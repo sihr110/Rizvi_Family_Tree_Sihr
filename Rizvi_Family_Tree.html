@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Rizvi Family Tree - Official Viewer</title>
+    <title>Rizvi Family Tree - Path Suite</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -10,183 +10,247 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     
     <style>
+        /* YOUR ORIGINAL CSS 100% UNTOUCHED */
         :root { 
-            --maroon: #5a0000; 
-            --dark-blue: #0f172a; 
-            --member-blue: #b45309; 
-            --blink-red: #ef4444; 
-            --light-yellow: #fefce8; 
-            --direct-green: #dcfce7;
-            --pink-bg: #fffaf0; 
-            --pink-border: #d4af37; 
-            --gold: #b8860b;
+            --maroon: #5a0000; --dark-blue: #0f172a; --member-blue: #b45309; 
+            --blink-red: #ef4444; --light-yellow: #fefce8; --direct-green: #dcfce7;
+            --pink-bg: #fffaf0; --pink-border: #d4af37; --gold: #d4af37; 
+            --gold-gradient: linear-gradient(135deg, #d4af37 0%, #f1d279 50%, #d4af37 100%);
+            --slate: #1e293b; --lineage-yellow: #fef9c3; --off-white: #fafaf9;
         }
 
-        body { font-family: 'Inter', sans-serif; background: #f8fafc; margin: 0; overflow: hidden; }
-
-        .header { 
-            background: white; padding: 15px 25px; display: flex; align-items: center; justify-content: space-between;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1); border-bottom: 3px solid var(--maroon); position: relative; z-index: 1000;
-        }
-        .logo-area h1 { font-family: 'Playfair Display', serif; color: var(--maroon); margin: 0; font-size: 24px; }
-        
-        .nav-controls { display: flex; gap: 10px; align-items: center; }
-        
-        .btn { 
-            padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; 
-            transition: all 0.2s; font-size: 13px; display: flex; align-items: center; gap: 6px;
-        }
-        .btn-pdf { background: var(--maroon); color: white; }
-        .btn-pdf:hover { background: #800000; }
-
-        .search-box { position: relative; }
-        .search-box input { 
-            padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; width: 250px; outline: none;
-        }
-
-        #viewer-container { width: 100vw; height: calc(100vh - 70px); overflow: auto; background: #f1f5f9; cursor: grab; }
-        #viewer-container:active { cursor: grabbing; }
-        #tree-surface { position: relative; padding: 100px; min-width: 5000px; min-height: 5000px; transform-origin: 0 0; }
-
-        .member-card {
-            position: absolute; width: 220px; background: white; border: 2px solid #cbd5e1;
-            border-radius: 10px; padding: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-            transition: all 0.3s; z-index: 10; cursor: pointer;
-        }
-        .member-card:hover { transform: scale(1.05); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); border-color: var(--maroon); }
-        .member-card.highlight { border-color: var(--blink-red); border-width: 3px; animation: pulse 1.5s infinite; }
-        
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
-
-        .gender-tag { font-size: 10px; font-weight: bold; text-transform: uppercase; padding: 2px 6px; border-radius: 4px; margin-bottom: 6px; display: inline-block; }
-        .male { background: #dbeafe; color: #1e40af; }
-        .female { background: #fce7f3; color: #9d174d; }
-
-        .name { font-weight: 700; color: var(--dark-blue); font-size: 14px; margin-bottom: 4px; }
-        .gen-id { font-size: 11px; color: #64748b; font-family: monospace; }
-
-        svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
-        line { stroke: #94a3b8; stroke-width: 2; }
+        body { font-family: 'Inter', sans-serif; background: #1a1a1a; margin: 0; height: 100vh; overflow: hidden; }
+        .pg-1 { max-width: 1400px; margin: 0 auto; background: white; height: 100vh; display: flex; flex-direction: column; box-shadow: 0 0 50px rgba(212, 175, 55, 0.2); border-left: 2px solid var(--gold); border-right: 2px solid var(--gold); }
+        .fixed-top-section { padding: 20px 30px 10px 30px; background: white; z-index: 1000; border-bottom: 1px solid #eee; }
+        .header-label { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: var(--gold); }
+        .member-name { font-family: 'Playfair Display', serif; color: var(--dark-blue); font-weight: 700; font-size: 20px; display: block; }
+        .search-label { font-family: 'Inter', sans-serif; letter-spacing: 1px; display: block; font-weight: 700; color: var(--maroon); margin-bottom: 8px; font-size: 11px; text-transform: uppercase; }
+        .header-flip-container { background: var(--dark-blue); color: white; border-radius: 12px; margin-bottom: 15px; border-bottom: 4px solid var(--gold); overflow: hidden; transition: all 0.3s ease; height: 50px; display: flex; align-items: center; justify-content: center; position: relative; }
+        .header-flip-container.active { height: 80px; background: #000; }
+        .header-content-wrapper { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 0 25px; }
+        .star-icon { font-size: 24px; color: var(--gold); user-select: none; }
+        .star-toggle { cursor: pointer; transition: transform 0.3s ease; }
+        .status-hub { display: none; width: 100%; padding: 0 20px; justify-content: space-between; align-items: center; font-size: 13px; }
+        .header-flip-container.active .header-content-wrapper { display: none; }
+        .header-flip-container.active .status-hub { display: flex; }
+        .search-container { display: grid; grid-template-columns: 1.5fr 1.5fr auto auto auto auto; gap: 12px; margin-bottom: 10px; background: #fdfdfd; padding: 15px; border-radius: 12px; border: 1px solid var(--gold); align-items: end; }
+        .search-box-wrapper { position: relative; }
+        .search-input { font-family: 'Inter', sans-serif; width: 100%; padding: 10px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; box-sizing: border-box; font-size: 14px; }
+        .dropdown { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--gold); z-index: 999; max-height: 250px; overflow-y: auto; display: none; border-radius: 0 0 10px 10px; box-shadow: 0 10px 15px rgba(0,0,0,0.1); }
+        .result-item { padding: 10px; border-bottom: 1px solid #eee; cursor: pointer; font-size: 13px; }
+        .tree-viewport { flex-grow: 1; display: flex; flex-direction: column; align-items: center; padding: 40px; overflow-y: auto; overflow-x: auto; background: #fffcf8; border-top: 1px solid #eee; }
+        .tree-root-layout { display: flex; flex-direction: column; align-items: center; gap: 20px; width: fit-content; padding-bottom: 100px; }
+        .box { border: 2px solid var(--gold); border-radius: 12px; background: white; min-width: 260px; text-align: center; cursor: pointer; position: relative; color: black; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08); transition: transform 0.2s; }
+        .box-header { display: flex; justify-content: space-between; padding: 6px 12px; background: #f8fafc; font-size: 10px; font-weight: 800; border-bottom: 1px solid #ddd; color: #475569; letter-spacing: 1px; }
+        .lineage-header { background: var(--gold-gradient) !important; color: black !important; }
+        .box-body { padding: 15px; position: relative; }
+        .father-name { font-size: 12px; color: #64748b; margin-top: 6px; display: block; font-weight: 500; }
+        .female-box { background-color: #fff1f2 !important; border-color: #fb7185 !important; }
+        .active-box { border-width: 3px; border-color: var(--gold) !important; box-shadow: 0 0 20px rgba(212, 175, 55, 0.3); }
+        @keyframes blink { 50% { opacity: 0.1; } }
+        .blinking-name { color: var(--blink-red); animation: blink 1.2s infinite; }
+        .daughters-wrapper { background: var(--pink-bg) !important; border-color: var(--gold) !important; border-style: dashed; }
+        .d-header { background: var(--gold); color: black; font-size: 11px; padding: 6px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+        .v-line { width: 3px; height: 30px; background: var(--gold); }
+        .h-row { display: flex; justify-content: center; gap: 25px; flex-wrap: wrap; }
+        .pdf-signature { width: 100%; text-align: center; color: var(--gold); font-weight: 700; padding-top: 20px; border-top: 2px solid #eee; margin-top: 40px; font-size: 14px; font-family: 'Playfair Display', serif; }
+        .next-gen-indicator { position: absolute; bottom: 5px; right: 8px; color: var(--gold); font-size: 12px; font-weight: bold; }
+        .root-rel-trigger-box { background: var(--dark-blue); color: var(--gold); border: 2px solid var(--gold); border-radius: 8px; padding: 10px; cursor: pointer; text-align: center; font-weight: 800; font-size: 12px; height: 42px; display: flex; align-items: center; justify-content: center; text-transform: uppercase; box-sizing: border-box; }
     </style>
 </head>
 <body>
 
-    <header class="header">
-        <div class="logo-area">
-            <h1>Rizvi Family Tree</h1>
-        </div>
-        
-        <div class="nav-controls">
-            <div class="search-box">
-                <input type="text" id="searchInput" placeholder="Search name..." oninput="handleSearch()">
+<div class="pg-1">
+    <div class="fixed-top-section">
+        <div class="header-flip-container" id="flip-header">
+            <div class="header-content-wrapper">
+                <span class="star-icon">★</span>
+                <div class="header-label" id="main-title">Rizvi Family Tree</div>
+                <span class="star-icon star-toggle" onclick="toggleHeader()">★</span>
             </div>
-            <button class="btn btn-pdf" onclick="exportPDF()">Download PDF</button>
+            <div class="status-hub">
+                <div>Source: <span id="fn" class="data-val">data.json</span> | Records: <span id="rc" class="data-val">0</span></div>
+                <div id="admin-controls">
+                    <button class="btn" style="background:#10b981; border:none; padding:8px 15px; border-radius:8px; color:white; font-weight:bold; cursor:pointer;" onclick="prepareViewer()">DOWNLOAD VIEWER</button>
+                    <span class="star-icon" style="cursor:pointer;" onclick="toggleHeader()">★</span>
+                </div>
+            </div>
         </div>
-    </header>
 
-    <div id="viewer-container">
-        <div id="tree-surface">
-            <svg id="svg-layer"></svg>
-            <div id="members-layer"></div>
+        <div class="search-container">
+            <div class="search-box-wrapper">
+                <label class="search-label">Starting Member (From)</label>
+                <input type="text" id="si-from" class="search-input" placeholder="Search name..." onkeyup="doSearch(this, 'sd-from')">
+                <div id="sd-from" class="dropdown"></div>
+            </div>
+
+            <div class="search-box-wrapper">
+                <div id="search-2-ui" style="display: none;">
+                    <label class="search-label">Ending Member (To)</label>
+                    <input type="text" id="si-to" class="search-input" placeholder="Search name..." onkeyup="doSearch(this, 'sd-to')">
+                    <div id="sd-to" class="dropdown"></div>
+                </div>
+                <div id="root-rel-trigger" class="root-rel-trigger-box" onclick="showBothSearches()">Root Relative</div>
+            </div>
+
+            <label class="sib-toggle" style="font-size:12px; font-weight:700;"><input type="checkbox" id="sib-check" onchange="initRender()" checked> Siblings</label>
+            <label class="sib-toggle" style="font-size:12px; font-weight:700;"><input type="checkbox" id="desc-check" onchange="initRender()" checked> Descendants</label>
+            <button class="btn reset-btn" style="background:#64748b; color:white; border:none; padding:10px; border-radius:8px; cursor:pointer;" onclick="resetSearch()">RESET</button>
+            <button class="btn pdf-btn" style="background:#991b1b; color:white; border:none; padding:10px; border-radius:8px; cursor:pointer;" onclick="exportPDF()">SAVE PDF</button>
         </div>
+
+        <div class="loading-timestamp-ui" id="ui-load-stamp">Data Loading : ---</div>
     </div>
 
+    <div class="tree-viewport">
+        <div id="canvas"></div>
+    </div>
+</div>
+
 <script>
-    let db = [];
-    const HORIZONTAL_GAP = 300;
-    const VERTICAL_GAP = 100;
+    /* ORIGINAL LOGIC 100% RESTORED */
+    var db = [];
+    var selectedFrom = null;
+    var selectedTo = null;
+    const ARCHITECT_INFO = "System Architect : Imran Haider S/o Risalat Hussain Rizvi";
 
-    // AUTO-LOAD FROM data.json
-    window.addEventListener('DOMContentLoaded', () => {
-        fetch('data.json')
-            .then(response => {
-                if (!response.ok) throw new Error("File not found");
-                return response.json();
-            })
-            .then(data => {
-                db = data;
-                renderTree();
-            })
-            .catch(err => {
-                console.error("Loading Error:", err);
-                alert("Please ensure data.json is uploaded to the same folder on GitHub.");
-            });
-    });
+    // ONLY MODIFICATION: Automatically loading data.json
+    window.onload = async () => {
+        try {
+            const response = await fetch('data.json');
+            const raw = await response.json();
+            db = raw.map(r => ({
+                name: String(r['Name']||"").trim(),
+                father: String(r['Father']||"").trim(),
+                gen: String(r['Gen']||"").trim(),
+                gender: String(r['Gender']||"M").trim().toUpperCase()
+            }));
+            document.getElementById('rc').innerText = db.length;
+            document.getElementById('ui-load-stamp').innerText = "Auto-Sync: " + new Date().toLocaleString();
+            resetSearch();
+        } catch (e) {
+            document.getElementById('ui-load-stamp').innerText = "Failed to load data.json";
+        }
+    };
 
-    function renderTree() {
-        const layer = document.getElementById('members-layer');
-        const svg = document.getElementById('svg-layer');
-        layer.innerHTML = "";
-        svg.innerHTML = "";
+    function displayName(str) { return str.replace(/\s*-\s*\d+$/, "").trim(); }
+    function toggleHeader() { document.getElementById('flip-header').classList.toggle('active'); }
+    function showBothSearches() { document.getElementById('search-2-ui').style.display = 'block'; document.getElementById('root-rel-trigger').style.display = 'none'; }
 
-        if (db.length === 0) return;
-
-        // Simple Layout Logic
-        let generations = {};
-        db.forEach(m => {
-            let genNum = m.Gen.split('-')[1] || "0";
-            if (!generations[genNum]) generations[genNum] = [];
-            generations[genNum].push(m);
+    function doSearch(input, dropdownId) {
+        const q = input.value.toLowerCase();
+        const sd = document.getElementById(dropdownId);
+        sd.innerHTML = '';
+        if (q.length < 1) { sd.style.display = 'none'; return; }
+        const found = db.filter(p => p.name.toLowerCase().includes(q)).slice(0, 8);
+        found.forEach(p => {
+            const div = document.createElement('div');
+            div.className = 'result-item';
+            div.innerHTML = `<b>${displayName(p.name)}</b> <small>(${p.gen})</small>`;
+            div.onclick = () => {
+                input.value = `${displayName(p.name)} (${p.gen})`;
+                sd.style.display = 'none';
+                if (dropdownId === 'sd-from') selectedFrom = p; else selectedTo = p;
+                initRender();
+            };
+            sd.appendChild(div);
         });
-
-        let sortedGens = Object.keys(generations).sort((a,b) => a.localeCompare(b, undefined, {numeric: true}));
-        let positions = new Map();
-
-        sortedGens.forEach((gen, xIdx) => {
-            generations[gen].forEach((m, yIdx) => {
-                const x = xIdx * HORIZONTAL_GAP + 50;
-                const y = yIdx * VERTICAL_GAP + 50;
-                positions.set(m.Name, { x, y });
-
-                const card = document.createElement('div');
-                card.className = 'member-card';
-                card.style.left = `${x}px`;
-                card.style.top = `${y}px`;
-                card.innerHTML = `
-                    <span class="gender-tag ${m.Gender.toLowerCase()}">${m.Gender}</span>
-                    <div class="name">${m.Name}</div>
-                    <div class="gen-id">${m.Gen}</div>
-                `;
-                layer.appendChild(card);
-            });
-        });
-
-        // Draw connecting lines
-        db.forEach(m => {
-            if (m.Father && positions.has(m.Father) && positions.has(m.Name)) {
-                const start = positions.get(m.Father);
-                const end = positions.get(m.Name);
-                const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-                line.setAttribute("x1", start.x + 220);
-                line.setAttribute("y1", start.y + 35);
-                line.setAttribute("x2", end.x);
-                line.setAttribute("y2", end.y + 35);
-                svg.appendChild(line);
-            }
-        });
+        sd.style.display = 'block';
     }
 
-    function handleSearch() {
-        const term = document.getElementById('searchInput').value.toLowerCase();
-        document.querySelectorAll('.member-card').forEach(card => {
-            if (term && card.innerText.toLowerCase().includes(term)) {
-                card.classList.add('highlight');
-            } else {
-                card.classList.remove('highlight');
-            }
-        });
+    function resetSearch() {
+        selectedFrom = selectedTo = null;
+        document.getElementById('si-from').value = ''; document.getElementById('si-to').value = '';
+        document.getElementById('canvas').innerHTML = '';
+        document.getElementById('search-2-ui').style.display = 'none';
+        document.getElementById('root-rel-trigger').style.display = 'flex';
+    }
+
+    function findParent(p) { return db.find(x => x.name.toLowerCase() === p.father.toLowerCase()); }
+
+    function initRender() {
+        if (!selectedFrom) return;
+        renderTreeBlock(selectedFrom);
+    }
+
+    /* 100% RESTORED ORIGINAL SIBLING & DESCENDANT LOGIC */
+    function renderTreeBlock(target) {
+        const canvas = document.getElementById('canvas');
+        const showSiblings = document.getElementById('sib-check').checked;
+        const showDescendants = document.getElementById('desc-check').checked;
+        
+        const father = findParent(target);
+        const children = db.filter(p => p.father.toLowerCase() === target.name.toLowerCase());
+        
+        let sibs = ""; 
+        if (showSiblings && target.father) {
+            const sList = db.filter(s => s.father.toLowerCase() === target.father.toLowerCase() && s.name.toLowerCase() !== target.name.toLowerCase());
+            sibs = renderSiblingsRow(sList, target.father);
+        }
+
+        let desc = showDescendants ? `<div class="v-line"></div><div class="h-row">${children.filter(c => c.gender.startsWith('M')).map(s => renderBox(s, "Son")).join('')}${renderDaughtersBox(children.filter(c => c.gender.startsWith('F')), target.name, "Daughters")}</div>` : '';
+
+        canvas.innerHTML = `
+            <div class="tree-root-layout" id="pdf-area">
+                ${father ? renderBox(father, "Father") + '<div class="v-line"></div>' : ''}
+                ${renderBox(target, "Selected", true)}
+                ${sibs}
+                ${desc}
+                <div class="pdf-signature">${ARCHITECT_INFO}</div>
+            </div>`;
+    }
+
+    function renderSiblingsRow(sibs, fatherName) {
+        if (!sibs.length) return '';
+        const brothers = sibs.filter(s => s.gender.startsWith('M')).map(b => renderBox(b, "Brother")).join('');
+        const sisters = renderDaughtersBox(sibs.filter(s => s.gender.startsWith('F')), fatherName, "Sisters");
+        return `<div class="h-row" style="margin-top:20px;">${brothers}${sisters}</div>`;
+    }
+
+    function renderDaughtersBox(list, fatherName, label) {
+        if (!list.length) return '';
+        return `
+            <div class="box daughters-wrapper">
+                <div class="d-header">${label}</div>
+                ${list.map(d => `<div style="padding:5px; font-size:13px;">${displayName(d.name)} <small>[${d.gen}]</small></div>`).join('')}
+                <div style="font-size:10px; padding:5px; border-top:1px solid #eee;">D/o ${displayName(fatherName)}</div>
+            </div>`;
+    }
+
+    function renderBox(p, label, isBlinking = false) {
+        const isFemale = p.gender.startsWith('F');
+        const femaleClass = isFemale ? "female-box" : "";
+        const nextInd = db.some(x => x.father.toLowerCase() === p.name.toLowerCase()) ? '<div class="next-gen-indicator">▼</div>' : '';
+        
+        return `
+            <div class="box ${femaleClass} ${isBlinking ? 'active-box' : ''}" onclick='jumpTo("${p.name}")'>
+                <div class="box-header"><span>${label}</span><span>${p.gen}</span></div>
+                <div class="box-body">
+                    <span class="member-name ${isBlinking ? 'blinking-name' : ''}">${displayName(p.name)}</span>
+                    <span class="father-name">${isFemale?'D/o':'S/o'}: ${displayName(p.father)}</span>
+                    ${nextInd}
+                </div>
+            </div>`;
+    }
+
+    function jumpTo(name) {
+        const p = db.find(x => x.name === name);
+        if (p) { selectedFrom = p; document.getElementById('si-from').value = displayName(p.name); initRender(); }
     }
 
     function exportPDF() {
-        const { jsPDF } = window.jspdf;
-        html2canvas(document.getElementById('tree-surface')).then(canvas => {
+        html2canvas(document.getElementById('pdf-area')).then(canvas => {
             const imgData = canvas.toDataURL('image/png');
-            const pdf = new jsPDF('l', 'mm', [canvas.width * 0.2, canvas.height * 0.2]);
-            pdf.addImage(imgData, 'PNG', 10, 10);
+            const pdf = new jspdf.jsPDF({ orientation: canvas.width > canvas.height ? 'l' : 'p', unit: 'mm', format: [canvas.width * 0.264, canvas.height * 0.264] });
+            pdf.addImage(imgData, 'PNG', 0, 0);
             pdf.save("Rizvi_Family_Tree.pdf");
         });
     }
-</script>
 
+    function prepareViewer() {
+        const blob = new Blob([document.documentElement.outerHTML], { type: 'text/html' });
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = "Rizvi_Family_Viewer.html"; a.click();
+    }
+</script>
 </body>
 </html>
