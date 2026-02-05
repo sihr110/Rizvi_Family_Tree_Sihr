@@ -79,8 +79,6 @@
         .canvas-main-title { color: var(--gold); background: var(--dark-blue); padding: 12px; border-radius: 8px; font-size: 28px; font-weight: 900; text-transform: uppercase; margin-bottom: 20px; text-align: center; display: none; font-family: 'Playfair Display', serif; letter-spacing: 2px; }
         .root-rel-trigger-box { background: var(--dark-blue); color: var(--gold); border: 2px solid var(--gold); border-radius: 8px; padding: 10px; cursor: pointer; text-align: center; font-weight: 800; font-size: 12px; height: 42px; display: flex; align-items: center; justify-content: center; text-transform: uppercase; box-sizing: border-box; transition: background 0.2s; }
         .root-rel-trigger-box:hover { background: #1e293b; }
-        
-        /* New Error Styling */
         .error-state { color: #ef4444 !important; border-left-color: #ef4444 !important; }
     </style>
 </head>
@@ -157,17 +155,12 @@
 
     function toggleHeader() {
         const header = document.getElementById('flip-header');
-        
-        // If already active, just close it
         if (header.classList.contains('active')) {
             header.classList.remove('active');
             return;
         }
-
-        // Only ask for password when TRYING to open
         const pass = prompt("Enter Admin Password (Rizvi*110):", "");
-        if (pass === null) return; // User clicked Cancel
-        
+        if (pass === null) return; 
         if (pass === "Rizvi*110") {
             header.classList.add('active');
         } else {
@@ -180,25 +173,21 @@
         try {
             const response = await fetch('data.xlsx', { cache: "no-cache" });
             if (!response.ok) throw new Error(`Status: ${response.status}`);
-
             const arrayBuffer = await response.arrayBuffer();
             const workbook = XLSX.read(arrayBuffer, {type: 'array'});
             const rows = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
-            
             db = rows.map(r => ({
                 name: String(r['Name'] || "").trim(),
                 father: String(r['Father'] || "").trim(),
                 gen: String(r['Gen'] || "").trim(),
                 gender: String(r['Gender'] || "M").trim().toUpperCase()
             })).filter(p => p.name !== "");
-
             LOAD_STAMP = "Data Synced : " + formatCurrentTime();
             stampEl.innerText = LOAD_STAMP;
             stampEl.classList.remove('error-state');
             document.getElementById('rc').innerText = db.length;
             document.getElementById('fn').innerText = "data.xlsx";
             document.getElementById('main-title').innerText = "RIZVI FAMILY";
-            
         } catch (err) {
             stampEl.innerText = "ERROR: " + err.message;
             stampEl.classList.add('error-state');
@@ -268,7 +257,6 @@
             document.getElementById('ui-load-stamp').classList.remove('error-state');
             document.getElementById('rc').innerText = db.length;
             document.getElementById('fn').innerText = file.name;
-            // Removed the toggleHeader() call from here so it doesn't force close the admin view after loading
             resetSearch();
         };
         reader.readAsArrayBuffer(file);
@@ -379,7 +367,6 @@
         const genA = getGenNum(commonAncestor.gen);
         const gen1 = getGenNum(selectedFrom.gen);
         const gen2 = getGenNum(selectedTo.gen);
-
         const diff1ToA = Math.abs(gen1 - genA);
         const diff2ToA = Math.abs(gen2 - genA);
         const totalDiffBetween = Math.abs(gen1 - gen2);
@@ -393,6 +380,7 @@
             </div>`;
     }
 
+    /* RESTORED BOTH ROOT LOGIC & CSS */
     function renderBothRoots() {
         const canvas = document.getElementById('canvas');
         if (!selectedFrom || !selectedTo) return;
@@ -402,18 +390,28 @@
         for (let p1 of chain1) { if (chain2.some(p2 => p2.name.toLowerCase() === p1.name.toLowerCase())) { meetingPoint = p1; break; } }
         if (!meetingPoint) return;
         const rootName = meetingPoint.name.toLowerCase();
+        
         const getColumnHtml = (chain, label) => {
-            let col = `<div style="display: flex; flex-direction: column; align-items: center; gap: 15px;"><div style="font-weight: 800; color: var(--dark-blue); font-size: 14px; margin-bottom: 10px; border-bottom: 2px solid var(--gold);">${label}</div>`;
+            let col = `<div style="display: flex; flex-direction: column; align-items: center; gap: 15px;">
+                        <div style="font-weight: 800; color: var(--dark-blue); font-size: 14px; margin-bottom: 10px; border-bottom: 2px solid var(--gold);">${label}</div>`;
             const rootIdx = chain.findIndex(p => p.name.toLowerCase() === rootName);
             const path = chain.slice(0, rootIdx + 1);
             path.forEach((p, i) => {
-                const isTarget = i === 0; const isRoot = p.name.toLowerCase() === rootName;
+                const isTarget = i === 0; 
+                const isRoot = p.name.toLowerCase() === rootName;
                 col += renderBox(p, isRoot ? "Common Root" : (isTarget ? "Search Member" : "Ancestor"), isTarget || isRoot, isRoot, true);
                 if (i < path.length - 1) col += '<div class="v-line"></div>';
             });
             col += `</div>`; return col;
         };
-        canvas.innerHTML = `<div class="tree-root-layout" id="pdf-area"><div style="display: flex; gap: 60px; align-items: flex-start; justify-content: center; width: 100%;">${getColumnHtml(chain1, "Search 1 Lineage")}${getColumnHtml(chain2, "Search 2 Lineage")}</div><div class="pdf-signature">${ARCHITECT_INFO}</div></div>`;
+
+        canvas.innerHTML = `<div class="tree-root-layout" id="pdf-area">
+            <div style="display: flex; gap: 60px; align-items: flex-start; justify-content: center; width: 100%;">
+                ${getColumnHtml(chain1, "Search 1 Lineage")}
+                ${getColumnHtml(chain2, "Search 2 Lineage")}
+            </div>
+            <div class="pdf-signature">${ARCHITECT_INFO}</div>
+        </div>`;
     }
 
     function renderPathBlock() {
@@ -497,7 +495,6 @@
         element.removeChild(headerDiv); element.removeChild(footerBox); if (banner) banner.style.display = 'block';
         const imgData = canvas.toDataURL('image/png', 1.0);
         const w = (canvas.width / 2) * 0.264583; const h = (canvas.height / 2) * 0.264583;
-
         const pdf = new jspdf.jsPDF({ orientation: w > h ? 'l' : 'p', unit: 'mm', format: [w + 40, h + 40] });
         pdf.addImage(imgData, 'PNG', 20, 20, w, h); pdf.save("Rizvi_Family_Tree.pdf");
     }
