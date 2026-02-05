@@ -10,13 +10,20 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     
     <style>
-        /* YOUR ORIGINAL CSS 100% UNTOUCHED */
         :root { 
-            --maroon: #5a0000; --dark-blue: #0f172a; --member-blue: #b45309; 
-            --blink-red: #ef4444; --light-yellow: #fefce8; --direct-green: #dcfce7;
-            --pink-bg: #fffaf0; --pink-border: #d4af37; --gold: #d4af37; 
+            --maroon: #5a0000; 
+            --dark-blue: #0f172a; 
+            --member-blue: #b45309; 
+            --blink-red: #ef4444; 
+            --light-yellow: #fefce8; 
+            --direct-green: #dcfce7;
+            --pink-bg: #fffaf0; 
+            --pink-border: #d4af37; 
+            --gold: #d4af37; 
             --gold-gradient: linear-gradient(135deg, #d4af37 0%, #f1d279 50%, #d4af37 100%);
-            --slate: #1e293b; --lineage-yellow: #fef9c3; --off-white: #fafaf9;
+            --slate: #1e293b; 
+            --lineage-yellow: #fef9c3; 
+            --off-white: #fafaf9;
         }
 
         body { font-family: 'Inter', sans-serif; background: #1a1a1a; margin: 0; height: 100vh; overflow: hidden; }
@@ -30,21 +37,30 @@
         .header-content-wrapper { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 0 25px; }
         .star-icon { font-size: 24px; color: var(--gold); user-select: none; }
         .star-toggle { cursor: pointer; transition: transform 0.3s ease; }
+        .star-toggle:hover { transform: scale(1.2); color: #fff; }
         .status-hub { display: none; width: 100%; padding: 0 20px; justify-content: space-between; align-items: center; font-size: 13px; }
         .header-flip-container.active .header-content-wrapper { display: none; }
         .header-flip-container.active .status-hub { display: flex; }
+        .data-val { color: var(--gold); font-weight: bold; }
         .search-container { display: grid; grid-template-columns: 1.5fr 1.5fr auto auto auto auto; gap: 12px; margin-bottom: 10px; background: #fdfdfd; padding: 15px; border-radius: 12px; border: 1px solid var(--gold); align-items: end; }
         .search-box-wrapper { position: relative; }
         .search-input { font-family: 'Inter', sans-serif; width: 100%; padding: 10px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; box-sizing: border-box; font-size: 14px; }
+        .search-input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1); }
+        .btn { border: none; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.2s; height: 42px; color: white; font-size: 12px; text-transform: uppercase; }
+        .reset-btn { background: #64748b; }
+        .pdf-btn { background: #991b1b; border: 1px solid var(--gold); }
+        .sib-toggle { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; color: var(--slate); cursor: pointer; padding-bottom: 12px; }
         .dropdown { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--gold); z-index: 999; max-height: 250px; overflow-y: auto; display: none; border-radius: 0 0 10px 10px; box-shadow: 0 10px 15px rgba(0,0,0,0.1); }
         .result-item { padding: 10px; border-bottom: 1px solid #eee; cursor: pointer; font-size: 13px; }
         .tree-viewport { flex-grow: 1; display: flex; flex-direction: column; align-items: center; padding: 40px; overflow-y: auto; overflow-x: auto; background: #fffcf8; border-top: 1px solid #eee; }
         .tree-root-layout { display: flex; flex-direction: column; align-items: center; gap: 20px; width: fit-content; padding-bottom: 100px; }
         .box { border: 2px solid var(--gold); border-radius: 12px; background: white; min-width: 260px; text-align: center; cursor: pointer; position: relative; color: black; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08); transition: transform 0.2s; }
+        .box:hover { transform: translateY(-2px); }
         .box-header { display: flex; justify-content: space-between; padding: 6px 12px; background: #f8fafc; font-size: 10px; font-weight: 800; border-bottom: 1px solid #ddd; color: #475569; letter-spacing: 1px; }
         .lineage-header { background: var(--gold-gradient) !important; color: black !important; }
         .box-body { padding: 15px; position: relative; }
         .father-name { font-size: 12px; color: #64748b; margin-top: 6px; display: block; font-weight: 500; }
+        .direct-gen-box { background-color: var(--direct-green) !important; border-color: #16a34a !important; }
         .female-box { background-color: #fff1f2 !important; border-color: #fb7185 !important; }
         .active-box { border-width: 3px; border-color: var(--gold) !important; box-shadow: 0 0 20px rgba(212, 175, 55, 0.3); }
         @keyframes blink { 50% { opacity: 0.1; } }
@@ -55,7 +71,14 @@
         .h-row { display: flex; justify-content: center; gap: 25px; flex-wrap: wrap; }
         .pdf-signature { width: 100%; text-align: center; color: var(--gold); font-weight: 700; padding-top: 20px; border-top: 2px solid #eee; margin-top: 40px; font-size: 14px; font-family: 'Playfair Display', serif; }
         .next-gen-indicator { position: absolute; bottom: 5px; right: 8px; color: var(--gold); font-size: 12px; font-weight: bold; }
-        .root-rel-trigger-box { background: var(--dark-blue); color: var(--gold); border: 2px solid var(--gold); border-radius: 8px; padding: 10px; cursor: pointer; text-align: center; font-weight: 800; font-size: 12px; height: 42px; display: flex; align-items: center; justify-content: center; text-transform: uppercase; box-sizing: border-box; }
+        .gen-diff-badge { background: var(--dark-blue); color: var(--gold); padding: 15px 30px; border-radius: 12px; font-size: 15px; font-weight: 700; border: 2px solid var(--gold); line-height: 1.6; text-align: left; font-family: 'Inter', sans-serif; display: inline-grid; grid-template-columns: auto auto; gap: 0 15px; margin-top: 30px; }
+        .loading-timestamp-container { display: flex; align-items: center; justify-content: space-between; padding: 0 10px; margin-bottom: 10px; }
+        .loading-timestamp-ui { font-size: 11px; color: #475569; font-weight: 700; border-left: 3px solid var(--gold); padding-left: 10px; text-transform: uppercase; }
+        .root-relative-btn { background: var(--dark-blue); color: var(--gold); padding: 6px 18px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 800; border: 1px solid var(--gold); transition: 0.2s; text-transform: uppercase; margin-left: 5px;}
+        .root-relative-btn:hover { background: var(--gold); color: black; }
+        .canvas-main-title { color: var(--gold); background: var(--dark-blue); padding: 12px; border-radius: 8px; font-size: 28px; font-weight: 900; text-transform: uppercase; margin-bottom: 20px; text-align: center; display: none; font-family: 'Playfair Display', serif; letter-spacing: 2px; }
+        .root-rel-trigger-box { background: var(--dark-blue); color: var(--gold); border: 2px solid var(--gold); border-radius: 8px; padding: 10px; cursor: pointer; text-align: center; font-weight: 800; font-size: 12px; height: 42px; display: flex; align-items: center; justify-content: center; text-transform: uppercase; box-sizing: border-box; transition: background 0.2s; }
+        .root-rel-trigger-box:hover { background: #1e293b; }
     </style>
 </head>
 <body>
@@ -68,10 +91,10 @@
                 <div class="header-label" id="main-title">Rizvi Family Tree</div>
                 <span class="star-icon star-toggle" onclick="toggleHeader()">★</span>
             </div>
-            <div class="status-hub">
-                <div>Source: <span id="fn" class="data-val">data.json</span> | Records: <span id="rc" class="data-val">0</span></div>
-                <div id="admin-controls">
-                    <button class="btn" style="background:#10b981; border:none; padding:8px 15px; border-radius:8px; color:white; font-weight:bold; cursor:pointer;" onclick="prepareViewer()">DOWNLOAD VIEWER</button>
+            <div id="status-hub-area" class="status-hub">
+                <div><span id="fn" class="data-val">Auto-Loading...</span> | Records: <span id="rc" class="data-val">0</span></div>
+                <div id="admin-controls" style="display: flex; gap: 15px; align-items: center;">
+                    <span style="color:var(--gold); font-weight:800; font-size:11px;">GitHub Auto-Sync Active</span>
                     <span class="star-icon" style="cursor:pointer;" onclick="toggleHeader()">★</span>
                 </div>
             </div>
@@ -90,52 +113,111 @@
                     <input type="text" id="si-to" class="search-input" placeholder="Search name..." onkeyup="doSearch(this, 'sd-to')">
                     <div id="sd-to" class="dropdown"></div>
                 </div>
-                <div id="root-rel-trigger" class="root-rel-trigger-box" onclick="showBothSearches()">Root Relative</div>
+                <div id="root-rel-trigger" class="root-rel-trigger-box" onclick="showBothSearches()">
+                    Root Relative
+                </div>
             </div>
 
-            <label class="sib-toggle" style="font-size:12px; font-weight:700;"><input type="checkbox" id="sib-check" onchange="initRender()" checked> Siblings</label>
-            <label class="sib-toggle" style="font-size:12px; font-weight:700;"><input type="checkbox" id="desc-check" onchange="initRender()" checked> Descendants</label>
-            <button class="btn reset-btn" style="background:#64748b; color:white; border:none; padding:10px; border-radius:8px; cursor:pointer;" onclick="resetSearch()">RESET</button>
-            <button class="btn pdf-btn" style="background:#991b1b; color:white; border:none; padding:10px; border-radius:8px; cursor:pointer;" onclick="exportPDF()">SAVE PDF</button>
+            <label class="sib-toggle"><input type="checkbox" id="sib-check" onchange="initRender()" checked> Siblings</label>
+            <label class="sib-toggle"><input type="checkbox" id="desc-check" onchange="initRender()" checked> Descendants</label>
+            <button class="btn reset-btn" onclick="resetSearch()">RESET</button>
+            <button class="btn pdf-btn" onclick="exportPDF()">SAVE PDF</button>
         </div>
 
-        <div class="loading-timestamp-ui" id="ui-load-stamp">Data Loading : ---</div>
+        <div class="loading-timestamp-container">
+            <div class="loading-timestamp-ui" id="ui-load-stamp">Awaiting data.xlsx...</div>
+            <div style="display: flex;">
+                <button id="both-root-opt" class="root-relative-btn" onclick="renderBothRoots()" style="display: none;">Both Root List</button>
+            </div>
+        </div>
     </div>
 
     <div class="tree-viewport">
+        <div id="canvas-header" class="canvas-main-title">Rizvi Family Tree</div>
         <div id="canvas"></div>
     </div>
 </div>
 
-<script>
-    /* ORIGINAL LOGIC 100% RESTORED */
-    var db = [];
-    var selectedFrom = null;
-    var selectedTo = null;
-    const ARCHITECT_INFO = "System Architect : Imran Haider S/o Risalat Hussain Rizvi";
+<script id="data-block">
+    var MASTER_DB = [];
+    var LOAD_STAMP = "";
+</script>
 
-    // ONLY MODIFICATION: Automatically loading data.json
-    window.onload = async () => {
-        try {
-            const response = await fetch('data.json');
-            const raw = await response.json();
-            db = raw.map(r => ({
-                name: String(r['Name']||"").trim(),
-                father: String(r['Father']||"").trim(),
-                gen: String(r['Gen']||"").trim(),
-                gender: String(r['Gender']||"M").trim().toUpperCase()
-            }));
-            document.getElementById('rc').innerText = db.length;
-            document.getElementById('ui-load-stamp').innerText = "Auto-Sync: " + new Date().toLocaleString();
-            resetSearch();
-        } catch (e) {
-            document.getElementById('ui-load-stamp').innerText = "Failed to load data.json";
-        }
+<script>
+    let db = []; 
+    let selectedFrom = null;
+    let selectedTo = null;
+    const ARCHITECT_INFO = "System Architect : Imran Haider S/o Risalat Hussain Rizvi 📞 0332-787-6010";
+
+    function displayName(str) {
+        if (!str) return "";
+        return str.replace(/\s*-\s*\d+$/, "").trim();
+    }
+
+    function getGenNum(genStr) {
+        const match = String(genStr).match(/\d+/);
+        return match ? parseInt(match[0]) : 0;
+    }
+
+    /* AUTO LOAD LOGIC FOR GITHUB */
+    window.onload = () => {
+        autoLoadExcel();
     };
 
-    function displayName(str) { return str.replace(/\s*-\s*\d+$/, "").trim(); }
+    async function autoLoadExcel() {
+        const titleEl = document.getElementById('main-title');
+        const fnEl = document.getElementById('fn');
+        const stampEl = document.getElementById('ui-load-stamp');
+
+        try {
+            const response = await fetch('data.xlsx');
+            if (!response.ok) throw new Error("File not found");
+            const data = await response.arrayBuffer();
+            const workbook = XLSX.read(data, {type: 'array'});
+            const rows = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
+            
+            db = rows.map(r => ({
+                name: String(r['Name'] || "").trim(),
+                father: String(r['Father'] || "").trim(),
+                gen: String(r['Gen'] || "").trim(),
+                gender: String(r['Gender'] || "M").trim().toUpperCase()
+            })).filter(p => p.name !== "");
+
+            LOAD_STAMP = "Data Synced : " + formatCurrentTime();
+            stampEl.innerText = LOAD_STAMP;
+            document.getElementById('rc').innerText = db.length;
+            fnEl.innerText = "data.xlsx";
+            titleEl.innerText = "RIZVI FAMILY";
+            
+            resetSearch();
+        } catch (err) {
+            stampEl.innerText = "Error: Ensure data.xlsx exists in folder";
+            console.error(err);
+        }
+    }
+
+    function showBothSearches() {
+        document.getElementById('canvas').innerHTML = '';
+        document.getElementById('canvas-header').style.display = 'none';
+        document.getElementById('search-2-ui').style.display = 'block';
+        document.getElementById('root-rel-trigger').style.display = 'none';
+        if(selectedFrom && selectedTo) {
+            renderRootRelativeSummary();
+            document.getElementById('both-root-opt').style.display = 'block';
+        }
+    }
+
     function toggleHeader() { document.getElementById('flip-header').classList.toggle('active'); }
-    function showBothSearches() { document.getElementById('search-2-ui').style.display = 'block'; document.getElementById('root-rel-trigger').style.display = 'none'; }
+    
+    function formatCurrentTime() {
+        const now = new Date();
+        const options = { month: 'short', day: '2-digit', year: 'numeric' };
+        let hours = now.getHours();
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const ampm = hours >= 12 ? 'pm' : 'am';
+        hours = hours % 12 || 12;
+        return `Date (${now.toLocaleDateString('en-US', options)}) Time : (${hours}:${minutes}${ampm})`;
+    }
 
     function doSearch(input, dropdownId) {
         const q = input.value.toLowerCase();
@@ -146,110 +228,198 @@
         found.forEach(p => {
             const div = document.createElement('div');
             div.className = 'result-item';
-            div.innerHTML = `<b>${displayName(p.name)}</b> <small>(${p.gen})</small>`;
+            div.innerHTML = `<b>${displayName(p.name)}</b> <small>(${p.gen})</small><br><small>S/o: ${displayName(p.father)}</small>`;
             div.onclick = () => {
                 input.value = `${displayName(p.name)} (${p.gen})`;
                 sd.style.display = 'none';
-                if (dropdownId === 'sd-from') selectedFrom = p; else selectedTo = p;
+                if (dropdownId === 'sd-from') { selectedFrom = p; } else { selectedTo = p; }
                 initRender();
             };
             sd.appendChild(div);
         });
-        sd.style.display = 'block';
+        sd.style.display = found.length > 0 ? 'block' : 'none';
     }
 
     function resetSearch() {
         selectedFrom = selectedTo = null;
-        document.getElementById('si-from').value = ''; document.getElementById('si-to').value = '';
+        document.getElementById('si-from').value = '';
+        document.getElementById('si-to').value = '';
         document.getElementById('canvas').innerHTML = '';
+        document.getElementById('canvas-header').style.display = 'none';
+        document.getElementById('both-root-opt').style.display = 'none';
         document.getElementById('search-2-ui').style.display = 'none';
         document.getElementById('root-rel-trigger').style.display = 'flex';
     }
 
-    function findParent(p) { return db.find(x => x.name.toLowerCase() === p.father.toLowerCase()); }
-
-    function initRender() {
-        if (!selectedFrom) return;
-        renderTreeBlock(selectedFrom);
+    function findParent(p) {
+        if (!p || !p.father || p.father.toLowerCase() === "n/a" || p.father === "") return null;
+        return db.find(x => x.name.toLowerCase() === p.father.toLowerCase());
     }
 
-    /* 100% RESTORED ORIGINAL SIBLING & DESCENDANT LOGIC */
-    function renderTreeBlock(target) {
-        const canvas = document.getElementById('canvas');
-        const showSiblings = document.getElementById('sib-check').checked;
-        const showDescendants = document.getElementById('desc-check').checked;
-        
-        const father = findParent(target);
-        const children = db.filter(p => p.father.toLowerCase() === target.name.toLowerCase());
-        
-        let sibs = ""; 
-        if (showSiblings && target.father) {
-            const sList = db.filter(s => s.father.toLowerCase() === target.father.toLowerCase() && s.name.toLowerCase() !== target.name.toLowerCase());
-            sibs = renderSiblingsRow(sList, target.father);
+    function getAncestryChain(p) {
+        let chain = [];
+        let curr = p;
+        let visited = new Set();
+        while (curr && !visited.has(curr.name.toLowerCase())) {
+            chain.push(curr);
+            visited.add(curr.name.toLowerCase());
+            curr = findParent(curr);
         }
+        return chain;
+    }
 
-        let desc = showDescendants ? `<div class="v-line"></div><div class="h-row">${children.filter(c => c.gender.startsWith('M')).map(s => renderBox(s, "Son")).join('')}${renderDaughtersBox(children.filter(c => c.gender.startsWith('F')), target.name, "Daughters")}</div>` : '';
+    function initRender() {
+        const canvas = document.getElementById('canvas');
+        document.getElementById('canvas-header').style.display = 'block';
+        if (selectedFrom && selectedTo) {
+            if(document.getElementById('search-2-ui').style.display === 'block') {
+                renderRootRelativeSummary();
+                document.getElementById('both-root-opt').style.display = 'block';
+            } else {
+                renderPathBlock();
+            }
+        } else if (selectedFrom) {
+            document.getElementById('both-root-opt').style.display = 'none';
+            renderTreeBlock(selectedFrom); 
+        } else {
+            canvas.innerHTML = '';
+        }
+    }
 
-        canvas.innerHTML = `
-            <div class="tree-root-layout" id="pdf-area">
-                ${father ? renderBox(father, "Father") + '<div class="v-line"></div>' : ''}
-                ${renderBox(target, "Selected", true)}
-                ${sibs}
-                ${desc}
+    function renderRootRelativeSummary() {
+        const canvas = document.getElementById('canvas');
+        if (!selectedFrom || !selectedTo) return;
+        const chain1 = getAncestryChain(selectedFrom);
+        const chain2 = getAncestryChain(selectedTo);
+        let meetingPoint = null;
+        for (let p1 of chain1) { if (chain2.some(p2 => p2.name.toLowerCase() === p1.name.toLowerCase())) { meetingPoint = p1; break; } }
+        if (!meetingPoint) {
+             canvas.innerHTML = '<div class="gen-diff-badge">No Common Ancestor Found</div>';
+             return;
+        }
+        let commonAncestor = meetingPoint;
+        const genA = getGenNum(commonAncestor.gen);
+        const gen1 = getGenNum(selectedFrom.gen);
+        const gen2 = getGenNum(selectedTo.gen);
+        const diff1ToA = Math.abs(gen1 - genA);
+        const diff2ToA = Math.abs(gen2 - genA);
+        const totalDiffBetween = Math.abs(gen1 - gen2);
+
+        canvas.innerHTML = `<div class="tree-root-layout" id="pdf-area">
+                <div style="display: flex; align-items: center; gap: 20px;">${renderBox(commonAncestor, "Common Ancestor", true, true, true)}</div>
+                <div class="v-line"></div>
+                <div class="h-row">${renderBox(selectedFrom, "Search 1", true, false, true)}${renderBox(selectedTo, "Search 2", true, false, true)}</div>
+                <div class="gen-diff-badge"><span>Steps (S1 to S2)</span> <span>: ${totalDiffBetween}</span><span>Steps (S1 to Root)</span> <span>: ${diff1ToA}</span><span>Steps (S2 to Root)</span> <span>: ${diff2ToA}</span></div>
                 <div class="pdf-signature">${ARCHITECT_INFO}</div>
             </div>`;
     }
 
-    function renderSiblingsRow(sibs, fatherName) {
+    function renderBothRoots() {
+        const canvas = document.getElementById('canvas');
+        if (!selectedFrom || !selectedTo) return;
+        const chain1 = getAncestryChain(selectedFrom);
+        const chain2 = getAncestryChain(selectedTo);
+        let meetingPoint = null;
+        for (let p1 of chain1) { if (chain2.some(p2 => p2.name.toLowerCase() === p1.name.toLowerCase())) { meetingPoint = p1; break; } }
+        if (!meetingPoint) return;
+        const rootName = meetingPoint.name.toLowerCase();
+        const getColumnHtml = (chain, label) => {
+            let col = `<div style="display: flex; flex-direction: column; align-items: center; gap: 15px;"><div style="font-weight: 800; color: var(--dark-blue); font-size: 14px; margin-bottom: 10px; border-bottom: 2px solid var(--gold);">${label}</div>`;
+            const rootIdx = chain.findIndex(p => p.name.toLowerCase() === rootName);
+            const path = chain.slice(0, rootIdx + 1);
+            path.forEach((p, i) => {
+                const isTarget = i === 0; const isRoot = p.name.toLowerCase() === rootName;
+                col += renderBox(p, isRoot ? "Common Root" : (isTarget ? "Search Member" : "Ancestor"), isTarget || isRoot, isRoot, true);
+                if (i < path.length - 1) col += '<div class="v-line"></div>';
+            });
+            col += `</div>`; return col;
+        };
+        canvas.innerHTML = `<div class="tree-root-layout" id="pdf-area"><div style="display: flex; gap: 60px; align-items: flex-start; justify-content: center; width: 100%;">${getColumnHtml(chain1, "Search 1 Lineage")}${getColumnHtml(chain2, "Search 2 Lineage")}</div><div class="pdf-signature">${ARCHITECT_INFO}</div></div>`;
+    }
+
+    function renderPathBlock() {
+        const canvas = document.getElementById('canvas');
+        const showSiblings = document.getElementById('sib-check').checked;
+        const chain1 = getAncestryChain(selectedFrom);
+        const chain2 = getAncestryChain(selectedTo);
+        let meetingPoint = null;
+        for (let p1 of chain1) { if (chain2.some(p2 => p2.name.toLowerCase() === p1.name.toLowerCase())) { meetingPoint = p1; break; } }
+        if (!meetingPoint) {
+            canvas.innerHTML = '<div class="gen-diff-badge">No Connection Found</div>';
+            return;
+        }
+        const displayRoot = meetingPoint;
+        let displayPath = []; let curr = selectedTo;
+        while (curr && curr.name.toLowerCase() !== displayRoot.name.toLowerCase()) { displayPath.unshift(curr); curr = findParent(curr); }
+        displayPath.unshift(displayRoot);
+        const pathNames = displayPath.map(p => p.name.toLowerCase());
+        canvas.innerHTML = `<div class="tree-root-layout" id="pdf-area">
+            <div id="lineage-banner" class="gen-diff-badge" style="text-align:center; display:block; margin-top: 0;">Connected Lineage Found</div>
+            ${displayPath.map((p, i) => {
+                let sibs = ""; if (showSiblings && p.father) { const sList = db.filter(s => s.father.toLowerCase() === p.father.toLowerCase() && s.name.toLowerCase() !== p.name.toLowerCase()); sibs = renderSiblingsRow(sList, pathNames, p.father); }
+                const isSelected = p.name.toLowerCase() === selectedFrom.name.toLowerCase() || p.name.toLowerCase() === selectedTo.name.toLowerCase();
+                return `${renderBox(p, p.name.toLowerCase() === displayRoot.name.toLowerCase() ? "Ancestor" : "Descendant", isSelected, true, true)}${sibs}${i < displayPath.length - 1 ? '<div class="v-line"></div>' : ''}`;
+            }).join('')}<div class="pdf-signature">${ARCHITECT_INFO}</div></div>`;
+    }
+
+    function renderTreeBlock(target) {
+        const canvas = document.getElementById('canvas');
+        const showSiblings = document.getElementById('sib-check').checked;
+        const showDescendants = document.getElementById('desc-check').checked;
+        const father = findParent(target);
+        const children = db.filter(p => p.father.toLowerCase() === target.name.toLowerCase());
+        let sibs = ""; if (showSiblings && target.father) { const sList = db.filter(s => s.father.toLowerCase() === target.father.toLowerCase() && s.name.toLowerCase() !== target.name.toLowerCase()); sibs = renderSiblingsRow(sList, [], target.father); }
+        let desc = showDescendants ? `<div class="v-line"></div><div class="h-row">${children.filter(c => c.gender.startsWith('M')).map(s => renderBox(s, "Son", false, false, false)).join('')}${renderDaughtersBox(children.filter(c => c.gender.startsWith('F')), target.name, "Daughters")}</div>` : '';
+        canvas.innerHTML = `<div class="tree-root-layout" id="pdf-area">${father ? renderBox(father, "Father", false, false, true) + '<div class="v-line"></div>' : ''}${renderBox(target, "Selected", true, false, true)}${sibs}${desc}<div class="pdf-signature">${ARCHITECT_INFO}</div></div>`;
+    }
+
+    function renderSiblingsRow(sibs, pathNames, fatherName) {
         if (!sibs.length) return '';
-        const brothers = sibs.filter(s => s.gender.startsWith('M')).map(b => renderBox(b, "Brother")).join('');
-        const sisters = renderDaughtersBox(sibs.filter(s => s.gender.startsWith('F')), fatherName, "Sisters");
-        return `<div class="h-row" style="margin-top:20px;">${brothers}${sisters}</div>`;
+        return `<div class="h-row" style="margin-top:10px;">${sibs.filter(s => s.gender.startsWith('M')).map(b => renderBox(b, "Brother", false, false, false)).join('')}${renderDaughtersBox(sibs.filter(s => s.gender.startsWith('F')), fatherName, "Sisters")}</div>`;
     }
 
-    function renderDaughtersBox(list, fatherName, label) {
+    function renderDaughtersBox(list, fatherName, relation) {
         if (!list.length) return '';
-        return `
-            <div class="box daughters-wrapper">
-                <div class="d-header">${label}</div>
-                ${list.map(d => `<div style="padding:5px; font-size:13px;">${displayName(d.name)} <small>[${d.gen}]</small></div>`).join('')}
-                <div style="font-size:10px; padding:5px; border-top:1px solid #eee;">D/o ${displayName(fatherName)}</div>
-            </div>`;
+        return `<div class="box daughters-wrapper"><div class="d-header">${relation}</div>${list.map(d => `<div class="d-item" onclick='jumpTo("${d.name.replace(/'/g, "\\'")}", "${d.gen}")' style="padding: 5px; cursor: pointer;"><span>${displayName(d.name)}</span> <small>[${d.gen}]</small></div>`).join('')}<div style="font-size:10px; color:black; padding:5px; border-top:1px solid #fecaca;">D/o ${displayName(fatherName)}</div></div>`;
     }
 
-    function renderBox(p, label, isBlinking = false) {
-        const isFemale = p.gender.startsWith('F');
+    function renderBox(p, label, isBlinking, isPathMember, isDirect) {
+        const hasNext = db.some(x => x.father.toLowerCase() === p.name.toLowerCase());
+        const isFemale = p.gender && p.gender.toUpperCase().startsWith('F');
+        const parentPrefix = isFemale ? "D/o" : "S/o";
         const femaleClass = isFemale ? "female-box" : "";
-        const nextInd = db.some(x => x.father.toLowerCase() === p.name.toLowerCase()) ? '<div class="next-gen-indicator">▼</div>' : '';
         
-        return `
-            <div class="box ${femaleClass} ${isBlinking ? 'active-box' : ''}" onclick='jumpTo("${p.name}")'>
-                <div class="box-header"><span>${label}</span><span>${p.gen}</span></div>
-                <div class="box-body">
-                    <span class="member-name ${isBlinking ? 'blinking-name' : ''}">${displayName(p.name)}</span>
-                    <span class="father-name">${isFemale?'D/o':'S/o'}: ${displayName(p.father)}</span>
-                    ${nextInd}
-                </div>
-            </div>`;
+        return `<div class="box ${femaleClass} ${isDirect ? 'direct-gen-box' : ''} ${isBlinking ? 'active-box' : ''}" onclick='jumpTo("${p.name.replace(/'/g, "\\'")}", "${p.gen}")'>
+            <div class="box-header ${isPathMember ? 'lineage-header' : ''}"><span>${label}</span><span>${p.gen}</span></div>
+            <div class="box-body"><span class="member-name ${isBlinking ? 'blinking-name' : ''}">${displayName(p.name)}</span><span class="father-name">${parentPrefix}: ${displayName(p.father)}</span>${hasNext ? '<div class="next-gen-indicator">▼</div>' : ''}</div></div>`;
     }
 
-    function jumpTo(name) {
-        const p = db.find(x => x.name === name);
-        if (p) { selectedFrom = p; document.getElementById('si-from').value = displayName(p.name); initRender(); }
+    function jumpTo(name, gen) {
+        const p = db.find(x => x.name === name && x.gen === gen);
+        if (p) { 
+            selectedFrom = p; 
+            document.getElementById('si-from').value = `${displayName(p.name)} (${p.gen})`; 
+            initRender(); 
+        }
     }
 
-    function exportPDF() {
-        html2canvas(document.getElementById('pdf-area')).then(canvas => {
-            const imgData = canvas.toDataURL('image/png');
-            const pdf = new jspdf.jsPDF({ orientation: canvas.width > canvas.height ? 'l' : 'p', unit: 'mm', format: [canvas.width * 0.264, canvas.height * 0.264] });
-            pdf.addImage(imgData, 'PNG', 0, 0);
-            pdf.save("Rizvi_Family_Tree.pdf");
-        });
-    }
-
-    function prepareViewer() {
-        const blob = new Blob([document.documentElement.outerHTML], { type: 'text/html' });
-        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = "Rizvi_Family_Viewer.html"; a.click();
+    async function exportPDF() {
+        const element = document.getElementById('pdf-area');
+        if (!element) return alert("Generate tree first");
+        const banner = document.getElementById('lineage-banner'); if (banner) banner.style.display = 'none';
+        const headerDiv = document.createElement('div');
+        headerDiv.innerHTML = `<h1 style="color:#D4AF37; text-align:center; font-size:36px; margin:0;">RIZVI FAMILY TREE</h1><h2 style="color:#991B1B; text-align:center; font-size:24px; margin:10px 0;">${selectedFrom ? (selectedTo ? `From: ${displayName(selectedFrom.name)} Till: ${displayName(selectedTo.name)}` : displayName(selectedFrom.name)) : ''}</h2>`;
+        element.insertBefore(headerDiv, element.firstChild);
+        const footerBox = document.createElement('div');
+        footerBox.style = "border:2px solid #D4AF37; padding:10px; margin-top:30px; width:100%; display:flex; justify-content:space-between; font-weight:bold; font-size:14px; box-sizing:border-box; background:#0F172A; color:#D4AF37;";
+        footerBox.innerHTML = `<span>${LOAD_STAMP}</span><span>Pdf saving : ${formatCurrentTime()}</span>`;
+        element.appendChild(footerBox);
+        const canvas = await html2canvas(element, { scale: 2, useCORS: true, backgroundColor: "#ffffff" });
+        element.removeChild(headerDiv); element.removeChild(footerBox); if (banner) banner.style.display = 'block';
+        const imgData = canvas.toDataURL('image/png', 1.0);
+        const w = (canvas.width / 2) * 0.264583; const h = (canvas.height / 2) * 0.264583;
+        const pdf = new jspdf.jsPDF({ orientation: w > h ? 'l' : 'p', unit: 'mm', format: [w + 40, h + 40] });
+        pdf.addImage(imgData, 'PNG', 20, 20, w, h); pdf.save("Rizvi_Family_Tree.pdf");
     }
 </script>
 </body>
