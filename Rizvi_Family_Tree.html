@@ -10,6 +10,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     
     <style>
+        /* YOUR ORIGINAL CSS RESTORED */
         :root { 
             --maroon: #5a0000; 
             --dark-blue: #0f172a; 
@@ -159,7 +160,7 @@
         return match ? parseInt(match[0]) : 0;
     }
 
-    /* AUTO LOAD LOGIC FOR GITHUB */
+    /* AUTO LOAD LOGIC FOR GITHUB REPOSITORY */
     window.onload = () => {
         autoLoadExcel();
     };
@@ -170,6 +171,7 @@
         const stampEl = document.getElementById('ui-load-stamp');
 
         try {
+            // Fetches data.xlsx from the same directory in your GitHub folder
             const response = await fetch('data.xlsx');
             if (!response.ok) throw new Error("File not found");
             const data = await response.arrayBuffer();
@@ -191,7 +193,7 @@
             
             resetSearch();
         } catch (err) {
-            stampEl.innerText = "Error: Ensure data.xlsx exists in folder";
+            stampEl.innerText = "ERROR: ENSURE DATA.XLSX EXISTS IN FOLDER";
             console.error(err);
         }
     }
