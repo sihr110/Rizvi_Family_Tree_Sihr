@@ -155,11 +155,25 @@
     let selectedTo = null;
     const ARCHITECT_INFO = "System Architect : Imran Haider S/o Risalat Hussain Rizvi 📞 0332-787-6010";
 
+    function toggleHeader() {
+        const header = document.getElementById('flip-header');
+        if (header.classList.contains('active')) {
+            header.classList.remove('active');
+            return;
+        }
+        const password = prompt("Enter Admin Password to access Data Tools:", "");
+        if (password === null) return; 
+        if (password === "Rizvi*110") {
+            header.classList.add('active');
+        } else {
+            alert("Incorrect Password. Access Denied.");
+        }
+    }
+
     // --- NEW AUTO-LOAD LOGIC ---
     async function autoLoadExcel() {
         const stampEl = document.getElementById('ui-load-stamp');
         try {
-            // Added cache-busting and explicit check for data.xlsx
             const response = await fetch('data.xlsx', { cache: "no-cache" });
             
             if (!response.ok) {
@@ -196,13 +210,11 @@
         if (typeof _SECURE_BLOB !== 'undefined') {
             db = JSON.parse(atob(_SECURE_BLOB));
             IS_LOCKED = true;
-            // Finish standard setup for locked viewer...
             document.getElementById('ui-load-stamp').innerText = LOAD_STAMP || "Data Loaded Successfully";
             document.getElementById('rc').innerText = db.length;
             document.getElementById('fn').innerText = "OFFICIAL DATA";
             document.getElementById('main-title').innerText = "RIZVI FAMILY";
         } else {
-            // Try to load data.xlsx automatically from folder
             autoLoadExcel();
         }
     };
@@ -227,8 +239,6 @@
             document.getElementById('both-root-opt').style.display = 'block';
         }
     }
-
-    function toggleHeader() { document.getElementById('flip-header').classList.toggle('active'); }
     
     function formatCurrentTime() {
         const now = new Date();
