@@ -157,28 +157,29 @@
 
     function toggleHeader() {
         const header = document.getElementById('flip-header');
+        
+        // If already active, just close it
         if (header.classList.contains('active')) {
             header.classList.remove('active');
             return;
         }
-        const password = prompt("Enter Admin Password to access Data Tools:", "");
-        if (password === null) return; 
-        if (password === "Rizvi*110") {
+
+        // Only ask for password when TRYING to open
+        const pass = prompt("Enter Admin Password (Rizvi*110):", "");
+        if (pass === null) return; // User clicked Cancel
+        
+        if (pass === "Rizvi*110") {
             header.classList.add('active');
         } else {
-            alert("Incorrect Password. Access Denied.");
+            alert("Wrong password!");
         }
     }
 
-    // --- NEW AUTO-LOAD LOGIC ---
     async function autoLoadExcel() {
         const stampEl = document.getElementById('ui-load-stamp');
         try {
             const response = await fetch('data.xlsx', { cache: "no-cache" });
-            
-            if (!response.ok) {
-                throw new Error(`FILE NOT FOUND: ${response.status} ${response.statusText}`);
-            }
+            if (!response.ok) throw new Error(`Status: ${response.status}`);
 
             const arrayBuffer = await response.arrayBuffer();
             const workbook = XLSX.read(arrayBuffer, {type: 'array'});
@@ -197,12 +198,10 @@
             document.getElementById('rc').innerText = db.length;
             document.getElementById('fn').innerText = "data.xlsx";
             document.getElementById('main-title').innerText = "RIZVI FAMILY";
-            resetSearch();
             
         } catch (err) {
             stampEl.innerText = "ERROR: " + err.message;
             stampEl.classList.add('error-state');
-            console.error("Auto-load failed:", err);
         }
     }
 
@@ -239,7 +238,7 @@
             document.getElementById('both-root-opt').style.display = 'block';
         }
     }
-    
+
     function formatCurrentTime() {
         const now = new Date();
         const options = { month: 'short', day: '2-digit', year: 'numeric' };
@@ -269,7 +268,7 @@
             document.getElementById('ui-load-stamp').classList.remove('error-state');
             document.getElementById('rc').innerText = db.length;
             document.getElementById('fn').innerText = file.name;
-            toggleHeader();
+            // Removed the toggleHeader() call from here so it doesn't force close the admin view after loading
             resetSearch();
         };
         reader.readAsArrayBuffer(file);
@@ -414,7 +413,7 @@
             });
             col += `</div>`; return col;
         };
-        canvas.innerHTML = `<div class="tree-root-layout" id="pdf-area"><div style="display: gap: 60px; align-items: flex-start; justify-content: center; width: 100%;">${getColumnHtml(chain1, "Search 1 Lineage")}${getColumnHtml(chain2, "Search 2 Lineage")}</div><div class="pdf-signature">${ARCHITECT_INFO}</div></div>`;
+        canvas.innerHTML = `<div class="tree-root-layout" id="pdf-area"><div style="display: flex; gap: 60px; align-items: flex-start; justify-content: center; width: 100%;">${getColumnHtml(chain1, "Search 1 Lineage")}${getColumnHtml(chain2, "Search 2 Lineage")}</div><div class="pdf-signature">${ARCHITECT_INFO}</div></div>`;
     }
 
     function renderPathBlock() {
