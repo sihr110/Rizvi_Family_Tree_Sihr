@@ -10,7 +10,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     
     <style>
-        /* YOUR ORIGINAL CSS RESTORED */
         :root { 
             --maroon: #5a0000; 
             --dark-blue: #0f172a; 
@@ -80,6 +79,9 @@
         .canvas-main-title { color: var(--gold); background: var(--dark-blue); padding: 12px; border-radius: 8px; font-size: 28px; font-weight: 900; text-transform: uppercase; margin-bottom: 20px; text-align: center; display: none; font-family: 'Playfair Display', serif; letter-spacing: 2px; }
         .root-rel-trigger-box { background: var(--dark-blue); color: var(--gold); border: 2px solid var(--gold); border-radius: 8px; padding: 10px; cursor: pointer; text-align: center; font-weight: 800; font-size: 12px; height: 42px; display: flex; align-items: center; justify-content: center; text-transform: uppercase; box-sizing: border-box; transition: background 0.2s; }
         .root-rel-trigger-box:hover { background: #1e293b; }
+        
+        /* New Error Styling */
+        .error-state { color: #ef4444 !important; border-left-color: #ef4444 !important; }
     </style>
 </head>
 <body>
@@ -93,9 +95,11 @@
                 <span class="star-icon star-toggle" onclick="toggleHeader()">★</span>
             </div>
             <div id="status-hub-area" class="status-hub">
-                <div><span id="fn" class="data-val">Auto-Loading...</span> | Records: <span id="rc" class="data-val">0</span></div>
+                <div><span id="fn" class="data-val">No file loaded</span> | Records: <span id="rc" class="data-val">0</span></div>
                 <div id="admin-controls" style="display: flex; gap: 15px; align-items: center;">
-                    <span style="color:var(--gold); font-weight:800; font-size:11px;">GitHub Auto-Sync Active</span>
+                    <input type="file" id="xl" accept=".xlsx, .xls" style="display:none;" onchange="handleFile(this)">
+                    <button class="btn" style="background:#3b82f6;" onclick="document.getElementById('xl').click()">LOAD EXCEL</button>
+                    <button class="btn" style="background:#10b981;" onclick="prepareViewer()">DOWNLOAD VIEWER</button>
                     <span class="star-icon" style="cursor:pointer;" onclick="toggleHeader()">★</span>
                 </div>
             </div>
@@ -126,7 +130,7 @@
         </div>
 
         <div class="loading-timestamp-container">
-            <div class="loading-timestamp-ui" id="ui-load-stamp">Awaiting data.xlsx...</div>
+            <div class="loading-timestamp-ui" id="ui-load-stamp">Data Loading : ---</div>
             <div style="display: flex;">
                 <button id="both-root-opt" class="root-relative-btn" onclick="renderBothRoots()" style="display: none;">Both Root List</button>
             </div>
@@ -142,40 +146,28 @@
 <script id="data-block">
     var MASTER_DB = [];
     var LOAD_STAMP = "";
+    var IS_LOCKED = false;
 </script>
 
 <script>
-    let db = []; 
+    let db = MASTER_DB; 
     let selectedFrom = null;
     let selectedTo = null;
     const ARCHITECT_INFO = "System Architect : Imran Haider S/o Risalat Hussain Rizvi 📞 0332-787-6010";
 
-    function displayName(str) {
-        if (!str) return "";
-        return str.replace(/\s*-\s*\d+$/, "").trim();
-    }
-
-    function getGenNum(genStr) {
-        const match = String(genStr).match(/\d+/);
-        return match ? parseInt(match[0]) : 0;
-    }
-
-    /* AUTO LOAD LOGIC FOR GITHUB REPOSITORY */
-    window.onload = () => {
-        autoLoadExcel();
-    };
-
+    // --- NEW AUTO-LOAD LOGIC ---
     async function autoLoadExcel() {
-        const titleEl = document.getElementById('main-title');
-        const fnEl = document.getElementById('fn');
         const stampEl = document.getElementById('ui-load-stamp');
-
         try {
-            // Fetches data.xlsx from the same directory in your GitHub folder
-            const response = await fetch('data.xlsx');
-            if (!response.ok) throw new Error("File not found");
-            const data = await response.arrayBuffer();
-            const workbook = XLSX.read(data, {type: 'array'});
+            // Added cache-busting and explicit check for data.xlsx
+            const response = await fetch('data.xlsx', { cache: "no-cache" });
+            
+            if (!response.ok) {
+                throw new Error(`FILE NOT FOUND: ${response.status} ${response.statusText}`);
+            }
+
+            const arrayBuffer = await response.arrayBuffer();
+            const workbook = XLSX.read(arrayBuffer, {type: 'array'});
             const rows = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
             
             db = rows.map(r => ({
@@ -187,15 +179,42 @@
 
             LOAD_STAMP = "Data Synced : " + formatCurrentTime();
             stampEl.innerText = LOAD_STAMP;
+            stampEl.classList.remove('error-state');
             document.getElementById('rc').innerText = db.length;
-            fnEl.innerText = "data.xlsx";
-            titleEl.innerText = "RIZVI FAMILY";
-            
+            document.getElementById('fn').innerText = "data.xlsx";
+            document.getElementById('main-title').innerText = "RIZVI FAMILY";
             resetSearch();
+            
         } catch (err) {
-            stampEl.innerText = "ERROR: ENSURE DATA.XLSX EXISTS IN FOLDER";
-            console.error(err);
+            stampEl.innerText = "ERROR: " + err.message;
+            stampEl.classList.add('error-state');
+            console.error("Auto-load failed:", err);
         }
+    }
+
+    window.onload = () => {
+        if (typeof _SECURE_BLOB !== 'undefined') {
+            db = JSON.parse(atob(_SECURE_BLOB));
+            IS_LOCKED = true;
+            // Finish standard setup for locked viewer...
+            document.getElementById('ui-load-stamp').innerText = LOAD_STAMP || "Data Loaded Successfully";
+            document.getElementById('rc').innerText = db.length;
+            document.getElementById('fn').innerText = "OFFICIAL DATA";
+            document.getElementById('main-title').innerText = "RIZVI FAMILY";
+        } else {
+            // Try to load data.xlsx automatically from folder
+            autoLoadExcel();
+        }
+    };
+
+    function displayName(str) {
+        if (!str) return "";
+        return str.replace(/\s*-\s*\d+$/, "").trim();
+    }
+
+    function getGenNum(genStr) {
+        const match = genStr.match(/\d+/);
+        return match ? parseInt(match[0]) : 0;
     }
 
     function showBothSearches() {
@@ -221,6 +240,50 @@
         return `Date (${now.toLocaleDateString('en-US', options)}) Time : (${hours}:${minutes}${ampm})`;
     }
 
+    function handleFile(input) {
+        const file = input.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, {type: 'array'});
+            const rows = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
+            db = rows.map(r => ({
+                name: String(r['Name'] || "").trim(),
+                father: String(r['Father'] || "").trim(),
+                gen: String(r['Gen'] || "").trim(),
+                gender: String(r['Gender'] || "M").trim().toUpperCase()
+            })).filter(p => p.name !== "");
+            LOAD_STAMP = "Data Loading : " + formatCurrentTime();
+            document.getElementById('ui-load-stamp').innerText = LOAD_STAMP;
+            document.getElementById('ui-load-stamp').classList.remove('error-state');
+            document.getElementById('rc').innerText = db.length;
+            document.getElementById('fn').innerText = file.name;
+            toggleHeader();
+            resetSearch();
+        };
+        reader.readAsArrayBuffer(file);
+    }
+
+    function prepareViewer() {
+        if (db.length === 0) return alert("Load Excel first.");
+        const secureBlob = btoa(unescape(encodeURIComponent(JSON.stringify(db))));
+        let docClone = document.documentElement.cloneNode(true);
+        let html = "<!DOCTYPE html>\n" + docClone.outerHTML;
+        const lockedScript = `var _SECURE_BLOB = "${secureBlob}";
+    var MASTER_DB = [];
+    var LOAD_STAMP = "${LOAD_STAMP}";
+    var IS_LOCKED = true;`;
+        html = html.replace(/var MASTER_DB = \[\];[\s\S]*?var IS_LOCKED = false;/, lockedScript);
+        const blob = new Blob([html], { type: 'text/html' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = "Rizvi_Family_Viewer_Locked.html";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
     function doSearch(input, dropdownId) {
         const q = input.value.toLowerCase();
         const sd = document.getElementById(dropdownId);
@@ -234,7 +297,11 @@
             div.onclick = () => {
                 input.value = `${displayName(p.name)} (${p.gen})`;
                 sd.style.display = 'none';
-                if (dropdownId === 'sd-from') { selectedFrom = p; } else { selectedTo = p; }
+                if (dropdownId === 'sd-from') {
+                    selectedFrom = p;
+                } else {
+                    selectedTo = p;
+                }
                 initRender();
             };
             sd.appendChild(div);
@@ -303,6 +370,7 @@
         const genA = getGenNum(commonAncestor.gen);
         const gen1 = getGenNum(selectedFrom.gen);
         const gen2 = getGenNum(selectedTo.gen);
+
         const diff1ToA = Math.abs(gen1 - genA);
         const diff2ToA = Math.abs(gen2 - genA);
         const totalDiffBetween = Math.abs(gen1 - gen2);
@@ -336,7 +404,7 @@
             });
             col += `</div>`; return col;
         };
-        canvas.innerHTML = `<div class="tree-root-layout" id="pdf-area"><div style="display: flex; gap: 60px; align-items: flex-start; justify-content: center; width: 100%;">${getColumnHtml(chain1, "Search 1 Lineage")}${getColumnHtml(chain2, "Search 2 Lineage")}</div><div class="pdf-signature">${ARCHITECT_INFO}</div></div>`;
+        canvas.innerHTML = `<div class="tree-root-layout" id="pdf-area"><div style="display: gap: 60px; align-items: flex-start; justify-content: center; width: 100%;">${getColumnHtml(chain1, "Search 1 Lineage")}${getColumnHtml(chain2, "Search 2 Lineage")}</div><div class="pdf-signature">${ARCHITECT_INFO}</div></div>`;
     }
 
     function renderPathBlock() {
@@ -382,7 +450,7 @@
 
     function renderDaughtersBox(list, fatherName, relation) {
         if (!list.length) return '';
-        return `<div class="box daughters-wrapper"><div class="d-header">${relation}</div>${list.map(d => `<div class="d-item" onclick='jumpTo("${d.name.replace(/'/g, "\\'")}", "${d.gen}")' style="padding: 5px; cursor: pointer;"><span>${displayName(d.name)}</span> <small>[${d.gen}]</small></div>`).join('')}<div style="font-size:10px; color:black; padding:5px; border-top:1px solid #fecaca;">D/o ${displayName(fatherName)}</div></div>`;
+        return `<div class="box daughters-wrapper"><div class="d-header">${relation}</div>${list.map(d => `<div class="d-item" onclick='jumpTo("${d.name.replace(/'/g, "\\")}", "${d.gen}")' style="padding: 5px; cursor: pointer;"><span>${displayName(d.name)}</span> <small>[${d.gen}]</small></div>`).join('')}<div style="font-size:10px; color:black; padding:5px; border-top:1px solid #fecaca;">D/o ${displayName(fatherName)}</div></div>`;
     }
 
     function renderBox(p, label, isBlinking, isPathMember, isDirect) {
@@ -391,7 +459,7 @@
         const parentPrefix = isFemale ? "D/o" : "S/o";
         const femaleClass = isFemale ? "female-box" : "";
         
-        return `<div class="box ${femaleClass} ${isDirect ? 'direct-gen-box' : ''} ${isBlinking ? 'active-box' : ''}" onclick='jumpTo("${p.name.replace(/'/g, "\\'")}", "${p.gen}")'>
+        return `<div class="box ${femaleClass} ${isDirect ? 'direct-gen-box' : ''} ${isBlinking ? 'active-box' : ''}" onclick='jumpTo("${p.name.replace(/'/g, "\\")}", "${p.gen}")'>
             <div class="box-header ${isPathMember ? 'lineage-header' : ''}"><span>${label}</span><span>${p.gen}</span></div>
             <div class="box-body"><span class="member-name ${isBlinking ? 'blinking-name' : ''}">${displayName(p.name)}</span><span class="father-name">${parentPrefix}: ${displayName(p.father)}</span>${hasNext ? '<div class="next-gen-indicator">▼</div>' : ''}</div></div>`;
     }
@@ -420,6 +488,7 @@
         element.removeChild(headerDiv); element.removeChild(footerBox); if (banner) banner.style.display = 'block';
         const imgData = canvas.toDataURL('image/png', 1.0);
         const w = (canvas.width / 2) * 0.264583; const h = (canvas.height / 2) * 0.264583;
+
         const pdf = new jspdf.jsPDF({ orientation: w > h ? 'l' : 'p', unit: 'mm', format: [w + 40, h + 40] });
         pdf.addImage(imgData, 'PNG', 20, 20, w, h); pdf.save("Rizvi_Family_Tree.pdf");
     }
