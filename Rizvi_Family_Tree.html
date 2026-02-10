@@ -28,24 +28,27 @@
 
         body { font-family: 'Inter', sans-serif; background: #1a1a1a; margin: 0; height: 100vh; overflow: hidden; }
         .pg-1 { max-width: 1400px; margin: 0 auto; background: white; height: 100vh; display: flex; flex-direction: column; box-shadow: 0 0 50px rgba(212, 175, 55, 0.2); border-left: 2px solid var(--gold); border-right: 2px solid var(--gold); }
+        
+        .top-main-heading { 
+            background: var(--dark-blue); 
+            color: var(--gold); 
+            text-align: center; 
+            padding: 15px 0; 
+            font-family: 'Playfair Display', serif; 
+            font-size: 32px; 
+            font-weight: 900; 
+            letter-spacing: 4px; 
+            border-bottom: 4px solid var(--gold);
+            text-transform: uppercase;
+        }
+
         .fixed-top-section { padding: 20px 30px 10px 30px; background: white; z-index: 1000; border-bottom: 1px solid #eee; }
         .header-label { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: var(--gold); }
         .member-name { font-family: 'Playfair Display', serif; color: var(--dark-blue); font-weight: 700; font-size: 20px; display: block; }
         
-        /* Requirement: Reduce female name font size */
         .female-box .member-name { font-size: 14px !important; }
 
         .search-label { font-family: 'Inter', sans-serif; letter-spacing: 1px; display: block; font-weight: 700; color: var(--maroon); margin-bottom: 8px; font-size: 11px; text-transform: uppercase; }
-        .header-flip-container { background: var(--dark-blue); color: white; border-radius: 12px; margin-bottom: 15px; border-bottom: 4px solid var(--gold); overflow: hidden; transition: all 0.3s ease; height: 50px; display: flex; align-items: center; justify-content: center; position: relative; }
-        .header-flip-container.active { height: 80px; background: #000; }
-        .header-content-wrapper { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 0 25px; }
-        .star-icon { font-size: 24px; color: var(--gold); user-select: none; }
-        .star-toggle { cursor: pointer; transition: transform 0.3s ease; }
-        .star-toggle:hover { transform: scale(1.2); color: #fff; }
-        .status-hub { display: none; width: 100%; padding: 0 20px; justify-content: space-between; align-items: center; font-size: 13px; }
-        .header-flip-container.active .header-content-wrapper { display: none; }
-        .header-flip-container.active .status-hub { display: flex; }
-        .data-val { color: var(--gold); font-weight: bold; }
         
         .search-container { display: grid; grid-template-columns: 1.5fr 1.5fr auto auto auto auto auto; gap: 12px; margin-bottom: 10px; background: #fdfdfd; padding: 15px; border-radius: 12px; border: 1px solid var(--gold); align-items: end; }
         .search-box-wrapper { position: relative; }
@@ -87,54 +90,98 @@
         .root-rel-trigger-box { background: var(--dark-blue); color: var(--gold); border: 2px solid var(--gold); border-radius: 8px; padding: 10px; cursor: pointer; text-align: center; font-weight: 800; font-size: 12px; height: 42px; display: flex; align-items: center; justify-content: center; text-transform: uppercase; box-sizing: border-box; transition: background 0.2s; }
         .root-rel-trigger-box:hover { background: #1e293b; }
         .error-state { color: #ef4444 !important; border-left-color: #ef4444 !important; }
+        
+        .main-menu { display: flex; background: var(--dark-blue); border-radius: 8px; margin-bottom: 15px; border: 1px solid var(--gold); overflow: hidden; }
+        .menu-item { flex: 1; text-align: center; padding: 12px; color: var(--gold); font-weight: 700; font-size: 13px; cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px; border-right: 1px solid rgba(212, 175, 55, 0.3); }
+        .menu-item:last-child { border-right: none; }
+        .menu-item:hover { background: rgba(212, 175, 55, 0.2); color: white; }
+        .menu-item.active { background: var(--gold); color: black; font-weight: 800; }
+        .menu-panel { display: none; animation: fadeIn 0.3s ease; }
+        .menu-panel.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        .admin-panel { background: var(--dark-blue); padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid var(--gold); }
+        .admin-controls { display: flex; gap: 15px; align-items: center; justify-content: center; }
+        .admin-status { text-align: center; color: var(--gold); font-size: 13px; margin-bottom: 15px; }
+        .admin-status .data-val { color: white; font-weight: bold; background: rgba(212, 175, 55, 0.2); padding: 2px 6px; border-radius: 4px; }
+        
+        .root-relative-controls { display: flex; gap: 15px; align-items: center; margin-top: 15px; }
     </style>
 </head>
 <body>
 
 <div class="pg-1">
+    <div class="top-main-heading">Rizvi Family Tree</div>
+
     <div class="fixed-top-section">
-        <div class="header-flip-container" id="flip-header">
-            <div class="header-content-wrapper">
-                <span class="star-icon">★</span>
-                <div class="header-label" id="main-title">Rizvi Family Tree</div>
-                <span class="star-icon star-toggle" onclick="toggleHeader()">★</span>
+        <div class="main-menu">
+            <div class="menu-item" data-panel="admin-panel">Admin Panel</div>
+            <div class="menu-item active" data-panel="search-panel">Search Tree</div>
+            <div class="menu-item" data-panel="root-panel">Root Relative</div>
+        </div>
+        
+        <div id="search-panel" class="menu-panel active">
+            <div class="search-container">
+                <div class="search-box-wrapper">
+                    <label class="search-label">Search Member</label>
+                    <input type="text" id="si-from" class="search-input" placeholder="Search name..." onkeyup="doSearch(this, 'sd-from')">
+                    <div id="sd-from" class="dropdown"></div>
+                </div>
+
+                <div class="search-box-wrapper" style="display: none;">
+                    <div id="search-2-ui">
+                        <label class="search-label">Ending Member (To)</label>
+                        <input type="text" id="si-to" class="search-input" placeholder="Search name..." onkeyup="doSearch(this, 'sd-to')">
+                        <div id="sd-to" class="dropdown"></div>
+                    </div>
+                </div>
+
+                <label class="sib-toggle" id="toggle-root"><input type="checkbox" id="search-from-root-check" onchange="initRender()"> Search from Root</label>
+                <label class="sib-toggle" id="toggle-sib"><input type="checkbox" id="sib-check" onchange="initRender()" checked> Siblings</label>
+                <label class="sib-toggle" id="toggle-desc"><input type="checkbox" id="desc-check" onchange="initRender()" checked> Descendants</label>
+                
+                <button class="btn reset-btn" onclick="resetSearch()">RESET</button>
+                <button class="btn pdf-btn" onclick="exportPDF()">SAVE PDF</button>
             </div>
-            <div id="status-hub-area" class="status-hub">
-                <div><span id="fn" class="data-val">No file loaded</span> | Records: <span id="rc" class="data-val">0</span></div>
-                <div id="admin-controls" style="display: flex; gap: 15px; align-items: center;">
-                    <input type="file" id="xl" accept=".xlsx, .xls" style="display:none;" onchange="handleFile(this)">
-                    <button class="btn" style="background:#3b82f6;" onclick="document.getElementById('xl').click()">LOAD EXCEL</button>
-                    <button class="btn" style="background:#10b981;" onclick="prepareViewer()">DOWNLOAD VIEWER</button>
-                    <span class="star-icon" style="cursor:pointer;" onclick="toggleHeader()">★</span>
+        </div>
+        
+        <div id="root-panel" class="menu-panel">
+            <div class="search-container">
+                <div class="search-box-wrapper">
+                    <label class="search-label">First Member</label>
+                    <input type="text" id="si-root1" class="search-input" placeholder="Search first member..." onkeyup="doSearchRoot(this, 'sd-root1', 'first')">
+                    <div id="sd-root1" class="dropdown"></div>
+                </div>
+                
+                <div class="search-box-wrapper" id="root-second-search" style="display: block;">
+                    <label class="search-label">Second Member</label>
+                    <input type="text" id="si-root2" class="search-input" placeholder="Search second member..." onkeyup="doSearchRoot(this, 'sd-root2', 'second')">
+                    <div id="sd-root2" class="dropdown"></div>
+                </div>
+                
+                <div class="root-relative-controls" style="grid-column: span 5; display: flex; gap: 15px; justify-content: flex-start; align-items: center;">
+                    <button class="btn" style="background: var(--dark-blue); border: 1px solid var(--gold);" onclick="findCommonRoot()">Find Common Root</button>
+                    <button class="btn" style="background: var(--dark-blue); border: 1px solid var(--gold);" onclick="showBothRootsView()">Show Both Roots</button>
+                    <button class="btn reset-btn" onclick="resetRootPanel()">Reset</button>
+                    <button class="btn pdf-btn" onclick="exportPDF()">SAVE PDF</button>
                 </div>
             </div>
         </div>
 
-        <div class="search-container">
-            <div class="search-box-wrapper">
-                <label class="search-label">Starting Member (From)</label>
-                <input type="text" id="si-from" class="search-input" placeholder="Search name..." onkeyup="doSearch(this, 'sd-from')">
-                <div id="sd-from" class="dropdown"></div>
-            </div>
-
-            <div class="search-box-wrapper">
-                <div id="search-2-ui" style="display: none;">
-                    <label class="search-label">Ending Member (To)</label>
-                    <input type="text" id="si-to" class="search-input" placeholder="Search name..." onkeyup="doSearch(this, 'sd-to')">
-                    <div id="sd-to" class="dropdown"></div>
+        <div id="admin-panel" class="menu-panel">
+            <div class="admin-panel">
+                <div class="admin-status">
+                    File: <span id="fn" class="data-val">No file loaded</span> | 
+                    Records: <span id="rc" class="data-val">0</span> | 
+                    Status: <span id="admin-status-text" class="data-val">Ready</span>
                 </div>
-                <div id="root-rel-trigger" class="root-rel-trigger-box" onclick="showBothSearches()">
-                    Root Relative
+                <div class="admin-controls">
+                    <input type="file" id="xl" accept=".xlsx, .xls" style="display:none;" onchange="handleFile(this)">
+                    <button class="btn" style="background:#3b82f6;" onclick="document.getElementById('xl').click()">LOAD EXCEL</button>
+                    <button class="btn" style="background:#10b981;" onclick="prepareViewer()">DOWNLOAD VIEWER</button>
+                    <button class="btn reset-btn" onclick="resetAll()">RESET ALL</button>
                 </div>
             </div>
-
-            <label class="sib-toggle" id="toggle-root"><input type="checkbox" id="search-from-root-check" onchange="initRender()"> Search from Root</label>
-            <label class="sib-toggle" id="toggle-sib"><input type="checkbox" id="sib-check" onchange="initRender()" checked> Siblings</label>
-            <label class="sib-toggle" id="toggle-desc"><input type="checkbox" id="desc-check" onchange="initRender()" checked> Descendants</label>
-            
-            <button id="both-root-opt" class="btn both-root-btn" onclick="renderBothRoots()" style="display: none;">Both Root List</button>
-            <button class="btn reset-btn" onclick="resetSearch()">RESET</button>
-            <button class="btn pdf-btn" onclick="exportPDF()">SAVE PDF</button>
         </div>
 
         <div class="loading-timestamp-container">
@@ -158,21 +205,97 @@
     let db = MASTER_DB; 
     let selectedFrom = null;
     let selectedTo = null;
+    let rootSearchFirst = null;
+    let rootSearchSecond = null;
+    let isAdminAuthenticated = false;
     const ARCHITECT_INFO = "System Architect : Imran Haider S/o Risalat Hussain Rizvi 📞 0332-787-6010";
+    
+    function formatH2Value(rawVal) {
+        if (!rawVal) return "---";
+        const d = new Date(rawVal);
+        if (isNaN(d.getTime())) return rawVal;
+        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const month = months[d.getMonth()];
+        const day = d.getDate();
+        const year = d.getFullYear();
+        let hours = d.getHours();
+        const minutes = String(d.getMinutes()).padStart(2, '0');
+        const ampm = hours >= 12 ? 'pm' : 'am';
+        hours = hours % 12 || 12;
+        return `${month} ${day}.${year} - ${hours}:${minutes} ${ampm}`;
+    }
 
-    function toggleHeader() {
-        const header = document.getElementById('flip-header');
-        if (header.classList.contains('active')) {
-            header.classList.remove('active');
-            return;
-        }
-        const pass = prompt("Enter Admin Password (Rizvi*110):", "");
-        if (pass === null) return; 
-        if (pass === "Rizvi*110") {
-            header.classList.add('active');
-        } else {
-            alert("Wrong password!");
-        }
+    function getTimestampFromExcel(workbook) {
+        try {
+            const sheet = workbook.Sheets[workbook.SheetNames[0]];
+            const cellH2 = sheet['H2'];
+            if (cellH2) {
+                const val = cellH2.w || cellH2.v;
+                return "Data Loading : " + formatH2Value(val);
+            }
+            return "Data Loading : Timestamp Not Found";
+        } catch (error) { return "Data Loading : Error Reading H2"; }
+    }
+    
+    function initMenu() {
+        const menuItems = document.querySelectorAll('.menu-item');
+        const panels = document.querySelectorAll('.menu-panel');
+        menuItems.forEach(item => {
+            item.addEventListener('click', function() {
+                const panelId = this.getAttribute('data-panel');
+                const currentActivePanel = document.querySelector('.menu-panel.active');
+                const currentActivePanelId = currentActivePanel ? currentActivePanel.id : '';
+                if (currentActivePanelId === 'admin-panel' && panelId !== 'admin-panel') isAdminAuthenticated = false;
+                if (panelId === 'admin-panel' && !isAdminAuthenticated) {
+                    const pass = prompt("Enter Admin Password:", "");
+                    if (pass === null) return;
+                    if (pass !== "6010") return alert("Wrong password!");
+                    isAdminAuthenticated = true;
+                }
+                menuItems.forEach(m => m.classList.remove('active'));
+                this.classList.add('active');
+                panels.forEach(p => { p.classList.remove('active'); if (p.id === panelId) p.classList.add('active'); });
+                document.getElementById('canvas').innerHTML = '';
+                document.getElementById('canvas-header').style.display = 'none';
+                if (panelId === 'search-panel') resetSearch();
+                else if (panelId === 'root-panel') resetRootPanel();
+            });
+        });
+    }
+    
+    function resetRootPanel() {
+        document.getElementById('si-root1').value = '';
+        document.getElementById('si-root2').value = '';
+        rootSearchFirst = null; rootSearchSecond = null;
+        document.getElementById('canvas').innerHTML = '';
+        document.getElementById('canvas-header').style.display = 'none';
+    }
+    
+    function findCommonRoot() {
+        if (!rootSearchFirst || !rootSearchSecond) return alert('Please select both members first');
+        selectedFrom = rootSearchFirst; selectedTo = rootSearchSecond;
+        renderRootRelativeSummary();
+    }
+    
+    function showBothRootsView() {
+        if (!rootSearchFirst || !rootSearchSecond) return alert('Please select both members first');
+        selectedFrom = rootSearchFirst; selectedTo = rootSearchSecond;
+        renderBothRoots();
+    }
+    
+    function resetAll() {
+        if (IS_LOCKED) return alert("Locked mode.");
+        db = []; MASTER_DB = [];
+        selectedFrom = selectedTo = rootSearchFirst = rootSearchSecond = null;
+        document.getElementById('rc').innerText = '0';
+        document.getElementById('fn').innerText = 'No file loaded';
+        document.getElementById('admin-status-text').textContent = 'Ready';
+        document.getElementById('ui-load-stamp').innerText = 'Data Loading : ---';
+        document.getElementById('si-from').value = document.getElementById('si-root1').value = document.getElementById('si-root2').value = '';
+        document.getElementById('canvas').innerHTML = '';
+        document.getElementById('canvas-header').style.display = 'none';
+        document.getElementById('xl').value = '';
+        LOAD_STAMP = "";
     }
 
     async function autoLoadExcel() {
@@ -189,70 +312,40 @@
                 gen: String(r['Gen'] || "").trim(),
                 gender: String(r['Gender'] || "M").trim().toUpperCase()
             })).filter(p => p.name !== "");
-            LOAD_STAMP = "Data Synced : " + formatCurrentTime();
-            stampEl.innerText = LOAD_STAMP;
-            stampEl.classList.remove('error-state');
+            LOAD_STAMP = getTimestampFromExcel(workbook);
+            stampEl.innerText = LOAD_STAMP; stampEl.classList.remove('error-state');
             document.getElementById('rc').innerText = db.length;
             document.getElementById('fn').innerText = "data.xlsx";
-            document.getElementById('main-title').innerText = "RIZVI FAMILY";
-            
-            // Flip back on excel load
-            document.getElementById('flip-header').classList.remove('active');
         } catch (err) {
-            stampEl.innerText = "ERROR: " + err.message;
-            stampEl.classList.add('error-state');
+            stampEl.innerText = "Waiting for data.xlsx...";
         }
     }
 
     window.onload = () => {
+        initMenu();
         if (typeof _SECURE_BLOB !== 'undefined') {
-            db = JSON.parse(atob(_SECURE_BLOB));
-            IS_LOCKED = true;
+            db = JSON.parse(atob(_SECURE_BLOB)); IS_LOCKED = true;
             document.getElementById('ui-load-stamp').innerText = LOAD_STAMP || "Data Loaded Successfully";
             document.getElementById('rc').innerText = db.length;
             document.getElementById('fn').innerText = "OFFICIAL DATA";
-            document.getElementById('main-title').innerText = "RIZVI FAMILY";
-            
-            // Requirement: Download viewer canvas cleaned on opening
+            const adminMenuItem = document.querySelector('.menu-item[data-panel="admin-panel"]');
+            if (adminMenuItem) adminMenuItem.style.display = 'none';
             resetSearch();
-        } else {
-            autoLoadExcel();
-        }
+        } else autoLoadExcel();
     };
 
-    function displayName(str) {
-        if (!str) return "";
-        return str.replace(/\s*-\s*\d+$/, "").trim();
-    }
-
-    function showBothSearches() {
-        document.getElementById('canvas').innerHTML = '';
-        document.getElementById('canvas-header').style.display = 'none';
-        
-        document.getElementById('toggle-root').style.display = 'none';
-        document.getElementById('toggle-sib').style.display = 'none';
-        document.getElementById('toggle-desc').style.display = 'none';
-
-        document.getElementById('search-2-ui').style.display = 'block';
-        document.getElementById('root-rel-trigger').style.display = 'none';
-        
-        // Both Root, Reset and Save Pdf aligned by showing the hidden btn
-        document.getElementById('both-root-opt').style.display = 'block';
-    }
+    function displayName(str) { if (!str) return ""; return str.replace(/\s*-\s*\d+$/, "").trim(); }
 
     function formatCurrentTime() {
         const now = new Date();
-        const options = { month: 'short', day: '2-digit', year: 'numeric' };
-        let hours = now.getHours();
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        const ampm = hours >= 12 ? 'pm' : 'am';
-        hours = hours % 12 || 12;
-        return `Date (${now.toLocaleDateString('en-US', options)}) Time : (${hours}:${minutes}${ampm})`;
+        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        let hours = now.getHours(); const minutes = String(now.getMinutes()).padStart(2, '0');
+        const ampm = hours >= 12 ? 'pm' : 'am'; hours = hours % 12 || 12;
+        return `${months[now.getMonth()]} ${now.getDate()}.${now.getFullYear()} - ${hours}:${minutes} ${ampm}`;
     }
 
     function handleFile(input) {
-        const file = input.files[0];
-        if (!file) return;
+        const file = input.files[0]; if (!file) return;
         const reader = new FileReader();
         reader.onload = (e) => {
             const data = new Uint8Array(e.target.result);
@@ -264,13 +357,10 @@
                 gen: String(r['Gen'] || "").trim(),
                 gender: String(r['Gender'] || "M").trim().toUpperCase()
             })).filter(p => p.name !== "");
-            LOAD_STAMP = "Data Loading : " + formatCurrentTime();
+            LOAD_STAMP = getTimestampFromExcel(workbook);
             document.getElementById('ui-load-stamp').innerText = LOAD_STAMP;
             document.getElementById('rc').innerText = db.length;
             document.getElementById('fn').innerText = file.name;
-            
-            // Flip back on manual excel load
-            document.getElementById('flip-header').classList.remove('active');
             resetSearch();
         };
         reader.readAsArrayBuffer(file);
@@ -278,12 +368,20 @@
 
     function prepareViewer() {
         if (db.length === 0) return alert("Load Excel first.");
-        
-        // Flip back Rizvi Family Tree on clicking download viewer
-        document.getElementById('flip-header').classList.remove('active');
-
         const secureBlob = btoa(unescape(encodeURIComponent(JSON.stringify(db))));
         let docClone = document.documentElement.cloneNode(true);
+        
+        // Remove Admin components for the Viewer
+        const adminTab = docClone.querySelector('.menu-item[data-panel="admin-panel"]');
+        const adminPanel = docClone.querySelector('#admin-panel');
+        if (adminTab) adminTab.remove();
+        if (adminPanel) adminPanel.remove();
+        
+        const searchTab = docClone.querySelector('.menu-item[data-panel="search-panel"]');
+        const searchPanel = docClone.querySelector('#search-panel');
+        if (searchTab) searchTab.classList.add('active');
+        if (searchPanel) searchPanel.classList.add('active');
+
         let html = "<!DOCTYPE html>\n" + docClone.outerHTML;
         const lockedScript = `var _SECURE_BLOB = "${secureBlob}";
     var MASTER_DB = [];
@@ -291,33 +389,37 @@
     var IS_LOCKED = true;`;
         html = html.replace(/var MASTER_DB = \[\];[\s\S]*?var IS_LOCKED = false;/, lockedScript);
         const blob = new Blob([html], { type: 'text/html' });
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
+        const link = document.createElement('a'); link.href = URL.createObjectURL(blob);
         link.download = "Rizvi_Family_Viewer_Locked.html";
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        document.body.appendChild(link); link.click(); document.body.removeChild(link);
     }
 
     function doSearch(input, dropdownId) {
-        const q = input.value.toLowerCase();
-        const sd = document.getElementById(dropdownId);
-        sd.innerHTML = '';
-        if (q.length < 1) { sd.style.display = 'none'; return; }
+        const q = input.value.toLowerCase(); const sd = document.getElementById(dropdownId);
+        sd.innerHTML = ''; if (q.length < 1) { sd.style.display = 'none'; return; }
         const found = db.filter(p => p.name.toLowerCase().includes(q)).slice(0, 8);
         found.forEach(p => {
-            const div = document.createElement('div');
-            div.className = 'result-item';
+            const div = document.createElement('div'); div.className = 'result-item';
             div.innerHTML = `<b>${displayName(p.name)}</b> <small>(${p.gen})</small><br><small>S/o: ${displayName(p.father)}</small>`;
             div.onclick = () => {
-                input.value = `${displayName(p.name)} (${p.gen})`;
-                sd.style.display = 'none';
-                if (dropdownId === 'sd-from') {
-                    selectedFrom = p;
-                } else {
-                    selectedTo = p;
-                }
-                initRender();
+                input.value = `${displayName(p.name)} (${p.gen})`; sd.style.display = 'none';
+                if (dropdownId === 'sd-from') { selectedFrom = p; selectedTo = null; initRender(); }
+            };
+            sd.appendChild(div);
+        });
+        sd.style.display = found.length > 0 ? 'block' : 'none';
+    }
+    
+    function doSearchRoot(input, dropdownId, type) {
+        const q = input.value.toLowerCase(); const sd = document.getElementById(dropdownId);
+        sd.innerHTML = ''; if (q.length < 1) { sd.style.display = 'none'; return; }
+        const found = db.filter(p => p.name.toLowerCase().includes(q)).slice(0, 8);
+        found.forEach(p => {
+            const div = document.createElement('div'); div.className = 'result-item';
+            div.innerHTML = `<b>${displayName(p.name)}</b> <small>(${p.gen})</small><br><small>S/o: ${displayName(p.father)}</small>`;
+            div.onclick = () => {
+                input.value = `${displayName(p.name)} (${p.gen})`; sd.style.display = 'none';
+                if (type === 'first') rootSearchFirst = p; else if (type === 'second') rootSearchSecond = p;
             };
             sd.appendChild(div);
         });
@@ -327,95 +429,48 @@
     function resetSearch() {
         selectedFrom = selectedTo = null;
         document.getElementById('si-from').value = '';
-        document.getElementById('si-to').value = '';
         document.getElementById('canvas').innerHTML = '';
         document.getElementById('canvas-header').style.display = 'none';
-        
-        document.getElementById('toggle-root').style.display = 'flex';
-        document.getElementById('toggle-sib').style.display = 'flex';
-        document.getElementById('toggle-desc').style.display = 'flex';
-        document.getElementById('both-root-opt').style.display = 'none';
-        document.getElementById('search-2-ui').style.display = 'none';
-        document.getElementById('root-rel-trigger').style.display = 'flex';
     }
 
-    function findParent(p) {
-        if (!p || !p.father || p.father.toLowerCase() === "n/a" || p.father === "") return null;
-        return db.find(x => x.name.toLowerCase() === p.father.toLowerCase());
-    }
+    function findParent(p) { if (!p || !p.father || p.father.toLowerCase() === "n/a" || p.father === "") return null; return db.find(x => x.name.toLowerCase() === p.father.toLowerCase()); }
 
     function getAncestryChain(p) {
-        let chain = [];
-        let curr = p;
-        let visited = new Set();
-        while (curr && !visited.has(curr.name.toLowerCase())) {
-            chain.push(curr);
-            visited.add(curr.name.toLowerCase());
-            curr = findParent(curr);
-        }
+        let chain = []; let curr = p; let visited = new Set();
+        while (curr && !visited.has(curr.name.toLowerCase())) { chain.push(curr); visited.add(curr.name.toLowerCase()); curr = findParent(curr); }
         return chain;
     }
 
     function initRender() {
         const canvas = document.getElementById('canvas');
         document.getElementById('canvas-header').style.display = 'block';
-        if (selectedFrom && selectedTo) {
-            if(document.getElementById('search-2-ui').style.display === 'block') {
-                renderRootRelativeSummary();
-            } else {
-                renderPathBlock();
-            }
-        } else if (selectedFrom) {
-            renderTreeBlock(selectedFrom); 
-        } else {
-            canvas.innerHTML = '';
-        }
+        if (selectedFrom) renderTreeBlock(selectedFrom); 
+        else canvas.innerHTML = '';
     }
 
     function renderRootRelativeSummary() {
-        const canvas = document.getElementById('canvas');
-        canvas.innerHTML = '';
+        const canvas = document.getElementById('canvas'); canvas.innerHTML = '';
         if (!selectedFrom || !selectedTo) return;
-        const chain1 = getAncestryChain(selectedFrom);
-        const chain2 = getAncestryChain(selectedTo);
+        const chain1 = getAncestryChain(selectedFrom); const chain2 = getAncestryChain(selectedTo);
         let meetingPoint = null;
         for (let p1 of chain1) { if (chain2.some(p2 => p2.name.toLowerCase() === p1.name.toLowerCase())) { meetingPoint = p1; break; } }
         if (!meetingPoint) { canvas.innerHTML = '<div class="gen-diff-badge">No Common Ancestor Found</div>'; return; }
-        const summaryBox = document.createElement('div');
-        summaryBox.className = 'gen-diff-badge';
-        summaryBox.innerHTML = `
-            <span style="color: white; opacity: 0.8;">Common Root Relative</span>
-            <span>: ${displayName(meetingPoint.name)} S/o ${displayName(meetingPoint.father)} (${meetingPoint.gen})</span>
-            <span style="color: white; opacity: 0.8;">1st Search</span>
-            <span>: ${displayName(selectedFrom.name)} S/o ${displayName(selectedFrom.father)} (${selectedFrom.gen})</span>
-            <span style="color: white; opacity: 0.8;">2nd Search</span>
-            <span>: ${displayName(selectedTo.name)} S/o ${displayName(selectedTo.father)} (${selectedTo.gen})</span>
-        `;
-        const wrapper = document.createElement('div');
-        wrapper.className = 'tree-root-layout';
-        wrapper.id = 'pdf-area';
-        wrapper.appendChild(summaryBox);
-        const sig = document.createElement('div');
-        sig.className = 'pdf-signature';
-        sig.innerText = ARCHITECT_INFO;
-        wrapper.appendChild(sig);
+        const summaryBox = document.createElement('div'); summaryBox.className = 'gen-diff-badge';
+        summaryBox.innerHTML = `<span style="color: white; opacity: 0.8;">Common Root Relative</span><span>: ${displayName(meetingPoint.name)} S/o ${displayName(meetingPoint.father)} (${meetingPoint.gen})</span><span style="color: white; opacity: 0.8;">1st Search</span><span>: ${displayName(selectedFrom.name)} S/o ${displayName(selectedFrom.father)} (${selectedFrom.gen})</span><span style="color: white; opacity: 0.8;">2nd Search</span><span>: ${displayName(selectedTo.name)} S/o ${displayName(selectedTo.father)} (${selectedTo.gen})</span>`;
+        const wrapper = document.createElement('div'); wrapper.className = 'tree-root-layout'; wrapper.id = 'pdf-area'; wrapper.appendChild(summaryBox);
+        const sig = document.createElement('div'); sig.className = 'pdf-signature'; sig.innerText = ARCHITECT_INFO; wrapper.appendChild(sig);
         canvas.appendChild(wrapper);
     }
 
     function renderBothRoots() {
-        const canvas = document.getElementById('canvas');
-        if (!selectedFrom || !selectedTo) return;
-        const chain1 = getAncestryChain(selectedFrom);
-        const chain2 = getAncestryChain(selectedTo);
-        let meetingPoint = null;
-        for (let p1 of chain1) { if (chain2.some(p2 => p2.name.toLowerCase() === p1.name.toLowerCase())) { meetingPoint = p1; break; } }
+        const canvas = document.getElementById('canvas'); if (!selectedFrom || !selectedTo) return;
+        const chain1 = getAncestryChain(selectedFrom); const chain2 = getAncestryChain(selectedTo);
+        let meetingPoint = null; for (let p1 of chain1) { if (chain2.some(p2 => p2.name.toLowerCase() === p1.name.toLowerCase())) { meetingPoint = p1; break; } }
         if (!meetingPoint) return;
         const rootName = meetingPoint.name.toLowerCase();
         const getColumnHtml = (chain, label) => {
-            let col = `<div style="display: flex; flex-direction: column; align-items: center; gap: 15px;">
-                        <div style="font-weight: 800; color: var(--dark-blue); font-size: 14px; margin-bottom: 10px; border-bottom: 2px solid var(--gold);">${label}</div>`;
-            const rootIdx = chain.findIndex(p => p.name.toLowerCase() === rootName);
-            const path = chain.slice(0, rootIdx + 1);
+            let col = `<div style="display: flex; flex-direction: column; align-items: center; gap: 15px;"><div style="font-weight: 800; color: var(--dark-blue); font-size: 14px; margin-bottom: 10px; border-bottom: 2px solid var(--gold);">${label}</div>`;
+            const rootIdx = chain.findIndex(p => p.name.toLowerCase() === rootName); const path = chain.slice(0, rootIdx + 1);
             path.forEach((p, i) => {
                 const isTarget = i === 0; const isRoot = p.name.toLowerCase() === rootName;
                 col += renderBox(p, isRoot ? "Common Root" : (isTarget ? "Search Member" : "Ancestor"), isTarget || isRoot, isRoot, true);
@@ -423,93 +478,44 @@
             });
             col += `</div>`; return col;
         };
-        canvas.innerHTML = `<div class="tree-root-layout" id="pdf-area">
-            <div style="display: flex; gap: 60px; align-items: flex-start; justify-content: center; width: 100%;">
-                ${getColumnHtml(chain1, "Search 1 Lineage")}
-                ${getColumnHtml(chain2, "Search 2 Lineage")}
-            </div>
-            <div class="pdf-signature">${ARCHITECT_INFO}</div>
-        </div>`;
-    }
-
-    function renderPathBlock() {
-        const canvas = document.getElementById('canvas');
-        const showSiblings = document.getElementById('sib-check').checked;
-        const chain1 = getAncestryChain(selectedFrom);
-        const chain2 = getAncestryChain(selectedTo);
-        let meetingPoint = null;
-        for (let p1 of chain1) { if (chain2.some(p2 => p2.name.toLowerCase() === p1.name.toLowerCase())) { meetingPoint = p1; break; } }
-        if (!meetingPoint) { canvas.innerHTML = '<div class="gen-diff-badge">No Connection Found</div>'; return; }
-        const displayRoot = meetingPoint;
-        let displayPath = []; let curr = selectedTo;
-        while (curr && curr.name.toLowerCase() !== displayRoot.name.toLowerCase()) { displayPath.unshift(curr); curr = findParent(curr); }
-        displayPath.unshift(displayRoot);
-        const pathNames = displayPath.map(p => p.name.toLowerCase());
-        canvas.innerHTML = `<div class="tree-root-layout" id="pdf-area">
-            <div id="lineage-banner" class="gen-diff-badge" style="text-align:center; display:block; margin-top: 0;">Connected Lineage Found</div>
-            ${displayPath.map((p, i) => {
-                let sibs = ""; if (showSiblings && p.father) { const sList = db.filter(s => s.father.toLowerCase() === p.father.toLowerCase() && s.name.toLowerCase() !== p.name.toLowerCase()); sibs = renderSiblingsRow(sList, pathNames, p.father); }
-                const isSelected = p.name.toLowerCase() === selectedFrom.name.toLowerCase() || p.name.toLowerCase() === selectedTo.name.toLowerCase();
-                return `${renderBox(p, p.name.toLowerCase() === displayRoot.name.toLowerCase() ? "Ancestor" : "Descendant", isSelected, true, true)}${sibs}${i < displayPath.length - 1 ? '<div class="v-line"></div>' : ''}`;
-            }).join('')}<div class="pdf-signature">${ARCHITECT_INFO}</div></div>`;
+        canvas.innerHTML = `<div class="tree-root-layout" id="pdf-area"><div style="display: flex; gap: 60px; align-items: flex-start; justify-content: center; width: 100%;">${getColumnHtml(chain1, "Search 1 Lineage")}${getColumnHtml(chain2, "Search 2 Lineage")}</div><div class="pdf-signature">${ARCHITECT_INFO}</div></div>`;
     }
 
     function renderTreeBlock(target) {
-        const canvas = document.getElementById('canvas');
-        const showSiblings = document.getElementById('sib-check').checked;
-        const showDescendants = document.getElementById('desc-check').checked;
-        const searchFromRoot = document.getElementById('search-from-root-check').checked;
+        const canvas = document.getElementById('canvas'); const showSiblings = document.getElementById('sib-check').checked;
+        const showDescendants = document.getElementById('desc-check').checked; const searchFromRoot = document.getElementById('search-from-root-check').checked;
         if (searchFromRoot) {
-            const fullChain = getAncestryChain(target).reverse();
-            let html = `<div class="tree-root-layout" id="pdf-area">`;
+            const fullChain = getAncestryChain(target).reverse(); let html = `<div class="tree-root-layout" id="pdf-area">`;
             fullChain.forEach((p, idx) => {
                 const isTarget = p.name.toLowerCase() === target.name.toLowerCase();
                 html += renderBox(p, idx === 0 ? "First Ancestor" : (isTarget ? "Selected" : "Ancestor"), isTarget, isTarget, true);
                 if (isTarget) {
-                    if (showSiblings && p.father) {
-                        const sList = db.filter(s => s.father.toLowerCase() === p.father.toLowerCase() && s.name.toLowerCase() !== p.name.toLowerCase());
-                        html += renderSiblingsRow(sList, [], p.father);
-                    }
+                    if (showSiblings && p.father) html += renderSiblingsRow(db.filter(s => s.father.toLowerCase() === p.father.toLowerCase() && s.name.toLowerCase() !== p.name.toLowerCase()), [], p.father);
                     if (showDescendants) {
                         const children = db.filter(c => c.father.toLowerCase() === p.name.toLowerCase());
                         html += `<div class="v-line"></div><div class="h-row">${children.filter(c => !c.gender.startsWith('F')).map(s => renderBox(s, "Son", false, false, false)).join('')}${renderDaughtersBox(children.filter(c => c.gender.startsWith('F')), p.name, "Daughters")}</div>`;
                     }
-                } else { html += `<div class="v-line"></div>`; }
+                } else html += `<div class="v-line"></div>`;
             });
-            html += `<div class="pdf-signature">${ARCHITECT_INFO}</div></div>`;
-            canvas.innerHTML = html;
+            html += `<div class="pdf-signature">${ARCHITECT_INFO}</div></div>`; canvas.innerHTML = html;
         } else {
-            const father = findParent(target);
-            const children = db.filter(p => p.father.toLowerCase() === target.name.toLowerCase());
-            let sibs = ""; if (showSiblings && target.father) { const sList = db.filter(s => s.father.toLowerCase() === target.father.toLowerCase() && s.name.toLowerCase() !== target.name.toLowerCase()); sibs = renderSiblingsRow(sList, [], target.father); }
+            const father = findParent(target); const children = db.filter(p => p.father.toLowerCase() === target.name.toLowerCase());
+            let sibs = ""; if (showSiblings && target.father) sibs = renderSiblingsRow(db.filter(s => s.father.toLowerCase() === target.father.toLowerCase() && s.name.toLowerCase() !== target.father.toLowerCase()), [], target.father);
             let desc = showDescendants ? `<div class="v-line"></div><div class="h-row">${children.filter(c => !c.gender.startsWith('F')).map(s => renderBox(s, "Son", false, false, false)).join('')}${renderDaughtersBox(children.filter(c => c.gender.startsWith('F')), target.name, "Daughters")}</div>` : '';
             canvas.innerHTML = `<div class="tree-root-layout" id="pdf-area">${father ? renderBox(father, "Father", false, false, true) + '<div class="v-line"></div>' : ''}${renderBox(target, "Selected", true, false, true)}${sibs}${desc}<div class="pdf-signature">${ARCHITECT_INFO}</div></div>`;
         }
     }
 
-    function renderSiblingsRow(sibs, pathNames, fatherName) {
-        if (!sibs.length) return '';
-        return `<div class="h-row" style="margin-top:10px;">${sibs.filter(s => !s.gender.startsWith('F')).map(b => renderBox(b, "Brother", false, false, false)).join('')}${renderDaughtersBox(sibs.filter(s => s.gender.startsWith('F')), fatherName, "Sisters")}</div>`;
-    }
+    function renderSiblingsRow(sibs, pathNames, fatherName) { if (!sibs.length) return ''; return `<div class="h-row" style="margin-top:10px;">${sibs.filter(s => !s.gender.startsWith('F')).map(b => renderBox(b, "Brother", false, false, false)).join('')}${renderDaughtersBox(sibs.filter(s => s.gender.startsWith('F')), fatherName, "Sisters")}</div>`; }
 
     function renderDaughtersBox(list, fatherName, relation) {
         if (!list.length) return '';
-        return `<div class="box daughters-wrapper" style="min-width: 280px;">
-            <div class="d-header">${relation}</div>
-            <div style="padding: 15px; text-align: left;">
-                ${list.map(d => `<div style="font-size: 18px; font-weight: 600; padding: 5px 0; border-bottom: 1px solid rgba(212,175,55,0.2); cursor: pointer;" onclick='jumpTo("${d.name.replace(/'/g, "\\")}", "${d.gen}")'>${displayName(d.name)} [${d.gen}]</div>`).join('')}
-            </div>
-            <div style="font-size:11px; color:black; padding:8px; border-top:1px solid rgba(212,175,55,0.1); font-weight:bold; text-align:center;">D/o ${displayName(fatherName)}</div>
-        </div>`;
+        return `<div class="box daughters-wrapper" style="min-width: 280px;"><div class="d-header">${relation}</div><div style="padding: 15px; text-align: left;">${list.map(d => `<div style="font-size: 18px; font-weight: 600; padding: 5px 0; border-bottom: 1px solid rgba(212,175,55,0.2); cursor: pointer;" onclick='jumpTo("${d.name.replace(/'/g, "\\")}", "${d.gen}")'>${displayName(d.name)} [${d.gen}]</div>`).join('')}</div><div style="font-size:11px; color:black; padding:8px; border-top:1px solid rgba(212,175,55,0.1); font-weight:bold; text-align:center;">D/o ${displayName(fatherName)}</div></div>`;
     }
 
     function renderBox(p, label, isBlinking, isPathMember, isDirect) {
-        const hasNext = db.some(x => x.father.toLowerCase() === p.name.toLowerCase());
-        const isFemale = p.gender && p.gender.toUpperCase().startsWith('F');
-        const parentPrefix = isFemale ? "D/o" : "S/o";
-        return `<div class="box ${isFemale ? 'female-box' : ''} ${isDirect ? 'direct-gen-box' : ''} ${isBlinking ? 'active-box' : ''}" onclick='jumpTo("${p.name.replace(/'/g, "\\")}", "${p.gen}")'>
-            <div class="box-header ${isPathMember ? 'lineage-header' : ''}"><span>${label}</span><span>${p.gen}</span></div>
-            <div class="box-body"><span class="member-name ${isBlinking ? 'blinking-name' : ''}">${displayName(p.name)}</span><span class="father-name">${parentPrefix}: ${displayName(p.father)}</span>${hasNext ? '<div class="next-gen-indicator">▼</div>' : ''}</div></div>`;
+        const hasNext = db.some(x => x.father.toLowerCase() === p.name.toLowerCase()); const isFemale = p.gender && p.gender.toUpperCase().startsWith('F'); const parentPrefix = isFemale ? "D/o" : "S/o";
+        return `<div class="box ${isFemale ? 'female-box' : ''} ${isDirect ? 'direct-gen-box' : ''} ${isBlinking ? 'active-box' : ''}" onclick='jumpTo("${p.name.replace(/'/g, "\\")}", "${p.gen}")'><div class="box-header ${isPathMember ? 'lineage-header' : ''}"><span>${label}</span><span>${p.gen}</span></div><div class="box-body"><span class="member-name ${isBlinking ? 'blinking-name' : ''}">${displayName(p.name)}</span><span class="father-name">${parentPrefix}: ${displayName(p.father)}</span>${hasNext ? '<div class="next-gen-indicator">▼</div>' : ''}</div></div>`;
     }
 
     function jumpTo(name, gen) {
@@ -518,18 +524,13 @@
     }
 
     async function exportPDF() {
-        const element = document.getElementById('pdf-area');
-        if (!element) return alert("Generate tree first");
-        const headerDiv = document.createElement('div');
-        headerDiv.innerHTML = `<h1 style="color:#D4AF37; text-align:center; font-size:36px; margin:0;">RIZVI FAMILY TREE</h1><h2 style="color:#991B1B; text-align:center; font-size:24px; margin:10px 0;">${selectedFrom ? (selectedTo ? `From: ${displayName(selectedFrom.name)} Till: ${displayName(selectedTo.name)}` : displayName(selectedFrom.name)) : ''}</h2>`;
+        const element = document.getElementById('pdf-area'); if (!element) return alert("Generate tree first");
+        const headerDiv = document.createElement('div'); headerDiv.innerHTML = `<h1 style="color:#D4AF37; text-align:center; font-size:36px; margin:0;">RIZVI FAMILY TREE</h1><h2 style="color:#991B1B; text-align:center; font-size:24px; margin:10px 0;">${selectedFrom ? (selectedTo ? `From: ${displayName(selectedFrom.name)} Till: ${displayName(selectedTo.name)}` : displayName(selectedFrom.name)) : ''}</h2>`;
         element.insertBefore(headerDiv, element.firstChild);
-        const footerBox = document.createElement('div');
-        footerBox.style = "border:2px solid #D4AF37; padding:10px; margin-top:30px; width:100%; display:flex; justify-content:space-between; font-weight:bold; font-size:14px; box-sizing:border-box; background:#0F172A; color:#D4AF37;";
-        footerBox.innerHTML = `<span>${LOAD_STAMP}</span><span>Pdf saving : ${formatCurrentTime()}</span>`;
-        element.appendChild(footerBox);
+        const footerBox = document.createElement('div'); footerBox.style = "border:2px solid #D4AF37; padding:10px; margin-top:30px; width:100%; display:flex; justify-content:space-between; font-weight:bold; font-size:14px; box-sizing:border-box; background:#0F172A; color:#D4AF37;";
+        footerBox.innerHTML = `<span>${LOAD_STAMP}</span><span>Pdf saving : ${formatCurrentTime()}</span>`; element.appendChild(footerBox);
         const canvas = await html2canvas(element, { scale: 2, useCORS: true, backgroundColor: "#ffffff" });
-        element.removeChild(headerDiv); element.removeChild(footerBox);
-        const imgData = canvas.toDataURL('image/png', 1.0);
+        element.removeChild(headerDiv); element.removeChild(footerBox); const imgData = canvas.toDataURL('image/png', 1.0);
         const w = (canvas.width / 2) * 0.264583; const h = (canvas.height / 2) * 0.264583;
         const pdf = new jspdf.jsPDF({ orientation: w > h ? 'l' : 'p', unit: 'mm', format: [w + 40, h + 40] });
         pdf.addImage(imgData, 'PNG', 20, 20, w, h); pdf.save("Rizvi_Family_Tree.pdf");
