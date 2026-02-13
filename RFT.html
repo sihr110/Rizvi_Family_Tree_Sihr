@@ -312,8 +312,8 @@
                 <div style="grid-column: span 1;"></div>
 
                 <div class="view-toggle-group">
+                    <label class="view-toggle-item"><input type="radio" name="view-mode" value="tree" onchange="initRender(); toggleCheckboxesVisibility();" checked=""> 🌳 Tree</label>
                     <label class="view-toggle-item"><input type="radio" name="view-mode" value="table" onchange="initRender(); toggleCheckboxesVisibility();"> 📋 Table</label>
-                    <label class="view-toggle-item"><input type="radio" name="view-mode" value="tree" onchange="initRender(); toggleCheckboxesVisibility();"> 🌳 Tree</label>
                 </div>
 
                 <label class="sib-toggle" id="sib-check-label" style="display: flex;"><input type="checkbox" id="sib-check" onchange="initRender()" checked=""> Siblings</label>
@@ -330,18 +330,18 @@
                 <div class="search-box-wrapper">
                     <label class="search-label">First Member</label>
                     <input type="text" id="si-root1" class="search-input" placeholder="Search first..." autocomplete="off" onkeyup="doSearchRoot(this, 'sd-root1', 'first')">
-                    <div id="sd-root1" class="dropdown" style="display: none;"><div class="result-item"><b>Syeda Ishrat Saba</b> <small>(G-041-D3)</small><br><small>D/o: Syed Risalat Hussain</small></div></div>
+                    <div id="sd-root1" class="dropdown"></div>
                 </div>
                 <div class="search-box-wrapper">
                     <label class="search-label">Second Member</label>
                     <input type="text" id="si-root2" class="search-input" placeholder="Search second..." autocomplete="off" onkeyup="doSearchRoot(this, 'sd-root2', 'second')">
-                    <div id="sd-root2" class="dropdown" style="display: none;"><div class="result-item"><b>Syeda Anjum Nighat</b> <small>(G-041-D1)</small><br><small>D/o: Syed Wiladat Hussain</small></div><div class="result-item"><b>Syed Mohammad Ali Anjum</b> <small>(G-041-S1)</small><br><small>S/o: Syed Izhar Ul Hasan</small></div></div>
+                    <div id="sd-root2" class="dropdown"></div>
                 </div>
 
                 <div></div>
 
-                <button class="btn-root" onclick="findCommonRoot()">ROOT-TABLE</button>
                 <button class="btn-root" onclick="showBothRootsView()">ROOT-TREE</button>
+                <button class="btn-root" onclick="findCommonRoot()">ROOT-TABLE</button>
                 <button class="btn reset-btn" onclick="resetRootPanel()">RESET</button>
                 <button class="btn pdf-btn" onclick="exportPDF()">SAVE PDF</button>
             </div>
