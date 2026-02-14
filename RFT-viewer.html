@@ -34,38 +34,167 @@
         /* PC & ANDROID - ORIGINAL STYLE */
         body { font-family: 'Inter', sans-serif; background: #1a1a1a; margin: 0; height: 100vh; overflow: hidden; }
 
-        /* IPHONE & MOBILE COMPATIBILITY: PRESERVE DESKTOP LAYOUT WITH HORIZONTAL SCROLL */
+        /* IPHONE & MOBILE COMPATIBILITY: IMPROVED LAYOUT + MENU TOGGLE */
         @media screen and (max-width: 768px) {
             body { 
                 overflow: auto; 
                 -webkit-overflow-scrolling: touch; 
+                height: auto;
+                min-height: 100vh;
             }
             .pg-1 { 
-                height: 100vh; 
-                min-height: 0;
-                overflow-x: auto;
+                height: auto; 
+                min-height: 100vh;
+                overflow-x: hidden;
+                border-left: none;
+                border-right: none;
             }
-            .search-container { 
-                grid-template-columns: 1.5fr 1fr auto auto auto auto auto auto; 
-                gap: 12px; 
-                padding: 15px;
-                width: max-content;
-                min-width: 100%;
+            .top-main-heading {
+                font-size: 24px;
+                padding: 10px 0;
+                letter-spacing: 2px;
+                position: relative;
             }
-            .tree-viewport { 
-                overflow: auto; 
+            /* Menu toggle button */
+            .menu-toggle {
+                position: absolute;
+                top: 10px;
+                right: 15px;
+                background: var(--gold);
+                color: black;
+                border: none;
+                border-radius: 50%;
+                width: 40px;
+                height: 40px;
+                font-size: 24px;
+                font-weight: bold;
+                cursor: pointer;
+                z-index: 2000;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.2);
             }
-            .main-menu {
-                flex-wrap: nowrap;
+            .fixed-top-section {
+                transition: max-height 0.3s ease, padding 0.3s ease;
+                overflow: hidden;
+                max-height: 500px; /* large enough for expanded content */
+                padding: 10px 15px;
             }
-            .menu-item {
-                white-space: nowrap;
+            .fixed-top-section.collapsed {
+                max-height: 0;
+                padding-top: 0;
+                padding-bottom: 0;
+                margin-bottom: 0;
+                border-bottom: none;
+            }
+            .main-menu .menu-item {
+                font-size: 11px;
+                padding: 8px 2px;
+            }
+            .search-container {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                padding: 12px;
+                width: 100%;
+                box-sizing: border-box;
+            }
+            .search-box-wrapper {
+                width: 100%;
+            }
+            .search-input {
+                width: 100%;
+                font-size: 14px;
+                padding: 10px;
+            }
+            .view-toggle-group {
+                width: 100%;
+                justify-content: space-around;
+                height: auto;
+                padding: 8px 0;
+            }
+            .view-toggle-item {
                 font-size: 12px;
-                padding: 10px 5px;
+            }
+            .sib-toggle {
+                font-size: 12px;
+                justify-content: flex-start;
+                width: 100%;
+            }
+            .btn, .btn-root {
+                width: 100%;
+                margin: 2px 0;
+                height: 44px;
+                font-size: 14px;
+            }
+            .btn-root {
+                padding: 12px;
+            }
+            .tree-viewport {
+                padding: 15px 10px;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            .tree-root-layout {
+                padding-bottom: 30px;
+                width: 100%;
+                align-items: stretch;
+            }
+            .box {
+                min-width: 220px;
+                max-width: 100%;
+                margin: 0 auto;
+            }
+            .box-body {
+                padding: 10px;
+            }
+            .member-name {
+                font-size: 18px !important;
+            }
+            .father-name {
+                font-size: 11px;
+            }
+            .daughters-wrapper {
+                min-width: 220px !important;
+            }
+            .h-row {
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+            .tables-container {
+                flex-direction: column;
+                gap: 20px;
+                overflow-x: auto;  /* allow horizontal scroll if needed */
+            }
+            .lineage-table-container {
+                max-width: 100%;
+                min-width: auto;
+                overflow-x: auto;   /* make tables scrollable */
+                -webkit-overflow-scrolling: touch;
+            }
+            .lineage-table {
+                min-width: 500px;   /* ensure table doesn't shrink too much, scroll appears */
+            }
+            .summary-content {
+                grid-template-columns: 1fr !important;
+            }
+            .gen-diff-badge {
+                padding: 10px;
+                font-size: 13px;
+            }
+            #loader-gear {
+                bottom: 15px;
+                right: 15px;
+                font-size: 24px;
+                background: rgba(0,0,0,0.5);
+                padding: 8px;
+                border-radius: 50%;
+                color: var(--gold);
             }
         }
 
-        .pg-1 { max-width: 1400px; margin: 0 auto; background: white; height: 100vh; display: flex; flex-direction: column; box-shadow: 0 0 50px rgba(212, 175, 55, 0.2); border-left: 2px solid var(--gold); border-right: 2px solid var(--gold); }
+        .pg-1 { max-width: 1400px; margin: 0 auto; background: white; height: 100vh; display: flex; flex-direction: column; box-shadow: 0 0 50px rgba(212, 175, 55, 0.2); border-left: 2px solid var(--gold); border-right: 2px solid var(--gold); position: relative; }
         
         .top-main-heading { 
             background: #1e3d3d; 
@@ -78,6 +207,17 @@
             letter-spacing: 4px; 
             border-bottom: 4px solid #ffd966;
             text-transform: uppercase;
+            position: relative;
+        }
+
+        /* Menu toggle button (hidden on desktop) */
+        .menu-toggle {
+            display: none;
+        }
+        @media screen and (max-width: 768px) {
+            .menu-toggle {
+                display: flex;
+            }
         }
 
         .fixed-top-section { padding: 20px 30px 10px 30px; background: white; z-index: 1000; border-bottom: 1px solid #eee; }
@@ -318,9 +458,12 @@
 </head>
 <body>
 <div class="pg-1">
-    <div class="top-main-heading">Rizvi Family Tree</div>
+    <div class="top-main-heading">
+        Rizvi Family Tree
+        <button class="menu-toggle" id="menuToggle" title="Toggle menu">☰</button>
+    </div>
 
-    <div class="fixed-top-section">
+    <div class="fixed-top-section" id="topSection">
         <div class="main-menu">
             <div class="menu-item active" data-panel="search-panel">Search Tree</div>
             <div class="menu-item" data-panel="root-panel">Root Relative</div>
@@ -463,10 +606,14 @@
             LOAD_STAMP = getTimestampFromExcel(wb);
             document.getElementById('ui-load-stamp').innerText = LOAD_STAMP;
             alert('Data loaded successfully!');
-            // Clear the input so the same file can be loaded again if needed
             document.getElementById('hidden-file-input').value = '';
         };
         reader.readAsArrayBuffer(file);
+    });
+
+    // Menu toggle for mobile
+    document.getElementById('menuToggle').addEventListener('click', function() {
+        document.getElementById('topSection').classList.toggle('collapsed');
     });
 
     function clearAllSearchAndCanvas() {
@@ -577,7 +724,6 @@
                 if (type === 'first') rootSearchFirst = p;
                 else rootSearchSecond = p;
 
-                /* AUTO SELECTION OF ROOT-TREE */
                 if (rootSearchFirst && rootSearchSecond) {
                     selectedFrom = rootSearchFirst; 
                     selectedTo = rootSearchSecond;
@@ -814,7 +960,6 @@
     window.onload = () => {
         initMenu();
         
-        // Ensure Tree is selected and canvas is blank on load
         clearViewRadios();
         toggleCheckboxesVisibility();
         clearAllSearchAndCanvas();
@@ -822,7 +967,6 @@
         const searchTab = document.querySelector('.menu-item[data-panel=\"search-panel\"]');
         if (searchTab) searchTab.click();
 
-        // Auto‑load data from same folder
         autoLoadExcel();
     };
 </script>
