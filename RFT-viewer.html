@@ -157,11 +157,6 @@
         .menu-panel.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         
-        .admin-panel { background: var(--dark-blue); padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid var(--gold); }
-        .admin-controls { display: flex; gap: 15px; align-items: center; justify-content: center; }
-        .admin-status { text-align: center; color: var(--gold); font-size: 13px; margin-bottom: 15px; }
-        .admin-status .data-val { color: white; font-weight: bold; background: rgba(212, 175, 55, 0.2); padding: 2px 6px; border-radius: 4px; }
-        
         .tables-container { display: flex; gap: 40px; justify-content: center; width: 100%; margin: 20px 0; }
         .lineage-table-container { 
             flex: 1; 
@@ -300,6 +295,25 @@
             background: var(--gold);
             color: black;
         }
+
+        /* Hidden password‑protected loader gear */
+        #loader-gear {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            font-size: 20px;
+            color: rgba(212, 175, 55, 0.3);
+            cursor: pointer;
+            z-index: 9999;
+            transition: color 0.2s;
+            user-select: none;
+        }
+        #loader-gear:hover {
+            color: var(--gold);
+        }
+        #hidden-file-input {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -308,7 +322,6 @@
 
     <div class="fixed-top-section">
         <div class="main-menu">
-            <div class="menu-item" data-panel="admin-panel">Admin</div>
             <div class="menu-item active" data-panel="search-panel">Search Tree</div>
             <div class="menu-item" data-panel="root-panel">Root Relative</div>
         </div>
@@ -359,24 +372,8 @@
             </div>
         </div>
 
-        <div id="admin-panel" class="menu-panel">
-            <div class="admin-panel">
-                <div class="admin-status">
-                    File: <span id="fn" class="data-val">No file loaded</span> | 
-                    Records: <span id="rc" class="data-val">0</span> | 
-                    Status: <span id="admin-status-text" class="data-val">Ready</span>
-                </div>
-                <div class="admin-controls">
-                    <input type="file" id="xl" accept=".xlsx, .xls" style="display:none;" onchange="handleFile(this)">
-                    <button class="btn" style="background:#3b82f6;" onclick="document.getElementById('xl').click()">LOAD EXCEL</button>
-                    <button class="btn" style="background:#10b981;" onclick="prepareViewer()">DOWNLOAD VIEWER</button>
-                    <button class="btn reset-btn" onclick="resetAll()">RESET ALL</button>
-                </div>
-            </div>
-        </div>
-
         <div class="loading-timestamp-container">
-            <div class="loading-timestamp-ui" id="ui-load-stamp">LAST DATA UPDATED ON: DATA.XLSX NOT LOADED — USE ADMIN PANEL</div>
+            <div class="loading-timestamp-ui" id="ui-load-stamp">LAST DATA UPDATED ON: DATA.XLSX NOT LOADED — CHECK FILE</div>
         </div>
     </div>
 
@@ -386,20 +383,18 @@
     </div>
 </div>
 
+<!-- Hidden password‑protected manual loader -->
+<div id="loader-gear" title="Admin load (password required)">⚙️</div>
+<input type="file" id="hidden-file-input" accept=".xlsx, .xls">
+
 <script>
     let db = [];
-    let LOAD_STAMP = "LAST DATA UPDATED ON: DATA.XLSX NOT LOADED — USE ADMIN PANEL";
-    let IS_LOCKED = false;
+    let LOAD_STAMP = "LAST DATA UPDATED ON: DATA.XLSX NOT LOADED — CHECK FILE";
     let selectedFrom = null;
     let selectedTo = null;
     let rootSearchFirst = null;
     let rootSearchSecond = null;
-    let isAdminAuthenticated = false;
     const ARCHITECT_INFO = "System Architect : Imran Haider S/o Risalat Hussain Rizvi 📞 0332-787-6010";
-
-    /* SAFE ENCODING TOOLS: To prevent breaking names with special characters */
-    function safeBtoA(str) { return btoa(unescape(encodeURIComponent(str))); }
-    function safeAtoB(str) { return decodeURIComponent(escape(atob(str))); }
 
     function displayName(str) { return str ? str.replace(/\s*-\s*\d+$/, "").trim() : ""; }
     function properCase(str) {
@@ -437,12 +432,42 @@
             })).filter(p => p.name !== '');
             LOAD_STAMP = getTimestampFromExcel(wb);
             el.innerText = LOAD_STAMP;
-            document.getElementById('rc').innerText = db.length;
-            document.getElementById('fn').innerText = 'data.xlsx';
         } catch (e) {
-            el.innerText = 'LAST DATA UPDATED ON: DATA.XLSX NOT LOADED — USE ADMIN PANEL';
+            el.innerText = '⚠️ Auto‑load failed. Use ⚙️ (bottom right) to load manually.';
         }
     }
+
+    // Password‑protected manual loader
+    document.getElementById('loader-gear').addEventListener('click', function() {
+        const pwd = prompt('Enter admin password:');
+        if (pwd === '6010') {
+            document.getElementById('hidden-file-input').click();
+        } else {
+            alert('Incorrect password.');
+        }
+    });
+
+    document.getElementById('hidden-file-input').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = e => {
+            const wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
+            const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+            db = rows.map(r => ({
+                name: String(r.Name || '').trim(),
+                father: String(r.Father || '').trim(),
+                gen: String(r.Gen || '').trim(),
+                gender: String(r.Gender || 'M').trim().toUpperCase()
+            })).filter(p => p.name);
+            LOAD_STAMP = getTimestampFromExcel(wb);
+            document.getElementById('ui-load-stamp').innerText = LOAD_STAMP;
+            alert('Data loaded successfully!');
+            // Clear the input so the same file can be loaded again if needed
+            document.getElementById('hidden-file-input').value = '';
+        };
+        reader.readAsArrayBuffer(file);
+    });
 
     function clearAllSearchAndCanvas() {
         document.getElementById('si-from').value = '';
@@ -485,18 +510,6 @@
         items.forEach(item => {
             item.addEventListener('click', function(e) {
                 const panelId = this.dataset.panel;
-                const currentActive = document.querySelector('.menu-item.active')?.dataset.panel;
-                
-                if (currentActive === 'admin-panel' && panelId !== 'admin-panel') {
-                    isAdminAuthenticated = false;
-                }
-                
-                if (panelId === 'admin-panel' && !isAdminAuthenticated) {
-                    const pwd = prompt('Admin password:','');
-                    if (pwd !== '6010') { alert('Wrong password!'); return; }
-                    isAdminAuthenticated = true;
-                }
-                
                 clearAllSearchAndCanvas();
                 
                 if (panelId === 'search-panel') {
@@ -526,39 +539,6 @@
         rootSearchSecond = null; 
         document.getElementById('canvas').innerHTML = ''; 
         document.getElementById('canvas-header').style.display = 'none'; 
-    }
-    function resetAll() {
-        if (IS_LOCKED) return alert('Locked');
-        db = []; 
-        clearAllSearchAndCanvas();
-        clearViewRadios();
-        toggleCheckboxesVisibility();
-        document.getElementById('rc').innerText = '0'; 
-        document.getElementById('fn').innerText = 'No file';
-        document.getElementById('ui-load-stamp').innerText = 'LAST DATA UPDATED ON: DATA.XLSX NOT LOADED — USE ADMIN PANEL';
-        document.getElementById('xl').value = ''; 
-        LOAD_STAMP = '';
-    }
-
-    function handleFile(input) {
-        const file = input.files[0]; if (!file) return;
-        const reader = new FileReader();
-        reader.onload = e => {
-            const wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
-            const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
-            db = rows.map(r => ({
-                name: String(r.Name || '').trim(),
-                father: String(r.Father || '').trim(),
-                gen: String(r.Gen || '').trim(),
-                gender: String(r.Gender || 'M').trim().toUpperCase()
-            })).filter(p => p.name);
-            LOAD_STAMP = getTimestampFromExcel(wb);
-            document.getElementById('ui-load-stamp').innerText = LOAD_STAMP;
-            document.getElementById('rc').innerText = db.length;
-            document.getElementById('fn').innerText = file.name;
-            resetSearch();
-        };
-        reader.readAsArrayBuffer(file);
     }
 
     function doSearch(input, dropId) {
@@ -831,27 +811,6 @@
     }
     function formatCurrentTime() { const d = new Date(); return `${d.toLocaleString('en-GB', { day:'2-digit', month:'short', year:'numeric' })} - ${d.getHours()%12||12}:${String(d.getMinutes()).padStart(2,'0')}${d.getHours()>=12?'pm':'am'}`; }
 
-    function prepareViewer() {
-        if (!db.length) return alert('Load data first');
-        
-        /* SAFE ENCODING: Uses safeBtoA to handle special characters */
-        const blob = safeBtoA(JSON.stringify(db));
-        
-        let clone = document.documentElement.cloneNode(true);
-        clone.querySelector('.menu-item[data-panel=\"admin-panel\"]')?.remove();
-        clone.querySelector('#admin-panel')?.remove();
-        let html = '<!DOCTYPE html>' + clone.outerHTML;
-        
-        /* Injection uses safeAtoB to ensure phone correctly decodes complex names */
-        const dataInjection = `let db = JSON.parse(safeAtoB("${blob}")); let LOAD_STAMP = "${LOAD_STAMP}"; let IS_LOCKED = true;`;
-        html = html.replace(/let db = \[\];\s*let LOAD_STAMP = ".*?";\s*let IS_LOCKED = false;/, dataInjection);
-
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(new Blob([html], { type:'text/html' }));
-        a.download = 'RFT-viewer.html';
-        a.click();
-    }
-
     window.onload = () => {
         initMenu();
         
@@ -863,21 +822,8 @@
         const searchTab = document.querySelector('.menu-item[data-panel=\"search-panel\"]');
         if (searchTab) searchTab.click();
 
-        if (IS_LOCKED) {
-            document.getElementById('ui-load-stamp').innerText = LOAD_STAMP.startsWith('LAST DATA UPDATED ON') ? LOAD_STAMP : ('LAST DATA UPDATED ON ' + (LOAD_STAMP || '✅ LOCKED DATA'));
-            document.getElementById('rc').innerText = db.length;
-            document.getElementById('fn').innerText = 'OFFICIAL';
-            const adminMenuItem = document.querySelector('.menu-item[data-panel=\"admin-panel\"]');
-            if (adminMenuItem) adminMenuItem.style.display = 'none';
-            
-            /* If data is locked (on phone), we must parse it correctly using safeAtoB */
-            try {
-                // If db is already an array, it's fine. If it's still a string, we decode.
-                if (typeof db === 'string') db = JSON.parse(safeAtoB(db));
-            } catch(e) {}
-        } else {
-            autoLoadExcel();
-        }
+        // Auto‑load data from same folder
+        autoLoadExcel();
     };
 </script>
 </body>
