@@ -1,11 +1,16 @@
-I have updated your code.
+I understand the issues now. You want the **exact PC layout** (buttons in a row, tables side-by-side) on your phone, but **scaled down** so it fits the screen, allowing you to pinch-to-zoom to read details.
 
-**Changes Made:**
-1.  **Mobile CSS:** I forced the layout to stay "Wide" (like PC) instead of stacking vertically.
-2.  **Auto-Scaling Logic:** I added a JavaScript function that automatically shrinks the tree to fit your phone screen perfectly.
-3.  **Zoom Enabled:** You can now **Pinch-to-Zoom** (spread two fingers) to see details clearly, just like a map.
+The previous code tried to "stack" buttons to make them big, which caused the "Save PDF" button to get cut off or the layout to look different from PC.
 
-Here is your complete, modified HTML file:
+Here is the **Corrected Version**.
+
+**What I fixed:**
+1.  **Restored PC Layout:** Removed the "stacking" logic. The search buttons are now in a row (like PC) and the tables are side-by-side (like PC).
+2.  **Fixed "Toggle Menu Missing":** The ☰ button is now guaranteed to be visible on mobile.
+3.  **Fixed "Save PDF Cut Off":** Removed height restrictions so buttons don't disappear.
+4.  **Global Scaling:** Added a script that automatically shrinks the **entire interface** (Search Bar + Tree) to fit your phone screen width. You can now **Pinch-to-Zoom** to see the text clearly.
+
+Here is the complete code:
 
 ```html
 <!DOCTYPE html>
@@ -14,7 +19,6 @@ Here is your complete, modified HTML file:
     
     <!-- 1. HTML HEAD & EXTERNAL LIBRARIES -->
     <meta charset="UTF-8">
-    <!-- Viewport allows up to 5x zoom for mobile -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title>Rizvi Family Tree – Path Suite</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
@@ -47,7 +51,7 @@ Here is your complete, modified HTML file:
             --accent-light: #faebcd;
         }
 
-        /* 2.2 MOBILE RESPONSIVENESS (IPHONE/ANDROID) - MODIFIED FOR PC LAYOUT + ZOOM */
+        /* 2.2 MOBILE RESPONSIVENESS (FORCED PC LAYOUT + SCALING) */
         body { font-family: 'Inter', sans-serif; background: #1a1a1a; margin: 0; height: 100vh; overflow: hidden; }
 
         @media screen and (max-width: 768px) {
@@ -62,116 +66,148 @@ Here is your complete, modified HTML file:
                 min-height: 100vh;
                 border-left: none;
                 border-right: none;
-                /* Allow the main container to handle the zoomed width */
-                overflow-x: hidden; 
+                /* Allow the whole page to be scaled */
+                transform-origin: top left;
+                width: 100%;
+                overflow-x: visible;
             }
+            
+            /* --- HEADER --- */
             .top-main-heading {
-                font-size: 20px;
-                padding: 10px 0;
-                letter-spacing: 1px;
+                font-size: 32px; /* Keep PC Size (will be scaled down) */
+                padding: 15px 0;
                 position: relative;
+                min-height: 60px; /* Ensure space for menu button */
             }
             .menu-toggle {
-                position: absolute; top: 5px; right: 15px; background: var(--gold); color: black; border: none;
-                border-radius: 50%; width: 35px; height: 35px; font-size: 20px; font-weight: bold; cursor: pointer;
-                z-index: 2000; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+                position: absolute; 
+                top: 10px; 
+                right: 15px; 
+                background: var(--gold); 
+                color: black; 
+                border: none;
+                border-radius: 50%; 
+                width: 40px; 
+                height: 40px; 
+                font-size: 24px; 
+                font-weight: bold; 
+                cursor: pointer;
+                z-index: 3000; 
+                display: flex !important; /* FORCE VISIBLE */
+                align-items: center; 
+                justify-content: center; 
+                box-shadow: 0 2px 8px rgba(0,0,0,0.2);
             }
+            
+            /* --- TOP SECTION (SEARCH) --- */
             .fixed-top-section { 
-                transition: max-height 0.3s ease, padding 0.3s ease; 
-                overflow: hidden; 
-                max-height: 80vh; /* Limit height for menu */
-                padding: 10px 15px; 
-                background: white;
-                z-index: 1000;
+                /* Removed max-height to prevent button cutoff */
+                padding: 20px 30px 10px 30px; 
+                background: white; 
+                z-index: 1000; 
+                border-bottom: 1px solid #eee;
+                transform-origin: top left; /* Scale from top left */
+                width: 100%; /* Ensure it takes full width before scaling */
+                box-sizing: border-box;
             }
-            .fixed-top-section.collapsed { max-height: 0; padding-top: 0; padding-bottom: 0; margin-bottom: 0; border-bottom: none; }
+            .fixed-top-section.collapsed { 
+                height: 0 !important; 
+                padding-top: 0 !important; 
+                padding-bottom: 0 !important; 
+                overflow: hidden; 
+                border-bottom: none; 
+            }
             
-            /* MENU ITEMS: Keep stacked for usability */
-            .main-menu .menu-item { font-size: 11px; padding: 8px 2px; }
+            /* --- RESTORING PC LAYOUT (NO STACKING) --- */
+            .search-container { 
+                /* FORCE PC GRID LAYOUT */
+                display: grid !important; 
+                grid-template-columns: 1.5fr 1fr auto auto auto auto auto auto !important; 
+                gap: 12px; 
+                margin-bottom: 10px; 
+                background: #fdfdfd; 
+                padding: 15px; 
+                border-radius: 12px; 
+                border: 1px solid var(--gold); 
+                align-items: center; 
+                width: 100%;
+                box-sizing: border-box;
+            }
+            .search-box-wrapper { position: relative; width: 100%; }
+            .search-input { width: 100%; padding: 10px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; box-sizing: border-box; font-size: 14px; }
+            .search-input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1); }
             
-            /* SEARCH: Keep stacked for usability */
-            .search-container { display: flex; flex-direction: column; gap: 8px; padding: 10px; width: 100%; box-sizing: border-box; }
-            .search-box-wrapper { width: 100%; }
-            .search-input { width: 100%; font-size: 14px; padding: 10px; }
-            .view-toggle-group { width: 100%; justify-content: space-around; height: auto; padding: 8px 0; }
-            .view-toggle-item { font-size: 12px; }
-            .sib-toggle { font-size: 12px; justify-content: flex-start; width: 100%; }
-            .btn, .btn-root { width: 100%; margin: 2px 0; height: 44px; font-size: 14px; }
-            .btn-root { padding: 12px; }
+            .view-toggle-group {
+                display: flex; align-items: center; gap: 12px; background: #f1f5f9; padding: 0 12px; border-radius: 8px; border: 1px solid #e2e8f0; height: 42px; box-sizing: border-box;
+            }
+            .view-toggle-item { display: flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; color: var(--slate); cursor: pointer; white-space: nowrap; }
+            
+            .sib-toggle { display: flex !important; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; color: var(--slate); cursor: pointer; white-space: nowrap; }
+            
+            .btn, .btn-root { 
+                white-space: nowrap; /* Prevent text wrapping/cutting */
+                height: 42px; 
+                font-size: 12px; 
+                padding: 10px 18px;
+            }
 
-            /* --- KEY CHANGE: FORCE PC LAYOUT FOR CANVAS --- */
+            /* --- TREE & TABLES (FORCE PC LAYOUT) --- */
             .tree-viewport { 
-                padding: 20px 10px; 
-                overflow: visible; /* Let the transform handle overflow */
+                padding: 40px; 
+                overflow: visible; 
                 display: flex; 
-                justify-content: center; /* Center the scaled content */
+                flex-direction: column; 
+                align-items: center; 
                 background: #fffcf8; 
+                transform-origin: top left;
+                width: 100%;
+                box-sizing: border-box;
             }
             .tree-root-layout { 
-                padding-bottom: 50px; 
-                /* Force PC-like width so it can be scaled down */
-                width: max-content; 
-                min-width: 100%; /* Ensure it doesn't shrink smaller than screen before scaling */
-                align-items: flex-start; /* Align tops for side-by-side */
-                transform-origin: top center; /* Scale from top center */
-                transition: transform 0.2s ease-out;
+                padding-bottom: 100px; 
+                width: fit-content; 
+                min-width: 100%; 
+                transform-origin: top left;
             }
 
-            /* Keep boxes same size as PC, just scaled down by parent */
-            .box { min-width: 260px; margin: 0 auto; }
-            .box-body { padding: 10px; }
-            .member-name { font-size: 18px !important; }
-            .father-name { font-size: 11px; }
-            .daughters-wrapper { min-width: 280px !important; }
-            
-            /* Force side-by-side tables (PC Style) instead of stacking */
+            /* Force Tables Side-by-Side (PC Style) */
             .tables-container { 
-                flex-direction: row !important; /* PC Layout */
-                gap: 20px; 
-                width: max-content;
+                display: flex !important; 
+                gap: 40px; 
+                justify-content: center; 
+                width: 100%; 
+                margin: 20px 0; 
+                flex-wrap: nowrap !important; /* Force no wrap, like PC */
             }
             
-            .lineage-table-container { 
-                min-width: 300px; 
-                /* Remove max-width to allow PC style */
-                max-width: none; 
-                width: 300px;
-            }
-            .lineage-table { 
-                min-width: 300px; 
-                width: 300px;
-            }
-            .summary-content { grid-template-columns: 1fr !important; }
-            
-            /* Hide scrollbars for cleaner look, user can pinch zoom */
-            ::-webkit-scrollbar { width: 0px; background: transparent; }
+            /* Hide scrollbars for cleaner look */
+            ::-webkit-scrollbar { width: 0px; background: transparent; height: 0px; }
             
             #loader-gear { bottom: 15px; right: 15px; font-size: 24px; background: rgba(0,0,0,0.5); padding: 8px; border-radius: 50%; color: var(--gold); }
         }
 
-        /* 2.3 MAIN LAYOUT & TYPOGRAPHY */
+        /* 2.3 MAIN LAYOUT & TYPOGRAPHY (PC DEFAULT) */
         .pg-1 { max-width: 1400px; margin: 0 auto; background: white; height: 100vh; display: flex; flex-direction: column; box-shadow: 0 0 50px rgba(212, 175, 55, 0.2); border-left: 2px solid var(--gold); border-right: 2px solid var(--gold); position: relative; }
         .top-main-heading { background: #1e3d3d; color: #ffd966; text-align: center; padding: 15px 0; font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 900; letter-spacing: 4px; border-bottom: 4px solid #ffd966; text-transform: uppercase; position: relative; }
+        
+        /* Hide menu on PC */
         .menu-toggle { display: none; }
-        @media screen and (min-width: 769px) { .menu-toggle { display: none; } }
-
+        
         /* 2.4 SEARCH AREA STYLES */
         .fixed-top-section { padding: 20px 30px 10px 30px; background: white; z-index: 1000; border-bottom: 1px solid #eee; }
         .member-name { font-family: 'Playfair Display', serif; color: var(--dark-blue); font-weight: 700; font-size: 20px; display: block; }
         .female-box .member-name { font-size: 20px !important; }
         .search-label { font-family: 'Inter', sans-serif; letter-spacing: 1px; display: block; font-weight: 700; color: var(--maroon); margin-bottom: 8px; font-size: 11px; text-transform: uppercase; }
+        
+        /* PC Default Search Container */
         .search-container { display: grid; grid-template-columns: 1.5fr 1fr auto auto auto auto auto auto; gap: 12px; margin-bottom: 10px; background: #fdfdfd; padding: 15px; border-radius: 12px; border: 1px solid var(--gold); align-items: center; }
-        .search-box-wrapper { position: relative; }
-        .search-input { font-family: 'Inter', sans-serif; width: 100%; padding: 10px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; box-sizing: border-box; font-size: 14px; }
-        .search-input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1); }
-
+        .dropdown { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--gold); z-index: 999; max-height: 250px; overflow-y: auto; display: none; border-radius: 0 0 10px 10px; box-shadow: 0 10px 15px rgba(0,0,0,0.1); }
+        .result-item { padding: 10px; border-bottom: 1px solid #eee; cursor: pointer; font-size: 13px; }
+        
         /* 2.5 BUTTONS & UI ELEMENTS */
         .btn { border: none; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.2s; height: 42px; color: white; font-size: 12px; text-transform: uppercase; white-space: nowrap; }
         .reset-btn { background: #64748b; }
         .pdf-btn { background: #991b1b; border: 1px solid var(--gold); }
-        .sib-toggle { display: none; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; color: var(--slate); cursor: pointer; white-space: nowrap; }
-        .dropdown { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--gold); z-index: 999; max-height: 250px; overflow-y: auto; display: none; border-radius: 0 0 10px 10px; box-shadow: 0 10px 15px rgba(0,0,0,0.1); }
-        .result-item { padding: 10px; border-bottom: 1px solid #eee; cursor: pointer; font-size: 13px; }
         
         /* 2.6 TREE VISUALIZATION STYLES */
         .tree-viewport { flex-grow: 1; display: flex; flex-direction: column; align-items: center; padding: 40px; overflow-y: auto; overflow-x: auto; background: #fffcf8; border-top: 1px solid #eee; }
@@ -227,9 +263,6 @@ Here is your complete, modified HTML file:
         .summary-label { font-size: 12px; font-weight: 700; color: #7a5c2e; text-transform: uppercase; margin-bottom: 5px; }
         .summary-value { font-size: 14px; font-weight: 600; color: #3d2e12; }
         
-        .view-toggle-group { display: flex; align-items: center; gap: 12px; background: #f1f5f9; padding: 0 12px; border-radius: 8px; border: 1px solid #e2e8f0; height: 42px; box-sizing: border-box; }
-        .view-toggle-item { display: flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; color: var(--slate); cursor: pointer; }
-        .view-toggle-item input[type="radio"] { margin: 0; width: 14px; height: 14px; accent-color: var(--gold); }
         .btn-root { background: var(--dark-blue); border: 1px solid var(--gold); color: var(--gold); padding: 10px 18px; border-radius: 8px; font-weight: bold; font-size: 12px; text-transform: uppercase; cursor: pointer; transition: 0.2s; height: 42px; white-space: nowrap; }
         .btn-root:hover { background: var(--gold); color: black; }
         
@@ -448,6 +481,9 @@ Here is your complete, modified HTML file:
                 items.forEach(m => m.classList.remove('active'));
                 this.classList.add('active');
                 panels.forEach(p => p.classList.toggle('active', p.id === panelId));
+                
+                // Retrigger scaling after menu switch
+                setTimeout(scalePCView, 50);
             });
         });
     }
@@ -459,6 +495,7 @@ Here is your complete, modified HTML file:
         document.getElementById('canvas-header').style.display = 'none'; 
         clearViewRadios();
         toggleCheckboxesVisibility();
+        setTimeout(scalePCView, 50);
     }
     function resetRootPanel() { 
         document.getElementById('si-root1').value = ''; 
@@ -467,6 +504,7 @@ Here is your complete, modified HTML file:
         rootSearchSecond = null; 
         document.getElementById('canvas').innerHTML = ''; 
         document.getElementById('canvas-header').style.display = 'none'; 
+        setTimeout(scalePCView, 50);
     }
 
     // 4.5 SEARCH FUNCTIONS
@@ -526,40 +564,63 @@ Here is your complete, modified HTML file:
         return chain;
     }
 
-    // 4.6 MOBILE AUTO-SCALING LOGIC (NEW)
-    function autoScaleCanvas() {
+    // 4.6 GLOBAL MOBILE SCALING LOGIC (NEW)
+    function scalePCView() {
         // Only apply scaling on mobile devices
-        if (window.innerWidth > 768) return;
+        if (window.innerWidth > 768) {
+            // Reset on desktop
+            document.getElementById('topSection').style.transform = 'none';
+            document.getElementById('topSection').style.width = '100%';
+            const layout = document.getElementById('pdf-area');
+            if(layout) {
+                layout.style.transform = 'none';
+                layout.style.marginBottom = '0';
+            }
+            return;
+        }
 
-        const container = document.getElementById('pdf-area');
-        if (!container) return;
-
-        // 1. Reset transform to measure natural width
-        container.style.transform = 'none';
-        container.style.marginBottom = '0';
-
-        // 2. Measure widths
         const viewportWidth = window.innerWidth;
-        const contentWidth = container.offsetWidth;
+        const topSection = document.getElementById('topSection');
+        const layout = document.getElementById('pdf-area');
 
-        // 3. If content is wider than screen, scale it down
-        if (contentWidth > viewportWidth) {
-            // Calculate scale factor (subtract 40px for padding)
-            const scale = (viewportWidth - 30) / contentWidth;
-            container.style.transform = `scale(${scale})`;
+        // 1. Scale Top Section (Search Bar)
+        if (topSection) {
+            // Reset to measure natural width
+            topSection.style.transform = 'none';
+            topSection.style.width = '100%'; 
             
-            // 4. Fix the whitespace gap at the bottom caused by scaling
-            // The element shrinks visually but keeps its DOM height. 
-            // We must pull up the bottom margin to close the gap.
-            const scaledHeight = container.offsetHeight * scale;
-            const originalHeight = container.offsetHeight;
-            const gap = originalHeight - scaledHeight;
-            container.style.marginBottom = `-${gap}px`;
+            const topWidth = topSection.scrollWidth;
+            if (topWidth > viewportWidth) {
+                const scale = (viewportWidth - 20) / topWidth;
+                topSection.style.transform = `scale(${scale})`;
+                // Fix width so it doesn't collapse
+                topSection.style.width = `${topWidth}px`;
+            } else {
+                topSection.style.transform = 'none';
+                topSection.style.width = '100%';
+            }
+        }
+
+        // 2. Scale Tree Layout
+        if (layout) {
+            layout.style.transform = 'none';
+            layout.style.marginBottom = '0';
+
+            const contentWidth = layout.offsetWidth;
+            if (contentWidth > viewportWidth) {
+                const scale = (viewportWidth - 20) / contentWidth;
+                layout.style.transform = `scale(${scale})`;
+                
+                // Fix bottom gap
+                const scaledHeight = layout.offsetHeight * scale;
+                const originalHeight = layout.offsetHeight;
+                const gap = originalHeight - scaledHeight;
+                layout.style.marginBottom = `-${gap}px`;
+            }
         }
     }
 
-    // Listen for screen rotation
-    window.addEventListener('resize', autoScaleCanvas);
+    window.addEventListener('resize', scalePCView);
 
     // 4.7 RENDERING LOGIC (TREE & TABLE)
     function initRender() {
@@ -578,8 +639,8 @@ Here is your complete, modified HTML file:
         if (mode === 'tree') renderTreeBlock(selectedFrom);
         else renderMemberTable(selectedFrom);
         
-        // Trigger auto-scale after rendering
-        setTimeout(autoScaleCanvas, 100);
+        // Trigger scale after render
+        setTimeout(scalePCView, 100);
     }
 
     function renderTreeBlock(target) {
@@ -718,7 +779,7 @@ Here is your complete, modified HTML file:
         document.getElementById('canvas').innerHTML = html;
         document.getElementById('canvas-header').style.display = 'block';
         
-        setTimeout(autoScaleCanvas, 100);
+        setTimeout(scalePCView, 100);
     }
     function makeLineageTable(member, chain, meeting, label) {
         let tbl = `<div class="lineage-table-container"><div class="table-title">${properCase(displayName(member.name))}</div><table class="lineage-table"><thead><tr><th>#</th><th>Name</th><th>Gen</th><th>Relation</th></tr></thead><tbody>`;
@@ -741,7 +802,7 @@ Here is your complete, modified HTML file:
         document.getElementById('canvas').innerHTML = `<div class="tree-root-layout" id="pdf-area"><div style="display:flex; gap:60px; align-items:flex-start;">${col1}${col2}</div><div class="pdf-signature">${ARCHITECT_INFO}</div></div>`;
         document.getElementById('canvas-header').style.display = 'block';
         
-        setTimeout(autoScaleCanvas, 100);
+        setTimeout(scalePCView, 100);
     }
     function buildTreeColumn(chain, rootName, label) {
         let col = `<div style="display:flex; flex-direction:column; align-items:center; gap:15px;"><div style="font-weight:800; color:var(--dark-blue); border-bottom:2px solid var(--gold); padding-bottom:6px;">${label}</div>`;
@@ -767,6 +828,7 @@ Here is your complete, modified HTML file:
         
         // Temporarily remove scale for clean PDF generation
         const currentTransform = el.style.transform;
+        const currentMargin = el.style.marginBottom;
         el.style.transform = 'none';
         el.style.marginBottom = '0';
 
@@ -785,6 +847,7 @@ Here is your complete, modified HTML file:
         
         // Restore scale
         el.style.transform = currentTransform;
+        el.style.marginBottom = currentMargin;
         
         const img = canvas.toDataURL('image/png');
         const w = canvas.width/2 * 0.264583, h = canvas.height/2 * 0.264583;
