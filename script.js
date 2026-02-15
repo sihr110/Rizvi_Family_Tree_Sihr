@@ -529,3 +529,19 @@ window.onload = () => {
 
     autoLoadExcel();
 };
+
+
+
+// Add mobile detection and expose functions for mobile.js
+window.renderTreeBlock = renderTreeBlock;
+window.renderBothRoots = renderBothRoots;
+window.exportPDF = exportPDF;
+
+// Ensure mobile optimizations are applied after render
+const originalInitRender = initRender;
+initRender = function() {
+    originalInitRender();
+    if (window.innerWidth <= 768 && typeof optimizeRenderedTreeForMobile !== 'undefined') {
+        setTimeout(optimizeRenderedTreeForMobile, 100);
+    }
+};

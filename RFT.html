@@ -5,95 +5,68 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rizvi Family Tree – Path Suite</title>
 
+    <!-- PC Styles - Unchanged -->
     <link rel="stylesheet" href="style.css">
+    
+    <!-- Mobile Only - loads only on mobile -->
+    <link rel="stylesheet" href="mobile.css" media="only screen and (max-width: 768px)">
 
+    <!-- Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
+    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
 </head>
 <body>
 
 <div class="pg-1">
-
-    <div class="top-main-heading">
-        Rizvi Family Tree
-    </div>
+    <div class="top-main-heading">Rizvi Family Tree</div>
 
     <div class="fixed-top-section" id="topSection">
-
         <div class="main-menu">
             <div class="menu-item active" data-panel="search-panel">Search Tree</div>
             <div class="menu-item" data-panel="root-panel">Root Relative</div>
         </div>
 
+        <!-- Search Panel -->
         <div id="search-panel" class="menu-panel active">
             <div class="search-container">
-
                 <div class="search-box-wrapper">
                     <label class="search-label">Search Member</label>
-                    <input type="text" id="si-from" class="search-input"
-                           placeholder="Search name..."
-                           autocomplete="off"
-                           onkeyup="doSearch(this, 'sd-from')">
+                    <input type="text" id="si-from" class="search-input" placeholder="Search name..." autocomplete="off" onkeyup="doSearch(this, 'sd-from')">
                     <div id="sd-from" class="dropdown"></div>
                 </div>
 
                 <div></div>
 
                 <div class="view-toggle-group">
-                    <label class="view-toggle-item">
-                        <input type="radio" name="view-mode" value="tree"
-                               onchange="initRender(); toggleCheckboxesVisibility();" checked>
-                        🌳 Tree
-                    </label>
-                    <label class="view-toggle-item">
-                        <input type="radio" name="view-mode" value="table"
-                               onchange="initRender(); toggleCheckboxesVisibility();">
-                        📋 Table
-                    </label>
+                    <label class="view-toggle-item"><input type="radio" name="view-mode" value="tree" onchange="initRender(); toggleCheckboxesVisibility();" checked> 🌳 Tree</label>
+                    <label class="view-toggle-item"><input type="radio" name="view-mode" value="table" onchange="initRender(); toggleCheckboxesVisibility();"> 📋 Table</label>
                 </div>
 
-                <label class="sib-toggle" id="sib-check-label">
-                    <input type="checkbox" id="sib-check" onchange="initRender()" checked>
-                    Siblings
-                </label>
-
-                <label class="sib-toggle" id="desc-check-label">
-                    <input type="checkbox" id="desc-check" onchange="initRender()" checked>
-                    Descendants
-                </label>
-
-                <label class="sib-toggle" id="root-check-label">
-                    <input type="checkbox" id="search-from-root-check" onchange="initRender()">
-                    Root
-                </label>
+                <label class="sib-toggle" id="sib-check-label"><input type="checkbox" id="sib-check" onchange="initRender()" checked> Siblings</label>
+                <label class="sib-toggle" id="desc-check-label"><input type="checkbox" id="desc-check" onchange="initRender()" checked> Descendants</label>
+                <label class="sib-toggle" id="root-check-label"><input type="checkbox" id="search-from-root-check" onchange="initRender()"> Root</label>
 
                 <button class="btn reset-btn" onclick="resetSearch()">Reset</button>
                 <button class="btn pdf-btn" onclick="exportPDF()">Save PDF</button>
             </div>
         </div>
 
+        <!-- Root Panel -->
         <div id="root-panel" class="menu-panel">
-            <div class="search-container"
-                 style="grid-template-columns: 2.5fr 2.5fr 0.8fr auto auto auto auto;">
-
+            <div class="search-container" style="grid-template-columns: 2.5fr 2.5fr 0.8fr auto auto auto auto;">
                 <div class="search-box-wrapper">
                     <label class="search-label">First Member</label>
-                    <input type="text" id="si-root1" class="search-input"
-                           placeholder="Search first..."
-                           autocomplete="off"
-                           onkeyup="doSearchRoot(this, 'sd-root1', 'first')">
+                    <input type="text" id="si-root1" class="search-input" placeholder="Search first..." autocomplete="off" onkeyup="doSearchRoot(this, 'sd-root1', 'first')">
                     <div id="sd-root1" class="dropdown"></div>
                 </div>
 
                 <div class="search-box-wrapper">
                     <label class="search-label">Second Member</label>
-                    <input type="text" id="si-root2" class="search-input"
-                           placeholder="Search second..."
-                           autocomplete="off"
-                           onkeyup="doSearchRoot(this, 'sd-root2', 'second')">
+                    <input type="text" id="si-root2" class="search-input" placeholder="Search second..." autocomplete="off" onkeyup="doSearchRoot(this, 'sd-root2', 'second')">
                     <div id="sd-root2" class="dropdown"></div>
                 </div>
 
@@ -107,9 +80,7 @@
         </div>
 
         <div class="loading-timestamp-container">
-            <div class="loading-timestamp-ui" id="ui-load-stamp">
-                LAST DATA UPDATED ON: DATA.XLSX NOT LOADED — CHECK FILE
-            </div>
+            <div class="loading-timestamp-ui" id="ui-load-stamp">LAST DATA UPDATED ON: DATA.XLSX NOT LOADED — CHECK FILE</div>
         </div>
     </div>
 
@@ -117,13 +88,15 @@
         <div id="canvas-header" class="canvas-main-title">Rizvi Family Tree</div>
         <div id="canvas"></div>
     </div>
-
 </div>
 
+<!-- Admin Loader -->
 <div id="loader-gear" title="Admin load (password required)">⚙️</div>
 <input type="file" id="hidden-file-input" accept=".xlsx,.xls">
 
+<!-- Scripts -->
 <script src="script.js"></script>
+<script src="mobile.js"></script>
 
 </body>
 </html>

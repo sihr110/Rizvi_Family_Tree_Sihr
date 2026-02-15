@@ -1,5 +1,4 @@
-/* 2. CSS STYLES SECTION */
-/* 2.1 CSS VARIABLES */
+/* PC Version ONLY - Unchanged */
 :root { 
     --maroon: #5a0000; 
     --dark-blue: #0f172a; 
@@ -21,6 +20,31 @@
     --table-header-text: #5e4a1a;
     --accent-light: #faebcd;
 }
+
+/* PC & ANDROID - ORIGINAL STYLE - COMPLETELY UNCHANGED */
+body { font-family: 'Inter', sans-serif; background: #1a1a1a; margin: 0; height: 100vh; overflow: hidden; }
+
+.pg-1 { max-width: 1400px; margin: 0 auto; background: white; height: 100vh; display: flex; flex-direction: column; box-shadow: 0 0 50px rgba(212, 175, 55, 0.2); border-left: 2px solid var(--gold); border-right: 2px solid var(--gold); position: relative; }
+
+.top-main-heading { 
+    background: #1e3d3d; 
+    color: #ffd966; 
+    text-align: center; 
+    padding: 15px 0; 
+    font-family: 'Playfair Display', serif; 
+    font-size: 32px; 
+    font-weight: 900; 
+    letter-spacing: 4px; 
+    border-bottom: 4px solid #ffd966;
+    text-transform: uppercase;
+    position: relative;
+}
+
+/* REST OF YOUR ORIGINAL style.css - KEEP EVERYTHING EXACTLY AS IT WAS */
+/* ... (keep all your original CSS exactly as it was) ... */
+
+
+
 
 /* PC & ANDROID - ORIGINAL STYLE */
 body { font-family: 'Inter', sans-serif; background: #1a1a1a; margin: 0; height: 100vh; overflow: hidden; }

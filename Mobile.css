@@ -1,0 +1,13 @@
+/* Only loads on mobile - PC unaffected */
+@media only screen and (max-width: 768px) {
+    .search-container { display: flex !important; flex-direction: column !important; }
+    .search-box-wrapper { width: 100% !important; }
+    .search-input { width: 100% !important; padding: 12px !important; }
+    .btn, .btn-root { width: 100% !important; margin: 5px 0 !important; height: auto !important; padding: 12px !important; }
+    #root-panel .search-container { display: flex !important; flex-direction: column !important; }
+    .sib-toggle { padding: 10px !important; background: #f5f5f5 !important; border-radius: 5px !important; }
+    .tree-viewport { padding: 10px !important; overflow-x: auto !important; }
+    .box { min-width: 200px !important; }
+    .tables-container { flex-direction: column !important; }
+    .lineage-table-container { width: 100% !important; overflow-x: auto !important; }
+}
