@@ -2,15 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- CHANGED: This meta tag now allows zooming on mobile -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title>Rizvi Family Tree – Path Suite</title>
 
     <!-- PC Styles - Unchanged -->
     <link rel="stylesheet" href="style.css">
     
-    <!-- Mobile Only - loads only on mobile -->
-    
-
     <!-- Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -94,7 +92,7 @@
 <div id="loader-gear" title="Admin load (password required)">⚙️</div>
 <input type="file" id="hidden-file-input" accept=".xlsx,.xls">
 
-<!-- Scripts -->
+<!-- Scripts - ONLY script.js, NO mobile files -->
 <script src="script.js"></script>
 
 </body>

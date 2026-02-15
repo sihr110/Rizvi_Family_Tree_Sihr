@@ -190,3 +190,68 @@ body { font-family: 'Inter', sans-serif; background: #1a1a1a; margin: 0; height:
 #hidden-file-input {
     display: none;
 }
+
+/* Mobile portrait mode - fit vertically, allow zoom */
+@media only screen and (max-width: 768px) and (orientation: portrait) {
+    body {
+        overflow: auto !important;
+        height: auto !important;
+        min-height: 100vh;
+    }
+    
+    .pg-1 {
+        max-width: 100% !important;
+        height: auto !important;
+        min-height: 100vh;
+        margin: 0 !important;
+    }
+    
+    .fixed-top-section {
+        position: sticky !important;
+        top: 0;
+        z-index: 1000;
+        padding: 10px !important;
+    }
+    
+    .search-container {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        gap: 8px !important;
+    }
+    
+    .view-toggle-group {
+        width: 100% !important;
+        justify-content: center !important;
+    }
+    
+    .sib-toggle {
+        width: 100% !important;
+        justify-content: flex-start !important;
+    }
+    
+    .btn, .btn-root {
+        width: 100% !important;
+        margin: 3px 0 !important;
+    }
+    
+    .tree-viewport {
+        padding: 20px 5px !important;
+        overflow: auto !important;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .tree-root-layout {
+        transform: scale(0.9);
+        transform-origin: top center;
+    }
+    
+    .box {
+        min-width: 220px !important;
+        font-size: 14px !important;
+    }
+}
+
+/* Allow zooming */
+meta[name=viewport] {
+    content: "width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes";
+}
