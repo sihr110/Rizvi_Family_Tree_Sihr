@@ -1,6 +1,11 @@
-**Confirmed.** I have added **numbered** headings to the code. No logic has been changed.
+I have updated your code.
 
-Here is your complete HTML file with numbered navigation markers:
+**Changes Made:**
+1.  **Mobile CSS:** I forced the layout to stay "Wide" (like PC) instead of stacking vertically.
+2.  **Auto-Scaling Logic:** I added a JavaScript function that automatically shrinks the tree to fit your phone screen perfectly.
+3.  **Zoom Enabled:** You can now **Pinch-to-Zoom** (spread two fingers) to see details clearly, just like a map.
+
+Here is your complete, modified HTML file:
 
 ```html
 <!DOCTYPE html>
@@ -9,7 +14,8 @@ Here is your complete HTML file with numbered navigation markers:
     
     <!-- 1. HTML HEAD & EXTERNAL LIBRARIES -->
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <!-- Viewport allows up to 5x zoom for mobile -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title>Rizvi Family Tree – Path Suite</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -41,22 +47,50 @@ Here is your complete HTML file with numbered navigation markers:
             --accent-light: #faebcd;
         }
 
-        /* 2.2 MOBILE RESPONSIVENESS (IPHONE/ANDROID) */
+        /* 2.2 MOBILE RESPONSIVENESS (IPHONE/ANDROID) - MODIFIED FOR PC LAYOUT + ZOOM */
         body { font-family: 'Inter', sans-serif; background: #1a1a1a; margin: 0; height: 100vh; overflow: hidden; }
 
         @media screen and (max-width: 768px) {
-            body { overflow: auto; -webkit-overflow-scrolling: touch; height: auto; min-height: 100vh; }
-            .pg-1 { height: auto; min-height: 100vh; overflow-x: hidden; border-left: none; border-right: none; }
-            .top-main-heading { font-size: 24px; padding: 10px 0; letter-spacing: 2px; position: relative; }
+            body { 
+                overflow: auto; 
+                -webkit-overflow-scrolling: touch; 
+                height: auto;
+                min-height: 100vh;
+            }
+            .pg-1 { 
+                height: auto; 
+                min-height: 100vh;
+                border-left: none;
+                border-right: none;
+                /* Allow the main container to handle the zoomed width */
+                overflow-x: hidden; 
+            }
+            .top-main-heading {
+                font-size: 20px;
+                padding: 10px 0;
+                letter-spacing: 1px;
+                position: relative;
+            }
             .menu-toggle {
-                position: absolute; top: 10px; right: 15px; background: var(--gold); color: black; border: none;
-                border-radius: 50%; width: 40px; height: 40px; font-size: 24px; font-weight: bold; cursor: pointer;
+                position: absolute; top: 5px; right: 15px; background: var(--gold); color: black; border: none;
+                border-radius: 50%; width: 35px; height: 35px; font-size: 20px; font-weight: bold; cursor: pointer;
                 z-index: 2000; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.2);
             }
-            .fixed-top-section { transition: max-height 0.3s ease, padding 0.3s ease; overflow: hidden; max-height: 500px; padding: 10px 15px; }
+            .fixed-top-section { 
+                transition: max-height 0.3s ease, padding 0.3s ease; 
+                overflow: hidden; 
+                max-height: 80vh; /* Limit height for menu */
+                padding: 10px 15px; 
+                background: white;
+                z-index: 1000;
+            }
             .fixed-top-section.collapsed { max-height: 0; padding-top: 0; padding-bottom: 0; margin-bottom: 0; border-bottom: none; }
+            
+            /* MENU ITEMS: Keep stacked for usability */
             .main-menu .menu-item { font-size: 11px; padding: 8px 2px; }
-            .search-container { display: flex; flex-direction: column; gap: 10px; padding: 12px; width: 100%; box-sizing: border-box; }
+            
+            /* SEARCH: Keep stacked for usability */
+            .search-container { display: flex; flex-direction: column; gap: 8px; padding: 10px; width: 100%; box-sizing: border-box; }
             .search-box-wrapper { width: 100%; }
             .search-input { width: 100%; font-size: 14px; padding: 10px; }
             .view-toggle-group { width: 100%; justify-content: space-around; height: auto; padding: 8px 0; }
@@ -64,19 +98,54 @@ Here is your complete HTML file with numbered navigation markers:
             .sib-toggle { font-size: 12px; justify-content: flex-start; width: 100%; }
             .btn, .btn-root { width: 100%; margin: 2px 0; height: 44px; font-size: 14px; }
             .btn-root { padding: 12px; }
-            .tree-viewport { padding: 15px 10px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-            .tree-root-layout { padding-bottom: 30px; width: 100%; align-items: stretch; }
-            .box { min-width: 220px; max-width: 100%; margin: 0 auto; }
+
+            /* --- KEY CHANGE: FORCE PC LAYOUT FOR CANVAS --- */
+            .tree-viewport { 
+                padding: 20px 10px; 
+                overflow: visible; /* Let the transform handle overflow */
+                display: flex; 
+                justify-content: center; /* Center the scaled content */
+                background: #fffcf8; 
+            }
+            .tree-root-layout { 
+                padding-bottom: 50px; 
+                /* Force PC-like width so it can be scaled down */
+                width: max-content; 
+                min-width: 100%; /* Ensure it doesn't shrink smaller than screen before scaling */
+                align-items: flex-start; /* Align tops for side-by-side */
+                transform-origin: top center; /* Scale from top center */
+                transition: transform 0.2s ease-out;
+            }
+
+            /* Keep boxes same size as PC, just scaled down by parent */
+            .box { min-width: 260px; margin: 0 auto; }
             .box-body { padding: 10px; }
             .member-name { font-size: 18px !important; }
             .father-name { font-size: 11px; }
-            .daughters-wrapper { min-width: 220px !important; }
-            .h-row { gap: 10px; flex-wrap: wrap; }
-            .tables-container { flex-direction: column; gap: 20px; overflow-x: auto; }
-            .lineage-table-container { max-width: 100%; min-width: auto; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-            .lineage-table { min-width: 500px; }
+            .daughters-wrapper { min-width: 280px !important; }
+            
+            /* Force side-by-side tables (PC Style) instead of stacking */
+            .tables-container { 
+                flex-direction: row !important; /* PC Layout */
+                gap: 20px; 
+                width: max-content;
+            }
+            
+            .lineage-table-container { 
+                min-width: 300px; 
+                /* Remove max-width to allow PC style */
+                max-width: none; 
+                width: 300px;
+            }
+            .lineage-table { 
+                min-width: 300px; 
+                width: 300px;
+            }
             .summary-content { grid-template-columns: 1fr !important; }
-            .gen-diff-badge { padding: 10px; font-size: 13px; }
+            
+            /* Hide scrollbars for cleaner look, user can pinch zoom */
+            ::-webkit-scrollbar { width: 0px; background: transparent; }
+            
             #loader-gear { bottom: 15px; right: 15px; font-size: 24px; background: rgba(0,0,0,0.5); padding: 8px; border-radius: 50%; color: var(--gold); }
         }
 
@@ -84,7 +153,7 @@ Here is your complete HTML file with numbered navigation markers:
         .pg-1 { max-width: 1400px; margin: 0 auto; background: white; height: 100vh; display: flex; flex-direction: column; box-shadow: 0 0 50px rgba(212, 175, 55, 0.2); border-left: 2px solid var(--gold); border-right: 2px solid var(--gold); position: relative; }
         .top-main-heading { background: #1e3d3d; color: #ffd966; text-align: center; padding: 15px 0; font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 900; letter-spacing: 4px; border-bottom: 4px solid #ffd966; text-transform: uppercase; position: relative; }
         .menu-toggle { display: none; }
-        @media screen and (max-width: 768px) { .menu-toggle { display: flex; } }
+        @media screen and (min-width: 769px) { .menu-toggle { display: none; } }
 
         /* 2.4 SEARCH AREA STYLES */
         .fixed-top-section { padding: 20px 30px 10px 30px; background: white; z-index: 1000; border-bottom: 1px solid #eee; }
@@ -324,7 +393,6 @@ Here is your complete HTML file with numbered navigation markers:
     });
 
     // 4.4 MENU & UI INTERACTIONS
-    // Menu toggle for mobile
     document.getElementById('menuToggle').addEventListener('click', function() {
         document.getElementById('topSection').classList.toggle('collapsed');
     });
@@ -458,7 +526,42 @@ Here is your complete HTML file with numbered navigation markers:
         return chain;
     }
 
-    // 4.6 RENDERING LOGIC (TREE & TABLE)
+    // 4.6 MOBILE AUTO-SCALING LOGIC (NEW)
+    function autoScaleCanvas() {
+        // Only apply scaling on mobile devices
+        if (window.innerWidth > 768) return;
+
+        const container = document.getElementById('pdf-area');
+        if (!container) return;
+
+        // 1. Reset transform to measure natural width
+        container.style.transform = 'none';
+        container.style.marginBottom = '0';
+
+        // 2. Measure widths
+        const viewportWidth = window.innerWidth;
+        const contentWidth = container.offsetWidth;
+
+        // 3. If content is wider than screen, scale it down
+        if (contentWidth > viewportWidth) {
+            // Calculate scale factor (subtract 40px for padding)
+            const scale = (viewportWidth - 30) / contentWidth;
+            container.style.transform = `scale(${scale})`;
+            
+            // 4. Fix the whitespace gap at the bottom caused by scaling
+            // The element shrinks visually but keeps its DOM height. 
+            // We must pull up the bottom margin to close the gap.
+            const scaledHeight = container.offsetHeight * scale;
+            const originalHeight = container.offsetHeight;
+            const gap = originalHeight - scaledHeight;
+            container.style.marginBottom = `-${gap}px`;
+        }
+    }
+
+    // Listen for screen rotation
+    window.addEventListener('resize', autoScaleCanvas);
+
+    // 4.7 RENDERING LOGIC (TREE & TABLE)
     function initRender() {
         const mode = document.querySelector('input[name="view-mode"]:checked')?.value;
         if (!mode) {
@@ -474,6 +577,9 @@ Here is your complete HTML file with numbered navigation markers:
         document.getElementById('canvas-header').style.display = 'block';
         if (mode === 'tree') renderTreeBlock(selectedFrom);
         else renderMemberTable(selectedFrom);
+        
+        // Trigger auto-scale after rendering
+        setTimeout(autoScaleCanvas, 100);
     }
 
     function renderTreeBlock(target) {
@@ -581,7 +687,7 @@ Here is your complete HTML file with numbered navigation markers:
         document.getElementById('canvas').innerHTML = html;
     }
 
-    // 4.7 ROOT RELATIVE LOGIC (TWO MEMBER SEARCH)
+    // 4.8 ROOT RELATIVE LOGIC (TWO MEMBER SEARCH)
     function findCommonRoot() {
         if (!rootSearchFirst || !rootSearchSecond) return alert('Select two members');
         selectedFrom = rootSearchFirst; selectedTo = rootSearchSecond;
@@ -611,6 +717,8 @@ Here is your complete HTML file with numbered navigation markers:
         html += `</div><div class="pdf-signature">${ARCHITECT_INFO}</div></div>`;
         document.getElementById('canvas').innerHTML = html;
         document.getElementById('canvas-header').style.display = 'block';
+        
+        setTimeout(autoScaleCanvas, 100);
     }
     function makeLineageTable(member, chain, meeting, label) {
         let tbl = `<div class="lineage-table-container"><div class="table-title">${properCase(displayName(member.name))}</div><table class="lineage-table"><thead><tr><th>#</th><th>Name</th><th>Gen</th><th>Relation</th></tr></thead><tbody>`;
@@ -632,6 +740,8 @@ Here is your complete HTML file with numbered navigation markers:
         const col2 = buildTreeColumn(c2, rootName, 'Member 2');
         document.getElementById('canvas').innerHTML = `<div class="tree-root-layout" id="pdf-area"><div style="display:flex; gap:60px; align-items:flex-start;">${col1}${col2}</div><div class="pdf-signature">${ARCHITECT_INFO}</div></div>`;
         document.getElementById('canvas-header').style.display = 'block';
+        
+        setTimeout(autoScaleCanvas, 100);
     }
     function buildTreeColumn(chain, rootName, label) {
         let col = `<div style="display:flex; flex-direction:column; align-items:center; gap:15px;"><div style="font-weight:800; color:var(--dark-blue); border-bottom:2px solid var(--gold); padding-bottom:6px;">${label}</div>`;
@@ -651,9 +761,15 @@ Here is your complete HTML file with numbered navigation markers:
         if (p) { selectedFrom = p; document.getElementById('si-from').value = `${displayName(p.name)} (${p.gen})`; initRender(); }
     }
 
-    // 4.8 PDF EXPORT LOGIC
+    // 4.9 PDF EXPORT LOGIC
     async function exportPDF() {
         const el = document.getElementById('pdf-area'); if (!el) return alert('Generate tree/table first');
+        
+        // Temporarily remove scale for clean PDF generation
+        const currentTransform = el.style.transform;
+        el.style.transform = 'none';
+        el.style.marginBottom = '0';
+
         let sub = '';
         if (rootSearchFirst && rootSearchSecond) sub = `${properCase(displayName(rootSearchFirst.name))} & ${properCase(displayName(rootSearchSecond.name))}`;
         else if (selectedFrom) sub = properCase(displayName(selectedFrom.name));
@@ -666,6 +782,10 @@ Here is your complete HTML file with numbered navigation markers:
         el.appendChild(foot);
         const canvas = await html2canvas(el, { scale:2, backgroundColor:'white' });
         el.removeChild(head); el.removeChild(foot);
+        
+        // Restore scale
+        el.style.transform = currentTransform;
+        
         const img = canvas.toDataURL('image/png');
         const w = canvas.width/2 * 0.264583, h = canvas.height/2 * 0.264583;
         const pdf = new jspdf.jsPDF({ orientation: w>h ? 'l' : 'p', unit: 'mm', format: [w+40, h+40] });
@@ -674,7 +794,7 @@ Here is your complete HTML file with numbered navigation markers:
     }
     function formatCurrentTime() { const d = new Date(); return `${d.toLocaleString('en-GB', { day:'2-digit', month:'short', year:'numeric' })} - ${d.getHours()%12||12}:${String(d.getMinutes()).padStart(2,'0')}${d.getHours()>=12?'pm':'am'}`; }
 
-    // 4.9 INITIALIZATION (ON WINDOW LOAD)
+    // 4.10 INITIALIZATION (ON WINDOW LOAD)
     window.onload = () => {
         initMenu();
         clearViewRadios();
