@@ -1294,7 +1294,42 @@
             }
         }
 
-           // ======================================================================
+        function groupSisters(sistersArray, fatherName, type) {
+            if (!sistersArray || sistersArray.length === 0) return '';
+            
+            let headerText = type === 'siblings' ? 'SISTERS' : 'DAUGHTERS';
+            
+            let html = `<div class="sisters-group-box">`;
+            html += `<div class="sisters-header"># ${headerText}</div>`;
+            
+            html += `<table style="width:100%; border-collapse: collapse; margin: 8px 0;">`;
+            html += `<tr style="border-bottom: 1px solid var(--sisters-border);">`;
+            html += `<th style="text-align: left; padding: 4px 8px; font-size: 11px; color: var(--maroon);">Name</th>`;
+            html += `<th style="text-align: right; padding: 4px 8px; font-size: 11px; color: var(--maroon);">Gen</th>`;
+            html += `</tr>`;
+            
+            sistersArray.forEach(sister => {
+                // Create clickable row
+                const memberData = encodeURIComponent(JSON.stringify(sister));
+                html += `<tr onclick='handleBoxClick(JSON.parse(decodeURIComponent("${memberData}")))' style="cursor: pointer;">`;
+                html += `<td style="padding: 4px 8px; border-bottom: 1px dashed #fecaca; font-weight: 600; transition: background 0.2s;" 
+                          onmouseover="this.style.background='#faebcd'" 
+                          onmouseout="this.style.background='transparent'">${displayName(sister.name)}</td>`;
+                html += `<td style="padding: 4px 8px; border-bottom: 1px dashed #fecaca; text-align: right; color: var(--maroon); 
+                          transition: background 0.2s;"
+                          onmouseover="this.style.background='#faebcd'" 
+                          onmouseout="this.style.background='transparent'">${sister.gen}</td>`;
+                html += `</tr>`;
+            });
+            
+            html += `</table>`;
+            html += `<div class="sister-father">*D/o ${displayName(fatherName)}*</div>`;
+            html += `</div>`;
+            
+            return html;
+        }
+
+        // ======================================================================
         // ========================== 7- RENDER FUNCTIONS ======================
         // ======================================================================
         function renderIndividualView() {
@@ -1468,33 +1503,8 @@
             </div>`;
         }
 
-        function groupSisters(sistersArray, fatherName, type) {
-            if (!sistersArray || sistersArray.length === 0) return '';
-            
-            let headerText = type === 'siblings' ? 'SISTERS' : 'DAUGHTERS';
-            
-            let html = `<div class="sisters-group-box">`;
-            html += `<div class="sisters-header"># ${headerText}</div>`;
-            
-            html += `<table style="width:100%; border-collapse: collapse; margin: 8px 0;">`;
-            html += `<tr style="border-bottom: 1px solid var(--sisters-border);">`;
-            html += `<th style="text-align: left; padding: 4px 8px; font-size: 11px; color: var(--maroon);">Name</th>`;
-            html += `<th style="text-align: right; padding: 4px 8px; font-size: 11px; color: var(--maroon);">Gen</th>`;
-            html += `</tr>`;
-            
-            sistersArray.forEach(sister => {
-                html += `<tr>`;
-                html += `<td style="padding: 4px 8px; border-bottom: 1px dashed #fecaca; font-weight: 600;">${displayName(sister.name)}</td>`;
-                html += `<td style="padding: 4px 8px; border-bottom: 1px dashed #fecaca; text-align: right; color: var(--maroon);">${sister.gen}</td>`;
-                html += `</tr>`;
-            });
-            
-            html += `</table>`;
-            html += `<div class="sister-father">*D/o ${displayName(fatherName)}*</div>`;
-            html += `</div>`;
-            
-            return html;
-        }
+
+
 
         // ======================================================================
         // ========================== 8- ROOT RELATIVE FUNCTIONS ===============
@@ -1851,6 +1861,20 @@
         }
 
 
+       // Show toast notification instead of alert
+setTimeout(() => {
+    if (!document.getElementById('dashboardSection').classList.contains('hidden')) {
+        showToast(`✅ Data loaded automatically! ${db.length} family members found.`, 'success');
+    }
+}, 500);
+
+
+
+
+
+
+
+
         // ======================================================================
         // ========================== 10- AUTO LOAD FUNCTION ====================
         // ======================================================================
@@ -1966,13 +1990,12 @@
                                 console.log(`✅ SUCCESS! Loaded ${db.length} members from:`, path);
                                 found = true;
                                 
-                       // Optional: Show success message
-setTimeout(() => {
-    if (!document.getElementById('dashboardSection').classList.contains('hidden')) {
-        // Only show if on dashboard
-        alert(`✅ Data loaded automatically!\n${db.length} family members found.`);
-    }
-}, 500);
+                                // Show toast notification instead of alert
+                                setTimeout(() => {
+                                    if (!document.getElementById('dashboardSection').classList.contains('hidden')) {
+                                        showToast(`✅ Data loaded automatically! ${db.length} family members found.`, 'success');
+                                    }
+                                }, 500);
                             } else {
                                 throw new Error('No valid data in file');
                             }
@@ -2002,6 +2025,9 @@ setTimeout(() => {
                 }
             }, 10000); // 10 second timeout
         }
+
+
+
 
         // ======================================================================
         // ========================== 11- PASSWORD FUNCTIONS ===================
