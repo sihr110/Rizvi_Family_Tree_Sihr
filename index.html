@@ -12,7 +12,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     
     <style>
-        /* ========== CSS STYLES (unchanged - keep your existing CSS here) ========== */
+        /* ========== CSS STYLES ========== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         :root {
@@ -811,6 +811,37 @@
             color: #fecaca;
         }
 
+        /* ========== TOGGLE VIEW BUTTON ========== */
+        .toggle-view-btn {
+            position: fixed; bottom: 20px; left: 20px; z-index: 9999;
+            background: #5a0000; color: white; border: 2px solid #d4af37;
+            border-radius: 50px; padding: 10px 20px; font-size: 14px;
+            font-weight: bold; cursor: pointer; display: flex; align-items: center;
+            gap: 8px; opacity: 0.8;
+        }
+        .toggle-view-btn:hover {
+            opacity: 1;
+        }
+        body.canvas-only .app-header,
+        body.canvas-only .app-footer,
+        body.canvas-only .fixed-header-section,
+        body.canvas-only .filter-buttons,
+        body.canvas-only .search-row,
+        body.canvas-only .root-search-row,
+        body.canvas-only .border-line,
+        body.canvas-only .dashboard-grid,
+        body.canvas-only .exit-btn-container {
+            display: none !important;
+        }
+        body.canvas-only .main-content {
+            height: 100vh;
+        }
+        @media (max-width: 768px) {
+            .toggle-view-btn {
+                bottom: 15px; left: 15px; padding: 8px 16px; font-size: 12px;
+            }
+        }
+
         @media (max-width: 900px) {
             .top-row {
                 grid-template-columns: repeat(2, 1fr);
@@ -957,6 +988,11 @@
         <div class="app-footer">
             Imran Haider S/o Syed Risalat Hussain Rizvi | 0332-787-6010
         </div>
+    </div>
+
+    <!-- Toggle View Button -->
+    <div class="toggle-view-btn" id="toggleViewBtn" onclick="toggleCanvasView()">
+        <span>👁️</span> <span>Full Screen</span>
     </div>
 
     <script>
@@ -1503,9 +1539,6 @@
             </div>`;
         }
 
-
-
-
         // ======================================================================
         // ========================== 8- ROOT RELATIVE FUNCTIONS ===============
         // ======================================================================
@@ -1625,7 +1658,7 @@
             document.getElementById('rootContent').innerHTML = html;
         }
 
-                // ======================================================================
+        // ======================================================================
         // ========================== 9- PDF EXPORT FUNCTIONS ==================
         // ================ (USING WORKING FORMULA FROM YOUR FILE) =============
         // ======================================================================
@@ -1860,21 +1893,6 @@
             }
         }
 
-
-       // Show toast notification instead of alert
-setTimeout(() => {
-    if (!document.getElementById('dashboardSection').classList.contains('hidden')) {
-        showToast(`✅ Data loaded automatically! ${db.length} family members found.`, 'success');
-    }
-}, 500);
-
-
-
-
-
-
-
-
         // ======================================================================
         // ========================== 10- AUTO LOAD FUNCTION ====================
         // ======================================================================
@@ -2026,9 +2044,6 @@ setTimeout(() => {
             }, 10000); // 10 second timeout
         }
 
-
-
-
         // ======================================================================
         // ========================== 11- PASSWORD FUNCTIONS ===================
         // ======================================================================
@@ -2160,6 +2175,19 @@ setTimeout(() => {
                 toast.style.animation = 'fadeOut 0.3s ease forwards';
                 setTimeout(() => toast.remove(), 300);
             }, 3000);
+        }
+
+        // ======================================================================
+        // ========================== TOGGLE CANVAS VIEW =======================
+        // ======================================================================
+        function toggleCanvasView() {
+            document.body.classList.toggle('canvas-only');
+            const btn = document.getElementById('toggleViewBtn');
+            if (document.body.classList.contains('canvas-only')) {
+                btn.innerHTML = '<span>🔍</span> <span>Exit</span>';
+            } else {
+                btn.innerHTML = '<span>👁️</span> <span>Full Screen</span>';
+            }
         }
 
         // ======================================================================
