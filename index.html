@@ -11,7 +11,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     
-    <style>
+     <style>
         /* ========== CSS STYLES ========== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -153,7 +153,7 @@
             background: var(--pdf-grey-dark);
         }
 
-        /* Menu toggle - hidden on desktop */
+        /* Menu toggle - hidden by default on desktop */
         .menu-toggle {
             display: none;
         }
@@ -842,8 +842,138 @@
             height: 100vh;
         }
 
-        /* ========== MASTERPIECE MOBILE OPTIMIZATIONS - PC UNCHANGED ========== */
-        @media screen and (max-width: 768px) {
+        /* ========== DESKTOP FIRST - FORCE PC STYLES ========== */
+        @media screen and (min-width: 769px) {
+            /* Force desktop styles - these will always apply on PC */
+            .menu-toggle {
+                display: none !important;
+            }
+            
+            .fixed-header-section {
+                max-height: none !important;
+                padding: 15px 15px 0 15px !important;
+            }
+            
+            .fixed-header-section.collapsed {
+                max-height: none !important;
+                padding: 15px 15px 0 15px !important;
+            }
+            
+            .search-row {
+                flex-direction: row !important;
+            }
+            
+            .root-search-row {
+                flex-direction: row !important;
+            }
+            
+            .search-wrapper {
+                min-width: 300px !important;
+            }
+            
+            .search-input, .root-search-input {
+                width: 100% !important;
+                font-size: 13px !important;
+                padding: 8px 15px !important;
+                height: auto !important;
+            }
+            
+            .filter-buttons {
+                width: auto !important;
+            }
+            
+            .filter-btn {
+                flex: none !important;
+                width: auto !important;
+                padding: 6px 14px !important;
+                font-size: 13px !important;
+            }
+            
+            .header-actions {
+                width: auto !important;
+            }
+            
+            .header-btn {
+                flex: none !important;
+                width: auto !important;
+                padding: 6px 14px !important;
+                font-size: 13px !important;
+                height: auto !important;
+            }
+            
+            .top-row {
+                grid-template-columns: repeat(3, 1fr) !important;
+            }
+            
+            .dashboard-card {
+                height: 140px !important;
+                padding: 20px 10px !important;
+            }
+            
+            .card-icon {
+                font-size: 36px !important;
+            }
+            
+            .card-title {
+                font-size: 16px !important;
+            }
+            
+            .exit-btn-container {
+                width: 70% !important;
+                height: auto !important;
+                padding: 8px 16px !important;
+            }
+            
+            .box {
+                min-width: 240px !important;
+                max-width: 280px !important;
+            }
+            
+            .member-name {
+                font-size: 16px !important;
+            }
+            
+            .sisters-group-box {
+                min-width: 300px !important;
+                max-width: 380px !important;
+            }
+            
+            .scrollable-content {
+                overflow-y: auto !important;
+                padding: 0 15px 15px 15px !important;
+            }
+            
+            .main-content {
+                overflow: hidden !important;
+            }
+            
+            #individualSection, #rootSection {
+                overflow: hidden !important;
+            }
+            
+            .table-container {
+                width: fit-content !important;
+            }
+            
+            .lineage-table {
+                min-width: 500px !important;
+            }
+            
+            .root-announce {
+                width: fit-content !important;
+            }
+            
+            .gap-row {
+                flex-direction: row !important;
+            }
+            
+            .gap-item {
+                width: auto !important;
+            }
+        }
+
+        /* ========== MOBILE OPTIMIZATIONS - TOUCH DEVICES ONLY ========== */
+        @media screen and (max-width: 768px) and (hover: none) and (pointer: coarse) {
             body {
                 overflow: auto;
                 -webkit-overflow-scrolling: touch;
@@ -1090,7 +1220,15 @@
             }
         }
 
-        @media screen and (max-width: 380px) {
+        /* Tablet fallback */
+        @media screen and (max-width: 768px) and (hover: hover) {
+            /* For small screens with mouse (like some tablets in desktop mode) */
+            .menu-toggle {
+                display: none !important;
+            }
+        }
+
+        @media screen and (max-width: 380px) and (hover: none) and (pointer: coarse) {
             .box {
                 min-width: 160px;
                 max-width: 220px;
