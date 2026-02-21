@@ -706,7 +706,11 @@
             border-collapse: collapse;
             min-width: 500px;
             font-size: 13px;
-            margin: 0 auto;
+            margin: 0 auto 20px auto;
+        }
+
+        .lineage-table:last-child {
+            margin-bottom: 0;
         }
 
         .lineage-table th {
@@ -720,6 +724,18 @@
             padding: 6px 8px;
             border-bottom: 1px solid #f0e5ce;
             text-align: center;
+        }
+
+        .lineage-table tr.female-row {
+            background-color: var(--pink-bg) !important;
+        }
+        
+        .lineage-table tr.female-row:hover {
+            background-color: #ffe4e6 !important;
+        }
+        
+        .lineage-table tr:hover {
+            background-color: #faebcd;
         }
 
         .root-announce {
@@ -1885,41 +1901,77 @@
         function renderIndividualTable() {
             if (!currentIndividual) return;
             
-            let html = '<div class="table-container"><table class="lineage-table">';
-            html += '<tr><th>Name</th><th>Gen</th><th>Father</th></tr>';
-            html += `<tr><td>${displayName(currentIndividual.name)}</td><td>${currentIndividual.gen}</td><td>${displayName(currentIndividual.father)}</td></tr>`;
+            let html = '<div class="table-container">';
             
+            // Main Member Table
+            html += `<table class="lineage-table" style="margin-bottom: 20px;">`;
+            html += `<tr><th colspan="3" style="background: linear-gradient(135deg, var(--gold) 0%, var(--light-gold) 100%); color: black; font-size: 16px;">🔍 SEARCH MEMBER</th></tr>`;
+            html += `<tr><th>S.No</th><th>Name</th><th>${currentIndividual.gender?.startsWith('F') ? 'D/O' : 'S/O'}</th></tr>`;
+            html += `<tr class="${currentIndividual.gender?.startsWith('F') ? 'female-row' : ''}">`;
+            html += `<td>1</td>`;
+            html += `<td><strong>${displayName(currentIndividual.name)}</strong></td>`;
+            html += `<td>${displayName(currentIndividual.father) || '—'}</td>`;
+            html += `</tr>`;
+            html += `</table>`;
+            
+            // Ancestors Table
             if (showAncestors) {
                 const ancestors = getAncestryChain(currentIndividual).slice(1);
                 if (ancestors.length > 0) {
-                    html += '<tr><th colspan="3">Ancestors</th></tr>';
-                    ancestors.forEach(a => {
-                        html += `<tr><td>${displayName(a.name)}</td><td>${a.gen}</td><td>${displayName(a.father)}</td></tr>`;
+                    html += `<table class="lineage-table" style="margin-bottom: 20px;">`;
+                    html += `<tr><th colspan="3" style="background: var(--dark-blue); color: var(--gold);">🌳 ANCESTORS (Father: ${displayName(ancestors[0]?.father) || '—'})</th></tr>`;
+                    html += `<tr><th>S.No</th><th>Name</th><th>Relation</th></tr>`;
+                    ancestors.reverse().forEach((a, index) => {
+                        const isFemale = a.gender?.startsWith('F');
+                        html += `<tr class="${isFemale ? 'female-row' : ''}">`;
+                        html += `<td>${index + 1}</td>`;
+                        html += `<td><strong>${displayName(a.name)}</strong></td>`;
+                        html += `<td>${index === ancestors.length-1 ? 'Earliest' : 'Ancestor'}</td>`;
+                        html += `</tr>`;
                     });
+                    html += `</table>`;
                 }
             }
             
+            // Siblings Table
             if (showSiblings && currentIndividual.father) {
                 const siblings = db.filter(s => s.father && s.father.toLowerCase() === currentIndividual.father.toLowerCase() && s.name !== currentIndividual.name);
                 if (siblings.length > 0) {
-                    html += '<tr><th colspan="3">Siblings</th></tr>';
-                    siblings.forEach(s => {
-                        html += `<tr><td>${displayName(s.name)}</td><td>${s.gen}</td><td>${displayName(s.father)}</td></tr>`;
+                    html += `<table class="lineage-table" style="margin-bottom: 20px;">`;
+                    html += `<tr><th colspan="3" style="background: var(--dark-blue); color: var(--gold);">👥 SIBLINGS (Father: ${displayName(currentIndividual.father)})</th></tr>`;
+                    html += `<tr><th>S.No</th><th>Name</th><th>Relation</th></tr>`;
+                    siblings.forEach((s, index) => {
+                        const isFemale = s.gender?.startsWith('F');
+                        html += `<tr class="${isFemale ? 'female-row' : ''}" onclick='jumpTo("${s.name.replace(/'/g, "\\'")}", "${s.gen}")' style="cursor: pointer;">`;
+                        html += `<td>${index + 1}</td>`;
+                        html += `<td><strong>${displayName(s.name)}</strong></td>`;
+                        html += `<td>${isFemale ? 'Sister' : 'Brother'}</td>`;
+                        html += `</tr>`;
                     });
+                    html += `</table>`;
                 }
             }
             
+            // Descendants Table
             if (showDescendants) {
                 const kids = db.filter(c => c.father && c.father.toLowerCase() === currentIndividual.name.toLowerCase());
                 if (kids.length > 0) {
-                    html += '<tr><th colspan="3">Children</th></tr>';
-                    kids.forEach(k => {
-                        html += `<tr><td>${displayName(k.name)}</td><td>${k.gen}</td><td>${displayName(k.father)}</td></tr>`;
+                    html += `<table class="lineage-table" style="margin-bottom: 20px;">`;
+                    html += `<tr><th colspan="3" style="background: var(--dark-blue); color: var(--gold);">👶 DESCENDANTS (Father: ${displayName(currentIndividual.name)})</th></tr>`;
+                    html += `<tr><th>S.No</th><th>Name</th><th>Relation</th></tr>`;
+                    kids.forEach((k, index) => {
+                        const isFemale = k.gender?.startsWith('F');
+                        html += `<tr class="${isFemale ? 'female-row' : ''}" onclick='jumpTo("${k.name.replace(/'/g, "\\'")}", "${k.gen}")' style="cursor: pointer;">`;
+                        html += `<td>${index + 1}</td>`;
+                        html += `<td><strong>${displayName(k.name)}</strong></td>`;
+                        html += `<td>${isFemale ? 'Daughter' : 'Son'}</td>`;
+                        html += `</tr>`;
                     });
+                    html += `</table>`;
                 }
             }
             
-            html += '</table></div>';
+            html += '</div>';
             document.getElementById('individualTable').innerHTML = html;
         }
 
