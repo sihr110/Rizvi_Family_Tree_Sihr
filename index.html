@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=5.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.3, maximum-scale=5.0, user-scalable=yes">
     <title>Rizvi Family Tree · Complete Viewer</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
@@ -1296,7 +1296,36 @@
                 width: 100%;
             }
         }
-    </style>
+   
+/* Allow zoom out on mobile */
+@media screen and (max-width: 768px) {
+    body {
+        overflow-x: auto !important;
+        -webkit-text-size-adjust: 100%;
+    }
+    
+    .app-container {
+        width: 100% !important;
+        min-width: 320px !important;
+        max-width: 100% !important;
+        transform-origin: top left;
+    }
+    
+    .fixed-header-section,
+    .scrollable-content,
+    .tree-root-layout,
+    .table-container {
+        max-width: 100% !important;
+        overflow-x: auto !important;
+    }
+    
+    .box, .sisters-group-box {
+        max-width: 100% !important;
+        min-width: 160px !important;
+    }
+}
+
+ </style>
 </head>
 <body>
     <div id="passwordScreen" class="password-screen">
