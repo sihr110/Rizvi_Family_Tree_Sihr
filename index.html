@@ -40,7 +40,7 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background: #1a1a1a;
+            background: #fffcf8;
             height: 100vh;
             overflow: hidden;
             margin: 0;
@@ -1239,34 +1239,47 @@
         // ======================================================================
         // ========================== 1- DASHBOARD SECTION =====================
         // ======================================================================
+// ========================== VIEW SWITCHING (FIXED) ==========================
         function showDashboard() {
             document.getElementById('dashboardSection').classList.remove('hidden');
-            document.getElementById('individualSection').classList.add('hidden');
             document.getElementById('rootSection').classList.add('hidden');
+            document.getElementById('individualSection').classList.add('hidden');
             document.getElementById('mainTitle').innerText = 'Rizvi Family Dashboard';
-            updateHeaderButtons('dashboard');
+            document.getElementById('headerActions').innerHTML = '';
         }
 
         function showIndividualSearch() {
-            if (!db.length) {
-                alert('Please load data first');
-                return;
-            }
             document.getElementById('dashboardSection').classList.add('hidden');
-            document.getElementById('individualSection').classList.remove('hidden');
             document.getElementById('rootSection').classList.add('hidden');
-            document.getElementById('mainTitle').innerText = 'Rizvi Family - Individual Search';
-            updateHeaderButtons('individual');
+            document.getElementById('individualSection').classList.remove('hidden');
             
-            document.getElementById('individualSearch').value = '';
-            currentIndividual = null;
-            
-            document.getElementById('individualTree').innerHTML = '<div style="text-align:center; color:#999; padding:60px;">Select a member to view</div>';
-            document.getElementById('individualTable').classList.add('hidden');
+            // FIX: Hide the table and show the tree by default when entering search
             document.getElementById('individualTree').classList.remove('hidden');
-            individualView = 'tree';
+            document.getElementById('individualTable').classList.add('hidden');
+            
+            updateHeader('Individual Search', [
+                { text: '📊 Table View', onclick: 'toggleTableView()', id: 'viewSwitchBtn' },
+                { text: '🏠 Home', onclick: 'showDashboard()', class: 'dashboard' }
+            ]);
         }
 
+function toggleTableView() {
+            const tree = document.getElementById('individualTree');
+            const table = document.getElementById('individualTable');
+            const btn = document.getElementById('viewSwitchBtn');
+
+            if (table.classList.contains('hidden')) {
+                // SWITCHING TO TABLE:
+                table.classList.remove('hidden'); // Show the Table
+                tree.classList.add('hidden');    // HIDE the Tree
+                btn.innerHTML = '<span>🌳</span> <span>Tree View</span>';
+            } else {
+                // SWITCHING TO TREE:
+                table.classList.add('hidden');    // Hide the Table
+                tree.classList.remove('hidden'); // SHOW the Tree
+                btn.innerHTML = '<span>📊</span> <span>Table View</span>';
+            }
+        }
         function showRootSearch() {
             if (!db.length) {
                 alert('Load data first');
