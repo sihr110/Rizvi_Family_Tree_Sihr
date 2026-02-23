@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Rizvi Family Tree · Complete Viewer</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
@@ -11,7 +11,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     
-    <style>
+     <style>
         /* ========== CSS STYLES ========== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -153,7 +153,7 @@
             background: var(--pdf-grey-dark);
         }
 
-        /* Menu toggle - hidden on desktop */
+        /* Menu toggle - hidden by default on desktop */
         .menu-toggle {
             display: none;
         }
@@ -706,7 +706,11 @@
             border-collapse: collapse;
             min-width: 500px;
             font-size: 13px;
-            margin: 0 auto;
+            margin: 0 auto 20px auto;
+        }
+
+        .lineage-table:last-child {
+            margin-bottom: 0;
         }
 
         .lineage-table th {
@@ -720,6 +724,18 @@
             padding: 6px 8px;
             border-bottom: 1px solid #f0e5ce;
             text-align: center;
+        }
+
+        .lineage-table tr.female-row {
+            background-color: var(--pink-bg) !important;
+        }
+        
+        .lineage-table tr.female-row:hover {
+            background-color: #ffe4e6 !important;
+        }
+        
+        .lineage-table tr:hover {
+            background-color: #faebcd;
         }
 
         .root-announce {
@@ -842,8 +858,138 @@
             height: 100vh;
         }
 
-        /* ========== MASTERPIECE MOBILE OPTIMIZATIONS - PC UNCHANGED ========== */
-        @media screen and (max-width: 768px) {
+        /* ========== DESKTOP FIRST - FORCE PC STYLES ========== */
+        @media screen and (min-width: 769px) {
+            /* Force desktop styles - these will always apply on PC */
+            .menu-toggle {
+                display: none !important;
+            }
+            
+            .fixed-header-section {
+                max-height: none !important;
+                padding: 15px 15px 0 15px !important;
+            }
+            
+            .fixed-header-section.collapsed {
+                max-height: none !important;
+                padding: 15px 15px 0 15px !important;
+            }
+            
+            .search-row {
+                flex-direction: row !important;
+            }
+            
+            .root-search-row {
+                flex-direction: row !important;
+            }
+            
+            .search-wrapper {
+                min-width: 300px !important;
+            }
+            
+            .search-input, .root-search-input {
+                width: 100% !important;
+                font-size: 13px !important;
+                padding: 8px 15px !important;
+                height: auto !important;
+            }
+            
+            .filter-buttons {
+                width: auto !important;
+            }
+            
+            .filter-btn {
+                flex: none !important;
+                width: auto !important;
+                padding: 6px 14px !important;
+                font-size: 13px !important;
+            }
+            
+            .header-actions {
+                width: auto !important;
+            }
+            
+            .header-btn {
+                flex: none !important;
+                width: auto !important;
+                padding: 6px 14px !important;
+                font-size: 13px !important;
+                height: auto !important;
+            }
+            
+            .top-row {
+                grid-template-columns: repeat(3, 1fr) !important;
+            }
+            
+            .dashboard-card {
+                height: 140px !important;
+                padding: 20px 10px !important;
+            }
+            
+            .card-icon {
+                font-size: 36px !important;
+            }
+            
+            .card-title {
+                font-size: 16px !important;
+            }
+            
+            .exit-btn-container {
+                width: 70% !important;
+                height: auto !important;
+                padding: 8px 16px !important;
+            }
+            
+            .box {
+                min-width: 240px !important;
+                max-width: 280px !important;
+            }
+            
+            .member-name {
+                font-size: 16px !important;
+            }
+            
+            .sisters-group-box {
+                min-width: 300px !important;
+                max-width: 380px !important;
+            }
+            
+            .scrollable-content {
+                overflow-y: auto !important;
+                padding: 0 15px 15px 15px !important;
+            }
+            
+            .main-content {
+                overflow: hidden !important;
+            }
+            
+            #individualSection, #rootSection {
+                overflow: hidden !important;
+            }
+            
+            .table-container {
+                width: fit-content !important;
+            }
+            
+            .lineage-table {
+                min-width: 500px !important;
+            }
+            
+            .root-announce {
+                width: fit-content !important;
+            }
+            
+            .gap-row {
+                flex-direction: row !important;
+            }
+            
+            .gap-item {
+                width: auto !important;
+            }
+        }
+
+        /* ========== MOBILE OPTIMIZATIONS - TOUCH DEVICES ONLY ========== */
+        @media screen and (max-width: 768px) and (hover: none) and (pointer: coarse) {
             body {
                 overflow: auto;
                 -webkit-overflow-scrolling: touch;
@@ -1090,7 +1236,15 @@
             }
         }
 
-        @media screen and (max-width: 380px) {
+        /* Tablet fallback */
+        @media screen and (max-width: 768px) and (hover: hover) {
+            /* For small screens with mouse (like some tablets in desktop mode) */
+            .menu-toggle {
+                display: none !important;
+            }
+        }
+
+        @media screen and (max-width: 380px) and (hover: none) and (pointer: coarse) {
             .box {
                 min-width: 160px;
                 max-width: 220px;
@@ -1142,7 +1296,10 @@
                 width: 100%;
             }
         }
-    </style>
+   
+
+
+ </style>
 </head>
 <body>
     <div id="passwordScreen" class="password-screen">
@@ -1747,41 +1904,77 @@
         function renderIndividualTable() {
             if (!currentIndividual) return;
             
-            let html = '<div class="table-container"><table class="lineage-table">';
-            html += '<tr><th>Name</th><th>Gen</th><th>Father</th></tr>';
-            html += `<tr><td>${displayName(currentIndividual.name)}</td><td>${currentIndividual.gen}</td><td>${displayName(currentIndividual.father)}</td></tr>`;
+            let html = '<div class="table-container">';
             
+            // Main Member Table
+            html += `<table class="lineage-table" style="margin-bottom: 20px;">`;
+            html += `<tr><th colspan="3" style="background: linear-gradient(135deg, var(--gold) 0%, var(--light-gold) 100%); color: black; font-size: 16px;">🔍 SEARCH MEMBER</th></tr>`;
+            html += `<tr><th>S.No</th><th>Name</th><th>${currentIndividual.gender?.startsWith('F') ? 'D/O' : 'S/O'}</th></tr>`;
+            html += `<tr class="${currentIndividual.gender?.startsWith('F') ? 'female-row' : ''}">`;
+            html += `<td>1</td>`;
+            html += `<td><strong>${displayName(currentIndividual.name)}</strong></td>`;
+            html += `<td>${displayName(currentIndividual.father) || '—'}</td>`;
+            html += `</tr>`;
+            html += `</table>`;
+            
+            // Ancestors Table
             if (showAncestors) {
                 const ancestors = getAncestryChain(currentIndividual).slice(1);
                 if (ancestors.length > 0) {
-                    html += '<tr><th colspan="3">Ancestors</th></tr>';
-                    ancestors.forEach(a => {
-                        html += `<tr><td>${displayName(a.name)}</td><td>${a.gen}</td><td>${displayName(a.father)}</td></tr>`;
+                    html += `<table class="lineage-table" style="margin-bottom: 20px;">`;
+                    html += `<tr><th colspan="3" style="background: var(--dark-blue); color: var(--gold);">🌳 ANCESTORS (Father: ${displayName(ancestors[0]?.father) || '—'})</th></tr>`;
+                    html += `<tr><th>S.No</th><th>Name</th><th>Relation</th></tr>`;
+                    ancestors.reverse().forEach((a, index) => {
+                        const isFemale = a.gender?.startsWith('F');
+                        html += `<tr class="${isFemale ? 'female-row' : ''}">`;
+                        html += `<td>${index + 1}</td>`;
+                        html += `<td><strong>${displayName(a.name)}</strong></td>`;
+                        html += `<td>${index === ancestors.length-1 ? 'Earliest' : 'Ancestor'}</td>`;
+                        html += `</tr>`;
                     });
+                    html += `</table>`;
                 }
             }
             
+            // Siblings Table
             if (showSiblings && currentIndividual.father) {
                 const siblings = db.filter(s => s.father && s.father.toLowerCase() === currentIndividual.father.toLowerCase() && s.name !== currentIndividual.name);
                 if (siblings.length > 0) {
-                    html += '<tr><th colspan="3">Siblings</th></tr>';
-                    siblings.forEach(s => {
-                        html += `<tr><td>${displayName(s.name)}</td><td>${s.gen}</td><td>${displayName(s.father)}</td></tr>`;
+                    html += `<table class="lineage-table" style="margin-bottom: 20px;">`;
+                    html += `<tr><th colspan="3" style="background: var(--dark-blue); color: var(--gold);">👥 SIBLINGS (Father: ${displayName(currentIndividual.father)})</th></tr>`;
+                    html += `<tr><th>S.No</th><th>Name</th><th>Relation</th></tr>`;
+                    siblings.forEach((s, index) => {
+                        const isFemale = s.gender?.startsWith('F');
+                        html += `<tr class="${isFemale ? 'female-row' : ''}" onclick='jumpTo("${s.name.replace(/'/g, "\\'")}", "${s.gen}")' style="cursor: pointer;">`;
+                        html += `<td>${index + 1}</td>`;
+                        html += `<td><strong>${displayName(s.name)}</strong></td>`;
+                        html += `<td>${isFemale ? 'Sister' : 'Brother'}</td>`;
+                        html += `</tr>`;
                     });
+                    html += `</table>`;
                 }
             }
             
+            // Descendants Table
             if (showDescendants) {
                 const kids = db.filter(c => c.father && c.father.toLowerCase() === currentIndividual.name.toLowerCase());
                 if (kids.length > 0) {
-                    html += '<tr><th colspan="3">Children</th></tr>';
-                    kids.forEach(k => {
-                        html += `<tr><td>${displayName(k.name)}</td><td>${k.gen}</td><td>${displayName(k.father)}</td></tr>`;
+                    html += `<table class="lineage-table" style="margin-bottom: 20px;">`;
+                    html += `<tr><th colspan="3" style="background: var(--dark-blue); color: var(--gold);">👶 DESCENDANTS (Father: ${displayName(currentIndividual.name)})</th></tr>`;
+                    html += `<tr><th>S.No</th><th>Name</th><th>Relation</th></tr>`;
+                    kids.forEach((k, index) => {
+                        const isFemale = k.gender?.startsWith('F');
+                        html += `<tr class="${isFemale ? 'female-row' : ''}" onclick='jumpTo("${k.name.replace(/'/g, "\\'")}", "${k.gen}")' style="cursor: pointer;">`;
+                        html += `<td>${index + 1}</td>`;
+                        html += `<td><strong>${displayName(k.name)}</strong></td>`;
+                        html += `<td>${isFemale ? 'Daughter' : 'Son'}</td>`;
+                        html += `</tr>`;
                     });
+                    html += `</table>`;
                 }
             }
             
-            html += '</table></div>';
+            html += '</div>';
             document.getElementById('individualTable').innerHTML = html;
         }
 
