@@ -172,14 +172,15 @@ body {
             backdrop-filter: blur(5px);
         }
 
-        .password-container {
+       .password-container {
             background: white;
             padding: 30px;
             border-radius: 20px;
             border: 3px solid var(--gold);
             max-width: 380px;
-            width: 90%;
+            width: 90%; /* Ensures it fills mobile width naturally */
             text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
         .password-container h1 {
@@ -342,11 +343,12 @@ body {
             font-weight: 600;
         }
 
-        #individualSection, #rootSection {
+    #individualSection, #rootSection {
             display: flex;
             flex-direction: column;
-            height: 100%;
-            overflow: hidden;
+            height: auto !important; /* Changed from 100% to auto */
+            min-height: 100%;
+            overflow: visible !important;
             flex: 1;
         }
 
@@ -361,11 +363,12 @@ body {
             margin: 20px 0 0 0;
         }
 
-        .scrollable-content {
+       .scrollable-content {
             flex: 1;
-            overflow-y: auto;
+            overflow-y: visible !important; /* Allows page to grow with data */
             overflow-x: auto;
-            padding: 0 15px 15px 15px;
+            padding: 0 15px 50px 15px; 
+            height: auto !important;
         }
 
         .search-row {
@@ -862,14 +865,15 @@ body {
             border-bottom: 2px solid var(--gold);
         }
 
-/* ========== MOBILE OPTIMIZATIONS (AUTO-ADJUST HEIGHT) ========== */
+
+/* ========== MOBILE OPTIMIZATIONS (FIXED 3-COLUMN & AUTO-HEIGHT) ========== */
         @media screen and (max-width: 768px) and (hover: none) and (pointer: coarse) {
             body {
                 overflow: auto !important; 
                 min-height: 100vh;
-                height: auto !important; /* Fixes the white area */
+                height: auto !important;
                 padding: 0; 
-                min-width: 1200px;
+                min-width: 1200px; /* Forces the wide layout */
                 background-color: #f8f9fa; 
             }
             
@@ -877,68 +881,49 @@ body {
                 width: 1200px !important; 
                 max-width: none !important;
                 min-height: 100vh;
-                height: auto !important; /* Hugs the content tightly */
+                height: auto !important; /* REMOVES THE WHITE AREA: Shrinks to content */
                 display: flex;
                 flex-direction: column;
                 border-radius: 0 !important;
                 background-color: white;
+                box-shadow: none;
             }
 
-            /* Dashboard Grid: 3 columns, auto height */
+            /* Forces exactly 3 boxes horizontally */
             .top-row {
                 display: grid !important;
-                grid-template-columns: repeat(3, 1fr) !important;
+                grid-template-columns: repeat(3, 1fr) !important; 
                 width: 100% !important;
                 gap: 15px !important;
                 padding: 20px !important;
                 height: auto !important;
             }
 
-            /* Content area expands vertically */
+            .dashboard-grid {
+                max-width: 100% !important;
+                width: 100% !important;
+                padding: 0 !important;
+            }
+
             .main-content {
                 flex: 1 0 auto !important;
                 height: auto !important;
+                overflow: visible !important;
             }
-
-            .tree-root-layout {
-                min-width: 1200px !important;
-                height: auto !important;
-                padding-bottom: 60px;
-            }
-
-            .app-header {
-                display: flex !important;
-                flex-direction: row !important;
-                justify-content: space-between !important;
-                padding: 10px 20px !important;
-                height: 70px !important;
-                flex-shrink: 0;
-            }
-
-            #mobileMenuToggle {
-                display: flex !important;
-                position: fixed;
-                bottom: 20px;
-                right: 20px;
-                z-index: 9999;
-                width: 50px;
-                height: 50px;
-                border-radius: 50%;
-                background: #5a0000;
-                color: white;
-                justify-content: center;
-                align-items: center;
-                box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            
+            /* Fixed Password Container for Mobile */
+            .password-container {
+                width: 400px !important;
+                max-width: 90% !important;
+                margin: 0 auto;
             }
         }
 
-        /* Adjustment for short screens (landscape) */
+        /* Adjustment for short screens */
         @media screen and (max-height: 600px) {
             .dashboard-card { height: 120px !important; }
         }
-
-
- </style>
+    </style>
 </head>
 <body>
     <div id="passwordScreen" class="password-screen">
