@@ -858,58 +858,59 @@
             height: 100vh;
         }
 
- /* ========== MOBILE OPTIMIZATIONS (FORCING PC VIEW) ========== */
+/* ========== MOBILE OPTIMIZATIONS (AUTO-ADJUST HEIGHT) ========== */
         @media screen and (max-width: 768px) and (hover: none) and (pointer: coarse) {
             body {
                 overflow: auto !important; 
-                height: 100vh;
+                min-height: 100vh;
+                height: auto !important; /* Fixes the white area */
                 padding: 0; 
-                min-width: 1200px; /* This forces the wide PC layout */
+                min-width: 1200px;
+                background-color: #f8f9fa; 
             }
             
             .app-container {
                 width: 1200px !important; 
                 max-width: none !important;
-                height: 100vh;
+                min-height: 100vh;
+                height: auto !important; /* Hugs the content tightly */
                 display: flex;
                 flex-direction: column;
                 border-radius: 0 !important;
+                background-color: white;
             }
 
-            /* Dashboard Grid: Force 3 columns across */
+            /* Dashboard Grid: 3 columns, auto height */
             .top-row {
                 display: grid !important;
                 grid-template-columns: repeat(3, 1fr) !important;
                 width: 100% !important;
                 gap: 15px !important;
-                padding: 10px !important;
+                padding: 20px !important;
+                height: auto !important;
             }
 
-            /* Header: Force horizontal layout */
+            /* Content area expands vertically */
+            .main-content {
+                flex: 1 0 auto !important;
+                height: auto !important;
+            }
+
+            .tree-root-layout {
+                min-width: 1200px !important;
+                height: auto !important;
+                padding-bottom: 60px;
+            }
+
             .app-header {
                 display: flex !important;
                 flex-direction: row !important;
                 justify-content: space-between !important;
                 padding: 10px 20px !important;
                 height: 70px !important;
+                flex-shrink: 0;
             }
 
-            .header-left, .header-right {
-                display: flex !important;
-                align-items: center !important;
-            }
-
-            /* Search Bars: Keep them wide */
-            .search-wrapper, .root-search-input {
-                width: 650px !important;
-            }
-
-            /* Family Tree: Prevent it from shrinking */
-            .tree-root-layout {
-                min-width: 1200px !important;
-            }
-
-            /* Floating mobile menu toggle button */
             #mobileMenuToggle {
                 display: flex !important;
                 position: fixed;
@@ -927,10 +928,11 @@
             }
         }
 
-        /* Small screen height adjustment for landscape */
+        /* Adjustment for short screens (landscape) */
         @media screen and (max-height: 600px) {
             .dashboard-card { height: 120px !important; }
         }
+
 
  </style>
 </head>
