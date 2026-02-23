@@ -38,15 +38,15 @@
             --sisters-box-bg: #fff0f5;
         }
 
-        body {
+body {
             font-family: 'Inter', sans-serif;
             background: #1a1a1a;
-            height: 100vh;
-            overflow: hidden;
+            height: auto; 
+            min-height: 100vh;
+            overflow: auto; 
             margin: 0;
             padding: 10px;
         }
-
         .app-container {
             max-width: 1400px;
             margin: 0 auto;
@@ -843,19 +843,23 @@
         .toggle-view-btn:hover {
             opacity: 1;
         }
+        
+/* ========== FIXED FULL SCREEN & AUTO LENGTH ========== */
         body.canvas-only .app-header,
         body.canvas-only .app-footer,
-        body.canvas-only .fixed-header-section,
-        body.canvas-only .filter-buttons,
-        body.canvas-only .search-row,
-        body.canvas-only .root-search-row,
-        body.canvas-only .border-line,
-        body.canvas-only .dashboard-grid,
-        body.canvas-only .exit-btn-container {
+        body.canvas-only .dashboard-grid {
             display: none !important;
         }
+
         body.canvas-only .main-content {
-            height: 100vh;
+            height: auto !important;
+            min-height: 100vh;
+        }
+
+        /* Keep the search and header visible so you can go back */
+        body.canvas-only .fixed-header-section {
+            display: block !important;
+            border-bottom: 2px solid var(--gold);
         }
 
 /* ========== MOBILE OPTIMIZATIONS (AUTO-ADJUST HEIGHT) ========== */
