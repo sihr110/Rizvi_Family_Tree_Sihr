@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Rizvi Family Tree · Complete Viewer</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
@@ -11,7 +11,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     
-     <style>
+    <style>
         /* ========== CSS STYLES ========== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -40,7 +40,7 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background: #fffcf8;
+            background: #1a1a1a;
             height: 100vh;
             overflow: hidden;
             margin: 0;
@@ -153,7 +153,7 @@
             background: var(--pdf-grey-dark);
         }
 
-        /* Menu toggle - hidden by default on desktop */
+        /* Menu toggle - hidden on desktop */
         .menu-toggle {
             display: none;
         }
@@ -706,11 +706,7 @@
             border-collapse: collapse;
             min-width: 500px;
             font-size: 13px;
-            margin: 0 auto 20px auto;
-        }
-
-        .lineage-table:last-child {
-            margin-bottom: 0;
+            margin: 0 auto;
         }
 
         .lineage-table th {
@@ -724,18 +720,6 @@
             padding: 6px 8px;
             border-bottom: 1px solid #f0e5ce;
             text-align: center;
-        }
-
-        .lineage-table tr.female-row {
-            background-color: var(--pink-bg) !important;
-        }
-        
-        .lineage-table tr.female-row:hover {
-            background-color: #ffe4e6 !important;
-        }
-        
-        .lineage-table tr:hover {
-            background-color: #faebcd;
         }
 
         .root-announce {
@@ -858,192 +842,307 @@
             height: 100vh;
         }
 
-        /* ========== DESKTOP FIRST - FORCE PC STYLES ========== */
-        @media screen and (min-width: 769px) {
-            /* Force desktop styles - these will always apply on PC */
+        /* ========== MASTERPIECE MOBILE OPTIMIZATIONS - PC UNCHANGED ========== */
+        @media screen and (max-width: 768px) {
+            body {
+                overflow: auto;
+                -webkit-overflow-scrolling: touch;
+                height: auto;
+                min-height: 100vh;
+                padding: 5px;
+            }
+            
+            .app-container {
+                height: auto;
+                min-height: calc(100vh - 10px);
+                border-radius: 16px;
+                overflow: hidden;
+            }
+            
+            .app-header {
+                position: relative;
+                padding: 10px 15px;
+            }
+            
+            .header-title {
+                font-size: 18px;
+                width: calc(100% - 50px);
+            }
+            
             .menu-toggle {
-                display: none !important;
+                display: flex !important;
+                position: absolute;
+                top: 50%;
+                right: 15px;
+                transform: translateY(-50%);
+                background: var(--gold);
+                color: black;
+                border: none;
+                border-radius: 50%;
+                width: 44px;
+                height: 44px;
+                font-size: 26px;
+                font-weight: bold;
+                cursor: pointer;
+                z-index: 2000;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.2);
             }
             
             .fixed-header-section {
-                max-height: none !important;
-                padding: 15px 15px 0 15px !important;
+                transition: max-height 0.3s ease, padding 0.3s ease, margin 0.3s ease;
+                overflow: hidden;
+                max-height: 500px;
+                padding: 15px 15px 10px 15px;
+                background: #fffcf8;
             }
             
             .fixed-header-section.collapsed {
-                max-height: none !important;
-                padding: 15px 15px 0 15px !important;
+                max-height: 0;
+                padding-top: 0;
+                padding-bottom: 0;
+                margin: 0;
+                border-bottom: none;
             }
             
             .search-row {
-                flex-direction: row !important;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
             }
             
             .root-search-row {
-                flex-direction: row !important;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
             }
             
             .search-wrapper {
-                min-width: 300px !important;
+                min-width: 100%;
+                width: 100%;
             }
             
             .search-input, .root-search-input {
-                width: 100% !important;
-                font-size: 13px !important;
-                padding: 8px 15px !important;
-                height: auto !important;
+                width: 100%;
+                font-size: 16px;
+                padding: 12px 15px;
+                height: 48px;
             }
             
             .filter-buttons {
-                width: auto !important;
+                width: 100%;
+                justify-content: space-between;
+                gap: 8px;
             }
             
             .filter-btn {
-                flex: none !important;
-                width: auto !important;
-                padding: 6px 14px !important;
-                font-size: 13px !important;
+                flex: 1;
+                padding: 10px 5px;
+                font-size: 12px;
+                justify-content: center;
+                height: 44px;
             }
             
             .header-actions {
-                width: auto !important;
+                width: 100%;
+                justify-content: space-between;
+                gap: 5px;
             }
             
             .header-btn {
-                flex: none !important;
-                width: auto !important;
-                padding: 6px 14px !important;
-                font-size: 13px !important;
-                height: auto !important;
+                flex: 1;
+                padding: 10px 5px;
+                font-size: 11px;
+                justify-content: center;
+                height: 44px;
+                white-space: nowrap;
             }
             
             .top-row {
-                grid-template-columns: repeat(3, 1fr) !important;
+                grid-template-columns: 1fr;
+                gap: 12px;
             }
             
             .dashboard-card {
-                height: 140px !important;
-                padding: 20px 10px !important;
+                height: 110px;
+                padding: 15px 10px;
             }
             
             .card-icon {
-                font-size: 36px !important;
+                font-size: 32px;
             }
             
             .card-title {
-                font-size: 16px !important;
+                font-size: 16px;
+            }
+            
+            .card-desc {
+                font-size: 12px;
             }
             
             .exit-btn-container {
-                width: 70% !important;
-                height: auto !important;
-                padding: 8px 16px !important;
+                width: 100%;
+                height: 50px;
+                padding: 12px;
+                font-size: 14px;
             }
             
             .box {
-                min-width: 240px !important;
-                max-width: 280px !important;
+                min-width: 200px;
+                max-width: 260px;
+                margin: 0 auto;
+            }
+            
+            .member-name {
+                font-size: 18px !important;
+            }
+            
+            .father-name {
+                font-size: 11px;
+            }
+            
+            .children-row {
+                gap: 12px;
+            }
+            
+            .sisters-group-box {
+                min-width: 240px;
+                max-width: 300px;
+                width: 100%;
+                margin: 8px auto;
+            }
+            
+            .v-line {
+                height: 20px;
+            }
+            
+            .relation-label {
+                font-size: 11px;
+                padding: 5px 15px;
+            }
+            
+            .scrollable-content {
+                overflow-y: visible;
+                -webkit-overflow-scrolling: touch;
+                padding: 0 12px 20px 12px;
+            }
+            
+            #individualSection, #rootSection {
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .main-content {
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .table-container {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                width: 100%;
+                padding: 10px;
+            }
+            
+            .lineage-table {
+                min-width: 500px;
+            }
+            
+            .root-announce {
+                width: 100%;
+                padding: 15px;
+                margin: 15px 0;
+            }
+            
+            .gap-row {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+            }
+            
+            .gap-item {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .toggle-view-btn {
+                bottom: 15px;
+                left: 15px;
+                padding: 10px 18px;
+                font-size: 14px;
+                height: 48px;
+                opacity: 0.95;
+            }
+            
+            .dropdown {
+                max-height: 200px;
+                font-size: 14px;
+            }
+            
+            .result-item {
+                padding: 12px 15px;
+            }
+            
+            .app-footer {
+                padding: 10px;
+                font-size: 10px;
+            }
+        }
+
+        @media screen and (max-width: 380px) {
+            .box {
+                min-width: 160px;
+                max-width: 220px;
             }
             
             .member-name {
                 font-size: 16px !important;
             }
             
-            .sisters-group-box {
-                min-width: 300px !important;
-                max-width: 380px !important;
+            .filter-btn {
+                font-size: 11px;
+                padding: 8px 4px;
             }
             
-            .scrollable-content {
-                overflow-y: auto !important;
-                padding: 0 15px 15px 15px !important;
-            }
-            
-            .main-content {
-                overflow: hidden !important;
-            }
-            
-            #individualSection, #rootSection {
-                overflow: hidden !important;
-            }
-            
-            .table-container {
-                width: fit-content !important;
-            }
-            
-            .lineage-table {
-                min-width: 500px !important;
-            }
-            
-            .root-announce {
-                width: fit-content !important;
-            }
-            
-            .gap-row {
-                flex-direction: row !important;
-            }
-            
-            .gap-item {
-                width: auto !important;
+            .header-btn {
+                font-size: 10px;
+                padding: 8px 4px;
             }
         }
 
-        /* ========== MOBILE OPTIMIZATIONS - ZOOM & WIDE VIEW ========== */
-        @media screen and (max-width: 768px) {
-            /* 1. Reset body to allow horizontal scrolling */
-            body {
-                overflow: auto !important;
-                height: auto !important;
+        @media (max-width: 900px) {
+            .top-row {
+                grid-template-columns: repeat(2, 1fr);
             }
-
-         /* 2. Keep the container wide like PC */
-            .app-container {
-                width: 1400px !important; 
-                min-width: 1400px !important; /* ADD THIS LINE */
-                max-width: none !important;
-                height: auto !important;
-                overflow: visible !important;
+            .bottom-card {
+                width: 66.666%;
             }
-
-            /* 3. Ensure the tree content doesn't squeeze */
-            .tree-root-layout, .scrollable-content {
-                display: block !important;
-                overflow: visible !important;
-                width: 100% !important;
-            }
-
-            /* 4. Stack Search for easy finger-tapping */
-            .search-row, .root-search-row {
-                flex-direction: column !important;
-                align-items: stretch !important;
-                gap: 15px !important;
-            }
-
-            .search-wrapper, .root-search-input {
-                width: 100% !important;
-            }
-
-            /* 5. Keep the member boxes a fixed size so they don't shrink */
-            .box {
-                min-width: 240px !important;
-                margin-bottom: 10px;
-            }
-
-            /* 6. Mobile Menu Button */
-            .menu-toggle {
-                display: flex !important;
-                background: var(--gold);
-                padding: 10px;
-                border-radius: 5px;
-            }
-            
-            /* Hide header tools when menu is collapsed */
-            .fixed-header-section.collapsed {
-                display: none !important;
+            .root-search-input {
+                width: 100%;
             }
         }
 
- </style>
+        @media (max-width: 600px) {
+            .top-row {
+                grid-template-columns: 1fr;
+            }
+            .bottom-card {
+                width: 100%;
+            }
+            .search-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .root-search-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .root-search-input {
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 <body>
     <div id="passwordScreen" class="password-screen">
@@ -1239,47 +1338,34 @@
         // ======================================================================
         // ========================== 1- DASHBOARD SECTION =====================
         // ======================================================================
-// ========================== VIEW SWITCHING (FIXED) ==========================
         function showDashboard() {
             document.getElementById('dashboardSection').classList.remove('hidden');
-            document.getElementById('rootSection').classList.add('hidden');
             document.getElementById('individualSection').classList.add('hidden');
+            document.getElementById('rootSection').classList.add('hidden');
             document.getElementById('mainTitle').innerText = 'Rizvi Family Dashboard';
-            document.getElementById('headerActions').innerHTML = '';
+            updateHeaderButtons('dashboard');
         }
 
         function showIndividualSearch() {
-            document.getElementById('dashboardSection').classList.add('hidden');
-            document.getElementById('rootSection').classList.add('hidden');
-            document.getElementById('individualSection').classList.remove('hidden');
-            
-            // FIX: Hide the table and show the tree by default when entering search
-            document.getElementById('individualTree').classList.remove('hidden');
-            document.getElementById('individualTable').classList.add('hidden');
-            
-            updateHeader('Individual Search', [
-                { text: '📊 Table View', onclick: 'toggleTableView()', id: 'viewSwitchBtn' },
-                { text: '🏠 Home', onclick: 'showDashboard()', class: 'dashboard' }
-            ]);
-        }
-
-function toggleTableView() {
-            const tree = document.getElementById('individualTree');
-            const table = document.getElementById('individualTable');
-            const btn = document.getElementById('viewSwitchBtn');
-
-            if (table.classList.contains('hidden')) {
-                // SWITCHING TO TABLE:
-                table.classList.remove('hidden'); // Show the Table
-                tree.classList.add('hidden');    // HIDE the Tree
-                btn.innerHTML = '<span>🌳</span> <span>Tree View</span>';
-            } else {
-                // SWITCHING TO TREE:
-                table.classList.add('hidden');    // Hide the Table
-                tree.classList.remove('hidden'); // SHOW the Tree
-                btn.innerHTML = '<span>📊</span> <span>Table View</span>';
+            if (!db.length) {
+                alert('Please load data first');
+                return;
             }
+            document.getElementById('dashboardSection').classList.add('hidden');
+            document.getElementById('individualSection').classList.remove('hidden');
+            document.getElementById('rootSection').classList.add('hidden');
+            document.getElementById('mainTitle').innerText = 'Rizvi Family - Individual Search';
+            updateHeaderButtons('individual');
+            
+            document.getElementById('individualSearch').value = '';
+            currentIndividual = null;
+            
+            document.getElementById('individualTree').innerHTML = '<div style="text-align:center; color:#999; padding:60px;">Select a member to view</div>';
+            document.getElementById('individualTable').classList.add('hidden');
+            document.getElementById('individualTree').classList.remove('hidden');
+            individualView = 'tree';
         }
+
         function showRootSearch() {
             if (!db.length) {
                 alert('Load data first');
@@ -1661,77 +1747,41 @@ function toggleTableView() {
         function renderIndividualTable() {
             if (!currentIndividual) return;
             
-            let html = '<div class="table-container">';
+            let html = '<div class="table-container"><table class="lineage-table">';
+            html += '<tr><th>Name</th><th>Gen</th><th>Father</th></tr>';
+            html += `<tr><td>${displayName(currentIndividual.name)}</td><td>${currentIndividual.gen}</td><td>${displayName(currentIndividual.father)}</td></tr>`;
             
-            // Main Member Table
-            html += `<table class="lineage-table" style="margin-bottom: 20px;">`;
-            html += `<tr><th colspan="3" style="background: linear-gradient(135deg, var(--gold) 0%, var(--light-gold) 100%); color: black; font-size: 16px;">🔍 SEARCH MEMBER</th></tr>`;
-            html += `<tr><th>S.No</th><th>Name</th><th>${currentIndividual.gender?.startsWith('F') ? 'D/O' : 'S/O'}</th></tr>`;
-            html += `<tr class="${currentIndividual.gender?.startsWith('F') ? 'female-row' : ''}">`;
-            html += `<td>1</td>`;
-            html += `<td><strong>${displayName(currentIndividual.name)}</strong></td>`;
-            html += `<td>${displayName(currentIndividual.father) || '—'}</td>`;
-            html += `</tr>`;
-            html += `</table>`;
-            
-            // Ancestors Table
             if (showAncestors) {
                 const ancestors = getAncestryChain(currentIndividual).slice(1);
                 if (ancestors.length > 0) {
-                    html += `<table class="lineage-table" style="margin-bottom: 20px;">`;
-                    html += `<tr><th colspan="3" style="background: var(--dark-blue); color: var(--gold);">🌳 ANCESTORS (Father: ${displayName(ancestors[0]?.father) || '—'})</th></tr>`;
-                    html += `<tr><th>S.No</th><th>Name</th><th>Relation</th></tr>`;
-                    ancestors.reverse().forEach((a, index) => {
-                        const isFemale = a.gender?.startsWith('F');
-                        html += `<tr class="${isFemale ? 'female-row' : ''}">`;
-                        html += `<td>${index + 1}</td>`;
-                        html += `<td><strong>${displayName(a.name)}</strong></td>`;
-                        html += `<td>${index === ancestors.length-1 ? 'Earliest' : 'Ancestor'}</td>`;
-                        html += `</tr>`;
+                    html += '<tr><th colspan="3">Ancestors</th></tr>';
+                    ancestors.forEach(a => {
+                        html += `<tr><td>${displayName(a.name)}</td><td>${a.gen}</td><td>${displayName(a.father)}</td></tr>`;
                     });
-                    html += `</table>`;
                 }
             }
             
-            // Siblings Table
             if (showSiblings && currentIndividual.father) {
                 const siblings = db.filter(s => s.father && s.father.toLowerCase() === currentIndividual.father.toLowerCase() && s.name !== currentIndividual.name);
                 if (siblings.length > 0) {
-                    html += `<table class="lineage-table" style="margin-bottom: 20px;">`;
-                    html += `<tr><th colspan="3" style="background: var(--dark-blue); color: var(--gold);">👥 SIBLINGS (Father: ${displayName(currentIndividual.father)})</th></tr>`;
-                    html += `<tr><th>S.No</th><th>Name</th><th>Relation</th></tr>`;
-                    siblings.forEach((s, index) => {
-                        const isFemale = s.gender?.startsWith('F');
-                        html += `<tr class="${isFemale ? 'female-row' : ''}" onclick='jumpTo("${s.name.replace(/'/g, "\\'")}", "${s.gen}")' style="cursor: pointer;">`;
-                        html += `<td>${index + 1}</td>`;
-                        html += `<td><strong>${displayName(s.name)}</strong></td>`;
-                        html += `<td>${isFemale ? 'Sister' : 'Brother'}</td>`;
-                        html += `</tr>`;
+                    html += '<tr><th colspan="3">Siblings</th></tr>';
+                    siblings.forEach(s => {
+                        html += `<tr><td>${displayName(s.name)}</td><td>${s.gen}</td><td>${displayName(s.father)}</td></tr>`;
                     });
-                    html += `</table>`;
                 }
             }
             
-            // Descendants Table
             if (showDescendants) {
                 const kids = db.filter(c => c.father && c.father.toLowerCase() === currentIndividual.name.toLowerCase());
                 if (kids.length > 0) {
-                    html += `<table class="lineage-table" style="margin-bottom: 20px;">`;
-                    html += `<tr><th colspan="3" style="background: var(--dark-blue); color: var(--gold);">👶 DESCENDANTS (Father: ${displayName(currentIndividual.name)})</th></tr>`;
-                    html += `<tr><th>S.No</th><th>Name</th><th>Relation</th></tr>`;
-                    kids.forEach((k, index) => {
-                        const isFemale = k.gender?.startsWith('F');
-                        html += `<tr class="${isFemale ? 'female-row' : ''}" onclick='jumpTo("${k.name.replace(/'/g, "\\'")}", "${k.gen}")' style="cursor: pointer;">`;
-                        html += `<td>${index + 1}</td>`;
-                        html += `<td><strong>${displayName(k.name)}</strong></td>`;
-                        html += `<td>${isFemale ? 'Daughter' : 'Son'}</td>`;
-                        html += `</tr>`;
+                    html += '<tr><th colspan="3">Children</th></tr>';
+                    kids.forEach(k => {
+                        html += `<tr><td>${displayName(k.name)}</td><td>${k.gen}</td><td>${displayName(k.father)}</td></tr>`;
                     });
-                    html += `</table>`;
                 }
             }
             
-            html += '</div>';
+            html += '</table></div>';
             document.getElementById('individualTable').innerHTML = html;
         }
 
