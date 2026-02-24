@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rizvi Family · Individual Tree (Mobile - Masterpiece Layout)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Rizvi Family · Individual Tree (Mobile)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -32,8 +32,6 @@
             background: #1a1a1a;
             min-height: 100vh;
             padding: 5px;
-            /* MODIFIED: Ensure body allows horizontal overflow like a PC page */
-            overflow-x: auto;
         }
 
         .app-container {
@@ -43,8 +41,6 @@
             border: 2px solid var(--gold);
             display: flex;
             flex-direction: column;
-            /* MODIFIED: Fixed minimum width to force PC-style horizontal layout on mobile */
-            min-width: 1000px;
         }
 
         .app-header {
@@ -54,32 +50,27 @@
             border-bottom: 3px solid var(--gold);
         }
 
-        /* MODIFIED: Combined all buttons into one masterpiece row like RFT-viewer */
-        .header-toolbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: #fffcf8;
-            padding: 10px 15px;
-            border-bottom: 1px solid var(--border-sage);
-            gap: 15px;
-        }
-
         .header-title {
             font-family: 'Playfair Display', serif;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 900;
-            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
 
-        .button-group {
+        .button-row {
             display: flex;
             gap: 8px;
+            padding: 8px 12px;
+            background: #fffcf8;
+            border-bottom: 1px solid var(--border-sage);
         }
 
         .action-btn {
-            padding: 8px 15px;
-            font-size: 13px;
+            flex: 1;
+            padding: 12px 8px;
+            font-size: 14px;
             font-weight: 600;
             cursor: pointer;
             border: 2px solid var(--gold);
@@ -88,15 +79,43 @@
             border-radius: 8px;
             display: flex;
             align-items: center;
-            gap: 5px;
+            justify-content: center;
+            gap: 6px;
+            min-height: 48px;
             transition: all 0.2s;
-            white-space: nowrap;
         }
 
-        .action-btn.table { background: var(--dark-blue); color: white; border-color: transparent; }
-        .action-btn.reset { background: var(--maroon); color: white; border-color: transparent; }
-        .action-btn.pdf { background: var(--pdf-grey); color: white; border-color: transparent; }
-        .action-btn.dashboard { background: var(--dashboard-green); color: white; border-color: transparent; }
+        .action-btn:active {
+            transform: scale(0.98);
+        }
+
+     .action-btn.table {
+    background: var(--dark-blue);  /* Dark blue background */
+    color: white;
+    border-color: transparent;
+}
+
+.action-btn.reset {
+    background: var(--maroon);
+    color: white;
+    border-color: transparent;
+}
+
+.action-btn.pdf {
+    background: var(--pdf-grey);
+    color: white;
+    border-color: transparent;
+}
+
+.action-btn.dashboard {
+    background: var(--dashboard-green);
+    color: white;
+    border-color: transparent;
+}
+
+        .action-btn span {
+            font-size: 18px;
+        }
 
         .main-content {
             flex: 1;
@@ -105,44 +124,83 @@
             background: #fffcf8;
         }
 
-        /* MODIFIED: Horizontal Search Bar for PC-feel */
         .search-section {
-            padding: 15px;
+            padding: 12px;
             background: #fffcf8;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            border-bottom: 2px solid var(--gold);
+        }
+
+        .search-label {
+            font-weight: 700;
+            color: var(--maroon);
+            font-size: 12px;
+            margin-bottom: 5px;
         }
 
         .search-wrapper {
             position: relative;
-            flex: 1;
-            max-width: 400px;
+            margin-bottom: 10px;
         }
 
         .search-input {
             width: 100%;
-            padding: 10px 15px;
+            padding: 12px 15px;
             border: 2px solid #cbd5e1;
             border-radius: 8px;
             font-size: 16px;
+            height: 48px;
+        }
+
+        .search-input:focus {
+            border-color: var(--gold);
+            outline: none;
+        }
+
+        .dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid var(--gold);
+            border-radius: 0 0 8px 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+            z-index: 1000;
+        }
+
+        .result-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .result-item:hover {
+            background: #faebcd;
         }
 
         .filter-buttons {
             display: flex;
-            gap: 8px;
+            gap: 5px;
+            margin-bottom: 10px;
         }
 
         .filter-btn {
-            padding: 8px 15px;
-            border-radius: 6px;
+            flex: 1;
+            padding: 10px 5px;
+            border-radius: 4px;
             font-weight: 600;
             font-size: 12px;
             cursor: pointer;
             border: 2px solid var(--gold);
             background: white;
-            white-space: nowrap;
+            color: var(--dark-blue);
+            text-align: center;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .filter-btn.active {
@@ -150,37 +208,230 @@
             border-color: var(--dark-green);
         }
 
-        .scrollable-content {
-            flex: 1;
-            overflow: auto;
-            padding: 30px;
-            background: white;
+        .border-line {
+            border-top: 3px solid var(--gold);
+            margin: 10px 0 0 0;
         }
 
-        /* All other rendering logic remains identical to your original file 7 */
-        .tree-root-layout { display: flex; flex-direction: column; align-items: center; gap: 20px; width: 100%; }
-        .family-group { display: flex; flex-direction: column; align-items: center; gap: 15px; }
-        .children-row { display: flex; gap: 20px; justify-content: center; }
-        .box { border: 2px solid var(--gold); border-radius: 10px; background: white; min-width: 180px; text-align: center; }
-        /* ... [Rest of the original File 7 Styles & Scripts] ... */
+        .scrollable-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .tree-root-layout {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .family-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .children-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .relation-label {
+            font-size: 10px;
+            color: white;
+            font-weight: bold;
+            background: var(--dark-blue);
+            padding: 4px 10px;
+            border-radius: 4px;
+            margin: 3px 0;
+        }
+
+        .descendant-heading {
+            font-size: 12px;
+            color: var(--maroon);
+            font-weight: 800;
+            margin: 10px 0 3px 0;
+            font-family: 'Playfair Display', serif;
+            text-align: center;
+            width: 100%;
+            border-bottom: 2px solid var(--gold);
+            padding-bottom: 3px;
+        }
+
+        .box {
+            border: 2px solid var(--gold);
+            border-radius: 10px;
+            background: white;
+            min-width: 150px;
+            max-width: 200px;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+        }
+
+        .box:active {
+            transform: scale(0.98);
+        }
+
+        .box.female-box {
+            background-color: var(--light-pink) !important;
+            border-color: #fb7185 !important;
+        }
+
+        .box.blinking-box {
+            animation: blinkBox 1.5s infinite;
+            border-width: 3px;
+        }
+
+        @keyframes blinkBox {
+            0%, 100% { border-color: #2e7d32; background: #e8f5e9; }
+            50% { border-color: #4caf50; background: #c8e6c9; }
+        }
+
+        .box-header {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 8px;
+            background: #f8fafc;
+            font-size: 9px;
+            font-weight: 800;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .box-body {
+            padding: 8px;
+        }
+
+        .member-name {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: 14px;
+            display: block;
+        }
+
+        .father-name {
+            font-size: 9px;
+            color: #64748b;
+            margin-top: 2px;
+        }
+
+        .v-line {
+            width: 2px;
+            height: 15px;
+            background: var(--gold);
+            margin: 3px auto;
+        }
+
+        .sisters-group-box {
+            border: 2px solid var(--sisters-border);
+            border-radius: 10px;
+            background: var(--light-pink);
+            width: 100%;
+            max-width: 220px;
+            padding: 8px;
+            margin: 5px auto;
+        }
+
+        .sisters-group-box .sisters-header {
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--maroon);
+            padding-bottom: 4px;
+            border-bottom: 2px solid var(--sisters-border);
+            margin-bottom: 5px;
+            text-align: left;
+        }
+
+        .sisters-group-box table {
+            width: 100%;
+            font-size: 11px;
+            border-collapse: collapse;
+        }
+
+        .sisters-group-box td {
+            padding: 4px;
+            border-bottom: 1px dashed #fecaca;
+        }
+
+        .sisters-group-box td:first-child {
+            font-weight: 600;
+            text-align: left;
+        }
+
+        .sisters-group-box td:last-child {
+            text-align: right;
+            color: var(--maroon);
+        }
+
+        .golden-heart {
+            font-size: 12px;
+            margin-top: 2px;
+            color: var(--gold);
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #999;
+            padding: 40px;
+            background: var(--light-sage);
+            border: 2px solid var(--border-sage);
+            border-radius: 16px;
+            margin: 20px;
+        }
+
+        .app-footer {
+            background: var(--dark-blue);
+            color: var(--gold);
+            text-align: center;
+            padding: 10px;
+            font-size: 10px;
+            border-top: 2px solid var(--gold);
+        }
+
+        .hidden { display: none; }
     </style>
 </head>
 <body>
     <div class="app-container">
-        <div class="header-toolbar">
-            <div class="header-title">🌿 Rizvi Family Tree</div>
-            <div class="button-group">
-                <button class="action-btn dashboard" onclick="goToDashboard()">🏠 Home</button>
-                <button class="action-btn table" onclick="switchToTable()">📋 Table</button>
-                <button class="action-btn pdf" onclick="exportPDF()">📑 PDF</button>
-                <button class="action-btn reset" onclick="resetSearch()">🔄 Reset</button>
+        <div class="app-header">
+            <div class="header-title">
+                <span>🌿</span> Rizvi Family - Tree View
             </div>
+        </div>
+
+        <!-- Button row 1 -->
+        <div class="button-row">
+            <button class="action-btn table" onclick="switchToTable()">
+                <span>📋</span> Switch to Table
+            </button>
+            <button class="action-btn reset" onclick="resetSearch()">
+                <span>🔄</span> Reset
+            </button>
+        </div>
+
+        <!-- Button row 2 -->
+        <div class="button-row">
+            <button class="action-btn pdf" onclick="exportPDF()">
+                <span>📑</span> Save PDF
+            </button>
+            <button class="action-btn dashboard" onclick="goToDashboard()">
+                <span>🏠</span> Home
+            </button>
         </div>
 
         <div class="main-content">
             <div class="search-section">
+                <div class="search-label">SEARCH MEMBER</div>
                 <div class="search-wrapper">
-                    <input type="text" id="searchInput" class="search-input" placeholder="Search Member..." onkeyup="searchMember(this.value)">
+                    <input type="text" id="searchInput" class="search-input" placeholder="Type name..." onkeyup="searchMember(this.value)" autocomplete="off">
                     <div id="dropdown" class="dropdown"></div>
                 </div>
                 <div class="filter-buttons">
@@ -188,11 +439,408 @@
                     <div id="filterDescendants" class="filter-btn active" onclick="toggleFilter('descendants')">👶 Children</div>
                     <div id="filterAncestors" class="filter-btn" onclick="toggleFilter('ancestors')">🌳 Ancestors</div>
                 </div>
+                <div class="border-line"></div>
             </div>
 
-            <div class="scrollable-content" id="treeView">
-                </div>
+            <div class="scrollable-content" id="treeView"></div>
+        </div>
+
+        <div class="app-footer">
+            Imran Haider S/o Risalat H Rizvi | 0332-787-6010
         </div>
     </div>
-    </body>
+
+    <script>
+        // ======================================================================
+        // ========================== GLOBAL VARIABLES ==========================
+        // ======================================================================
+        let db = [];
+        let currentMember = null;
+        let showSiblings = true;
+        let showDescendants = true;
+        let showAncestors = false;
+        let LOAD_STAMP = '';
+
+        // ======================================================================
+        // ========================== HELPER FUNCTIONS ==========================
+        // ======================================================================
+        function displayName(str) {
+            return str ? str.replace(/\s*-\s*\d+$/, '').trim() : '';
+        }
+
+        function formatCurrentTime() {
+            const d = new Date();
+            const day = d.getDate();
+            const month = d.getMonth() + 1;
+            const year = d.getFullYear();
+            const hours = d.getHours();
+            const minutes = String(d.getMinutes()).padStart(2, '0');
+            const ampm = hours >= 12 ? 'pm' : 'am';
+            const displayHours = hours % 12 || 12;
+            return `${day}/${month}/${year} - ${displayHours}:${minutes}${ampm}`;
+        }
+
+        function loadFromStorage() {
+            const saved = localStorage.getItem('familyDB');
+            if (saved) {
+                db = JSON.parse(saved);
+                LOAD_STAMP = 'Last data updated on: ' + new Date().toLocaleString();
+            }
+        }
+
+        function findParent(member) {
+            if (!member || !member.father) return null;
+            return db.find(x => x.name.toLowerCase() === member.father.toLowerCase());
+        }
+
+        function getAncestryChain(member) {
+            if (!member) return [];
+            let chain = [], cur = member, visited = new Set();
+            while (cur && !visited.has(cur.name.toLowerCase())) {
+                chain.push(cur);
+                visited.add(cur.name.toLowerCase());
+                cur = findParent(cur);
+            }
+            return chain;
+        }
+
+        // ======================================================================
+        // ========================== NAVIGATION ================================
+        // ======================================================================
+        function switchToTable() {
+            if (currentMember) {
+                localStorage.setItem('tableViewMember', JSON.stringify(currentMember));
+                localStorage.setItem('tableViewFilters', JSON.stringify({
+                    showSiblings: showSiblings,
+                    showDescendants: showDescendants,
+                    showAncestors: showAncestors
+                }));
+            }
+            window.location.href = '8-individual-table-mobile.html';
+        }
+
+        function goToDashboard() {
+            window.location.href = '6-dashboard-mobile.html';
+        }
+
+        function resetSearch() {
+            document.getElementById('searchInput').value = '';
+            currentMember = null;
+            document.getElementById('treeView').innerHTML = `
+                <div class="empty-state">
+                    <div style="font-size: 40px; margin-bottom: 10px;">👤</div>
+                    <div style="font-size: 16px; font-weight: 600; color: var(--maroon);">Select a member</div>
+                    <div style="font-size: 12px; color: #666; margin-top: 5px;">Search and select a family member above</div>
+                </div>
+            `;
+            document.getElementById('dropdown').style.display = 'none';
+        }
+
+        // ======================================================================
+        // ========================== PDF EXPORT ================================
+        // ======================================================================
+        async function exportPDF() {
+            if (!currentMember) {
+                alert('Please select a member first');
+                return;
+            }
+            
+            const content = document.getElementById('treeView');
+            if (!content) return alert('No content to export');
+            
+            try {
+                const header = document.createElement('div');
+                header.style.marginBottom = '20px';
+                header.style.textAlign = 'center';
+                header.innerHTML = `
+                    <h1 style="color: #d4af37; font-size: 24px; font-family: 'Playfair Display', serif;">Rizvi Family Tree</h1>
+                    <h2 style="color: #5a0000; font-size: 18px; font-family: 'Playfair Display', serif;">${displayName(currentMember.name)}</h2>
+                `;
+                
+                const footer = document.createElement('div');
+                footer.style.marginTop = '20px';
+                footer.style.padding = '10px';
+                footer.style.borderTop = '1px solid #ddd';
+                footer.style.textAlign = 'center';
+                footer.style.fontSize = '10px';
+                footer.innerHTML = `Imran Haider | 0332-787-6010 | ${formatCurrentTime()}`;
+                
+                content.insertBefore(header, content.firstChild);
+                content.appendChild(footer);
+                
+                const loadingMsg = document.createElement('div');
+                loadingMsg.style.position = 'fixed';
+                loadingMsg.style.top = '50%';
+                loadingMsg.style.left = '50%';
+                loadingMsg.style.transform = 'translate(-50%, -50%)';
+                loadingMsg.style.background = '#5a0000';
+                loadingMsg.style.color = 'white';
+                loadingMsg.style.padding = '15px 30px';
+                loadingMsg.style.borderRadius = '8px';
+                loadingMsg.style.zIndex = '9999';
+                loadingMsg.textContent = '📄 Preparing PDF...';
+                document.body.appendChild(loadingMsg);
+                
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                const canvas = await html2canvas(content, {
+                    scale: 2,
+                    backgroundColor: '#ffffff'
+                });
+                
+                content.removeChild(header);
+                content.removeChild(footer);
+                document.body.removeChild(loadingMsg);
+                
+                const imgData = canvas.toDataURL('image/png');
+                const { jsPDF } = window.jspdf;
+                
+                const w = canvas.width / 2 * 0.264583;
+                const h = canvas.height / 2 * 0.264583;
+                
+                const pdf = new jsPDF({
+                    orientation: w > h ? 'l' : 'p',
+                    unit: 'mm',
+                    format: [w + 30, h + 30]
+                });
+                
+                pdf.addImage(imgData, 'PNG', 15, 15, w, h);
+                
+                const safeName = displayName(currentMember.name).replace(/[^a-z0-9]/gi, '_').toLowerCase();
+                pdf.save(`family_${safeName}_${new Date().getTime()}.pdf`);
+                
+            } catch (err) {
+                console.error('PDF Error:', err);
+                alert('❌ PDF generation failed: ' + err.message);
+            }
+        }
+
+        // ======================================================================
+        // ========================== SEARCH FUNCTIONS ==========================
+        // ======================================================================
+        function searchMember(query) {
+            const drop = document.getElementById('dropdown');
+            drop.innerHTML = '';
+            
+            if (!query || query.length < 1) {
+                drop.style.display = 'none';
+                return;
+            }
+            
+            const found = db.filter(p => p.name.toLowerCase().includes(query.toLowerCase())).slice(0, 6);
+            if (found.length === 0) {
+                drop.style.display = 'none';
+                return;
+            }
+            
+            found.forEach(p => {
+                const div = document.createElement('div');
+                div.className = 'result-item';
+                div.innerHTML = `<div><strong>${displayName(p.name)}</strong> <span style="color:var(--maroon);">(${p.gen})</span></div>
+                    <div style="font-size:10px; color:#666;">${p.gender?.startsWith('F') ? 'D/o' : 'S/o'} ${displayName(p.father)}</div>`;
+                div.onclick = (e) => {
+                    e.stopPropagation();
+                    document.getElementById('searchInput').value = displayName(p.name) + ' (' + p.gen + ')';
+                    currentMember = p;
+                    renderTree();
+                    drop.style.display = 'none';
+                };
+                drop.appendChild(div);
+            });
+            
+            drop.style.display = 'block';
+        }
+
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.search-wrapper')) {
+                document.getElementById('dropdown').style.display = 'none';
+            }
+        });
+
+        function handleBoxClick(member) {
+            currentMember = member;
+            document.getElementById('searchInput').value = displayName(member.name) + ' (' + member.gen + ')';
+            renderTree();
+        }
+
+        // ======================================================================
+        // ========================== FILTER TOGGLE =============================
+        // ======================================================================
+        function toggleFilter(filter) {
+            if (!currentMember) return;
+            
+            if (filter === 'siblings') {
+                showSiblings = !showSiblings;
+                document.getElementById('filterSiblings').classList.toggle('active', showSiblings);
+            } else if (filter === 'descendants') {
+                showDescendants = !showDescendants;
+                document.getElementById('filterDescendants').classList.toggle('active', showDescendants);
+            } else if (filter === 'ancestors') {
+                showAncestors = !showAncestors;
+                document.getElementById('filterAncestors').classList.toggle('active', showAncestors);
+            }
+            
+            renderTree();
+        }
+
+        // ======================================================================
+        // ========================== GROUP SISTERS =============================
+        // ======================================================================
+        function groupSisters(sisters, type = 'children') {
+            if (!sisters.length) return '';
+            
+            let headerText = type === 'siblings' ? 'SISTERS' : 'DAUGHTERS';
+            
+            let html = `<div class="sisters-group-box"><div class="sisters-header"># ${headerText}</div><table>`;
+            sisters.forEach(sister => {
+                html += `<tr><td>${displayName(sister.name)}</td><td>${sister.gen}</td></tr>`;
+            });
+            html += `</table></div>`;
+            return html;
+        }
+
+        // ======================================================================
+        // ========================== RENDER BOX ================================
+        // ======================================================================
+        function renderBox(member, label, isSelected, hasChildren) {
+            const isFemale = member.gender?.startsWith('F');
+            const blinkClass = isSelected ? 'blinking-box' : '';
+            
+            return `<div class="box ${isFemale ? 'female-box' : ''} ${blinkClass}" onclick='handleBoxClick(${JSON.stringify(member).replace(/'/g, "\\'")})'>
+                <div class="box-header"><span>${label}</span><span>${member.gen}</span></div>
+                <div class="box-body">
+                    <span class="member-name">${displayName(member.name)}</span>
+                    <span class="father-name">${isFemale ? 'D/o' : 'S/o'}: ${displayName(member.father)}</span>
+                    ${hasChildren ? '<div class="golden-heart">❤️</div>' : ''}
+                </div>
+            </div>`;
+        }
+
+        // ======================================================================
+        // ========================== RENDER TREE ===============================
+        // ======================================================================
+        function renderTree() {
+            if (!currentMember) return;
+            
+            let html = '<div>';
+            
+            if (showAncestors) {
+                const ancestors = getAncestryChain(currentMember).slice(1);
+                if (ancestors.length > 0) {
+                    html += '<div class="family-group">';
+                    html += '<div class="relation-label">ANCESTORS</div>';
+                    [...ancestors].reverse().forEach((a, idx) => {
+                        const hasChildren = db.some(x => x.father?.toLowerCase() === a.name.toLowerCase());
+                        html += renderBox(a, idx === 0 ? 'Earliest' : 'Ancestor', false, hasChildren);
+                        if (idx < ancestors.length - 1) html += '<div class="v-line"></div>';
+                    });
+                    html += '<div class="v-line"></div></div>';
+                }
+            }
+            
+            const father = findParent(currentMember);
+            if (father) {
+                const fatherHasChildren = db.some(x => x.father?.toLowerCase() === father.name.toLowerCase());
+                html += '<div class="family-group">';
+                html += renderBox(father, 'Father', false, fatherHasChildren);
+                html += '<div class="v-line"></div>';
+            }
+            
+            const currentHasChildren = db.some(x => x.father?.toLowerCase() === currentMember.name.toLowerCase());
+            html += renderBox(currentMember, 'Selected', true, currentHasChildren);
+            html += '</div>';
+            
+            if (showSiblings && father) {
+                const siblings = db.filter(s => s.father?.toLowerCase() === currentMember.father?.toLowerCase() && s.name !== currentMember.name);
+                if (siblings.length > 0) {
+                    const males = siblings.filter(s => !s.gender?.startsWith('F'));
+                    const females = siblings.filter(s => s.gender?.startsWith('F'));
+                    
+                    html += '<div class="family-group">';
+                    html += `<div class="descendant-heading">CHILDREN OF ${displayName(father.name).toUpperCase()}</div>`;
+                    html += '<div class="relation-label">SIBLINGS</div>';
+                    
+                    if (males.length) {
+                        html += '<div class="children-row">';
+                        males.forEach(s => {
+                            const hasChildren = db.some(x => x.father?.toLowerCase() === s.name.toLowerCase());
+                            html += renderBox(s, 'Brother', false, hasChildren);
+                        });
+                        html += '</div>';
+                    }
+                    
+                    if (females.length) {
+                        html += groupSisters(females, 'siblings');
+                    }
+                    html += '</div>';
+                }
+            }
+            
+            if (showDescendants) {
+                const children = db.filter(c => c.father?.toLowerCase() === currentMember.name.toLowerCase());
+                if (children.length > 0) {
+                    const males = children.filter(c => !c.gender?.startsWith('F'));
+                    const females = children.filter(c => c.gender?.startsWith('F'));
+                    
+                    html += '<div class="family-group">';
+                    html += '<div class="v-line"></div>';
+                    html += `<div class="descendant-heading">CHILDREN OF ${displayName(currentMember.name).toUpperCase()}</div>`;
+                    html += '<div class="relation-label">CHILDREN</div>';
+                    
+                    if (males.length) {
+                        html += '<div class="children-row">';
+                        males.forEach(c => {
+                            const hasChildren = db.some(x => x.father?.toLowerCase() === c.name.toLowerCase());
+                            html += renderBox(c, 'Son', false, hasChildren);
+                        });
+                        html += '</div>';
+                    }
+                    
+                    if (females.length) {
+                        html += groupSisters(females, 'children');
+                    }
+                    html += '</div>';
+                }
+            }
+            
+            html += '</div>';
+            document.getElementById('treeView').innerHTML = html;
+        }
+
+        // ======================================================================
+        // ========================== INITIALIZATION ============================
+        // ======================================================================
+        loadFromStorage();
+        
+        const savedMember = localStorage.getItem('tableViewMember');
+        if (savedMember) {
+            currentMember = JSON.parse(savedMember);
+            document.getElementById('searchInput').value = displayName(currentMember.name) + ' (' + currentMember.gen + ')';
+            localStorage.removeItem('tableViewMember');
+            
+            const savedFilters = localStorage.getItem('tableViewFilters');
+            if (savedFilters) {
+                const filters = JSON.parse(savedFilters);
+                showSiblings = filters.showSiblings;
+                showDescendants = filters.showDescendants;
+                showAncestors = filters.showAncestors;
+                
+                document.getElementById('filterSiblings').classList.toggle('active', showSiblings);
+                document.getElementById('filterDescendants').classList.toggle('active', showDescendants);
+                document.getElementById('filterAncestors').classList.toggle('active', showAncestors);
+                
+                localStorage.removeItem('tableViewFilters');
+            }
+            renderTree();
+        } else {
+            document.getElementById('treeView').innerHTML = `
+                <div class="empty-state">
+                    <div style="font-size: 40px; margin-bottom: 10px;">👤</div>
+                    <div style="font-size: 16px; font-weight: 600; color: var(--maroon);">Select a member</div>
+                    <div style="font-size: 12px; color: #666; margin-top: 5px;">Search and select a family member above</div>
+                </div>
+            `;
+        }
+    </script>
+</body>
 </html>
