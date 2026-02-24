@@ -46,13 +46,8 @@
         .app-header {
             background: linear-gradient(135deg, var(--dark-blue) 0%, #1e3d3d 100%);
             color: var(--gold);
-            padding: 10px 12px;
+            padding: 12px;
             border-bottom: 3px solid var(--gold);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 8px;
         }
 
         .header-title {
@@ -64,56 +59,62 @@
             gap: 5px;
         }
 
-        .header-actions {
+        .button-row {
             display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-            justify-content: flex-end;
+            gap: 8px;
+            padding: 8px 12px;
+            background: #fffcf8;
+            border-bottom: 1px solid var(--border-sage);
         }
 
-        .header-btn {
-            padding: 8px 10px;
+        .action-btn {
+            flex: 1;
+            padding: 12px 8px;
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
             border: 2px solid var(--gold);
-            background: transparent;
-            color: var(--gold);
-            border-radius: 6px;
-            min-width: 44px;
-            min-height: 44px;
+            background: white;
+            color: var(--dark-blue);
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
+            gap: 6px;
+            min-height: 48px;
             transition: all 0.2s;
         }
 
-        .header-btn:active {
-            transform: scale(0.95);
+        .action-btn:active {
+            transform: scale(0.98);
         }
 
-        .header-btn.table {
-            background: var(--bronze);
-            color: white;
-            border-color: transparent;
-        }
+     .action-btn.table {
+    background: var(--dark-blue);  /* Dark blue background */
+    color: white;
+    border-color: transparent;
+}
 
-        .header-btn.reset {
-            background: var(--maroon);
-            color: white;
-            border-color: transparent;
-        }
+.action-btn.reset {
+    background: var(--maroon);
+    color: white;
+    border-color: transparent;
+}
 
-        .header-btn.pdf {
-            background: var(--pdf-grey);
-            color: white;
-            border-color: transparent;
-        }
+.action-btn.pdf {
+    background: var(--pdf-grey);
+    color: white;
+    border-color: transparent;
+}
 
-        .header-btn.dashboard {
-            background: var(--dashboard-green);
-            color: white;
-            border-color: transparent;
+.action-btn.dashboard {
+    background: var(--dashboard-green);
+    color: white;
+    border-color: transparent;
+}
+
+        .action-btn span {
+            font-size: 18px;
         }
 
         .main-content {
@@ -404,12 +405,26 @@
             <div class="header-title">
                 <span>🌿</span> Rizvi Family - Tree View
             </div>
-            <div class="header-actions">
-                <button class="header-btn table" onclick="switchToTable()" title="Switch to Table View">📋</button>
-                <button class="header-btn reset" onclick="resetSearch()" title="Reset Search">🔄</button>
-                <button class="header-btn pdf" onclick="exportPDF()" title="Save as PDF">📑</button>
-                <button class="header-btn dashboard" onclick="goToDashboard()" title="Go to Dashboard">🏠</button>
-            </div>
+        </div>
+
+        <!-- Button row 1 -->
+        <div class="button-row">
+            <button class="action-btn table" onclick="switchToTable()">
+                <span>📋</span> Switch to Table
+            </button>
+            <button class="action-btn reset" onclick="resetSearch()">
+                <span>🔄</span> Reset
+            </button>
+        </div>
+
+        <!-- Button row 2 -->
+        <div class="button-row">
+            <button class="action-btn pdf" onclick="exportPDF()">
+                <span>📑</span> Save PDF
+            </button>
+            <button class="action-btn dashboard" onclick="goToDashboard()">
+                <span>🏠</span> Home
+            </button>
         </div>
 
         <div class="main-content">
@@ -709,7 +724,6 @@
             
             let html = '<div>';
             
-            // Ancestors
             if (showAncestors) {
                 const ancestors = getAncestryChain(currentMember).slice(1);
                 if (ancestors.length > 0) {
@@ -724,7 +738,6 @@
                 }
             }
             
-            // Father and Current
             const father = findParent(currentMember);
             if (father) {
                 const fatherHasChildren = db.some(x => x.father?.toLowerCase() === father.name.toLowerCase());
@@ -737,7 +750,6 @@
             html += renderBox(currentMember, 'Selected', true, currentHasChildren);
             html += '</div>';
             
-            // Siblings
             if (showSiblings && father) {
                 const siblings = db.filter(s => s.father?.toLowerCase() === currentMember.father?.toLowerCase() && s.name !== currentMember.name);
                 if (siblings.length > 0) {
@@ -764,7 +776,6 @@
                 }
             }
             
-            // Children
             if (showDescendants) {
                 const children = db.filter(c => c.father?.toLowerCase() === currentMember.name.toLowerCase());
                 if (children.length > 0) {
@@ -801,7 +812,6 @@
         // ======================================================================
         loadFromStorage();
         
-        // Check if coming from table view
         const savedMember = localStorage.getItem('tableViewMember');
         if (savedMember) {
             currentMember = JSON.parse(savedMember);
