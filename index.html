@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Rizvi Family · Login</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
     
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
         :root {
             --maroon: #5a0000;
@@ -28,11 +28,11 @@
 
         .password-container {
             background: white;
-            padding: 30px;
+            padding: 30px 20px;
             border-radius: 20px;
             border: 3px solid var(--gold);
             max-width: 380px;
-            width: 90%;
+            width: 100%;
             text-align: center;
             box-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
         }
@@ -59,29 +59,33 @@
         }
 
         .device-btn {
-            padding: 10px 20px;
+            padding: 12px 10px;
             border: 2px solid var(--gold);
             background: white;
             cursor: pointer;
             border-radius: 8px;
             font-weight: 600;
-            font-size: 14px;
+            font-size: 15px;
             transition: all 0.2s;
             flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 6px;
-        }
-
-        .device-btn:hover {
-            background: #faebcd;
+            min-height: 50px;
+            -webkit-appearance: none;
+            appearance: none;
         }
 
         .device-btn.active {
             background: var(--gold);
             color: var(--dark-blue);
             border-color: var(--dark-blue);
+        }
+
+        .device-btn:active {
+            transform: scale(0.98);
+            background: #faebcd;
         }
 
         .password-wrapper {
@@ -98,6 +102,8 @@
             outline: none;
             transition: all 0.2s;
             font-family: 'Inter', sans-serif;
+            -webkit-appearance: none;
+            appearance: none;
         }
 
         .password-wrapper input:focus {
@@ -113,14 +119,18 @@
             cursor: pointer;
             color: var(--maroon);
             font-weight: bold;
-            font-size: 14px;
+            font-size: 15px;
             background: white;
-            padding: 2px 8px;
+            padding: 5px 10px;
             border-radius: 4px;
             user-select: none;
+            min-height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .toggle-btn:hover {
+        .toggle-btn:active {
             background: #f0f0f0;
         }
 
@@ -128,39 +138,42 @@
             background: var(--maroon);
             color: white;
             border: none;
-            padding: 14px 30px;
+            padding: 16px 20px;
             border-radius: 8px;
             font-weight: bold;
             cursor: pointer;
             width: 100%;
-            font-size: 16px;
+            font-size: 17px;
             transition: all 0.2s;
             margin-top: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
+            -webkit-appearance: none;
+            appearance: none;
+            min-height: 55px;
         }
 
-        .unlock-btn:hover {
+        .unlock-btn:active {
             background: #7a1f1f;
-            transform: translateY(-2px);
+            transform: scale(0.98);
         }
 
         .error-msg {
             color: var(--maroon);
             margin-top: 15px;
             display: none;
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 600;
-            padding: 8px;
+            padding: 10px;
             background: #ffe6e6;
             border-radius: 4px;
         }
 
         .footer-note {
             margin-top: 25px;
-            font-size: 12px;
+            font-size: 13px;
             color: #666;
             border-top: 1px solid #eee;
             padding-top: 15px;
@@ -200,20 +213,20 @@
         <div class="subtitle">Honoring our past, preserving our future</div>
         
         <div class="device-selector">
-            <button class="device-btn active" onclick="setDevice('pc')">
+            <button class="device-btn active" id="pcBtn">
                 <span>💻</span> Desktop
             </button>
-            <button class="device-btn" onclick="setDevice('mobile')">
+            <button class="device-btn" id="mobileBtn">
                 <span>📱</span> Mobile
             </button>
         </div>
         
         <div class="password-wrapper">
             <input type="password" id="passwordField" placeholder="Enter Secure Password" autofocus>
-            <span class="toggle-btn" onclick="togglePassword()">Show</span>
+            <span class="toggle-btn" id="toggleBtn">Show</span>
         </div>
 
-        <button onclick="checkPassword()" class="unlock-btn">
+        <button class="unlock-btn" id="unlockBtn">
             <span>🔓</span> Unlock Dashboard
         </button>
         <div id="passwordError" class="error-msg">
@@ -233,57 +246,108 @@
         const CONFIG = { password: 'sihr110' };
         let deviceType = 'pc';
 
-        function setDevice(type) {
-            deviceType = type;
-            document.querySelectorAll('.device-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-        }
+        // Wait for DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Page loaded, setting up event listeners...');
+            
+            // Get elements
+            const pcBtn = document.getElementById('pcBtn');
+            const mobileBtn = document.getElementById('mobileBtn');
+            const toggleBtn = document.getElementById('toggleBtn');
+            const unlockBtn = document.getElementById('unlockBtn');
+            const passwordField = document.getElementById('passwordField');
+            const errorMsg = document.getElementById('passwordError');
 
-        function togglePassword() {
-            const pwd = document.getElementById('passwordField');
-            pwd.type = pwd.type === 'password' ? 'text' : 'password';
-            document.querySelector('.toggle-btn').textContent = pwd.type === 'password' ? 'Show' : 'Hide';
-        }
+            // Device selection - PC
+            if (pcBtn) {
+                pcBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('PC button clicked');
+                    deviceType = 'pc';
+                    pcBtn.classList.add('active');
+                    mobileBtn.classList.remove('active');
+                });
+            }
+
+            // Device selection - Mobile
+            if (mobileBtn) {
+                mobileBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('Mobile button clicked');
+                    deviceType = 'mobile';
+                    mobileBtn.classList.add('active');
+                    pcBtn.classList.remove('active');
+                });
+            }
+
+            // Toggle password visibility
+            if (toggleBtn) {
+                toggleBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('Toggle button clicked');
+                    const type = passwordField.type === 'password' ? 'text' : 'password';
+                    passwordField.type = type;
+                    toggleBtn.textContent = type === 'password' ? 'Show' : 'Hide';
+                });
+            }
+
+            // Unlock button
+            if (unlockBtn) {
+                unlockBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('Unlock button clicked');
+                    checkPassword();
+                });
+            }
+
+            // Enter key in password field
+            if (passwordField) {
+                passwordField.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        console.log('Enter key pressed');
+                        checkPassword();
+                    }
+                });
+
+                // Clear error when typing
+                passwordField.addEventListener('input', function() {
+                    errorMsg.style.display = 'none';
+                });
+            }
+
+            // Focus on password field
+            passwordField.focus();
+        });
 
         function checkPassword() {
-            const enteredPwd = document.getElementById('passwordField').value;
+            const passwordField = document.getElementById('passwordField');
+            const errorMsg = document.getElementById('passwordError');
+            const enteredPwd = passwordField.value;
+            
+            console.log('Checking password...');
             
             if (enteredPwd === CONFIG.password) {
-                // CRITICAL FIX: Clear any existing data on fresh login
+                console.log('Password correct, redirecting to', deviceType);
+                // Clear any existing data on fresh login
                 localStorage.removeItem('familyDB');
                 
                 // Navigate to appropriate dashboard
                 const dashboard = deviceType === 'pc' ? '1-dashboard-pc.html' : '6-dashboard-mobile.html';
                 window.location.href = dashboard;
             } else {
+                console.log('Password incorrect');
                 // Show error message
-                document.getElementById('passwordError').style.display = 'block';
-                document.getElementById('passwordField').value = '';
-                document.getElementById('passwordField').focus();
+                errorMsg.style.display = 'block';
+                passwordField.value = '';
+                passwordField.focus();
                 
                 // Hide error after 3 seconds
                 setTimeout(() => {
-                    document.getElementById('passwordError').style.display = 'none';
+                    errorMsg.style.display = 'none';
                 }, 3000);
             }
         }
-
-        // Allow Enter key to submit
-        document.getElementById('passwordField').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                checkPassword();
-            }
-        });
-
-        // Clear error when user starts typing
-        document.getElementById('passwordField').addEventListener('input', function() {
-            document.getElementById('passwordError').style.display = 'none';
-        });
-
-        // Focus on password field when page loads
-        window.addEventListener('load', function() {
-            document.getElementById('passwordField').focus();
-        });
     </script>
 </body>
 </html>
