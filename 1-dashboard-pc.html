@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Rizvi Family · Dashboard (Desktop)</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --maroon: #5a0000;
+            --dark-blue: #0f172a;
+            --gold: #d4af37;
+            --bronze: #bc8c4f;
+            --dashboard-green: #1b5e20;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #1a1a1a;
+            height: 100vh;
+            overflow: hidden;
+            margin: 0;
+            padding: 10px;
+        }
+
+        .app-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            height: calc(100vh - 20px);
+            display: flex;
+            flex-direction: column;
+            border-radius: 20px;
+            border: 2px solid var(--gold);
+            overflow: hidden;
+            box-shadow: 0 0 50px rgba(212, 175, 55, 0.2);
+        }
+
+        .app-header {
+            background: linear-gradient(135deg, var(--dark-blue) 0%, #1e3d3d 100%);
+            color: var(--gold);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid var(--gold);
+        }
+
+        .header-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-icon {
+            background: var(--gold);
+            color: var(--dark-blue);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .header-btn {
+            padding: 6px 14px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            border: 2px solid var(--gold);
+            background: transparent;
+            color: var(--gold);
+            border-radius: 4px;
+        }
+
+        .header-btn:hover {
+            background: var(--gold);
+            color: var(--dark-blue);
+        }
+
+        .header-btn.reset {
+            background: var(--maroon);
+            color: white;
+            border-color: transparent;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fffcf8;
+        }
+
+        .dashboard-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-width: 900px;
+            width: 100%;
+            padding: 20px;
+        }
+
+        .top-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .bottom-row {
+            display: flex;
+            justify-content: center;
+        }
+
+        .dashboard-card {
+            background: white;
+            border: 2px solid var(--gold);
+            border-radius: 16px;
+            padding: 20px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            height: 140px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--bronze);
+        }
+
+        .card-icon {
+            font-size: 36px;
+            margin-bottom: 8px;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--dark-blue);
+            margin-bottom: 5px;
+        }
+
+        .card-desc {
+            color: #666;
+            font-size: 11px;
+        }
+
+        .data-status {
+            margin-top: 8px;
+            color: var(--maroon);
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .exit-btn-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #991b1b;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            border: 2px solid #991b1b;
+            width: 70%;
+            justify-content: center;
+        }
+
+        .exit-btn-container:hover {
+            background: #b91c1c;
+        }
+
+        .app-footer {
+            background: var(--dark-blue);
+            color: var(--gold);
+            text-align: center;
+            padding: 8px;
+            font-size: 11px;
+            border-top: 2px solid var(--gold);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="app-header">
+            <div class="header-title">
+                <span class="header-icon">🌿</span>
+                <span>Rizvi Family Dashboard</span>
+            </div>
+            <div class="header-actions">
+                <!-- No duplicate logout button -->
+            </div>
+        </div>
+
+        <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" style="display:none;">
+
+        <div class="main-content">
+            <div class="dashboard-grid">
+                <div class="top-row">
+                    <div class="dashboard-card" onclick="loadDataWithPassword()">
+                        <div class="card-icon">📂</div>
+                        <div class="card-title">Load Data</div>
+                        <div class="card-desc">Upload Excel file</div>
+                        <div class="data-status" id="dataStatus">🔍 Searching...</div>
+                    </div>
+                    <div class="dashboard-card" onclick="goToIndividual()">
+                        <div class="card-icon">👤</div>
+                        <div class="card-title">Individual</div>
+                        <div class="card-desc">Single member search</div>
+                    </div>
+                    <div class="dashboard-card" onclick="goToRoot()">
+                        <div class="card-icon">👥</div>
+                        <div class="card-title">Root Relative</div>
+                        <div class="card-desc">Two member search</div>
+                    </div>
+                </div>
+                <div class="bottom-row">
+                    <div class="exit-btn-container" onclick="logout()">
+                        <span class="exit-btn-icon">🚪</span>
+                        <span class="exit-btn-text">Exit</span>
+                        <span class="exit-btn-subtext">- (Back to login)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="app-footer">
+            Imran Haider S/o Syed Risalat Hussain Rizvi | 0332-787-6010
+        </div>
+    </div>
+
+    <script>
+        let db = [];
+
+        function logout() {
+            // Clear all data when going back to password screen
+            localStorage.removeItem('familyDB');
+            db = [];
+            window.location.href = 'index.html';
+        }
+
+        function loadDataWithPassword() {
+            const pwd = prompt('Enter data password:');
+            if (pwd === '6010') {
+                document.getElementById('fileInput').click();
+            } else if (pwd !== null) {
+                alert('❌ Invalid password');
+            }
+        }
+
+        document.getElementById('fileInput').onchange = function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const wb = XLSX.read(data, { type: 'array' });
+                    const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+                    
+                    db = rows.map(r => ({
+                        name: String(r.Name || r.name || '').trim(),
+                        father: String(r.Father || r.father || '').trim(),
+                        gen: String(r.Gen || r.gen || '').trim(),
+                        gender: String(r.Gender || r.gender || 'M').trim().toUpperCase()
+                    })).filter(p => p.name);
+
+                    // Save to localStorage for other pages
+                    localStorage.setItem('familyDB', JSON.stringify(db));
+                    document.getElementById('dataStatus').innerHTML = `✅ ${db.length} members`;
+                    document.getElementById('dataStatus').style.color = '#2e7d32';
+                } catch (err) {
+                    alert('❌ Error: ' + err.message);
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        };
+
+        function goToIndividual() {
+            // Check if data exists in memory OR in localStorage
+            if (db.length === 0) {
+                const saved = localStorage.getItem('familyDB');
+                if (saved) {
+                    db = JSON.parse(saved);
+                } else {
+                    alert('Please load data first');
+                    return;
+                }
+            }
+            window.location.href = '2-individual-tree-pc.html';
+        }
+
+        function goToRoot() {
+            // Check if data exists in memory OR in localStorage
+            if (db.length === 0) {
+                const saved = localStorage.getItem('familyDB');
+                if (saved) {
+                    db = JSON.parse(saved);
+                } else {
+                    alert('Please load data first');
+                    return;
+                }
+            }
+            window.location.href = '4-root-tree-pc.html';
+        }
+
+        // Check if data already exists in localStorage from previous session
+        function initializeData() {
+            const saved = localStorage.getItem('familyDB');
+            if (saved) {
+                db = JSON.parse(saved);
+                document.getElementById('dataStatus').innerHTML = `✅ ${db.length} members`;
+                document.getElementById('dataStatus').style.color = '#2e7d32';
+            } else {
+                // Only auto-load if no cached data
+                autoLoadData();
+            }
+        }
+
+        // Auto-load function - runs only if no cached data
+        function autoLoadData() {
+            const possiblePaths = [
+                'data.xlsx',
+                './data.xlsx',
+                'Rizvi Family Tree.xlsx',
+                './Rizvi Family Tree.xlsx',
+                'data/data.xlsx',
+                'family-tree.xlsx'
+            ];
+            
+            let attempted = 0;
+            let loadingIndicator = document.getElementById('dataStatus');
+            
+            function tryNextPath() {
+                if (attempted >= possiblePaths.length) {
+                    loadingIndicator.innerHTML = '⚠️ Click to load manually';
+                    loadingIndicator.style.color = '#f59e0b';
+                    return;
+                }
+                
+                const path = possiblePaths[attempted];
+                attempted++;
+                
+                fetch(path, { method: 'GET', mode: 'cors' })
+                    .then(response => {
+                        if (!response.ok) throw new Error('Not found');
+                        return response.arrayBuffer();
+                    })
+                    .then(data => {
+                        try {
+                            const wb = XLSX.read(new Uint8Array(data), { type: 'array' });
+                            const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+                            
+                            db = rows.map(r => ({
+                                name: String(r.Name || r.name || '').trim(),
+                                father: String(r.Father || r.father || '').trim(),
+                                gen: String(r.Gen || r.gen || '').trim(),
+                                gender: String(r.Gender || r.gender || 'M').trim().toUpperCase()
+                            })).filter(p => p.name);
+
+                            if (db.length > 0) {
+                                localStorage.setItem('familyDB', JSON.stringify(db));
+                                loadingIndicator.innerHTML = `✅ ${db.length} members loaded`;
+                                loadingIndicator.style.color = '#2e7d32';
+                            } else {
+                                tryNextPath();
+                            }
+                        } catch (err) {
+                            tryNextPath();
+                        }
+                    })
+                    .catch(() => {
+                        tryNextPath();
+                    });
+            }
+            
+            tryNextPath();
+        }
+
+        // Initialize on page load
+        initializeData();
+    </script>
+</body>
+</html>
