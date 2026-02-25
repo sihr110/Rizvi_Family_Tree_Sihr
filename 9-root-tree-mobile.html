@@ -10,6 +10,21 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
 
+/* Container to center the top box */
+.report-section {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+/* The box itself - locked to the same width as the items below */
+.stats-container, .summary-card {
+    width: 550px !important; /* Forces it to match the width of one tree/table */
+    margin: 0 auto;
+}
+
+
 html {
     overflow: hidden;
     height: 100%;

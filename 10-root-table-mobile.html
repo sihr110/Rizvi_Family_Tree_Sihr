@@ -10,6 +10,21 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
 
+
+/* Container to center the top box */
+.report-section {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+/* The box itself - locked to the same width as the items below */
+.stats-container, .summary-card {
+    width: 550px !important; /* Forces it to match the width of one tree/table */
+    margin: 0 auto;
+}
+
 html {
     overflow: hidden;
     height: 100%;
@@ -299,22 +314,17 @@ body {
             text-align: center;
         }
 
-        .lineage-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-        }
+      .lineage-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: auto !important; /* This allows columns to expand for long names */
+    white-space: nowrap;           /* Keeps names on a single line */
+}
 
-.lineage-table th {
-    background: #fdf6e3;
-    padding: 8px;
-    border-bottom: 2px solid var(--gold);
-    text-align: center;
-    font-weight: 700;
-    color: var(--maroon);
-    position: sticky;   
-    top: 155px;         
-    z-index: 999;       
+/* Ensure the columns have enough breathing room */
+.lineage-table th, .lineage-table td {
+    padding: 12px 20px;
+    min-width: 100px;
 }
 
         .lineage-table td {
