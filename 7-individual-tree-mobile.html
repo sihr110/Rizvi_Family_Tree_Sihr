@@ -53,13 +53,14 @@
             overflow: hidden;
             max-width: 100%;
             margin: 0 auto;
+            width: 100%;
         }
 
-        /* PC-style header with buttons on right */
+        /* Wide header with compact buttons on right */
         .app-header {
             background: linear-gradient(135deg, var(--dark-blue) 0%, #1e3d3d 100%);
             color: var(--gold);
-            padding: 8px 15px;
+            padding: 8px 20px;
             border-bottom: 3px solid var(--gold);
             flex-shrink: 0;
             display: flex;
@@ -75,34 +76,32 @@
             font-weight: 900;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             white-space: nowrap;
-            flex-shrink: 0;
         }
 
         .header-icon {
             background: var(--gold);
             color: var(--dark-blue);
-            width: 28px;
-            height: 28px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
+            font-size: 15px;
         }
 
-        /* PC-style header buttons */
+        /* Compact header buttons row */
         .header-actions {
             display: flex;
-            gap: 6px;
+            gap: 8px;
             flex-wrap: wrap;
             justify-content: flex-end;
-            flex-shrink: 0;
         }
 
         .header-btn {
-            padding: 5px 10px;
+            padding: 5px 12px;
             font-weight: 600;
             font-size: 12px;
             cursor: pointer;
@@ -130,18 +129,10 @@
             border-color: transparent;
         }
 
-        .header-btn.table:active {
-            background: #9e6f3a;
-        }
-
         .header-btn.reset {
             background: var(--reset-red);
             color: white;
             border-color: transparent;
-        }
-
-        .header-btn.reset:active {
-            background: #7a1f1f;
         }
 
         .header-btn.pdf {
@@ -150,18 +141,10 @@
             border-color: transparent;
         }
 
-        .header-btn.pdf:active {
-            background: #5a6268;
-        }
-
         .header-btn.dashboard {
             background: var(--dashboard-green);
             color: white;
             border-color: transparent;
-        }
-
-        .header-btn.dashboard:active {
-            background: #2e7d32;
         }
 
         .main-content {
@@ -170,22 +153,25 @@
             flex-direction: column;
             background: #fffcf8;
             overflow: hidden;
+            width: 100%;
         }
 
-        /* PC-style search section */
+        /* Wide search section */
         .search-section {
-            padding: 15px 15px 0 15px;
+            padding: 15px 20px 0 20px;
             background: #fffcf8;
             flex-shrink: 0;
+            width: 100%;
         }
 
-        /* PC-style search row */
+        /* Wide search row */
         .search-row {
             display: flex;
             align-items: center;
             gap: 15px;
             margin-bottom: 15px;
             flex-wrap: wrap;
+            width: 100%;
         }
 
         .search-label {
@@ -199,7 +185,7 @@
         .search-wrapper {
             position: relative;
             flex: 2;
-            min-width: 250px;
+            min-width: 300px;
         }
 
         .search-input {
@@ -218,15 +204,15 @@
             box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
         }
 
-        /* PC-style filter buttons inline */
+        /* Filter buttons inline */
         .filter-buttons {
             display: flex;
-            gap: 6px;
+            gap: 8px;
             flex-wrap: wrap;
         }
 
         .filter-btn {
-            padding: 6px 14px;
+            padding: 6px 16px;
             border-radius: 4px;
             font-weight: 600;
             font-size: 13px;
@@ -285,17 +271,20 @@
         .border-line {
             border-top: 3px solid var(--gold);
             margin: 20px 0 0 0;
+            width: 100%;
         }
 
+        /* Wide scrollable tree area */
         .scrollable-content {
             flex: 1;
             overflow-y: auto;
             overflow-x: auto;
             padding: 20px;
             -webkit-overflow-scrolling: touch;
+            width: 100%;
         }
 
-        /* Wide tree layout - exactly like PC version */
+        /* Wide tree layout - horizontal scroll enabled */
         .tree-root-layout {
             display: flex;
             flex-direction: column;
@@ -303,7 +292,7 @@
             gap: 15px;
             width: fit-content;
             min-width: 100%;
-            padding: 10px 20px;
+            padding: 10px 30px;
             margin: 0 auto;
         }
 
@@ -317,7 +306,7 @@
 
         .children-row {
             display: flex;
-            gap: 20px;
+            gap: 25px;
             flex-wrap: wrap;
             justify-content: center;
         }
@@ -329,7 +318,7 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             background: var(--dark-blue);
-            padding: 4px 12px;
+            padding: 4px 15px;
             border-radius: 4px;
             margin: 5px 0;
             text-align: center;
@@ -349,12 +338,12 @@
             padding-bottom: 5px;
         }
 
-        /* PC-style boxes */
+        /* PC-style wide boxes */
         .box {
             border: 2px solid var(--gold);
             border-radius: 12px;
             background: white;
-            min-width: 240px;
+            min-width: 250px;
             max-width: 280px;
             text-align: center;
             cursor: pointer;
@@ -396,7 +385,7 @@
         .box-header {
             display: flex;
             justify-content: space-between;
-            padding: 6px 10px;
+            padding: 6px 12px;
             background: #f8fafc;
             font-size: 11px;
             font-weight: 800;
@@ -516,23 +505,19 @@
             font-size: 10px;
             border-top: 2px solid var(--gold);
             flex-shrink: 0;
+            width: 100%;
         }
 
         .hidden { display: none; }
 
-        /* Mobile adjustments */
-        @media screen and (max-width: 768px) {
+        /* Responsive - only adjust when screen is very small */
+        @media screen and (max-width: 700px) {
             .search-row {
                 gap: 10px;
             }
             
-            .search-label {
-                font-size: 12px;
-            }
-            
-            .filter-btn {
-                padding: 6px 10px;
-                font-size: 12px;
+            .search-wrapper {
+                min-width: 250px;
             }
         }
 
@@ -557,38 +542,11 @@
                 justify-content: center;
             }
         }
-
-        @media screen and (max-width: 480px) {
-            .header-title {
-                font-size: 15px;
-            }
-            
-            .header-icon {
-                width: 24px;
-                height: 24px;
-                font-size: 12px;
-            }
-            
-            .header-btn {
-                padding: 4px 8px;
-                font-size: 11px;
-            }
-            
-            .box {
-                min-width: 220px;
-                max-width: 260px;
-            }
-            
-            .sisters-group-box {
-                min-width: 240px;
-                max-width: 300px;
-            }
-        }
     </style>
 </head>
 <body>
     <div class="app-container">
-        <!-- PC-style header with buttons on right -->
+        <!-- Wide header with compact buttons on right -->
         <div class="app-header">
             <div class="header-title">
                 <span class="header-icon">🌿</span>
@@ -603,8 +561,8 @@
         </div>
 
         <div class="main-content">
+            <!-- Wide search section -->
             <div class="search-section">
-                <!-- PC-style search row with label, wide search, and inline filters -->
                 <div class="search-row">
                     <span class="search-label">SEARCH MEMBER</span>
                     <div class="search-wrapper">
@@ -620,6 +578,7 @@
                 <div class="border-line"></div>
             </div>
 
+            <!-- Wide scrollable tree area -->
             <div class="scrollable-content" id="treeView"></div>
         </div>
 
