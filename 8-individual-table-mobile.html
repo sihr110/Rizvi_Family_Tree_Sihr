@@ -55,7 +55,7 @@
             margin: 0 auto;
         }
 
-        /* PC-style header with buttons on right */
+        /* PC-style header with buttons on right - HORIZONTAL LAYOUT */
         .app-header {
             background: linear-gradient(135deg, var(--dark-blue) 0%, #1e3d3d 100%);
             color: var(--gold);
@@ -66,6 +66,7 @@
             justify-content: space-between;
             align-items: center;
             min-height: 50px;
+            width: 100%;
         }
 
         .header-title {
@@ -76,6 +77,7 @@
             align-items: center;
             gap: 6px;
             white-space: nowrap;
+            flex-shrink: 0;
         }
 
         .header-icon {
@@ -90,12 +92,13 @@
             font-size: 14px;
         }
 
-        /* PC-style header buttons */
+        /* PC-style header buttons - IN A ROW */
         .header-actions {
             display: flex;
             gap: 6px;
             flex-wrap: wrap;
             justify-content: flex-end;
+            flex-shrink: 0;
         }
 
         .header-btn {
@@ -176,7 +179,7 @@
             flex-shrink: 0;
         }
 
-        /* PC-style search row */
+        /* PC-style search row - HORIZONTAL */
         .search-row {
             display: flex;
             align-items: center;
@@ -215,7 +218,7 @@
             box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
         }
 
-        /* PC-style filter buttons inline */
+        /* PC-style filter buttons inline - HORIZONTAL */
         .filter-buttons {
             display: flex;
             gap: 6px;
@@ -292,7 +295,7 @@
             -webkit-overflow-scrolling: touch;
         }
 
-        /* Empty state box - exactly like File 7 */
+        /* Empty state box */
         .empty-state {
             text-align: center;
             color: #999;
@@ -376,7 +379,7 @@
         .lineage-table th:last-child,
         .lineage-table td:last-child {
             text-align: center;
-            width: 120px;  /* Wider for Generation column */
+            width: 120px;
             font-weight: 600;
             color: var(--maroon);
         }
@@ -424,7 +427,7 @@
 
         .hidden { display: none; }
 
-        /* Mobile adjustments */
+        /* Mobile adjustments - only for very small screens */
         @media screen and (max-width: 768px) {
             .search-row {
                 gap: 10px;
@@ -441,6 +444,7 @@
         }
 
         @media screen and (max-width: 600px) {
+            /* Only wrap when absolutely necessary */
             .search-row {
                 flex-direction: row;
                 flex-wrap: wrap;
@@ -495,14 +499,14 @@
             
             .lineage-table th:last-child,
             .lineage-table td:last-child {
-                width: 100px;  /* Still wider on mobile */
+                width: 100px;
             }
         }
     </style>
 </head>
 <body>
     <div class="app-container">
-        <!-- PC-style header with buttons on right and proper title -->
+        <!-- PC-style header with buttons on right - HORIZONTAL LAYOUT -->
         <div class="app-header">
             <div class="header-title">
                 <span class="header-icon">📋</span>
@@ -518,7 +522,7 @@
 
         <div class="main-content">
             <div class="search-section">
-                <!-- PC-style search row with label, wide search, and inline filters -->
+                <!-- PC-style search row with label, wide search, and inline filters - HORIZONTAL -->
                 <div class="search-row">
                     <span class="search-label">SEARCH MEMBER</span>
                     <div class="search-wrapper">

@@ -66,6 +66,7 @@
             justify-content: space-between;
             align-items: center;
             min-height: 50px;
+            width: 100%;
         }
 
         .header-title {
@@ -76,6 +77,7 @@
             align-items: center;
             gap: 6px;
             white-space: nowrap;
+            flex-shrink: 0;
         }
 
         .header-icon {
@@ -96,6 +98,7 @@
             gap: 6px;
             flex-wrap: wrap;
             justify-content: flex-end;
+            flex-shrink: 0;
         }
 
         .header-btn {
@@ -487,6 +490,24 @@
             max-width: 500px;
         }
 
+        .empty-state .big-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        .empty-state .main-message {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--maroon);
+            margin-bottom: 8px;
+        }
+
+        .empty-state .sub-message {
+            font-size: 13px;
+            color: #666;
+        }
+
         .app-footer {
             background: var(--dark-blue);
             color: var(--gold);
@@ -499,7 +520,7 @@
 
         .hidden { display: none; }
 
-        /* Mobile adjustments - keep everything PC style but scale down slightly */
+        /* Mobile adjustments */
         @media screen and (max-width: 768px) {
             .search-row {
                 gap: 10px;
@@ -571,7 +592,7 @@
         <div class="app-header">
             <div class="header-title">
                 <span class="header-icon">🌿</span>
-                <span>Rizvi Family - Tree view</span>
+                <span>Rizvi Family - Tree View</span>
             </div>
             <div class="header-actions">
                 <div class="header-btn table" onclick="switchToTable()">📋 Table</div>
@@ -692,9 +713,9 @@
             currentMember = null;
             document.getElementById('treeView').innerHTML = `
                 <div class="empty-state">
-                    <div style="font-size: 48px; margin-bottom: 15px; opacity: 0.5;">👤</div>
-                    <div style="font-size: 18px; font-weight: 600; color: var(--maroon); margin-bottom: 8px;">Select a member to view</div>
-                    <div style="font-size: 13px; color: #666;">Search and select a family member above to see their tree</div>
+                    <div class="big-icon">👤</div>
+                    <div class="main-message">Select a member to view</div>
+                    <div class="sub-message">Search and select a family member above to see their tree</div>
                 </div>
             `;
             document.getElementById('dropdown').style.display = 'none';
@@ -999,9 +1020,9 @@
         } else {
             document.getElementById('treeView').innerHTML = `
                 <div class="empty-state">
-                    <div style="font-size: 48px; margin-bottom: 15px; opacity: 0.5;">👤</div>
-                    <div style="font-size: 18px; font-weight: 600; color: var(--maroon); margin-bottom: 8px;">Select a member to view</div>
-                    <div style="font-size: 13px; color: #666;">Search and select a family member above to see their tree</div>
+                    <div class="big-icon">👤</div>
+                    <div class="main-message">Select a member to view</div>
+                    <div class="sub-message">Search and select a family member above to see their tree</div>
                 </div>
             `;
         }
