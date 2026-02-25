@@ -2,10 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+<meta name="viewport" content="width=device-width, initial-scale=0.5, minimum-scale=0.1, maximum-scale=5.0">
+
+
     <title>Rizvi Family · Individual Table (Mobile)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -17,6 +21,9 @@
             --light-sage: #f4f7f2;
             --border-sage: #c9d6c2;
             --dark-green: #1b5e20;
+            --bronze: #bc8c4f;
+            --pdf-grey: #6c757d;
+            --dashboard-green: #1b5e20;
         }
 
         body {
@@ -24,56 +31,91 @@
             background: #1a1a1a;
             min-height: 100vh;
             padding: 5px;
+	overscroll-behavior-y: none;
         }
 
-        .app-container {
-            background: white;
-            min-height: calc(100vh - 10px);
-            border-radius: 16px;
-            border: 2px solid var(--gold);
-            display: flex;
-            flex-direction: column;
-        }
+    .app-container {
+    background: white;
+    min-height: calc(100vh - 10px);
+    border-radius: 16px;
+    border: 2px solid var(--gold);
+    display: flex;
+    flex-direction: column;
+    min-width: 1200px;}
 
         .app-header {
             background: linear-gradient(135deg, var(--dark-blue) 0%, #1e3d3d 100%);
             color: var(--gold);
             padding: 12px;
             border-bottom: 3px solid var(--gold);
-            position: relative;
         }
 
         .header-title {
             font-family: 'Playfair Display', serif;
             font-size: 16px;
             font-weight: 900;
-            padding-right: 100px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
 
-        .header-actions {
-            position: absolute;
-            top: 50%;
-            right: 12px;
-            transform: translateY(-50%);
+        .button-row {
             display: flex;
             gap: 8px;
+            padding: 8px 12px;
+            background: #fffcf8;
+            border-bottom: 1px solid var(--border-sage);
         }
 
-        .header-btn {
-            padding: 6px 10px;
-            font-size: 11px;
+        .action-btn {
+            flex: 1;
+            padding: 12px 8px;
+            font-size: 14px;
             font-weight: 600;
             cursor: pointer;
             border: 2px solid var(--gold);
-            background: transparent;
-            color: var(--gold);
-            border-radius: 4px;
-            white-space: nowrap;
+            background: white;
+            color: var(--dark-blue);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            min-height: 48px;
+            transition: all 0.2s;
         }
 
-        .header-btn.tree {
-            background: var(--gold);
-            color: var(--dark-blue);
+        .action-btn:active {
+            transform: scale(0.98);
+        }
+
+     
+.action-btn.tree {
+    background: #d4edda;  /* Light green background */
+    color: var(--dark-blue);
+    border: 2px solid var(--dark-green);
+}
+
+.action-btn.reset {
+    background: var(--maroon);
+    color: white;
+    border-color: transparent;
+}
+
+.action-btn.pdf {
+    background: var(--pdf-grey);
+    color: white;
+    border-color: transparent;
+}
+
+.action-btn.dashboard {
+    background: var(--dashboard-green);
+    color: white;
+    border-color: transparent;
+}
+
+        .action-btn span {
+            font-size: 18px;
         }
 
         .main-content {
@@ -83,11 +125,14 @@
             background: #fffcf8;
         }
 
-        .search-section {
-            padding: 12px;
-            background: #fffcf8;
-        }
-
+     .search-section {
+    padding: 12px;
+    background: #fffcf8;
+    position: sticky;   
+    top: 0;            
+    z-index: 1000;       
+}
+     
         .search-label {
             font-weight: 700;
             color: var(--maroon);
@@ -132,6 +177,11 @@
             padding: 12px 15px;
             border-bottom: 1px solid #eee;
             cursor: pointer;
+            font-size: 13px;
+        }
+
+        .result-item:hover {
+            background: #faebcd;
         }
 
         .filter-buttons {
@@ -151,6 +201,10 @@
             background: white;
             color: var(--dark-blue);
             text-align: center;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .filter-btn.active {
@@ -247,7 +301,7 @@
             background: var(--dark-blue);
             color: var(--gold);
             text-align: center;
-            padding: 8px;
+            padding: 10px;
             font-size: 10px;
             border-top: 2px solid var(--gold);
         }
@@ -258,10 +312,29 @@
 <body>
     <div class="app-container">
         <div class="app-header">
-            <div class="header-title">📋 Individual Table</div>
-            <div class="header-actions">
-                <div class="header-btn tree" onclick="switchToTree()">🌲 Tree</div>
+            <div class="header-title">
+                <span>📋</span> Rizvi Family - Table View
             </div>
+        </div>
+
+        <!-- Button row 1 -->
+        <div class="button-row">
+            <button class="action-btn tree" onclick="switchToTree()">
+                <span>🌲</span> Switch to Tree
+            </button>
+            <button class="action-btn reset" onclick="resetSearch()">
+                <span>🔄</span> Reset
+            </button>
+        </div>
+
+        <!-- Button row 2 -->
+        <div class="button-row">
+            <button class="action-btn pdf" onclick="exportPDF()">
+                <span>📑</span> Save PDF
+            </button>
+            <button class="action-btn dashboard" onclick="goToDashboard()">
+                <span>🏠</span> Home
+            </button>
         </div>
 
         <div class="main-content">
@@ -283,24 +356,46 @@
         </div>
 
         <div class="app-footer">
-            Imran Haider S/o Risalat H Rizvi | 0332-787-6010
+           Imran Haider S/o Risalat H Rizvi | 0332-787-6010
         </div>
     </div>
 
     <script>
+        // ======================================================================
+        // ========================== GLOBAL VARIABLES ==========================
+        // ======================================================================
         let db = [];
         let currentMember = null;
         let showSiblings = true;
         let showDescendants = true;
         let showAncestors = false;
+        let LOAD_STAMP = '';
 
+        // ======================================================================
+        // ========================== HELPER FUNCTIONS ==========================
+        // ======================================================================
         function displayName(str) {
             return str ? str.replace(/\s*-\s*\d+$/, '').trim() : '';
         }
 
+        function formatCurrentTime() {
+            const d = new Date();
+            const day = d.getDate();
+            const month = d.getMonth() + 1;
+            const year = d.getFullYear();
+            const hours = d.getHours();
+            const minutes = String(d.getMinutes()).padStart(2, '0');
+            const ampm = hours >= 12 ? 'pm' : 'am';
+            const displayHours = hours % 12 || 12;
+            return `${day}/${month}/${year} - ${displayHours}:${minutes}${ampm}`;
+        }
+
         function loadFromStorage() {
             const saved = localStorage.getItem('familyDB');
-            if (saved) db = JSON.parse(saved);
+            if (saved) {
+                db = JSON.parse(saved);
+                LOAD_STAMP = 'Last data updated on: ' + new Date().toLocaleString();
+            }
         }
 
         function findParent(member) {
@@ -329,16 +424,119 @@
             return db.filter(x => x.father?.toLowerCase() === member.name.toLowerCase());
         }
 
+        // ======================================================================
+        // ========================== NAVIGATION ================================
+        // ======================================================================
         function switchToTree() {
             if (currentMember) {
                 localStorage.setItem('tableViewMember', JSON.stringify(currentMember));
                 localStorage.setItem('tableViewFilters', JSON.stringify({
-                    showSiblings, showDescendants, showAncestors
+                    showSiblings: showSiblings,
+                    showDescendants: showDescendants,
+                    showAncestors: showAncestors
                 }));
             }
             window.location.href = '7-individual-tree-mobile.html';
         }
 
+        function goToDashboard() {
+            window.location.href = '6-dashboard-mobile.html';
+        }
+
+        function resetSearch() {
+            document.getElementById('searchInput').value = '';
+            currentMember = null;
+            document.getElementById('tableView').innerHTML = `
+                <div class="empty-state">
+                    <div style="font-size: 40px; margin-bottom: 10px;">👤</div>
+                    <div style="font-size: 16px; font-weight: 600; color: var(--maroon);">Select a member</div>
+                    <div style="font-size: 12px; color: #666; margin-top: 5px;">Search and select a family member above</div>
+                </div>
+            `;
+            document.getElementById('dropdown').style.display = 'none';
+        }
+
+        // ======================================================================
+        // ========================== PDF EXPORT ================================
+        // ======================================================================
+        async function exportPDF() {
+            if (!currentMember) {
+                alert('Please select a member first');
+                return;
+            }
+            
+            const content = document.getElementById('tableView');
+            
+            try {
+                const header = document.createElement('div');
+                header.style.marginBottom = '20px';
+                header.style.textAlign = 'center';
+                header.innerHTML = `
+                    <h1 style="color: #d4af37; font-size: 24px; font-family: 'Playfair Display', serif;">Rizvi Family - Table View</h1>
+                    <h2 style="color: #5a0000; font-size: 18px; font-family: 'Playfair Display', serif;">${displayName(currentMember.name)}</h2>
+                `;
+                
+                const footer = document.createElement('div');
+                footer.style.marginTop = '20px';
+                footer.style.padding = '10px';
+                footer.style.borderTop = '1px solid #ddd';
+                footer.style.textAlign = 'center';
+                footer.style.fontSize = '10px';
+                footer.innerHTML = `Imran Haider | 0332-787-6010 | ${formatCurrentTime()}`;
+                
+                content.insertBefore(header, content.firstChild);
+                content.appendChild(footer);
+                
+                const loadingMsg = document.createElement('div');
+                loadingMsg.style.position = 'fixed';
+                loadingMsg.style.top = '50%';
+                loadingMsg.style.left = '50%';
+                loadingMsg.style.transform = 'translate(-50%, -50%)';
+                loadingMsg.style.background = '#5a0000';
+                loadingMsg.style.color = 'white';
+                loadingMsg.style.padding = '15px 30px';
+                loadingMsg.style.borderRadius = '8px';
+                loadingMsg.style.zIndex = '9999';
+                loadingMsg.textContent = '📄 Preparing PDF...';
+                document.body.appendChild(loadingMsg);
+                
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                const canvas = await html2canvas(content, {
+                    scale: 2,
+                    backgroundColor: '#ffffff'
+                });
+                
+                content.removeChild(header);
+                content.removeChild(footer);
+                document.body.removeChild(loadingMsg);
+                
+                const imgData = canvas.toDataURL('image/png');
+                const { jsPDF } = window.jspdf;
+                
+                const w = canvas.width / 2 * 0.264583;
+                const h = canvas.height / 2 * 0.264583;
+                
+                const pdf = new jsPDF({
+                    orientation: w > h ? 'l' : 'p',
+                    unit: 'mm',
+                    format: [w + 30, h + 30]
+                });
+                
+                pdf.addImage(imgData, 'PNG', 15, 15, w, h);
+                
+                const safeName = displayName(currentMember.name).replace(/[^a-z0-9]/gi, '_').toLowerCase();
+                pdf.save(`table_${safeName}_${new Date().getTime()}.pdf`);
+                
+            } catch (err) {
+                console.error('PDF Error:', err);
+                alert('❌ PDF generation failed: ' + err.message);
+            }
+        }
+
+        // ======================================================================
+        // ========================== SEARCH FUNCTIONS ==========================
+        // ======================================================================
         function searchMember(query) {
             const drop = document.getElementById('dropdown');
             drop.innerHTML = '';
@@ -353,7 +551,8 @@
             found.forEach(p => {
                 const div = document.createElement('div');
                 div.className = 'result-item';
-                div.innerHTML = `<strong>${displayName(p.name)}</strong> (${p.gen})<br><small>${p.gender?.startsWith('F') ? 'D/o' : 'S/o'} ${displayName(p.father)}</small>`;
+                div.innerHTML = `<div><strong>${displayName(p.name)}</strong> <span style="color:var(--maroon);">(${p.gen})</span></div>
+                    <div style="font-size:10px; color:#666;">${p.gender?.startsWith('F') ? 'D/o' : 'S/o'} ${displayName(p.father)}</div>`;
                 div.onclick = () => {
                     document.getElementById('searchInput').value = displayName(p.name) + ' (' + p.gen + ')';
                     currentMember = p;
@@ -366,6 +565,21 @@
             drop.style.display = 'block';
         }
 
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.search-wrapper')) {
+                document.getElementById('dropdown').style.display = 'none';
+            }
+        });
+
+        function handleRowClick(member) {
+            currentMember = member;
+            document.getElementById('searchInput').value = displayName(member.name) + ' (' + member.gen + ')';
+            renderTable();
+        }
+
+        // ======================================================================
+        // ========================== FILTER TOGGLE =============================
+        // ======================================================================
         function toggleFilter(filter) {
             if (!currentMember) return;
             
@@ -383,22 +597,11 @@
             renderTable();
         }
 
-        function handleRowClick(member) {
-            currentMember = member;
-            document.getElementById('searchInput').value = displayName(member.name) + ' (' + member.gen + ')';
-            renderTable();
-        }
-
+        // ======================================================================
+        // ========================== RENDER TABLE ==============================
+        // ======================================================================
         function renderTable() {
-            if (!currentMember) {
-                document.getElementById('tableView').innerHTML = `
-                    <div class="empty-state">
-                        <div style="font-size: 40px; margin-bottom: 10px;">👤</div>
-                        <div style="font-size: 16px; font-weight: 600; color: var(--maroon);">Select a member</div>
-                    </div>
-                `;
-                return;
-            }
+            if (!currentMember) return;
             
             let html = '<div class="table-container"><table class="lineage-table">';
             html += '<tr><th>Sno</th><th>Name</th><th>Gen</th></tr>';
@@ -470,12 +673,9 @@
             document.getElementById('tableView').innerHTML = html;
         }
 
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('.search-wrapper')) {
-                document.getElementById('dropdown').style.display = 'none';
-            }
-        });
-
+        // ======================================================================
+        // ========================== INITIALIZATION ============================
+        // ======================================================================
         loadFromStorage();
         
         const savedMember = localStorage.getItem('tableViewMember');
@@ -490,14 +690,23 @@
                 showSiblings = filters.showSiblings;
                 showDescendants = filters.showDescendants;
                 showAncestors = filters.showAncestors;
+                
                 document.getElementById('filterSiblings').classList.toggle('active', showSiblings);
                 document.getElementById('filterDescendants').classList.toggle('active', showDescendants);
                 document.getElementById('filterAncestors').classList.toggle('active', showAncestors);
+                
                 localStorage.removeItem('tableViewFilters');
             }
             renderTable();
+        } else {
+            document.getElementById('tableView').innerHTML = `
+                <div class="empty-state">
+                    <div style="font-size: 40px; margin-bottom: 10px;">👤</div>
+                    <div style="font-size: 16px; font-weight: 600; color: var(--maroon);">Select a member</div>
+                    <div style="font-size: 12px; color: #666; margin-top: 5px;">Search and select a family member above</div>
+                </div>
+            `;
         }
     </script>
 </body>
-
 </html>
