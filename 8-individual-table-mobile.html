@@ -11,7 +11,21 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+html {
+    overflow: hidden;
+    height: 100%;
+}
+
+body {
+    height: 100%;
+    overflow-y: auto;       /* This makes the scroll happen inside the app, not the browser */
+    overscroll-behavior-y: none; /* This kills the pull-to-refresh completely */
+    -webkit-overflow-scrolling: touch; 
+    font-family: 'Inter', sans-serif;
+    background: #1a1a1a;
+    padding: 5px;
+}        * { margin: 0; padding: 0; box-sizing: border-box; }
         
         :root {
             --maroon: #5a0000;
@@ -238,14 +252,18 @@
             font-size: 13px;
         }
 
-        .lineage-table th {
-            background: #fdf6e3;
-            padding: 10px;
-            border-bottom: 2px solid var(--gold);
-            text-align: center;
-            font-weight: 700;
-            color: var(--maroon);
-        }
+.lineage-table th {
+    background: #fdf6e3;
+    padding: 10px;
+    border-bottom: 2px solid var(--gold);
+    text-align: center;
+    font-weight: 700;
+    color: var(--maroon);
+    /* ADD THESE 3 LINES TO LOCK HEADERS AT THE TOP */
+    position: sticky;
+    top: 0;
+    z-index: 999;
+}
 
         .lineage-table td {
             padding: 8px 10px;

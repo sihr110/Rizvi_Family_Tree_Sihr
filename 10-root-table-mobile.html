@@ -9,6 +9,18 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
+
+html {
+    overflow: hidden;
+    height: 100%;
+}
+
+body {
+    height: 100%;
+    overflow-y: auto;       /* This moves the scroll inside the body */
+    overscroll-behavior-y: none;
+    -webkit-overflow-scrolling: touch; /* Makes scrolling smooth on iPhone */
+}
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         :root {
@@ -253,12 +265,25 @@
             color: white;
         }
 
-        .tables-container {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
+.tables-container {
+    display: flex !important;
+    flex-direction: row !important; /* This forces side-by-side */
+    justify-content: center;
+    align-items: flex-start;
+    gap: 20px;
+    width: 100%;
+    padding: 10px;
+}
 
+.table-wrapper {
+    flex: 1;                /* Makes both tables take equal space */
+    min-width: 500px;       /* Ensures tables don't get too squeezed */
+    background: white;
+    border: 2px solid var(--gold);
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
         .table-wrapper {
             background: white;
             border: 2px solid var(--gold);
