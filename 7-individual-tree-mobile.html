@@ -2,10 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- viewport tuned for mobile wide screen: allow scaling, set width to device,
-         but give enough initial width to mimic desktop feel while remaining scrollable -->
-    <meta name="viewport" content="width=device-width, initial-scale=0.8, minimum-scale=0.5, maximum-scale=2.0, user-scalable=yes">
-    <title>Rizvi Family · Tree View (mobile wide)</title>
+    <!-- viewport: allow full scaling, but set width to device width so that we can use horizontal scroll properly -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
+    <title>Rizvi Family · Tree View (mobile wide, horizontal scroll)</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
     
@@ -14,7 +13,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     
     <style>
-        /* ========== EXACT STYLES FROM FILE 2 (PC) WITH MINIMAL ADAPTATIONS FOR WIDE MOBILE ========== */
+        /* ========== EXACT STYLES FROM FILE 2 (PC) BUT WITH HORIZONTAL SCROLL CAPABILITY AND NO PULL-TO-REFRESH ========== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         :root {
@@ -41,20 +40,27 @@
             --sisters-box-bg: #fff0f5;
         }
 
+        /* PREVENT PULL-TO-REFRESH & overscroll glow */
+        html {
+            overflow: hidden;
+            height: 100%;
+            position: fixed;
+            width: 100%;
+        }
         body {
             font-family: 'Inter', sans-serif;
             background: #1a1a1a;
-            /* allow vertical scroll, but container itself will be scrollable */
+            height: 100%;
+            overflow: auto;
+            position: relative;
             margin: 0;
             padding: 8px;
-            min-height: 100vh;
-            overflow-x: auto;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
+            -webkit-overflow-scrolling: touch; /* smooth scroll */
+            overscroll-behavior: none; /* kill pull-to-refresh */
         }
 
         .app-container {
-            max-width: 1400px;          /* keep max width, but on mobile it will be full width */
+            max-width: 1400px;
             margin: 0 auto;
             background: white;
             width: 100%;
@@ -62,7 +68,7 @@
             flex-direction: column;
             border-radius: 20px;
             border: 2px solid var(--gold);
-            overflow: hidden;            /* keep inner scroll inside main content */
+            overflow: hidden;  /* keeps border */
             box-shadow: 0 0 50px rgba(212, 175, 55, 0.2);
         }
 
@@ -133,19 +139,11 @@
             border-radius: 4px;
         }
 
-        .header-btn.dashboard:hover {
-            background: #2e7d32;
-        }
-
         .header-btn.reset {
             background: var(--reset-red);
             color: white;
             border-color: transparent;
             border-radius: 4px;
-        }
-
-        .header-btn.reset:hover {
-            background: var(--reset-red-dark);
         }
 
         .header-btn.pdf {
@@ -155,10 +153,6 @@
             border-radius: 4px;
         }
 
-        .header-btn.pdf:hover {
-            background: var(--pdf-grey-dark);
-        }
-
         .header-btn.table {
             background: var(--bronze);
             color: white;
@@ -166,11 +160,6 @@
             border-radius: 4px;
         }
 
-        .header-btn.table:hover {
-            background: #9e6f3a;
-        }
-
-        /* menu toggle from file 2 (hidden by default) */
         .menu-toggle {
             display: none;
         }
@@ -179,7 +168,7 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            overflow: hidden;          /* will allow scrollable inside */
+            overflow: hidden;
             background: #fffcf8;
         }
 
@@ -202,12 +191,14 @@
             margin: 20px 0 0 0;
         }
 
+        /* SCROLLABLE AREA – HORIZONTAL + VERTICAL */
         .scrollable-content {
             flex: 1;
             overflow-y: auto;
-            overflow-x: auto;           /* allow horizontal scroll if tree is wide */
+            overflow-x: auto;
             padding: 0 15px 15px 15px;
             -webkit-overflow-scrolling: touch;
+            overscroll-behavior: none; /* extra safety */
         }
 
         .search-row {
@@ -229,7 +220,7 @@
         .search-wrapper {
             position: relative;
             flex: 2;
-            min-width: 250px;           /* slightly reduced for mobile but still usable */
+            min-width: 250px;
         }
 
         .search-input {
@@ -310,15 +301,16 @@
             border-color: var(--dark-green);
         }
 
+        /* TREE LAYOUT – WIDTH FITS CONTENT TO ALLOW HORIZONTAL SCROLL */
         .tree-root-layout {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 15px;
-            width: fit-content;          /* allow horizontal scrolling if needed */
+            width: fit-content;
+            min-width: 100%;
             margin: 0 auto;
             padding: 15px;
-            min-width: 100%;             /* but also fill container */
         }
 
         .family-group {
@@ -369,7 +361,7 @@
             border: 2px solid var(--sisters-border);
             border-radius: 12px;
             background: var(--sisters-box-bg);
-            min-width: 280px;            /* a bit more compact but still readable */
+            min-width: 280px;
             max-width: 360px;
             text-align: center;
             box-shadow: 0 4px 8px rgba(0,0,0,0.05);
@@ -421,7 +413,7 @@
             border: 2px solid var(--gold);
             border-radius: 12px;
             background: white;
-            min-width: 220px;            /* slightly smaller for mobile wide but still good */
+            min-width: 220px;
             max-width: 260px;
             text-align: center;
             cursor: pointer;
@@ -515,7 +507,6 @@
             border-top: 2px solid var(--gold);
         }
 
-        /* full‑screen toggle button (exactly from file 2) */
         .toggle-view-btn {
             position: fixed; bottom: 20px; left: 20px; z-index: 9999;
             background: #5a0000; color: white; border: 2px solid #d4af37;
@@ -538,8 +529,8 @@
             height: 100vh;
         }
 
-        /* small tweaks for narrower screens – ensure nothing breaks */
-        @media screen and (max-width: 600px) {
+        /* mobile adjustments: ensure filter buttons don't stack weird */
+        @media screen and (max-width: 700px) {
             .search-row {
                 flex-direction: column;
                 align-items: stretch;
@@ -553,25 +544,26 @@
             .filter-btn {
                 flex: 1;
                 justify-content: center;
+                font-size: 12px;
+                padding: 8px 5px;
             }
             .header-actions {
-                flex-wrap: wrap;
-                justify-content: flex-end;
+                gap: 4px;
             }
             .header-btn {
                 padding: 6px 8px;
-                font-size: 12px;
-            }
-            .box {
-                min-width: 200px;
-            }
-            .sisters-group-box {
-                min-width: 240px;
+                font-size: 11px;
             }
         }
-
-        /* menu toggle from file 2, we keep it hidden, but if we want to show it for very small? keep hidden */
-        .menu-toggle { display: none; }
+        /* for very small devices, reduce box min-width a bit */
+        @media screen and (max-width: 380px) {
+            .box {
+                min-width: 180px;
+            }
+            .sisters-group-box {
+                min-width: 220px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -581,12 +573,10 @@
                 <span class="header-icon">🌿</span>
                 <span id="mainTitle">Rizvi Family - Tree View</span>
             </div>
-            <!-- no menu toggle needed, but keep structure identical to file2 -->
             <button class="menu-toggle" id="mobileMenuToggle" style="display:none;">☰</button>
             <div class="header-actions" id="headerActions"></div>
         </div>
 
-        <!-- hidden file input for potential upload (as in file2) but not used -->
         <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" style="display:none;">
 
         <div class="main-content" id="mainContent">
@@ -617,13 +607,12 @@
         </div>
     </div>
 
-    <!-- floating full‑screen toggle (exact same) -->
     <div class="toggle-view-btn" id="toggleViewBtn" onclick="toggleCanvasView()">
         <span>👁️</span> <span>Full Screen</span>
     </div>
 
     <script>
-        // ==================== GLOBAL VARIABLES (identical to file2) ====================
+        // ==================== GLOBAL VARIABLES ====================
         let db = [];
         let currentIndividual = null;
         let showSiblings = true;
@@ -658,7 +647,7 @@
                     showAncestors: showAncestors
                 }));
             }
-            window.location.href = '3-individual-table-pc.html'; // as per file2, keep same target
+            window.location.href = '3-individual-table-pc.html';
         }
 
         function updateHeaderButtons() {
@@ -672,10 +661,10 @@
         }
 
         function showDashboard() {
-            window.location.href = '1-dashboard-pc.html'; // as per file2
+            window.location.href = '1-dashboard-pc.html';
         }
 
-        // ==================== RESET ====================
+        // ==================== RESET (use instead of page refresh) ====================
         function resetIndividual() {
             document.getElementById('individualSearch').value = '';
             currentIndividual = null;
@@ -704,11 +693,6 @@
         function findParent(p) {
             if (!p || !p.father) return null;
             return db.find(x => x.name.toLowerCase() === p.father.toLowerCase());
-        }
-
-        function getGenNum(gen) {
-            const match = String(gen).match(/\d+/);
-            return match ? parseInt(match[0]) : 0;
         }
 
         function getAncestryChain(p) {
@@ -773,26 +757,21 @@
             renderIndividualTree();
         }
 
-        // ==================== GROUP SISTERS (identical to file2) ====================
+        // ==================== GROUP SISTERS ====================
         function groupSisters(sistersArray, fatherName, type) {
             if (!sistersArray || sistersArray.length === 0) return '';
             let headerText = type === 'siblings' ? 'SISTERS' : 'DAUGHTERS';
             let html = `<div class="sisters-group-box">`;
             html += `<div class="sisters-header"># ${headerText}</div>`;
-            html += `<table style="width:100%; border-collapse: collapse; margin: 8px 0;">`;
-            html += `<tr style="border-bottom: 1px solid var(--sisters-border);">`;
-            html += `<th style="text-align: left; padding: 4px 8px; font-size: 11px; color: var(--maroon);">Name</th>`;
-            html += `<th style="text-align: right; padding: 4px 8px; font-size: 11px; color: var(--maroon);">Gen</th>`;
-            html += `</tr>`;
+            html += `<table><tr><th>Name</th><th>Gen</th></tr>`;
             sistersArray.forEach(sister => {
                 const memberData = encodeURIComponent(JSON.stringify(sister));
                 html += `<tr onclick='handleBoxClick(JSON.parse(decodeURIComponent("${memberData}")))' style="cursor: pointer;">`;
-                html += `<td style="padding: 4px 8px; border-bottom: 1px dashed #fecaca; font-weight: 600; transition: background 0.2s;" onmouseover="this.style.background='#faebcd'" onmouseout="this.style.background='transparent'">${displayName(sister.name)}</td>`;
-                html += `<td style="padding: 4px 8px; border-bottom: 1px dashed #fecaca; text-align: right; color: var(--maroon); transition: background 0.2s;" onmouseover="this.style.background='#faebcd'" onmouseout="this.style.background='transparent'">${sister.gen}</td>`;
+                html += `<td style="padding:4px 8px;">${displayName(sister.name)}</td>`;
+                html += `<td style="padding:4px 8px; text-align:right;">${sister.gen}</td>`;
                 html += `</tr>`;
             });
-            html += `</table>`;
-            html += `</div>`;
+            html += `</table></div>`;
             return html;
         }
 
@@ -811,7 +790,7 @@
             </div>`;
         }
 
-        // ==================== RENDER TREE (identical logic to file2) ====================
+        // ==================== RENDER TREE (identical to file2) ====================
         function renderIndividualTree() {
             if (!currentIndividual) return;
             
@@ -902,7 +881,7 @@
             document.getElementById('individualTree').innerHTML = html;
         }
 
-        // ==================== PDF EXPORT (from file2) ====================
+        // ==================== PDF EXPORT ====================
         async function exportIndividualPDF() {
             if (!currentIndividual) { alert('Please select a member first'); return; }
             const content = document.getElementById('individualTree');
@@ -999,7 +978,7 @@
 
         // ==================== INIT ====================
         document.addEventListener('DOMContentLoaded', function() {
-            // menu toggle hidden, no need but keep
+            // Ensure filters are correctly set
             document.getElementById('filterSiblings').classList.add('active');
             document.getElementById('filterDescendants').classList.add('active');
             document.getElementById('filterAncestors').classList.remove('active');
