@@ -224,12 +224,11 @@ body {
             white-space: nowrap;
         }
 
-        .search-wrapper {
-            position: relative;
-            flex: 1;
-            min-width: 120px;
-        }
-
+.search-wrapper {
+    position: relative;
+    flex: 0 1 100px; /* This prevents it from growing too large */
+    min-width: 80px;  /* This allows it to stay small on mobile */
+}
         .search-input {
             width: 100%;
             padding: 8px 15px;
@@ -288,20 +287,20 @@ body {
             flex-wrap: wrap;
         }
 
-        .filter-btn {
-            padding: 6px 14px;
-            border-radius: 4px;
-            font-weight: 600;
-            font-size: 13px;
-            cursor: pointer;
-            border: 2px solid var(--gold);
-            background: white;
-            color: var(--dark-blue);
-            white-space: nowrap;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
+    .filter-btn {
+    padding: 4px 6px; /* Smaller padding */
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 10px;  /* Smaller text to fit icons and words */
+    cursor: pointer;
+    border: 2px solid var(--gold);
+    background: white;
+    color: var(--dark-blue);
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
 
         .filter-btn.active {
             background: #d4edda;
@@ -546,11 +545,12 @@ body {
 
 @media screen and (max-width: 768px) {
     .search-row {
-        flex-direction: row; /* Force one row */
+        flex-direction: row; 
         flex-wrap: nowrap;
         align-items: center;
-        gap: 5px;
+        gap: 4px; /* Tighten gap */
     }
+}
     
     .search-wrapper {
         min-width: 100px;
