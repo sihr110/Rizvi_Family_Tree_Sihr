@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=0.4, minimum-scale=0.1, maximum-scale=5.0, user-scalable=yes">
     <title>Rizvi Family · Tree View (Mobile Wide)</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
@@ -46,14 +46,15 @@ html, body {
     overflow-x: auto; /* Enable horizontal scrolling for the wide tree */
     overflow-y: auto; /* Enable vertical scrolling */
 }
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #1a1a1a;
-            padding: 10px;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-        }
+body {
+    font-family: 'Inter', sans-serif;
+    background: #1a1a1a;
+    padding: 10px;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+   overscroll-behavior-y: none;
+}
 
      .app-container {
     max-width: none; /* Remove the 1400px cap */
@@ -225,8 +226,8 @@ html, body {
 
         .search-wrapper {
             position: relative;
-            flex: 2;
-            min-width: 150px;
+            flex: 1;
+            min-width: 120px;
         }
 
         .search-input {
@@ -543,46 +544,33 @@ html, body {
             height: 100vh;
         }
 
-        /* Mobile optimizations - minimal changes */
-        @media screen and (max-width: 768px) {
-            .search-row {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            
-            .search-wrapper {
-                min-width: 100%;
-            }
-            
-            .filter-buttons {
-                width: 100%;
-                justify-content: space-between;
-            }
-            
-            .filter-btn {
-                flex: 1;
-                justify-content: center;
-                padding: 8px 5px;
-                font-size: 12px;
-            }
-            
-            .header-actions {
-                gap: 4px;
-            }
-            
-            .header-btn {
-                padding: 6px 8px;
-                font-size: 11px;
-            }
-            
-            .box {
-                min-width: 200px;
-            }
-            
-            .sisters-group-box {
-                min-width: 260px;
-            }
-        }
+@media screen and (max-width: 768px) {
+    .search-row {
+        flex-direction: row; /* Force one row */
+        flex-wrap: nowrap;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .search-wrapper {
+        min-width: 100px;
+        flex: 1;
+    }
+}
+    
+    .filter-buttons {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        gap: 5px;
+    }
+    /* This makes buttons smaller so they fit on one line */
+    .filter-btn {
+        flex: 1;
+        font-size: 11px;
+        padding: 8px 2px;
+    }
+}
     </style>
 </head>
 <body>
