@@ -39,14 +39,12 @@
             --sisters-box-bg: #fff0f5;
         }
 
-        /* CRITICAL FIX: Prevent pull-to-refresh and allow both scroll directions */
 html, body {
-    position: absolute; /* Change fixed to absolute */
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    overflow: auto;    /* Ensure this says auto */
+    position: static; /* Change relative/absolute to static */
+    width: 100%;
+    height: auto;     /* Allow the page to determine its own height */
+    overflow-x: auto; /* Enable horizontal scrolling for the wide tree */
+    overflow-y: auto; /* Enable vertical scrolling */
 }
         body {
             font-family: 'Inter', sans-serif;
@@ -65,16 +63,18 @@ html, body {
     /* ... keep other styles ... */
 }
 
-        .app-header {
-            background: linear-gradient(135deg, var(--dark-blue) 0%, #1e3d3d 100%);
-            color: var(--gold);
-            padding: 10px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 3px solid var(--gold);
-            position: relative;
-        }
+.app-header {
+    background: linear-gradient(135deg, var(--dark-blue) 0%, #1e3d3d 100%);
+    color: var(--gold);
+    padding: 15px 20px; /* Increased padding */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap; /* Allows buttons to drop to a new line if needed */
+    gap: 15px;      /* Creates the gap between buttons */
+    border-bottom: 3px solid var(--gold);
+    position: relative;
+}
 
         .header-title {
             font-family: 'Playfair Display', serif;
@@ -780,13 +780,16 @@ html, body {
             }
         });
 
-        function handleBoxClick(member) {
-            if (!member || !member.name) return;
-            
-            currentIndividual = member;
-            document.getElementById('individualSearch').value = displayName(member.name) + ' (' + member.gen + ')';
-            renderIndividualTree();
-        }
+function handleBoxClick(member) {
+    if (!member || !member.name) return;
+    
+    currentIndividual = member;
+    // This line ensures the selection stays even if the screen "moves"
+    localStorage.setItem('tableViewMember', JSON.stringify(member)); 
+    
+    document.getElementById('individualSearch').value = displayName(member.name) + ' (' + member.gen + ')';
+    renderIndividualTree();
+}
 
         // ========================== GROUP SISTERS FUNCTION ====================
         function groupSisters(sistersArray, fatherName, type) {
