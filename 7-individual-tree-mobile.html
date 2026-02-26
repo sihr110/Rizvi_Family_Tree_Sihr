@@ -2,9 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- viewport: allow full scaling, but set width to device width so that we can use horizontal scroll properly -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
-    <title>Rizvi Family · Tree View (mobile wide, horizontal scroll)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes, viewport-fit=cover">
+    <title>Rizvi Family · Tree View (Mobile Wide)</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
     
@@ -13,7 +12,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     
     <style>
-        /* ========== EXACT STYLES FROM FILE 2 (PC) BUT WITH HORIZONTAL SCROLL CAPABILITY AND NO PULL-TO-REFRESH ========== */
+        /* EXACT STYLES FROM FILE 2 - PRESERVED COMPLETELY */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         :root {
@@ -40,35 +39,35 @@
             --sisters-box-bg: #fff0f5;
         }
 
-        /* PREVENT PULL-TO-REFRESH & overscroll glow */
-        html {
-            overflow: hidden;
-            height: 100%;
+        /* CRITICAL FIX: Prevent pull-to-refresh and allow both scroll directions */
+        html, body {
             position: fixed;
-            width: 100%;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow: hidden;
         }
+
         body {
             font-family: 'Inter', sans-serif;
             background: #1a1a1a;
+            padding: 10px;
+            width: 100%;
             height: 100%;
-            overflow: auto;
-            position: relative;
-            margin: 0;
-            padding: 8px;
-            -webkit-overflow-scrolling: touch; /* smooth scroll */
-            overscroll-behavior: none; /* kill pull-to-refresh */
+            overflow: hidden;
         }
 
         .app-container {
             max-width: 1400px;
             margin: 0 auto;
             background: white;
-            width: 100%;
+            height: 100%;
             display: flex;
             flex-direction: column;
             border-radius: 20px;
             border: 2px solid var(--gold);
-            overflow: hidden;  /* keeps border */
+            overflow: hidden;
             box-shadow: 0 0 50px rgba(212, 175, 55, 0.2);
         }
 
@@ -139,11 +138,19 @@
             border-radius: 4px;
         }
 
+        .header-btn.dashboard:hover {
+            background: #2e7d32;
+        }
+
         .header-btn.reset {
             background: var(--reset-red);
             color: white;
             border-color: transparent;
             border-radius: 4px;
+        }
+
+        .header-btn.reset:hover {
+            background: var(--reset-red-dark);
         }
 
         .header-btn.pdf {
@@ -153,11 +160,19 @@
             border-radius: 4px;
         }
 
+        .header-btn.pdf:hover {
+            background: var(--pdf-grey-dark);
+        }
+
         .header-btn.table {
             background: var(--bronze);
             color: white;
             border-color: transparent;
             border-radius: 4px;
+        }
+
+        .header-btn.table:hover {
+            background: #9e6f3a;
         }
 
         .menu-toggle {
@@ -191,14 +206,12 @@
             margin: 20px 0 0 0;
         }
 
-        /* SCROLLABLE AREA – HORIZONTAL + VERTICAL */
+        /* CRITICAL FIX: Enable BOTH horizontal and vertical scrolling */
         .scrollable-content {
             flex: 1;
-            overflow-y: auto;
-            overflow-x: auto;
+            overflow: auto;
             padding: 0 15px 15px 15px;
             -webkit-overflow-scrolling: touch;
-            overscroll-behavior: none; /* extra safety */
         }
 
         .search-row {
@@ -220,7 +233,7 @@
         .search-wrapper {
             position: relative;
             flex: 2;
-            min-width: 250px;
+            min-width: 300px;
         }
 
         .search-input {
@@ -301,7 +314,7 @@
             border-color: var(--dark-green);
         }
 
-        /* TREE LAYOUT – WIDTH FITS CONTENT TO ALLOW HORIZONTAL SCROLL */
+        /* CRITICAL FIX: Allow tree to expand horizontally */
         .tree-root-layout {
             display: flex;
             flex-direction: column;
@@ -361,8 +374,8 @@
             border: 2px solid var(--sisters-border);
             border-radius: 12px;
             background: var(--sisters-box-bg);
-            min-width: 280px;
-            max-width: 360px;
+            min-width: 300px;
+            max-width: 380px;
             text-align: center;
             box-shadow: 0 4px 8px rgba(0,0,0,0.05);
             padding: 12px;
@@ -413,8 +426,8 @@
             border: 2px solid var(--gold);
             border-radius: 12px;
             background: white;
-            min-width: 220px;
-            max-width: 260px;
+            min-width: 240px;
+            max-width: 280px;
             text-align: center;
             cursor: pointer;
             position: relative;
@@ -508,14 +521,26 @@
         }
 
         .toggle-view-btn {
-            position: fixed; bottom: 20px; left: 20px; z-index: 9999;
-            background: #5a0000; color: white; border: 2px solid #d4af37;
-            border-radius: 50px; padding: 10px 20px; font-size: 14px;
-            font-weight: bold; cursor: pointer; display: flex; align-items: center;
-            gap: 8px; opacity: 0.8;
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 9999;
+            background: #5a0000;
+            color: white;
+            border: 2px solid #d4af37;
+            border-radius: 50px;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            opacity: 0.8;
         }
-        .toggle-view-btn:hover { opacity: 1; }
-
+        .toggle-view-btn:hover {
+            opacity: 1;
+        }
         body.canvas-only .app-header,
         body.canvas-only .app-footer,
         body.canvas-only .fixed-header-section,
@@ -529,39 +554,44 @@
             height: 100vh;
         }
 
-        /* mobile adjustments: ensure filter buttons don't stack weird */
-        @media screen and (max-width: 700px) {
+        /* Mobile optimizations - minimal changes */
+        @media screen and (max-width: 768px) {
             .search-row {
                 flex-direction: column;
                 align-items: stretch;
             }
+            
             .search-wrapper {
                 min-width: 100%;
             }
+            
             .filter-buttons {
+                width: 100%;
                 justify-content: space-between;
             }
+            
             .filter-btn {
                 flex: 1;
                 justify-content: center;
-                font-size: 12px;
                 padding: 8px 5px;
+                font-size: 12px;
             }
+            
             .header-actions {
                 gap: 4px;
             }
+            
             .header-btn {
                 padding: 6px 8px;
                 font-size: 11px;
             }
-        }
-        /* for very small devices, reduce box min-width a bit */
-        @media screen and (max-width: 380px) {
+            
             .box {
-                min-width: 180px;
+                min-width: 200px;
             }
+            
             .sisters-group-box {
-                min-width: 220px;
+                min-width: 260px;
             }
         }
     </style>
@@ -573,7 +603,6 @@
                 <span class="header-icon">🌿</span>
                 <span id="mainTitle">Rizvi Family - Tree View</span>
             </div>
-            <button class="menu-toggle" id="mobileMenuToggle" style="display:none;">☰</button>
             <div class="header-actions" id="headerActions"></div>
         </div>
 
@@ -612,7 +641,8 @@
     </div>
 
     <script>
-        // ==================== GLOBAL VARIABLES ====================
+        // ==================== COMPLETE JAVASCRIPT FROM FILE 2 ====================
+        // ========================== GLOBAL VARIABLES ==========================
         let db = [];
         let currentIndividual = null;
         let showSiblings = true;
@@ -620,7 +650,7 @@
         let showAncestors = false;
         let LOAD_STAMP = '';
 
-        // ==================== HELPER FUNCTIONS ====================
+        // ========================== HELPER FUNCTIONS ==========================
         function displayName(str) {
             return str ? str.replace(/\s*-\s*\d+$/, '').trim() : '';
         }
@@ -637,7 +667,7 @@
             return `${day}/${month}/${year} - ${displayHours}:${minutes}${ampm}`;
         }
 
-        // ==================== VIEW TOGGLE ====================
+        // ========================== VIEW TOGGLE ===============================
         function switchToTableView() {
             if (currentIndividual) {
                 localStorage.setItem('tableViewMember', JSON.stringify(currentIndividual));
@@ -664,7 +694,7 @@
             window.location.href = '1-dashboard-pc.html';
         }
 
-        // ==================== RESET (use instead of page refresh) ====================
+        // ========================== RESET FUNCTIONS ===========================
         function resetIndividual() {
             document.getElementById('individualSearch').value = '';
             currentIndividual = null;
@@ -672,7 +702,7 @@
             updateHeaderButtons();
         }
 
-        // ==================== FILTER TOGGLE ====================
+        // ========================== FILTER TOGGLE =============================
         function toggleFilter(filter) {
             if (!currentIndividual) return;
             
@@ -686,13 +716,19 @@
                 showAncestors = !showAncestors;
                 document.getElementById('filterAncestors').classList.toggle('active', showAncestors);
             }
+            
             renderIndividualTree();
         }
 
-        // ==================== TREE FUNCTIONS ====================
+        // ========================== TREE FUNCTIONS ============================
         function findParent(p) {
             if (!p || !p.father) return null;
             return db.find(x => x.name.toLowerCase() === p.father.toLowerCase());
+        }
+
+        function getGenNum(gen) {
+            const match = String(gen).match(/\d+/);
+            return match ? parseInt(match[0]) : 0;
         }
 
         function getAncestryChain(p) {
@@ -706,9 +742,10 @@
             return chain;
         }
 
-        // ==================== SEARCH ====================
+        // ========================== SEARCH FUNCTIONS ==========================
         function searchIndividual(query) {
             if (!db.length) return;
+            
             const drop = document.getElementById('individualDropdown');
             performSearch(query, drop, (member) => {
                 document.getElementById('individualSearch').value = displayName(member.name) + ' (' + member.gen + ')';
@@ -720,16 +757,19 @@
 
         function performSearch(query, drop, callback) {
             if (!drop) return;
+            
             drop.innerHTML = '';
             if (!query || query.length < 1) {
                 drop.style.display = 'none';
                 return;
             }
+            
             const found = db.filter(p => p.name.toLowerCase().includes(query.toLowerCase())).slice(0, 8);
             if (found.length === 0) {
                 drop.style.display = 'none';
                 return;
             }
+            
             found.forEach(p => {
                 const div = document.createElement('div');
                 div.className = 'result-item';
@@ -741,6 +781,7 @@
                 };
                 drop.appendChild(div);
             });
+            
             drop.style.display = 'block';
         }
 
@@ -752,45 +793,47 @@
 
         function handleBoxClick(member) {
             if (!member || !member.name) return;
+            
             currentIndividual = member;
             document.getElementById('individualSearch').value = displayName(member.name) + ' (' + member.gen + ')';
             renderIndividualTree();
         }
 
-        // ==================== GROUP SISTERS ====================
+        // ========================== GROUP SISTERS FUNCTION ====================
         function groupSisters(sistersArray, fatherName, type) {
             if (!sistersArray || sistersArray.length === 0) return '';
+            
             let headerText = type === 'siblings' ? 'SISTERS' : 'DAUGHTERS';
+            
             let html = `<div class="sisters-group-box">`;
             html += `<div class="sisters-header"># ${headerText}</div>`;
-            html += `<table><tr><th>Name</th><th>Gen</th></tr>`;
+            
+            html += `<table style="width:100%; border-collapse: collapse; margin: 8px 0;">`;
+            html += `<tr style="border-bottom: 1px solid var(--sisters-border);">`;
+            html += `<th style="text-align: left; padding: 4px 8px; font-size: 11px; color: var(--maroon);">Name</th>`;
+            html += `<th style="text-align: right; padding: 4px 8px; font-size: 11px; color: var(--maroon);">Gen</th>`;
+            html += `</tr>`;
+            
             sistersArray.forEach(sister => {
                 const memberData = encodeURIComponent(JSON.stringify(sister));
                 html += `<tr onclick='handleBoxClick(JSON.parse(decodeURIComponent("${memberData}")))' style="cursor: pointer;">`;
-                html += `<td style="padding:4px 8px;">${displayName(sister.name)}</td>`;
-                html += `<td style="padding:4px 8px; text-align:right;">${sister.gen}</td>`;
+                html += `<td style="padding: 4px 8px; border-bottom: 1px dashed #fecaca; font-weight: 600; transition: background 0.2s;" 
+                          onmouseover="this.style.background='#faebcd'" 
+                          onmouseout="this.style.background='transparent'">${displayName(sister.name)}</td>`;
+                html += `<td style="padding: 4px 8px; border-bottom: 1px dashed #fecaca; text-align: right; color: var(--maroon); 
+                          transition: background 0.2s;"
+                          onmouseover="this.style.background='#faebcd'" 
+                          onmouseout="this.style.background='transparent'">${sister.gen}</td>`;
                 html += `</tr>`;
             });
-            html += `</table></div>`;
+            
+            html += `</table>`;
+            html += `</div>`;
+            
             return html;
         }
 
-        // ==================== RENDER BOX ====================
-        function renderBox(p, label, isSelected, hasChildren) {
-            const isFemale = p.gender?.startsWith('F');
-            const blinkClass = isSelected ? 'blinking-box' : '';
-            const memberData = encodeURIComponent(JSON.stringify(p));
-            return `<div class="box ${isFemale ? 'female-box' : ''} ${blinkClass}" onclick='handleBoxClick(JSON.parse(decodeURIComponent("${memberData}")))'>
-                <div class="box-header"><span>${label}</span><span>${p.gen}</span></div>
-                <div class="box-body">
-                    <span class="member-name">${displayName(p.name)}</span>
-                    <span class="father-name">${isFemale ? 'D/o' : 'S/o'}: ${displayName(p.father)}</span>
-                    ${hasChildren ? '<div class="golden-heart">❤️</div>' : ''}
-                </div>
-            </div>`;
-        }
-
-        // ==================== RENDER TREE (identical to file2) ====================
+        // ========================== RENDER FUNCTIONS ==========================
         function renderIndividualTree() {
             if (!currentIndividual) return;
             
@@ -820,6 +863,7 @@
                 html += '<div class="family-group">';
                 html += renderBox(father, 'Father', false, fatherHasChildren);
                 html += '<div class="v-line"></div>';
+                
                 const currentHasChildren = db.some(x => x.father && x.father.toLowerCase() === currentIndividual.name.toLowerCase());
                 html += renderBox(currentIndividual, 'Selected', true, currentHasChildren);
                 html += '</div>';
@@ -832,12 +876,15 @@
             
             if (showSiblings && father) {
                 const siblings = db.filter(s => s.father && s.father.toLowerCase() === currentIndividual.father.toLowerCase() && s.name !== currentIndividual.name);
+                
                 if (siblings.length > 0) {
                     const maleSiblings = siblings.filter(s => !s.gender?.startsWith('F'));
                     const femaleSiblings = siblings.filter(s => s.gender?.startsWith('F'));
+                    
                     html += '<div class="family-group">';
                     html += `<div class="descendant-heading">DESCENDANTS OF ${displayName(father.name).toUpperCase()}</div>`;
                     html += '<div class="relation-label">SIBLINGS</div>';
+                    
                     if (maleSiblings.length > 0) {
                         html += '<div class="children-row">';
                         maleSiblings.forEach(s => {
@@ -846,9 +893,11 @@
                         });
                         html += '</div>';
                     }
+                    
                     if (femaleSiblings.length > 0) {
                         html += groupSisters(femaleSiblings, father.name, 'siblings');
                     }
+                    
                     html += '</div>';
                 }
             }
@@ -858,10 +907,12 @@
                 if (children.length > 0) {
                     const maleChildren = children.filter(c => !c.gender?.startsWith('F'));
                     const femaleChildren = children.filter(c => c.gender?.startsWith('F'));
+                    
                     html += '<div class="family-group">';
                     html += '<div class="v-line"></div>';
                     html += `<div class="descendant-heading">DESCENDANTS OF ${displayName(currentIndividual.name).toUpperCase()}</div>`;
                     html += '<div class="relation-label">CHILDREN</div>';
+                    
                     if (maleChildren.length > 0) {
                         html += '<div class="children-row">';
                         maleChildren.forEach(c => {
@@ -870,9 +921,11 @@
                         });
                         html += '</div>';
                     }
+                    
                     if (femaleChildren.length > 0) {
                         html += groupSisters(femaleChildren, currentIndividual.name, 'children');
                     }
+                    
                     html += '</div>';
                 }
             }
@@ -881,12 +934,35 @@
             document.getElementById('individualTree').innerHTML = html;
         }
 
-        // ==================== PDF EXPORT ====================
+        function renderBox(p, label, isSelected, hasChildren) {
+            const isFemale = p.gender?.startsWith('F');
+            const blinkClass = isSelected ? 'blinking-box' : '';
+            
+            const memberData = encodeURIComponent(JSON.stringify(p));
+            
+            return `<div class="box ${isFemale ? 'female-box' : ''} ${blinkClass}" onclick='handleBoxClick(JSON.parse(decodeURIComponent("${memberData}")))'>
+                <div class="box-header"><span>${label}</span><span>${p.gen}</span></div>
+                <div class="box-body">
+                    <span class="member-name">${displayName(p.name)}</span>
+                    <span class="father-name">${isFemale ? 'D/o' : 'S/o'}: ${displayName(p.father)}</span>
+                    ${hasChildren ? '<div class="golden-heart">❤️</div>' : ''}
+                </div>
+            </div>`;
+        }
+
+        // ========================== PDF EXPORT ================================
         async function exportIndividualPDF() {
-            if (!currentIndividual) { alert('Please select a member first'); return; }
+            if (!currentIndividual) {
+                alert('Please select a member first');
+                return;
+            }
+            
             const content = document.getElementById('individualTree');
+            
             if (!content) return alert('No content to export');
+            
             const treeElement = content.querySelector('.tree-root-layout') || content;
+            
             try {
                 const header = document.createElement('div');
                 header.style.marginBottom = '30px';
@@ -895,6 +971,7 @@
                     <h1 style="color: #d4af37; font-size: 36px; font-family: 'Playfair Display', serif; margin: 0 0 10px 0;">Rizvi Family Tree</h1>
                     <h2 style="color: #5a0000; font-size: 24px; font-family: 'Playfair Display', serif; margin: 0;">${displayName(currentIndividual.name)}</h2>
                 `;
+                
                 const footer = document.createElement('div');
                 footer.style.marginTop = '40px';
                 footer.style.padding = '15px 20px';
@@ -906,8 +983,13 @@
                 footer.style.justifyContent = 'space-between';
                 footer.style.alignItems = 'center';
                 footer.style.fontSize = '11px';
+                
                 const timeStr = formatCurrentTime();
-                footer.innerHTML = `<span>${LOAD_STAMP || 'Last data updated on: Unknown'}</span><span style="font-weight: 500;">PDF generated: ${timeStr}</span>`;
+                footer.innerHTML = `
+                    <span>${LOAD_STAMP || 'Last data updated on: Unknown'}</span>
+                    <span style="font-weight: 500;">PDF generated: ${timeStr}</span>
+                `;
+                
                 const signature = document.createElement('div');
                 signature.style.marginTop = '20px';
                 signature.style.paddingTop = '15px';
@@ -937,7 +1019,14 @@
                 document.body.appendChild(loadingMsg);
                 
                 await new Promise(resolve => setTimeout(resolve, 500));
-                const canvas = await html2canvas(treeElement, { scale: 2, backgroundColor: '#ffffff', logging: false, allowTaint: true, useCORS: true });
+                
+                const canvas = await html2canvas(treeElement, {
+                    scale: 2,
+                    backgroundColor: '#ffffff',
+                    logging: false,
+                    allowTaint: true,
+                    useCORS: true
+                });
                 
                 treeElement.removeChild(header);
                 treeElement.removeChild(footer);
@@ -946,19 +1035,28 @@
                 
                 const imgData = canvas.toDataURL('image/png');
                 const { jsPDF } = window.jspdf;
+                
                 const w = canvas.width / 2 * 0.264583;
                 const h = canvas.height / 2 * 0.264583;
-                const pdf = new jsPDF({ orientation: w > h ? 'l' : 'p', unit: 'mm', format: [w + 40, h + 40] });
+                
+                const pdf = new jsPDF({
+                    orientation: w > h ? 'l' : 'p',
+                    unit: 'mm',
+                    format: [w + 40, h + 40]
+                });
+                
                 pdf.addImage(imgData, 'PNG', 20, 20, w, h);
+                
                 const safeName = displayName(currentIndividual.name).replace(/[^a-z0-9]/gi, '_').toLowerCase();
                 pdf.save(`family_${safeName}_${new Date().getTime()}.pdf`);
+                
             } catch (err) {
                 console.error('PDF Error:', err);
                 alert('❌ PDF generation failed: ' + err.message);
             }
         }
 
-        // ==================== TOGGLE CANVAS VIEW ====================
+        // ========================== TOGGLE CANVAS VIEW ========================
         function toggleCanvasView() {
             document.body.classList.toggle('canvas-only');
             const btn = document.getElementById('toggleViewBtn');
@@ -969,16 +1067,15 @@
             }
         }
 
-        // ==================== DATA LOADING ====================
+        // ========================== DATA LOADING ==============================
         const saved = localStorage.getItem('familyDB');
         if (saved) {
             db = JSON.parse(saved);
             LOAD_STAMP = 'Last data updated on: ' + new Date().toLocaleString();
         }
 
-        // ==================== INIT ====================
+        // ========================== INITIALIZATION ============================
         document.addEventListener('DOMContentLoaded', function() {
-            // Ensure filters are correctly set
             document.getElementById('filterSiblings').classList.add('active');
             document.getElementById('filterDescendants').classList.add('active');
             document.getElementById('filterAncestors').classList.remove('active');
@@ -988,15 +1085,18 @@
                 currentIndividual = JSON.parse(tableMember);
                 document.getElementById('individualSearch').value = displayName(currentIndividual.name) + ' (' + currentIndividual.gen + ')';
                 localStorage.removeItem('tableViewMember');
+                
                 const savedFilters = localStorage.getItem('tableViewFilters');
                 if (savedFilters) {
                     const filters = JSON.parse(savedFilters);
                     showSiblings = filters.showSiblings;
                     showDescendants = filters.showDescendants;
                     showAncestors = filters.showAncestors;
+                    
                     document.getElementById('filterSiblings').classList.toggle('active', showSiblings);
                     document.getElementById('filterDescendants').classList.toggle('active', showDescendants);
                     document.getElementById('filterAncestors').classList.toggle('active', showAncestors);
+                    
                     localStorage.removeItem('tableViewFilters');
                 }
             }
