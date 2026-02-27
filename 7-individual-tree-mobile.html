@@ -12,510 +12,57 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     
     <style>
-        /* EXACT STYLES FROM FILE 2 - PRESERVED COMPLETELY */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        :root {
-            --maroon: #5a0000;
-            --dark-blue: #0f172a;
-            --gold: #d4af37;
-            --light-gold: #f1d279;
-            --green: #2e7d32;
-            --dark-green: #1b5e20;
-            --light-green: #d4edda;
-            --pink-bg: #fff0f5;
-            --light-pink: #ffe4e9;
-            --light-sage: #f4f7f2;
-            --border-sage: #c9d6c2;
-            --sisters-border: #fb7185;
-            --summary-border: #e6c87c;
-            --table-header-bg: #fdf6e3;
-            --bronze: #bc8c4f;
-            --reset-red: #5a0000;
-            --reset-red-dark: #7a1f1f;
-            --pdf-grey: #6c757d;
-            --pdf-grey-dark: #5a6268;
-            --dashboard-green: #1b5e20;
-            --sisters-box-bg: #fff0f5;
-        }
+       
+/* 1. THE BASICS & BACKGROUND */
+:root {
+    --maroon: #5a0000;
+    --dark-blue: #0f172a;
+    --gold: #d4af37;
+    --light-sage: #f4f7f2;
+}
 
 html, body {
-    position: static; /* Change relative/absolute to static */
-    width: 100%;
-    height: auto;     /* Allow the page to determine its own height */
-    overflow-x: auto; /* Enable horizontal scrolling for the wide tree */
-    overflow-y: auto; /* Enable vertical scrolling */
-}
-body {
-    font-family: 'Inter', sans-serif;
-    background: #f4f7f2; /* Changed from #1a1a1a to Light Sage to match the app */
     margin: 0;
     padding: 0;
-    overflow: auto; /* Allow the browser to handle the main scroll */
+    background: var(--light-sage); /* Fixes the black screen */
+    overflow: auto; /* Fixes the scrolling */
+    width: 100%;
     -webkit-overflow-scrolling: touch;
 }
 
-.app-container {
-    background: white;
-    min-height: 100vh;
-    width: max-content; /* This allows the tree to grow wide */
-    min-width: 100vw;    /* This prevents the black background from showing on small trees */
-    display: flex;
-    flex-direction: column;
-}
-
+/* 2. THE HEADER (Keeps Title Visible) */
 .app-header {
     background: linear-gradient(135deg, var(--dark-blue) 0%, #1e3d3d 100%);
     color: var(--gold);
-    padding: 15px 20px; /* Increased padding */
+    padding: 15px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap; /* Allows buttons to drop to a new line if needed */
-    gap: 15px;      /* Creates the gap between buttons */
     border-bottom: 3px solid var(--gold);
-    position: relative;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 }
 
-        .header-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 20px;
-            font-weight: 900;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .header-icon {
-            background: var(--gold);
-            color: var(--dark-blue);
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .header-btn {
-            padding: 6px 14px;
-            font-weight: 600;
-            font-size: 13px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            white-space: nowrap;
-            border: 2px solid var(--gold);
-            background: transparent;
-            color: var(--gold);
-            transition: all 0.2s;
-            border-radius: 4px;
-        }
-
-        .header-btn:hover {
-            background: var(--gold);
-            color: var(--dark-blue);
-            transform: translateY(-2px);
-        }
-
-        .header-btn.dashboard {
-            background: var(--dashboard-green);
-            color: white;
-            border-color: transparent;
-            border-radius: 4px;
-        }
-
-        .header-btn.dashboard:hover {
-            background: #2e7d32;
-        }
-
-        .header-btn.reset {
-            background: var(--reset-red);
-            color: white;
-            border-color: transparent;
-            border-radius: 4px;
-        }
-
-        .header-btn.reset:hover {
-            background: var(--reset-red-dark);
-        }
-
-        .header-btn.pdf {
-            background: var(--pdf-grey);
-            color: white;
-            border-color: transparent;
-            border-radius: 4px;
-        }
-
-        .header-btn.pdf:hover {
-            background: var(--pdf-grey-dark);
-        }
-
-        .header-btn.table {
-            background: var(--bronze);
-            color: white;
-            border-color: transparent;
-            border-radius: 4px;
-        }
-
-        .header-btn.table:hover {
-            background: #9e6f3a;
-        }
-
-        .menu-toggle {
-            display: none;
-        }
-
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            background: #fffcf8;
-        }
-
-        #individualSection {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            overflow: hidden;
-            flex: 1;
-        }
-
-        .fixed-header-section {
-            padding: 15px 15px 0 15px;
-            background: #fffcf8;
-            flex-shrink: 0;
-        }
-
-        .border-line {
-            border-top: 3px solid var(--gold);
-            margin: 20px 0 0 0;
-        }
-
-        /* CRITICAL FIX: Enable BOTH horizontal and vertical scrolling */
-.scrollable-content {
-    flex: 1;
-    width: 100%;
-    overflow: visible; /* Let the body handle the scrolling for better mobile performance */
-    padding: 20px;
+/* 3. THE TREE AREA (Allows wide scrolling) */
+.app-container {
     display: flex;
-    justify-content: center;
-}
-        .search-row {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-        }
-
-        .search-label {
-            font-weight: 700;
-            color: var(--maroon);
-            font-size: 13px;
-            text-transform: uppercase;
-            white-space: nowrap;
-        }
-
-.search-wrapper {
-    position: relative;
-    flex: 0 1 100px; /* This prevents it from growing too large */
-    min-width: 80px;  /* This allows it to stay small on mobile */
-}
-        .search-input {
-            width: 100%;
-            padding: 8px 15px;
-            border: 2px solid #cbd5e1;
-            border-radius: 4px;
-            font-size: 13px;
-            outline: none;
-            transition: all 0.3s;
-        }
-
-        .search-input:focus {
-            border-color: var(--gold);
-            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
-        }
-
-        .dropdown {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: white;
-            border: 2px solid var(--gold);
-            border-radius: 0 0 4px 4px;
-            max-height: 200px;
-            overflow-y: auto;
-            display: none;
-            z-index: 1000;
-            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
-        }
-
-        .result-item {
-            padding: 8px 12px;
-            border-bottom: 1px solid #eee;
-            cursor: pointer;
-            font-size: 13px;
-        }
-
-        .result-item:hover {
-            background: #faebcd;
-        }
-
-        .result-item .main-name {
-            font-weight: 700;
-            color: var(--dark-blue);
-        }
-
-        .result-item .gen {
-            color: var(--maroon);
-            font-size: 11px;
-            margin-left: 6px;
-        }
-
-        .filter-buttons {
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-        }
-
-    .filter-btn {
-    padding: 4px 6px; /* Smaller padding */
-    border-radius: 4px;
-    font-weight: 600;
-    font-size: 10px;  /* Smaller text to fit icons and words */
-    cursor: pointer;
-    border: 2px solid var(--gold);
-    background: white;
-    color: var(--dark-blue);
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
-    gap: 2px;
-}
-
-        .filter-btn.active {
-            background: #d4edda;
-            border-color: var(--dark-green);
-        }
-
-        /* CRITICAL FIX: Allow tree to expand horizontally */
-       .tree-root-layout {
-    display: inline-flex; /* Changed from 'flex' to allow width to expand */
     flex-direction: column;
-    align-items: center;
-    min-width: 100%;
-    padding: 20px;
-}  
-        .family-group {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-            width: 100%;
-        }
-
-.children-row {
-    display: flex;
-    gap: 20px;
-    flex-wrap: nowrap; /* This is the most important part for "Wide" view */
-    justify-content: center;
-    padding: 10px;
+    width: max-content; /* Critical for wide trees */
+    min-width: 100vw;
 }
 
-        .relation-label {
-            font-size: 11px;
-            color: var(--gold);
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            background: var(--dark-blue);
-            padding: 4px 12px;
-            border-radius: 4px;
-            color: white;
-            margin: 5px 0;
-            text-align: center;
-            display: inline-block;
-            width: auto;
-        }
+.scrollable-content {
+    padding: 20px;
+    overflow: visible; /* Prevents stuck scrolling */
+}
 
-        .descendant-heading {
-            font-size: 14px;
-            color: var(--maroon);
-            font-weight: 800;
-            margin: 15px 0 5px 0;
-            font-family: 'Playfair Display', serif;
-            text-align: center;
-            width: 100%;
-            border-bottom: 2px solid var(--gold);
-            padding-bottom: 5px;
-        }
-
-        .sisters-group-box {
-            border: 2px solid var(--sisters-border);
-            border-radius: 12px;
-            background: var(--sisters-box-bg);
-            min-width: 300px;
-            max-width: 380px;
-            text-align: center;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-            padding: 12px;
-            margin: 10px auto;
-        }
-
-        .sisters-group-box .sisters-header {
-            font-size: 14px;
-            font-weight: 800;
-            color: var(--maroon);
-            padding-bottom: 6px;
-            margin-bottom: 6px;
-            text-align: left;
-            border-bottom: 2px solid var(--sisters-border);
-            font-family: 'Playfair Display', serif;
-        }
-
-        .sisters-group-box table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 8px 0;
-        }
-
-        .sisters-group-box th {
-            text-align: left;
-            padding: 4px 8px;
-            font-size: 11px;
-            color: var(--maroon);
-            border-bottom: 1px solid var(--sisters-border);
-        }
-
-        .sisters-group-box td {
-            padding: 4px 8px;
-            border-bottom: 1px dashed #fecaca;
-        }
-
-        .sisters-group-box td:first-child {
-            font-weight: 600;
-            text-align: left;
-        }
-
-        .sisters-group-box td:last-child {
-            text-align: right;
-            color: var(--maroon);
-        }
-
-        .box {
-            border: 2px solid var(--gold);
-            border-radius: 12px;
-            background: white;
-            min-width: 240px;
-            max-width: 280px;
-            text-align: center;
-            cursor: pointer;
-            position: relative;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-            transition: transform 0.2s;
-        }
-
-        .box:hover {
-            transform: translateY(-3px);
-        }
-
-        .box.blinking-box {
-            animation: blinkBoxLightGreen 1.5s infinite;
-            border-width: 4px;
-            z-index: 10;
-            transform: scale(1.02);
-        }
-
-        @keyframes blinkBoxLightGreen {
-            0%, 100% { 
-                border-color: #2e7d32;
-                background: #e8f5e9;
-                box-shadow: 0 0 15px rgba(46, 125, 50, 0.4);
-            }
-            50% { 
-                border-color: #4caf50;
-                background: #c8e6c9;
-                box-shadow: 0 0 30px rgba(76, 175, 80, 0.6);
-                transform: scale(1.05);
-            }
-        }
-
-        .box-header {
-            display: flex;
-            justify-content: space-between;
-            padding: 6px 10px;
-            background: #f8fafc;
-            font-size: 10px;
-            font-weight: 800;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .box-body {
-            padding: 12px;
-        }
-
-        .member-name {
-            font-family: 'Playfair Display', serif;
-            font-weight: 700;
-            font-size: 16px;
-            display: block;
-        }
-
-        .father-name {
-            font-size: 11px;
-            color: #64748b;
-            margin-top: 4px;
-        }
-
-        .female-box {
-            background-color: var(--light-pink) !important;
-            border-color: #fb7185 !important;
-        }
-
-        .v-line {
-            width: 3px;
-            height: 25px;
-            background: var(--gold);
-            margin: 5px auto;
-        }
-
-        .golden-heart {
-            position: absolute;
-            bottom: 5px;
-            right: 8px;
-            color: var(--gold);
-            font-size: 16px;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        .app-footer {
-            background: var(--dark-blue);
-            color: var(--gold);
-            text-align: center;
-            padding: 8px;
-            font-size: 11px;
-            border-top: 2px solid var(--gold);
-        }
-
- .toggle-view-btn {
+/* 4. FULL SCREEN BUTTON (Top Left & Always Visible) */
+.toggle-view-btn {
     position: fixed;
-    top: 15px;      /* Changed from bottom to top */
-    left: 15px;     /* Keep on the left */
-    z-index: 9999;  /* Ensure it stays above everything */
+    top: 15px;
+    left: 15px;
+    z-index: 9999;
     background: var(--maroon);
     color: white;
     width: 45px;
@@ -524,54 +71,20 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
     cursor: pointer;
 }
-        .toggle-view-btn:hover {
-            opacity: 1;
-        }
-        /* This hides everything EXCEPT the toggle button when in full screen */
-body.canvas-only .fixed-header-section,
-body.canvas-only .search-section,
-body.canvas-only .filter-container,
-body.canvas-only .footer-nav {
+
+/* 5. FULL SCREEN LOGIC */
+/* When in full screen, hide search and footer, but NOT the title or button */
+body.canvas-only .fixed-header-section, 
+body.canvas-only .app-footer,
+body.canvas-only .search-section {
     display: none !important;
 }
 
-/* Ensure the button stays visible to allow "Exit Full Screen" */
-body.canvas-only .toggle-view-btn {
-    display: flex !important;
-    opacity: 0.7; /* Optional: make it slightly see-through in full screen */
-}
 
-@media screen and (max-width: 768px) {
-    .search-row {
-        flex-direction: row; 
-        flex-wrap: nowrap;
-        align-items: center;
-        gap: 4px; /* Tighten gap */
-    }
-}
-    
-    .search-wrapper {
-        min-width: 100px;
-        flex: 1;
-    }
-}
-    
-    .filter-buttons {
-        width: 100%;
-        display: flex;
-        justify-content: space-between;
-        gap: 5px;
-    }
-    /* This makes buttons smaller so they fit on one line */
-    .filter-btn {
-        flex: 1;
-        font-size: 11px;
-        padding: 8px 2px;
-    }
-}
+
     </style>
 </head>
 <body>
@@ -1038,18 +551,17 @@ function handleBoxClick(member) {
         }
 
         // ========================== TOGGLE CANVAS VIEW ========================
-     function toggleCanvasView() {
-    const isCanvasOnly = document.body.classList.toggle('canvas-only');
-    const btn = document.getElementById('toggleViewBtn');
+function toggleCanvasView() {
+    // This tells the browser to turn "Full Screen mode" on or off
+    document.body.classList.toggle('canvas-only');
     
-    if (isCanvasOnly) {
-        btn.innerHTML = '✕'; // Change icon to an 'X' to indicate "Exit"
-        btn.style.background = '#333';
+    const btn = document.getElementById('toggleViewBtn');
+    if (document.body.classList.contains('canvas-only')) {
+        btn.innerHTML = '✕'; // Show 'X' to exit
     } else {
-        btn.innerHTML = '👁️'; // Change back to the eye icon
-        btn.style.background = 'var(--maroon)';
+        btn.innerHTML = '👁️'; // Show 'Eye' to enter
     }
-}}
+}
 
         // ========================== DATA LOADING ==============================
         const saved = localStorage.getItem('familyDB');
