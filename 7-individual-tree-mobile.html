@@ -48,20 +48,20 @@ html, body {
 }
 body {
     font-family: 'Inter', sans-serif;
-    background: #1a1a1a;
-    padding: 10px;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-   overscroll-behavior-y: none;
+    background: #f4f7f2; /* Changed from #1a1a1a to Light Sage to match the app */
+    margin: 0;
+    padding: 0;
+    overflow: auto; /* Allow the browser to handle the main scroll */
+    -webkit-overflow-scrolling: touch;
 }
 
-     .app-container {
-    max-width: none; /* Remove the 1400px cap */
-    width: max-content; /* Allow container to grow with the tree */
-    min-width: 100vw; 
-    margin: 0;
-    /* ... keep other styles ... */
+.app-container {
+    background: white;
+    min-height: 100vh;
+    width: max-content; /* This allows the tree to grow wide */
+    min-width: 100vw;    /* This prevents the black background from showing on small trees */
+    display: flex;
+    flex-direction: column;
 }
 
 .app-header {
@@ -204,9 +204,11 @@ body {
         /* CRITICAL FIX: Enable BOTH horizontal and vertical scrolling */
 .scrollable-content {
     flex: 1;
-    overflow: auto; 
-    display: block; 
-    width: 100%; /* Changed from 100vw */
+    width: 100%;
+    overflow: visible; /* Let the body handle the scrolling for better mobile performance */
+    padding: 20px;
+    display: flex;
+    justify-content: center;
 }
         .search-row {
             display: flex;
@@ -509,39 +511,38 @@ body {
             border-top: 2px solid var(--gold);
         }
 
-        .toggle-view-btn {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            z-index: 9999;
-            background: #5a0000;
-            color: white;
-            border: 2px solid #d4af37;
-            border-radius: 50px;
-            padding: 10px 20px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            opacity: 0.8;
-        }
+ .toggle-view-btn {
+    position: fixed;
+    top: 15px;      /* Changed from bottom to top */
+    left: 15px;     /* Keep on the left */
+    z-index: 9999;  /* Ensure it stays above everything */
+    background: var(--maroon);
+    color: white;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    cursor: pointer;
+}
         .toggle-view-btn:hover {
             opacity: 1;
         }
-        body.canvas-only .app-header,
-        body.canvas-only .app-footer,
-        body.canvas-only .fixed-header-section,
-        body.canvas-only .filter-buttons,
-        body.canvas-only .search-row,
-        body.canvas-only .border-line,
-        body.canvas-only .toggle-view-btn {
-            display: none !important;
-        }
-        body.canvas-only .main-content {
-            height: 100vh;
-        }
+        /* This hides everything EXCEPT the toggle button when in full screen */
+body.canvas-only .fixed-header-section,
+body.canvas-only .search-section,
+body.canvas-only .filter-container,
+body.canvas-only .footer-nav {
+    display: none !important;
+}
+
+/* Ensure the button stays visible to allow "Exit Full Screen" */
+body.canvas-only .toggle-view-btn {
+    display: flex !important;
+    opacity: 0.7; /* Optional: make it slightly see-through in full screen */
+}
 
 @media screen and (max-width: 768px) {
     .search-row {
@@ -1037,15 +1038,18 @@ function handleBoxClick(member) {
         }
 
         // ========================== TOGGLE CANVAS VIEW ========================
-        function toggleCanvasView() {
-            document.body.classList.toggle('canvas-only');
-            const btn = document.getElementById('toggleViewBtn');
-            if (document.body.classList.contains('canvas-only')) {
-                btn.innerHTML = '<span>🔍</span> <span>Exit</span>';
-            } else {
-                btn.innerHTML = '<span>👁️</span> <span>Full Screen</span>';
-            }
-        }
+     function toggleCanvasView() {
+    const isCanvasOnly = document.body.classList.toggle('canvas-only');
+    const btn = document.getElementById('toggleViewBtn');
+    
+    if (isCanvasOnly) {
+        btn.innerHTML = '✕'; // Change icon to an 'X' to indicate "Exit"
+        btn.style.background = '#333';
+    } else {
+        btn.innerHTML = '👁️'; // Change back to the eye icon
+        btn.style.background = 'var(--maroon)';
+    }
+}}
 
         // ========================== DATA LOADING ==============================
         const saved = localStorage.getItem('familyDB');
