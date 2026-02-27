@@ -37,26 +37,26 @@
             --dashboard-green: #1b5e20;
             --sisters-box-bg: #fff0f5;
         }
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #1a1a1a;
-            height: 100vh;
-            overflow: hidden;
-            margin: 0;
-            padding: 10px;
-        }
-        .app-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: white;
-            height: calc(100vh - 20px);
-            display: flex;
-            flex-direction: column;
-            border-radius: 20px;
-            border: 2px solid var(--gold);
-            overflow: hidden;
-            box-shadow: 0 0 50px rgba(212, 175, 55, 0.2);
-        }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #1a1a1a;
+    min-height: 100vh;
+    overflow: auto; /* This allows the whole page to scroll */
+    margin: 0;
+    padding: 10px;
+}
+   .app-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    background: white;
+    min-height: calc(100vh - 20px);
+    display: flex;
+    flex-direction: column;
+    border-radius: 20px;
+    border: 2px solid var(--gold);
+    overflow: visible; /* Allows the tree to expand outwards */
+    box-shadow: 0 0 50px rgba(212, 175, 55, 0.2);
+}
 
 	.app-header {
             background: linear-gradient(135deg, var(--dark-blue) 0%, #1e3d3d 100%);
