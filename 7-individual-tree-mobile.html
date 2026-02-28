@@ -270,6 +270,19 @@ body.canvas-only .tree-root-layout {
 }
 
 
+/* Prevent pull-to-refresh */
+body {
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Ensure tree stays after scroll */
+#individualTree {
+    min-height: 100%;
+}
+
+
+
     </style>
 </head>
 <body>
@@ -706,6 +719,50 @@ body.canvas-only .tree-root-layout {
             window.showDashboard = showDashboard;
             window.resetIndividual = resetIndividual;
         })();
+
+// Prevent pull-to-refresh and preserve tree
+let scrollTop = 0;
+
+window.addEventListener('scroll', function() {
+    // Save scroll position
+    scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+});
+
+// Restore scroll position if page reloads
+window.addEventListener('load', function() {
+    if (scrollTop > 0) {
+        window.scrollTo(0, scrollTop);
+    }
+    
+    // Re-render tree if data exists but tree is empty
+    if (currentIndividual && document.getElementById('individualTree').innerHTML.includes('Select a member')) {
+        renderIndividualTree();
+    }
+});
+
+// Save state before page unload
+window.addEventListener('beforeunload', function() {
+    if (currentIndividual) {
+        sessionStorage.setItem('tempIndividual', JSON.stringify(currentIndividual));
+        sessionStorage.setItem('tempScroll', scrollTop);
+    }
+});
+
+// Restore from sessionStorage if exists
+const tempIndividual = sessionStorage.getItem('tempIndividual');
+if (tempIndividual && !currentIndividual) {
+    currentIndividual = JSON.parse(tempIndividual);
+    sessionStorage.removeItem('tempIndividual');
+    
+    const tempScroll = sessionStorage.getItem('tempScroll');
+    if (tempScroll) {
+        setTimeout(() => {
+            window.scrollTo(0, parseInt(tempScroll));
+            sessionStorage.removeItem('tempScroll');
+        }, 100);
+    }
+}
+
     </script>
 </body>
 </html>
