@@ -526,23 +526,42 @@
         // =========================================================================
         // GROUP SISTERS - FIXED VERSION with Gen under name
         // =========================================================================
-        function groupSisters(sistersArray, fatherName, type) {
-            if (!sistersArray || sistersArray.length === 0) return '';
-            let headerText = type === 'siblings' ? 'SISTERS' : 'DAUGHTERS';
-            let html = `<div class="sisters-group-box"><div class="sisters-header"># ${headerText}</div>`;
-            html += `<div style="width:100%; margin: 8px 0;">`;
-            
-            sistersArray.forEach((sister, index) => {
-                const memberData = encodeURIComponent(JSON.stringify(sister));
-                html += `<div onclick='handleBoxClick(JSON.parse(decodeURIComponent("${memberData}")))' style="cursor: pointer; padding: 8px; ${index < sistersArray.length - 1 ? 'border-bottom: 1px dashed #fecaca;' : ''} transition: background 0.2s;" onmouseover="this.style.background='#faebcd'" onmouseout="this.style.background='transparent'">
-                            <div style="font-weight: 600;">${displayName(sister.name)}</div>
-                            <div style="font-size: 10px; color: var(--maroon); margin-top: 2px;">Gen: ${sister.gen}</div>
-                        </div>`;
-            });
-            
-            html += `</div></div>`;
-            return html;
-        }
+
+
+function groupSisters(sistersArray, fatherName, type) {
+    if (!sistersArray || sistersArray.length === 0) return '';
+    let headerText = type === 'siblings' ? 'SISTERS' : 'DAUGHTERS';
+    let html = `<div class="sisters-group-box"><div class="sisters-header"># ${headerText}</div>`;
+    
+    // Table with two columns - Name and Gen
+    html += `<table style="width:100%; border-collapse: collapse; margin: 8px 0; table-layout: fixed;">`;
+    
+    // Table header - center justified
+    html += `<tr style="border-bottom: 2px solid var(--sisters-border);">
+                <th style="text-align: center; padding: 8px 4px 4px 8px; font-size: 11px; color: var(--maroon); width: 60%;">Name</th>
+                <th style="text-align: center; padding: 8px 8px 4px 4px; font-size: 11px; color: var(--maroon); width: 40%;">Gen</th>
+            </tr>`;
+    
+    // Table rows - left aligned
+    sistersArray.forEach(sister => {
+        const memberData = encodeURIComponent(JSON.stringify(sister));
+        html += `<tr onclick='handleBoxClick(JSON.parse(decodeURIComponent("${memberData}")))' style="cursor: pointer;">
+                    <td style="text-align: left; padding: 8px 4px 8px 8px; border-bottom: 1px dashed #fecaca; font-weight: 600; transition: background 0.2s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" onmouseover="this.style.background='#faebcd'" onmouseout="this.style.background='transparent'">${displayName(sister.name)}</td>
+                    <td style="text-align: left; padding: 8px 8px 8px 4px; border-bottom: 1px dashed #fecaca; color: var(--maroon); transition: background 0.2s; white-space: nowrap;" onmouseover="this.style.background='#faebcd'" onmouseout="this.style.background='transparent'">${sister.gen}</td>
+                </tr>`;
+    });
+    
+    html += `</table>`;
+    
+    // Father name at the bottom - left aligned
+    html += `<div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--sisters-border); font-size: 11px; color: #64748b; text-align: left;">
+                ${sistersArray[0]?.gender?.startsWith('F') ? 'D/o' : 'S/o'}: ${displayName(fatherName)}
+            </div>`;
+    
+    html += `</div>`;
+    return html;
+}
+
 
         // =========================================================================
         // RENDER TREE
