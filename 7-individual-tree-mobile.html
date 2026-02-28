@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Your existing code -->
+    <script src="family-data.js"></script>  <!-- ADD THIS LINE -->
+</head>
+
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=3.0, user-scalable=yes, viewport-fit=cover">
     <title>Rizvi family · structured tree (mobile→pc layout)</title>
@@ -725,35 +730,23 @@ function groupSisters(sistersArray, fatherName, type) {
         // =========================================================================
         // LOAD DATA & INIT
         // =========================================================================
-        const saved = localStorage.getItem('familyDB');
-        if (saved) {
-            db = JSON.parse(saved);
-            LOAD_STAMP = 'Last data updated on: ' + new Date().toLocaleString();
-        }
+       // =========================================================================
+// LOAD DATA - MODIFIED TO USE family-data.js FIRST
+// =========================================================================
+let db = [];
 
-        document.addEventListener('DOMContentLoaded', function() {
-            // mobile menu toggle
-            document.getElementById('mobileMenuToggle')?.addEventListener('click', function() {
-                document.querySelector('.fixed-header-section')?.classList.toggle('collapsed');
-            });
-
-            const tableMember = localStorage.getItem('tableViewMember');
-            if (tableMember) {
-                currentIndividual = JSON.parse(tableMember);
-                document.getElementById('individualSearch').value = displayName(currentIndividual.name) + ' (' + currentIndividual.gen + ')';
-                localStorage.removeItem('tableViewMember');
-                const savedFilters = localStorage.getItem('tableViewFilters');
-                if (savedFilters) {
-                    const filters = JSON.parse(savedFilters);
-                    showSiblings = filters.showSiblings;
-                    showDescendants = filters.showDescendants;
-                    showAncestors = filters.showAncestors;
-                    document.getElementById('filterSiblings').classList.toggle('active', showSiblings);
-                    document.getElementById('filterDescendants').classList.toggle('active', showDescendants);
-                    document.getElementById('filterAncestors').classList.toggle('active', showAncestors);
-                    localStorage.removeItem('tableViewFilters');
-                }
-            }
+// Check if FAMILY_DATA exists from external file
+if (typeof FAMILY_DATA !== 'undefined' && FAMILY_DATA.length > 0) {
+    db = FAMILY_DATA;
+    LOAD_STAMP = 'Last data updated on: ' + new Date().toLocaleString();
+} else {
+    // Fallback to localStorage
+    const saved = localStorage.getItem('familyDB');
+    if (saved) {
+        db = JSON.parse(saved);
+        LOAD_STAMP = 'Last data updated on: ' + new Date().toLocaleString();
+    }
+}
 
             if (currentIndividual) {
                 renderIndividualTree();

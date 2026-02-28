@@ -156,7 +156,13 @@
 
         .hidden { display: none; }
     </style>
+
+
+<head>
+    <!-- Your existing code -->
+    <script src="family-data.js"></script>  <!-- ADD THIS LINE -->
 </head>
+
 <body>
     <div class="app-container">
         <div class="app-header">
@@ -194,7 +200,7 @@
         </div>
 
         <div class="app-footer">
-            Imran Haider | 0332-787-6010
+            Imran Haider S/o Risalat H Rizvi | 0332-787-6010
         </div>
     </div>
 
@@ -270,16 +276,26 @@
             window.location.href = '9-root-tree-mobile.html';
         }
 
-        function initializeData() {
-            const saved = localStorage.getItem('familyDB');
-            if (saved) {
-                db = JSON.parse(saved);
-                document.getElementById('dataStatus').innerHTML = `✅ ${db.length} members`;
-                document.getElementById('dataStatus').style.color = '#2e7d32';
-            } else {
-                autoLoadData();
-            }
-        }
+   function initializeData() {
+    // First check if FAMILY_DATA exists (from the external file)
+    if (typeof FAMILY_DATA !== 'undefined' && FAMILY_DATA.length > 0) {
+        db = FAMILY_DATA;
+        localStorage.setItem('familyDB', JSON.stringify(db));
+        document.getElementById('dataStatus').innerHTML = `✅ ${db.length} members`;
+        document.getElementById('dataStatus').style.color = '#2e7d32';
+        return;
+    }
+    
+    // Fallback to localStorage if no external data
+    const saved = localStorage.getItem('familyDB');
+    if (saved) {
+        db = JSON.parse(saved);
+        document.getElementById('dataStatus').innerHTML = `✅ ${db.length} members`;
+        document.getElementById('dataStatus').style.color = '#2e7d32';
+    } else {
+        autoLoadData(); // Your existing auto-load function
+    }
+}
 
         function autoLoadData() {
             const possiblePaths = [
