@@ -213,10 +213,10 @@
         <div class="subtitle">Honoring our past, preserving our future</div>
         
         <div class="device-selector">
-            <button class="device-btn active" id="pcBtn">
+            <button class="device-btn" id="pcBtn">
                 <span>💻</span> Desktop
             </button>
-            <button class="device-btn" id="mobileBtn">
+            <button class="device-btn active" id="mobileBtn">
                 <span>📱</span> Mobile
             </button>
         </div>
@@ -244,7 +244,7 @@
 
     <script>
         const CONFIG = { password: 'sihr110' };
-        let deviceType = 'pc';
+        let deviceType = 'mobile'; // Default to mobile
 
         // Wait for DOM to be fully loaded
         document.addEventListener('DOMContentLoaded', function() {
