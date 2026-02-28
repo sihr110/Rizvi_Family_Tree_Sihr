@@ -368,389 +368,432 @@ body {
     <div class="section-marker" data-section="6-fullscreen-btn"></div>
     <!-- note: no extra headings or text inserted, just hidden markers -->
 
-    <script>
-        (function(){
-            // =========================================================================
-            // GLOBAL STATE – identical to file 2
-            // =========================================================================
-            let db = [];                       
-            let currentIndividual = null;       
-            let showSiblings = true;            
-            let showDescendants = true;
-            let showAncestors = false;
-            let LOAD_STAMP = '';
+<script>
+    (function(){
+        // =========================================================================
+        // STATE PRESERVATION - MUST RUN FIRST
+        // =========================================================================
+        let currentIndividual = null;
+        let db = [];
+        let showSiblings = true;
+        let showDescendants = true;
+        let showAncestors = false;
+        let LOAD_STAMP = '';
+        
+        // Restore from sessionStorage IMMEDIATELY
+        const tempIndividual = sessionStorage.getItem('tempIndividual');
+        if (tempIndividual) {
+            try {
+                currentIndividual = JSON.parse(tempIndividual);
+                sessionStorage.removeItem('tempIndividual');
+            } catch (e) {}
+        }
 
-            // =========================================================================
-            // UTILITIES (displayName, formatCurrentTime)
-            // =========================================================================
-            function displayName(str) {
-                return str ? str.replace(/\s*-\s*\d+$/, '').trim() : '';
+        // =========================================================================
+        // UTILITIES
+        // =========================================================================
+        function displayName(str) {
+            return str ? str.replace(/\s*-\s*\d+$/, '').trim() : '';
+        }
+
+        function formatCurrentTime() {
+            const d = new Date();
+            const day = d.getDate();
+            const month = d.getMonth() + 1;
+            const year = d.getFullYear();
+            const hours = d.getHours();
+            const minutes = String(d.getMinutes()).padStart(2, '0');
+            const ampm = hours >= 12 ? 'pm' : 'am';
+            const displayHours = hours % 12 || 12;
+            return `${day}/${month}/${year} - ${displayHours}:${minutes}${ampm}`;
+        }
+
+        // =========================================================================
+        // NAVIGATION
+        // =========================================================================
+        function switchToTableView() {
+            if (currentIndividual) {
+                localStorage.setItem('tableViewMember', JSON.stringify(currentIndividual));
+                localStorage.setItem('tableViewFilters', JSON.stringify({ showSiblings, showDescendants, showAncestors }));
             }
+            window.location.href = '8-individual-table-mobile.html';
+        }
 
-            function formatCurrentTime() {
-                const d = new Date();
-                const day = d.getDate();
-                const month = d.getMonth() + 1;
-                const year = d.getFullYear();
-                const hours = d.getHours();
-                const minutes = String(d.getMinutes()).padStart(2, '0');
-                const ampm = hours >= 12 ? 'pm' : 'am';
-                const displayHours = hours % 12 || 12;
-                return `${day}/${month}/${year} - ${displayHours}:${minutes}${ampm}`;
+        function updateHeaderButtons() {
+            document.getElementById('headerActions').innerHTML = `
+                <div class="header-btn table" onclick="switchToTableView()">📋 Switch to Table</div>
+                <div class="header-btn reset" onclick="resetIndividual()">🔄 Reset</div>
+                <div class="header-btn pdf" onclick="exportIndividualPDF()">📑 Save PDF</div>
+                <div class="header-btn dashboard" onclick="showDashboard()">🏠 Dashboard</div>
+            `;
+        }
+
+        function showDashboard() {
+            // Clear any stored state before going to dashboard
+            sessionStorage.removeItem('tempIndividual');
+            sessionStorage.removeItem('tempScroll');
+            window.location.href = '6-dashboard-mobile.html';
+        }
+
+        function resetIndividual() {
+            document.getElementById('individualSearch').value = '';
+            currentIndividual = null;
+            document.getElementById('individualTree').innerHTML = 
+                '<div style="text-align:center; color:#999; padding:60px; background: var(--light-sage); border: 2px solid var(--border-sage); border-radius: 16px; margin:20px auto; max-width:500px;">' +
+                '<div style="font-size:48px; margin-bottom:15px; opacity:0.5;">👤</div>' +
+                '<div style="font-size:18px; font-weight:600; color:var(--maroon); margin-bottom:8px;">Select a member to view</div>' +
+                '<div style="font-size:13px; color:#666;">Search and select a family member above to see their tree</div></div>';
+            updateHeaderButtons();
+            sessionStorage.removeItem('tempIndividual');
+        }
+
+        // =========================================================================
+        // FILTER TOGGLE
+        // =========================================================================
+        window.toggleFilter = function(filter) {
+            if (!currentIndividual) return;
+            if (filter === 'siblings') { showSiblings = !showSiblings; document.getElementById('filterSiblings').classList.toggle('active', showSiblings); }
+            else if (filter === 'descendants') { showDescendants = !showDescendants; document.getElementById('filterDescendants').classList.toggle('active', showDescendants); }
+            else if (filter === 'ancestors') { showAncestors = !showAncestors; document.getElementById('filterAncestors').classList.toggle('active', showAncestors); }
+            renderIndividualTree();
+        };
+
+        // =========================================================================
+        // TREE HELPERS
+        // =========================================================================
+        function findParent(p) {
+            if (!p || !p.father) return null;
+            return db.find(x => x.name.toLowerCase() === p.father.toLowerCase());
+        }
+
+        function getAncestryChain(p) {
+            if (!p) return [];
+            let chain = [], cur = p, visited = new Set();
+            while (cur && !visited.has(cur.name.toLowerCase())) {
+                chain.push(cur);
+                visited.add(cur.name.toLowerCase());
+                cur = findParent(cur);
             }
+            return chain;
+        }
 
-            // =========================================================================
-            // NAVIGATION: table / dashboard / reset
-            // =========================================================================
-            function switchToTableView() {
-                if (currentIndividual) {
-                    localStorage.setItem('tableViewMember', JSON.stringify(currentIndividual));
-                    localStorage.setItem('tableViewFilters', JSON.stringify({ showSiblings, showDescendants, showAncestors }));
-                }
-                window.location.href = '8-individual-table-mobile.html';  // kept as per file 2
-            }
-
-            function updateHeaderButtons() {
-                document.getElementById('headerActions').innerHTML = `
-                    <div class="header-btn table" onclick="switchToTableView()">📋 Switch to Table</div>
-                    <div class="header-btn reset" onclick="resetIndividual()">🔄 Reset</div>
-                    <div class="header-btn pdf" onclick="exportIndividualPDF()">📑 Save PDF</div>
-                    <div class="header-btn dashboard" onclick="showDashboard()">🏠 Dashboard</div>
-                `;
-            }
-
-            function showDashboard() {
-                window.location.href = '6-dashboard-mobile.html';   // consistent with file 2
-            }
-
-            function resetIndividual() {
-                document.getElementById('individualSearch').value = '';
-                currentIndividual = null;
-                document.getElementById('individualTree').innerHTML = 
-                    '<div style="text-align:center; color:#999; padding:60px; background: var(--light-sage); border: 2px solid var(--border-sage); border-radius: 16px; margin:20px auto; max-width:500px;">' +
-                    '<div style="font-size:48px; margin-bottom:15px; opacity:0.5;">👤</div>' +
-                    '<div style="font-size:18px; font-weight:600; color:var(--maroon); margin-bottom:8px;">Select a member to view</div>' +
-                    '<div style="font-size:13px; color:#666;">Search and select a family member above to see their tree</div></div>';
-                updateHeaderButtons();
-            }
-
-            // =========================================================================
-            // FILTER TOGGLE (exposed globally)
-            // =========================================================================
-            window.toggleFilter = function(filter) {
-                if (!currentIndividual) return;
-                if (filter === 'siblings') { showSiblings = !showSiblings; document.getElementById('filterSiblings').classList.toggle('active', showSiblings); }
-                else if (filter === 'descendants') { showDescendants = !showDescendants; document.getElementById('filterDescendants').classList.toggle('active', showDescendants); }
-                else if (filter === 'ancestors') { showAncestors = !showAncestors; document.getElementById('filterAncestors').classList.toggle('active', showAncestors); }
-                renderIndividualTree();
-            };
-
-            // =========================================================================
-            // TREE HELPERS (findParent, getGenNum, getAncestryChain)
-            // =========================================================================
-            function findParent(p) {
-                if (!p || !p.father) return null;
-                return db.find(x => x.name.toLowerCase() === p.father.toLowerCase());
-            }
-
-            function getGenNum(gen) {
-                const match = String(gen).match(/\d+/);
-                return match ? parseInt(match[0]) : 0;
-            }
-
-            function getAncestryChain(p) {
-                if (!p) return [];
-                let chain = [], cur = p, visited = new Set();
-                while (cur && !visited.has(cur.name.toLowerCase())) {
-                    chain.push(cur);
-                    visited.add(cur.name.toLowerCase());
-                    cur = findParent(cur);
-                }
-                return chain;
-            }
-
-            // =========================================================================
-            // SEARCH DROPDOWN
-            // =========================================================================
-            window.searchIndividual = function(query) {
-                if (!db.length) return;
-                const drop = document.getElementById('individualDropdown');
-                if (!drop) return;
-                drop.innerHTML = '';
-                if (!query || query.length < 1) { drop.style.display = 'none'; return; }
-                const found = db.filter(p => p.name.toLowerCase().includes(query.toLowerCase())).slice(0, 8);
-                if (found.length === 0) { drop.style.display = 'none'; return; }
-                found.forEach(p => {
-                    const div = document.createElement('div');
-                    div.className = 'result-item';
-                    div.innerHTML = `<div><span class="main-name">${displayName(p.name)}</span> <span class="gen">(${p.gen})</span></div>
-                        <div style="font-size:11px;">${p.gender?.startsWith('F') ? 'D/o' : 'S/o'} ${displayName(p.father)}</div>`;
-                    div.onclick = (e) => {
-                        e.stopPropagation();
-                        document.getElementById('individualSearch').value = displayName(p.name) + ' (' + p.gen + ')';
-                        currentIndividual = p;
-                        renderIndividualTree();
-                        drop.style.display = 'none';
-                    };
-                    drop.appendChild(div);
-                });
-                drop.style.display = 'block';
-            };
-
-            document.addEventListener('click', function(e) {
-                if (!e.target.closest('.search-wrapper')) {
-                    document.querySelectorAll('.dropdown').forEach(d => d.style.display = 'none');
-                }
-            });
-
-            // =========================================================================
-            // BOX CLICK HANDLER
-            // =========================================================================
-            window.handleBoxClick = function(member) {
-                if (!member || !member.name) return;
-                currentIndividual = member;
-                document.getElementById('individualSearch').value = displayName(member.name) + ' (' + member.gen + ')';
-                renderIndividualTree();
-            };
-
-            // =========================================================================
-            // GROUP SISTERS (table render)
-            // =========================================================================
-            function groupSisters(sistersArray, fatherName, type) {
-                if (!sistersArray || sistersArray.length === 0) return '';
-                let headerText = type === 'siblings' ? 'SISTERS' : 'DAUGHTERS';
-                let html = `<div class="sisters-group-box"><div class="sisters-header"># ${headerText}</div>`;
-                html += `<table style="width:100%; border-collapse: collapse; margin: 8px 0;">`;
-                html += `<tr style="border-bottom: 1px solid var(--sisters-border);"><th style="text-align: left; padding: 4px 8px; font-size: 11px; color: var(--maroon);">Name</th><th style="text-align: right; padding: 4px 8px; font-size: 11px; color: var(--maroon);">Gen</th></tr>`;
-                sistersArray.forEach(sister => {
-                    const memberData = encodeURIComponent(JSON.stringify(sister));
-                    html += `<tr onclick='handleBoxClick(JSON.parse(decodeURIComponent("${memberData}")))' style="cursor: pointer;">`;
-                    html += `<td style="padding: 4px 8px; border-bottom: 1px dashed #fecaca; font-weight: 600; transition: background 0.2s;" onmouseover="this.style.background='#faebcd'" onmouseout="this.style.background='transparent'">${displayName(sister.name)}</td>`;
-                    html += `<td style="padding: 4px 8px; border-bottom: 1px dashed #fecaca; text-align: right; color: var(--maroon); transition: background 0.2s;" onmouseover="this.style.background='#faebcd'" onmouseout="this.style.background='transparent'">${sister.gen}</td>`;
-                    html += `</tr>`;
-                });
-                html += `</table></div>`;
-                return html;
-            }
-
-            // =========================================================================
-            // RENDER INDIVIDUAL TREE (core)
-            // =========================================================================
-            function renderIndividualTree() {
-                if (!currentIndividual) return;
-                let html = '<div>';
-
-                if (showAncestors) {
-                    const ancestors = getAncestryChain(currentIndividual).slice(1);
-                    if (ancestors.length > 0) {
-                        html += '<div class="family-group">';
-                        html += '<div class="relation-label">ANCESTORS</div>';
-                        [...ancestors].reverse().forEach((a, idx) => {
-                            const hasChildren = db.some(x => x.father && x.father.toLowerCase() === a.name.toLowerCase());
-                            html += renderBox(a, idx === 0 ? 'Earliest' : 'Ancestor', false, hasChildren);
-                            if (idx < ancestors.length - 1) html += '<div class="v-line"></div>';
-                        });
-                        html += '<div class="v-line"></div>';
-                        html += '</div>';
-                    }
-                }
-
-                const father = findParent(currentIndividual);
-                const ancestors = showAncestors ? getAncestryChain(currentIndividual).slice(1) : [];
-                const fatherInAncestors = father && ancestors.some(a => a.name === father.name);
-
-                if (father && !fatherInAncestors) {
-                    const fatherHasChildren = db.some(x => x.father && x.father.toLowerCase() === father.name.toLowerCase());
-                    html += '<div class="family-group">';
-                    html += renderBox(father, 'Father', false, fatherHasChildren);
-                    html += '<div class="v-line"></div>';
-                    const currentHasChildren = db.some(x => x.father && x.father.toLowerCase() === currentIndividual.name.toLowerCase());
-                    html += renderBox(currentIndividual, 'Selected', true, currentHasChildren);
-                    html += '</div>';
-                } else {
-                    const currentHasChildren = db.some(x => x.father && x.father.toLowerCase() === currentIndividual.name.toLowerCase());
-                    html += '<div class="family-group">';
-                    html += renderBox(currentIndividual, 'Selected', true, currentHasChildren);
-                    html += '</div>';
-                }
-
-                if (showSiblings && father) {
-                    const siblings = db.filter(s => s.father && s.father.toLowerCase() === currentIndividual.father.toLowerCase() && s.name !== currentIndividual.name);
-                    if (siblings.length > 0) {
-                        const maleSiblings = siblings.filter(s => !s.gender?.startsWith('F'));
-                        const femaleSiblings = siblings.filter(s => s.gender?.startsWith('F'));
-                        html += '<div class="family-group">';
-                        html += `<div class="descendant-heading">DESCENDANTS OF ${displayName(father.name).toUpperCase()}</div>`;
-                        html += '<div class="relation-label">SIBLINGS</div>';
-                        if (maleSiblings.length > 0) {
-                            html += '<div class="children-row">';
-                            maleSiblings.forEach(s => {
-                                const hasChildren = db.some(x => x.father && x.father.toLowerCase() === s.name.toLowerCase());
-                                html += renderBox(s, 'Brother', false, hasChildren);
-                            });
-                            html += '</div>';
-                        }
-                        if (femaleSiblings.length > 0) {
-                            html += groupSisters(femaleSiblings, father.name, 'siblings');
-                        }
-                        html += '</div>';
-                    }
-                }
-
-                if (showDescendants) {
-                    const children = db.filter(c => c.father && c.father.toLowerCase() === currentIndividual.name.toLowerCase());
-                    if (children.length > 0) {
-                        const maleChildren = children.filter(c => !c.gender?.startsWith('F'));
-                        const femaleChildren = children.filter(c => c.gender?.startsWith('F'));
-                        html += '<div class="family-group">';
-                        html += '<div class="v-line"></div>';
-                        html += `<div class="descendant-heading">DESCENDANTS OF ${displayName(currentIndividual.name).toUpperCase()}</div>`;
-                        html += '<div class="relation-label">CHILDREN</div>';
-                        if (maleChildren.length > 0) {
-                            html += '<div class="children-row">';
-                            maleChildren.forEach(c => {
-                                const hasChildren = db.some(x => x.father && x.father.toLowerCase() === c.name.toLowerCase());
-                                html += renderBox(c, 'Son', false, hasChildren);
-                            });
-                            html += '</div>';
-                        }
-                        if (femaleChildren.length > 0) {
-                            html += groupSisters(femaleChildren, currentIndividual.name, 'children');
-                        }
-                        html += '</div>';
-                    }
-                }
-
-                html += '</div>';
-                document.getElementById('individualTree').innerHTML = html;
-            }
-
-            function renderBox(p, label, isSelected, hasChildren) {
-                const isFemale = p.gender?.startsWith('F');
-                const blinkClass = isSelected ? 'blinking-box' : '';
-                const memberData = encodeURIComponent(JSON.stringify(p));
-                return `<div class="box ${isFemale ? 'female-box' : ''} ${blinkClass}" onclick='handleBoxClick(JSON.parse(decodeURIComponent("${memberData}")))'>
-                    <div class="box-header"><span>${label}</span><span>${p.gen}</span></div>
-                    <div class="box-body">
-                        <span class="member-name">${displayName(p.name)}</span>
-                        <span class="father-name">${isFemale ? 'D/o' : 'S/o'}: ${displayName(p.father)}</span>
-                        ${hasChildren ? '<div class="golden-heart">❤️</div>' : ''}
-                    </div>
-                </div>`;
-            }
-
-            // =========================================================================
-            // PDF EXPORT (identical to file 2)
-            // =========================================================================
-            window.exportIndividualPDF = async function() {
-                if (!currentIndividual) { alert('Please select a member first'); return; }
-                const content = document.getElementById('individualTree');
-                if (!content) return alert('No content to export');
-                const treeElement = content.querySelector('.tree-root-layout') || content;
-                try {
-                    const header = document.createElement('div');
-                    header.style.marginBottom = '30px'; header.style.textAlign = 'center';
-                    header.innerHTML = `<h1 style="color: #d4af37; font-size: 36px; font-family: 'Playfair Display', serif; margin:0 0 10px 0;">Rizvi Family Tree</h1><h2 style="color:#5a0000; font-size:24px; font-family:'Playfair Display', serif; margin:0;">${displayName(currentIndividual.name)}</h2>`;
-                    const footer = document.createElement('div');
-                    footer.style.marginTop = '40px'; footer.style.padding = '15px 20px'; footer.style.border = '2px solid #d4af37'; footer.style.borderRadius = '4px';
-                    footer.style.background = '#0f172a'; footer.style.color = '#d4af37'; footer.style.display = 'flex'; footer.style.justifyContent = 'space-between'; footer.style.alignItems = 'center'; footer.style.fontSize = '11px';
-                    const timeStr = formatCurrentTime();
-                    footer.innerHTML = `<span>${LOAD_STAMP || 'Last data updated on: Unknown'}</span><span style="font-weight: 500;">PDF generated: ${timeStr}</span>`;
-                    const signature = document.createElement('div');
-                    signature.style.marginTop = '20px'; signature.style.paddingTop = '15px'; signature.style.borderTop = '1px solid #ddd'; signature.style.textAlign = 'center'; signature.style.color = '#000'; signature.style.fontSize = '12px'; signature.style.fontWeight = '500';
-                    signature.textContent = 'Imran Haider S/o Syed Risalat Hussain Rizvi | 0332-787-6010';
-
-                    treeElement.insertBefore(header, treeElement.firstChild);
-                    treeElement.appendChild(footer);
-                    treeElement.appendChild(signature);
-
-                    const loadingMsg = document.createElement('div');
-                    loadingMsg.style.position = 'fixed'; loadingMsg.style.top = '50%'; loadingMsg.style.left = '50%'; loadingMsg.style.transform = 'translate(-50%, -50%)';
-                    loadingMsg.style.background = '#5a0000'; loadingMsg.style.color = 'white'; loadingMsg.style.padding = '20px 40px'; loadingMsg.style.borderRadius = '8px'; loadingMsg.style.zIndex = '9999'; loadingMsg.style.boxShadow = '0 4px 20px rgba(0,0,0,0.3)';
-                    loadingMsg.textContent = '📄 Preparing PDF... please wait';
-                    document.body.appendChild(loadingMsg);
-                    await new Promise(resolve => setTimeout(resolve, 500));
-
-                    const canvas = await html2canvas(treeElement, { scale: 2, backgroundColor: '#ffffff', logging: false, allowTaint: true, useCORS: true });
-                    
-                    treeElement.removeChild(header); treeElement.removeChild(footer); treeElement.removeChild(signature);
-                    document.body.removeChild(loadingMsg);
-
-                    const imgData = canvas.toDataURL('image/png');
-                    const { jsPDF } = window.jspdf;
-                    const w = canvas.width / 2 * 0.264583;
-                    const h = canvas.height / 2 * 0.264583;
-                    const pdf = new jsPDF({ orientation: w > h ? 'l' : 'p', unit: 'mm', format: [w + 40, h + 40] });
-                    pdf.addImage(imgData, 'PNG', 20, 20, w, h);
-                    const safeName = displayName(currentIndividual.name).replace(/[^a-z0-9]/gi, '_').toLowerCase();
-                    pdf.save(`family_${safeName}_${Date.now()}.pdf`);
-                } catch (err) {
-                    console.error('PDF Error:', err);
-                    alert('❌ PDF generation failed: ' + err.message);
-                }
-            };
-
-            // =========================================================================
-            // FULL SCREEN TOGGLE
-            // =========================================================================
-            window.toggleCanvasView = function() {
-                document.body.classList.toggle('canvas-only');
-                const btn = document.getElementById('toggleViewBtn');
-                if (document.body.classList.contains('canvas-only')) {
-                    btn.innerHTML = '<span>🔍</span> <span>Exit</span>';
-                } else {
-                    btn.innerHTML = '<span>👁️</span> <span>Full Screen</span>';
-                }
-            };
-
-            // =========================================================================
-            // LOAD DATA FROM LOCALSTORAGE & INIT
-            // =========================================================================
-            const saved = localStorage.getItem('familyDB');
-            if (saved) {
-                db = JSON.parse(saved);
-                LOAD_STAMP = 'Last data updated on: ' + new Date().toLocaleString();
-            }
-
-            document.addEventListener('DOMContentLoaded', function() {
-                // mobile menu toggle (exactly as file 2)
-                document.getElementById('mobileMenuToggle')?.addEventListener('click', function() {
-                    document.querySelector('.fixed-header-section')?.classList.toggle('collapsed');
-                });
-
-                const tableMember = localStorage.getItem('tableViewMember');
-                if (tableMember) {
-                    currentIndividual = JSON.parse(tableMember);
-                    document.getElementById('individualSearch').value = displayName(currentIndividual.name) + ' (' + currentIndividual.gen + ')';
-                    localStorage.removeItem('tableViewMember');
-                    const savedFilters = localStorage.getItem('tableViewFilters');
-                    if (savedFilters) {
-                        const filters = JSON.parse(savedFilters);
-                        showSiblings = filters.showSiblings;
-                        showDescendants = filters.showDescendants;
-                        showAncestors = filters.showAncestors;
-                        document.getElementById('filterSiblings').classList.toggle('active', showSiblings);
-                        document.getElementById('filterDescendants').classList.toggle('active', showDescendants);
-                        document.getElementById('filterAncestors').classList.toggle('active', showAncestors);
-                        localStorage.removeItem('tableViewFilters');
-                    }
-                }
-
-                updateHeaderButtons();
-
-                if (currentIndividual) {
+        // =========================================================================
+        // SEARCH DROPDOWN
+        // =========================================================================
+        window.searchIndividual = function(query) {
+            if (!db.length) return;
+            const drop = document.getElementById('individualDropdown');
+            if (!drop) return;
+            drop.innerHTML = '';
+            if (!query || query.length < 1) { drop.style.display = 'none'; return; }
+            const found = db.filter(p => p.name.toLowerCase().includes(query.toLowerCase())).slice(0, 8);
+            if (found.length === 0) { drop.style.display = 'none'; return; }
+            found.forEach(p => {
+                const div = document.createElement('div');
+                div.className = 'result-item';
+                div.innerHTML = `<div><span class="main-name">${displayName(p.name)}</span> <span class="gen">(${p.gen})</span></div>
+                    <div style="font-size:11px;">${p.gender?.startsWith('F') ? 'D/o' : 'S/o'} ${displayName(p.father)}</div>`;
+                div.onclick = (e) => {
+                    e.stopPropagation();
+                    document.getElementById('individualSearch').value = displayName(p.name) + ' (' + p.gen + ')';
+                    currentIndividual = p;
                     renderIndividualTree();
-                } else {
-                    resetIndividual();
+                    drop.style.display = 'none';
+                };
+                drop.appendChild(div);
+            });
+            drop.style.display = 'block';
+        };
+
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.search-wrapper')) {
+                document.querySelectorAll('.dropdown').forEach(d => d.style.display = 'none');
+            }
+        });
+
+        // =========================================================================
+        // BOX CLICK HANDLER
+        // =========================================================================
+        window.handleBoxClick = function(member) {
+            if (!member || !member.name) return;
+            currentIndividual = member;
+            document.getElementById('individualSearch').value = displayName(member.name) + ' (' + member.gen + ')';
+            renderIndividualTree();
+        };
+
+        // =========================================================================
+        // GROUP SISTERS
+        // =========================================================================
+        function groupSisters(sistersArray, fatherName, type) {
+            if (!sistersArray || sistersArray.length === 0) return '';
+            let headerText = type === 'siblings' ? 'SISTERS' : 'DAUGHTERS';
+            let html = `<div class="sisters-group-box"><div class="sisters-header"># ${headerText}</div>`;
+            html += `<table style="width:100%; border-collapse: collapse; margin: 8px 0;">`;
+            html += `<tr style="border-bottom: 1px solid var(--sisters-border);"><th style="text-align: left; padding: 4px 8px; font-size: 11px; color: var(--maroon);">Name</th><th style="text-align: right; padding: 4px 8px; font-size: 11px; color: var(--maroon);">Gen</th></tr>`;
+            sistersArray.forEach(sister => {
+                const memberData = encodeURIComponent(JSON.stringify(sister));
+                html += `<tr onclick='handleBoxClick(JSON.parse(decodeURIComponent("${memberData}")))' style="cursor: pointer;">`;
+                html += `<td style="padding: 4px 8px; border-bottom: 1px dashed #fecaca; font-weight: 600; transition: background 0.2s;" onmouseover="this.style.background='#faebcd'" onmouseout="this.style.background='transparent'">${displayName(sister.name)}</td>`;
+                html += `<td style="padding: 4px 8px; border-bottom: 1px dashed #fecaca; text-align: right; color: var(--maroon); transition: background 0.2s;" onmouseover="this.style.background='#faebcd'" onmouseout="this.style.background='transparent'">${sister.gen}</td>`;
+                html += `</tr>`;
+            });
+            html += `</table></div>`;
+            return html;
+        }
+
+        // =========================================================================
+        // RENDER TREE
+        // =========================================================================
+        function renderIndividualTree() {
+            if (!currentIndividual) return;
+            let html = '<div>';
+
+            if (showAncestors) {
+                const ancestors = getAncestryChain(currentIndividual).slice(1);
+                if (ancestors.length > 0) {
+                    html += '<div class="family-group">';
+                    html += '<div class="relation-label">ANCESTORS</div>';
+                    [...ancestors].reverse().forEach((a, idx) => {
+                        const hasChildren = db.some(x => x.father && x.father.toLowerCase() === a.name.toLowerCase());
+                        html += renderBox(a, idx === 0 ? 'Earliest' : 'Ancestor', false, hasChildren);
+                        if (idx < ancestors.length - 1) html += '<div class="v-line"></div>';
+                    });
+                    html += '<div class="v-line"></div>';
+                    html += '</div>';
                 }
+            }
+
+            const father = findParent(currentIndividual);
+            const ancestors = showAncestors ? getAncestryChain(currentIndividual).slice(1) : [];
+            const fatherInAncestors = father && ancestors.some(a => a.name === father.name);
+
+            if (father && !fatherInAncestors) {
+                const fatherHasChildren = db.some(x => x.father && x.father.toLowerCase() === father.name.toLowerCase());
+                html += '<div class="family-group">';
+                html += renderBox(father, 'Father', false, fatherHasChildren);
+                html += '<div class="v-line"></div>';
+                const currentHasChildren = db.some(x => x.father && x.father.toLowerCase() === currentIndividual.name.toLowerCase());
+                html += renderBox(currentIndividual, 'Selected', true, currentHasChildren);
+                html += '</div>';
+            } else {
+                const currentHasChildren = db.some(x => x.father && x.father.toLowerCase() === currentIndividual.name.toLowerCase());
+                html += '<div class="family-group">';
+                html += renderBox(currentIndividual, 'Selected', true, currentHasChildren);
+                html += '</div>';
+            }
+
+            if (showSiblings && father) {
+                const siblings = db.filter(s => s.father && s.father.toLowerCase() === currentIndividual.father.toLowerCase() && s.name !== currentIndividual.name);
+                if (siblings.length > 0) {
+                    const maleSiblings = siblings.filter(s => !s.gender?.startsWith('F'));
+                    const femaleSiblings = siblings.filter(s => s.gender?.startsWith('F'));
+                    html += '<div class="family-group">';
+                    html += `<div class="descendant-heading">DESCENDANTS OF ${displayName(father.name).toUpperCase()}</div>`;
+                    html += '<div class="relation-label">SIBLINGS</div>';
+                    if (maleSiblings.length > 0) {
+                        html += '<div class="children-row">';
+                        maleSiblings.forEach(s => {
+                            const hasChildren = db.some(x => x.father && x.father.toLowerCase() === s.name.toLowerCase());
+                            html += renderBox(s, 'Brother', false, hasChildren);
+                        });
+                        html += '</div>';
+                    }
+                    if (femaleSiblings.length > 0) {
+                        html += groupSisters(femaleSiblings, father.name, 'siblings');
+                    }
+                    html += '</div>';
+                }
+            }
+
+            if (showDescendants) {
+                const children = db.filter(c => c.father && c.father.toLowerCase() === currentIndividual.name.toLowerCase());
+                if (children.length > 0) {
+                    const maleChildren = children.filter(c => !c.gender?.startsWith('F'));
+                    const femaleChildren = children.filter(c => c.gender?.startsWith('F'));
+                    html += '<div class="family-group">';
+                    html += '<div class="v-line"></div>';
+                    html += `<div class="descendant-heading">DESCENDANTS OF ${displayName(currentIndividual.name).toUpperCase()}</div>`;
+                    html += '<div class="relation-label">CHILDREN</div>';
+                    if (maleChildren.length > 0) {
+                        html += '<div class="children-row">';
+                        maleChildren.forEach(c => {
+                            const hasChildren = db.some(x => x.father && x.father.toLowerCase() === c.name.toLowerCase());
+                            html += renderBox(c, 'Son', false, hasChildren);
+                        });
+                        html += '</div>';
+                    }
+                    if (femaleChildren.length > 0) {
+                        html += groupSisters(femaleChildren, currentIndividual.name, 'children');
+                    }
+                    html += '</div>';
+                }
+            }
+
+            html += '</div>';
+            document.getElementById('individualTree').innerHTML = html;
+        }
+
+        function renderBox(p, label, isSelected, hasChildren) {
+            const isFemale = p.gender?.startsWith('F');
+            const blinkClass = isSelected ? 'blinking-box' : '';
+            const memberData = encodeURIComponent(JSON.stringify(p));
+            return `<div class="box ${isFemale ? 'female-box' : ''} ${blinkClass}" onclick='handleBoxClick(JSON.parse(decodeURIComponent("${memberData}")))'>
+                <div class="box-header"><span>${label}</span><span>${p.gen}</span></div>
+                <div class="box-body">
+                    <span class="member-name">${displayName(p.name)}</span>
+                    <span class="father-name">${isFemale ? 'D/o' : 'S/o'}: ${displayName(p.father)}</span>
+                    ${hasChildren ? '<div class="golden-heart">❤️</div>' : ''}
+                </div>
+            </div>`;
+        }
+
+        // =========================================================================
+        // PDF EXPORT
+        // =========================================================================
+        window.exportIndividualPDF = async function() {
+            if (!currentIndividual) { alert('Please select a member first'); return; }
+            const content = document.getElementById('individualTree');
+            if (!content) return alert('No content to export');
+            const treeElement = content.querySelector('.tree-root-layout') || content;
+            try {
+                const header = document.createElement('div');
+                header.style.marginBottom = '30px'; header.style.textAlign = 'center';
+                header.innerHTML = `<h1 style="color: #d4af37; font-size: 36px; font-family: 'Playfair Display', serif; margin:0 0 10px 0;">Rizvi Family Tree</h1><h2 style="color:#5a0000; font-size:24px; font-family:'Playfair Display', serif; margin:0;">${displayName(currentIndividual.name)}</h2>`;
+                const footer = document.createElement('div');
+                footer.style.marginTop = '40px'; footer.style.padding = '15px 20px'; footer.style.border = '2px solid #d4af37'; footer.style.borderRadius = '4px';
+                footer.style.background = '#0f172a'; footer.style.color = '#d4af37'; footer.style.display = 'flex'; footer.style.justifyContent = 'space-between'; footer.style.alignItems = 'center'; footer.style.fontSize = '11px';
+                const timeStr = formatCurrentTime();
+                footer.innerHTML = `<span>${LOAD_STAMP || 'Last data updated on: Unknown'}</span><span style="font-weight: 500;">PDF generated: ${timeStr}</span>`;
+                const signature = document.createElement('div');
+                signature.style.marginTop = '20px'; signature.style.paddingTop = '15px'; signature.style.borderTop = '1px solid #ddd'; signature.style.textAlign = 'center'; signature.style.color = '#000'; signature.style.fontSize = '12px'; signature.style.fontWeight = '500';
+                signature.textContent = 'Imran Haider S/o Syed Risalat Hussain Rizvi | 0332-787-6010';
+
+                treeElement.insertBefore(header, treeElement.firstChild);
+                treeElement.appendChild(footer);
+                treeElement.appendChild(signature);
+
+                const loadingMsg = document.createElement('div');
+                loadingMsg.style.position = 'fixed'; loadingMsg.style.top = '50%'; loadingMsg.style.left = '50%'; loadingMsg.style.transform = 'translate(-50%, -50%)';
+                loadingMsg.style.background = '#5a0000'; loadingMsg.style.color = 'white'; loadingMsg.style.padding = '20px 40px'; loadingMsg.style.borderRadius = '8px'; loadingMsg.style.zIndex = '9999'; loadingMsg.style.boxShadow = '0 4px 20px rgba(0,0,0,0.3)';
+                loadingMsg.textContent = '📄 Preparing PDF... please wait';
+                document.body.appendChild(loadingMsg);
+                await new Promise(resolve => setTimeout(resolve, 500));
+
+                const canvas = await html2canvas(treeElement, { scale: 2, backgroundColor: '#ffffff', logging: false, allowTaint: true, useCORS: true });
+                
+                treeElement.removeChild(header); treeElement.removeChild(footer); treeElement.removeChild(signature);
+                document.body.removeChild(loadingMsg);
+
+                const imgData = canvas.toDataURL('image/png');
+                const { jsPDF } = window.jspdf;
+                const w = canvas.width / 2 * 0.264583;
+                const h = canvas.height / 2 * 0.264583;
+                const pdf = new jsPDF({ orientation: w > h ? 'l' : 'p', unit: 'mm', format: [w + 40, h + 40] });
+                pdf.addImage(imgData, 'PNG', 20, 20, w, h);
+                const safeName = displayName(currentIndividual.name).replace(/[^a-z0-9]/gi, '_').toLowerCase();
+                pdf.save(`family_${safeName}_${Date.now()}.pdf`);
+            } catch (err) {
+                console.error('PDF Error:', err);
+                alert('❌ PDF generation failed: ' + err.message);
+            }
+        };
+
+        // =========================================================================
+        // FULL SCREEN TOGGLE
+        // =========================================================================
+        window.toggleCanvasView = function() {
+            document.body.classList.toggle('canvas-only');
+            const btn = document.getElementById('toggleViewBtn');
+            if (document.body.classList.contains('canvas-only')) {
+                btn.innerHTML = '<span>🔍</span> <span>Exit</span>';
+            } else {
+                btn.innerHTML = '<span>👁️</span> <span>Full Screen</span>';
+            }
+        };
+
+        // =========================================================================
+        // LOAD DATA & INIT
+        // =========================================================================
+        const saved = localStorage.getItem('familyDB');
+        if (saved) {
+            db = JSON.parse(saved);
+            LOAD_STAMP = 'Last data updated on: ' + new Date().toLocaleString();
+        }
+
+        // Clear search input when coming from dashboard
+        const urlParams = new URLSearchParams(window.location.search);
+        if (document.referrer.includes('dashboard')) {
+            document.getElementById('individualSearch').value = '';
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // mobile menu toggle
+            document.getElementById('mobileMenuToggle')?.addEventListener('click', function() {
+                document.querySelector('.fixed-header-section')?.classList.toggle('collapsed');
             });
 
-            // expose globals
-                 window.switchToTableView = switchToTableView;
-            window.showDashboard = showDashboard;
-            window.resetIndividual = resetIndividual;
-        })();  // <-- This closes the IIFE
+            const tableMember = localStorage.getItem('tableViewMember');
+            if (tableMember) {
+                currentIndividual = JSON.parse(tableMember);
+                document.getElementById('individualSearch').value = displayName(currentIndividual.name) + ' (' + currentIndividual.gen + ')';
+                localStorage.removeItem('tableViewMember');
+                const savedFilters = localStorage.getItem('tableViewFilters');
+                if (savedFilters) {
+                    const filters = JSON.parse(savedFilters);
+                    showSiblings = filters.showSiblings;
+                    showDescendants = filters.showDescendants;
+                    showAncestors = filters.showAncestors;
+                    document.getElementById('filterSiblings').classList.toggle('active', showSiblings);
+                    document.getElementById('filterDescendants').classList.toggle('active', showDescendants);
+                    document.getElementById('filterAncestors').classList.toggle('active', showAncestors);
+                    localStorage.removeItem('tableViewFilters');
+                }
+            }
 
-    </script>
+            updateHeaderButtons();
+
+            if (currentIndividual) {
+                renderIndividualTree();
+                // Update search field
+                document.getElementById('individualSearch').value = displayName(currentIndividual.name) + ' (' + currentIndividual.gen + ')';
+            } else {
+                resetIndividual();
+            }
+        });
+
+        // =========================================================================
+        // STATE PRESERVATION FOR REFRESH
+        // =========================================================================
+        let scrollTop = 0;
+
+        window.addEventListener('scroll', function() {
+            scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        });
+
+        window.addEventListener('beforeunload', function() {
+            if (currentIndividual) {
+                sessionStorage.setItem('tempIndividual', JSON.stringify(currentIndividual));
+                sessionStorage.setItem('tempScroll', scrollTop);
+            }
+        });
+
+        // Restore scroll position after page load
+        window.addEventListener('load', function() {
+            const tempScroll = sessionStorage.getItem('tempScroll');
+            if (tempScroll) {
+                setTimeout(() => {
+                    window.scrollTo(0, parseInt(tempScroll));
+                    sessionStorage.removeItem('tempScroll');
+                }, 100);
+            }
+        });
+
+        // expose globals
+        window.switchToTableView = switchToTableView;
+        window.showDashboard = showDashboard;
+        window.resetIndividual = resetIndividual;
+    })();
+</script>
+
 </body>
 </html>
