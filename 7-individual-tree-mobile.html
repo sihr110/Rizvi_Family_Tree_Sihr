@@ -645,7 +645,6 @@
             document.getElementById('individualTree').innerHTML = html;
         }
 
-       
 function renderBox(p, label, isSelected, hasChildren) {
     const isFemale = p.gender?.startsWith('F');
     const blinkClass = isSelected ? 'blinking-box' : '';
@@ -655,13 +654,12 @@ function renderBox(p, label, isSelected, hasChildren) {
         <div class="box-header"><span>${label}</span></div>
         <div class="box-body">
             <span class="member-name">${displayName(p.name)}</span>
-            <span style="font-size: 11px; color: #64748b; display: block; margin-bottom: 4px;">${p.gen}</span>
+            <span style="font-size: 11px; color: #64748b; display: block; margin: 2px 0 4px 0;">Gen : ${p.gen}</span>
             <span class="father-name">${isFemale ? 'D/o' : 'S/o'}: ${displayName(p.father)}</span>
             ${hasChildren ? '<div class="golden-heart">❤️</div>' : ''}
         </div>
     </div>`;
 }
-
 
         // =========================================================================
         // PDF EXPORT
