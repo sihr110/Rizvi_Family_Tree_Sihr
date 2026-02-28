@@ -386,7 +386,7 @@ body.canvas-only .tree-root-layout {
 <!-- JAVASCRIPT Start                          -->
 <!-- ========================================= -->
 
- <script>
+<script>
     (function(){
         // =========================================================================
         // STATE PRESERVATION - MUST RUN FIRST
@@ -398,9 +398,8 @@ body.canvas-only .tree-root-layout {
         let showAncestors = false;
         let LOAD_STAMP = '';
         
-        // Check if coming from dashboard - CLEAR EVERYTHING
-        const fromDashboard = document.referrer.includes('dashboard') || 
-                             sessionStorage.getItem('fromDashboard') === 'true';
+        // Check if coming from dashboard - SIMPLE AND WORKING
+        const fromDashboard = sessionStorage.getItem('fromDashboard') === 'true';
         
         if (fromDashboard) {
             // Clear ALL storage
@@ -731,14 +730,13 @@ body.canvas-only .tree-root-layout {
         };
 
         // =========================================================================
-        // FULL SCREEN TOGGLE - IMPROVED FOR ZOOM
+        // FULL SCREEN TOGGLE
         // =========================================================================
         window.toggleCanvasView = function() {
             document.body.classList.toggle('canvas-only');
             const btn = document.getElementById('toggleViewBtn');
             if (document.body.classList.contains('canvas-only')) {
                 btn.innerHTML = '<span>🔍</span> <span>Exit</span>';
-                // Reset any transforms that might be blocking zoom
                 document.querySelector('.tree-root-layout').style.transform = 'none';
             } else {
                 btn.innerHTML = '<span>👁️</span> <span>Full Screen</span>';
@@ -784,8 +782,9 @@ body.canvas-only .tree-root-layout {
                 renderIndividualTree();
                 document.getElementById('individualSearch').value = displayName(currentIndividual.name) + ' (' + currentIndividual.gen + ')';
             } else {
-                // Force reset if coming from dashboard
                 resetIndividual();
+                // Extra safety: clear search field
+                document.getElementById('individualSearch').value = '';
             }
         });
 
@@ -805,7 +804,6 @@ body.canvas-only .tree-root-layout {
             }
         });
 
-        // Restore scroll position after page load
         window.addEventListener('load', function() {
             const tempScroll = sessionStorage.getItem('tempScroll');
             if (tempScroll && !fromDashboard) {
@@ -825,6 +823,5 @@ body.canvas-only .tree-root-layout {
 
 <!-- ========================================= -->
 <!-- JAVASCRIPT END                            -->
-<!-- ========================================= -->
-</body>
+<!-- ========================================= --></body>
 </html>
