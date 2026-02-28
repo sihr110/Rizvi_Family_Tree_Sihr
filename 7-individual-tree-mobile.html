@@ -715,10 +715,51 @@ body {
             });
 
             // expose globals
-            window.switchToTableView = switchToTableView;
+                 window.switchToTableView = switchToTableView;
             window.showDashboard = showDashboard;
             window.resetIndividual = resetIndividual;
-        })();
+
+            // =========================================================================
+            // PULL-TO-REFRESH PREVENTION & STATE PRESERVATION
+            // =========================================================================
+            let scrollTop = 0;
+
+            window.addEventListener('scroll', function() {
+                scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            });
+
+            window.addEventListener('load', function() {
+                if (scrollTop > 0) {
+                    window.scrollTo(0, scrollTop);
+                }
+                
+                if (currentIndividual && document.getElementById('individualTree').innerHTML.includes('Select a member')) {
+                    renderIndividualTree();
+                }
+            });
+
+            window.addEventListener('beforeunload', function() {
+                if (currentIndividual) {
+                    sessionStorage.setItem('tempIndividual', JSON.stringify(currentIndividual));
+                    sessionStorage.setItem('tempScroll', scrollTop);
+                }
+            });
+
+            // Restore from sessionStorage if exists
+            const tempIndividual = sessionStorage.getItem('tempIndividual');
+            if (tempIndividual && !currentIndividual) {
+                currentIndividual = JSON.parse(tempIndividual);
+                sessionStorage.removeItem('tempIndividual');
+                
+                const tempScroll = sessionStorage.getItem('tempScroll');
+                if (tempScroll) {
+                    setTimeout(() => {
+                        window.scrollTo(0, parseInt(tempScroll));
+                        sessionStorage.removeItem('tempScroll');
+                    }, 100);
+                }
+            }
+        })();  // <-- This closes the IIFE
 
 // Prevent pull-to-refresh and preserve tree
 let scrollTop = 0;
