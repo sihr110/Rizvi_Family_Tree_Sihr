@@ -14,6 +14,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     
+
+<!-- ========================================= -->
+<!-- CSS START                                 -->
+<!-- ========================================= -->
+
     <style>
         /* ===== GLOBAL RESET & VARIABLES (identical to file 2) ===== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -312,9 +317,18 @@ body {
     min-height: 100%;
 }
 
-
+/* Ensure canvas mode allows full zoom control */
+body.canvas-only .tree-root-layout {
+    transform: none !important;
+    transition: none !important;
+}
 
     </style>
+
+<!-- ========================================= -->
+<!-- CSS END                                   -->
+<!-- ========================================= -->
+
 </head>
 <body>
     <!-- ⑦ INDIVIDUAL TREE – MOBILE WIDE (exact copy of file 2 structure) -->
@@ -368,7 +382,11 @@ body {
     <div class="section-marker" data-section="6-fullscreen-btn"></div>
     <!-- note: no extra headings or text inserted, just hidden markers -->
 
-<script>
+<!-- ========================================= -->
+<!-- JAVASCRIPT Start                          -->
+<!-- ========================================= -->
+
+ <script>
     (function(){
         // =========================================================================
         // STATE PRESERVATION - MUST RUN FIRST
@@ -380,13 +398,25 @@ body {
         let showAncestors = false;
         let LOAD_STAMP = '';
         
-        // Restore from sessionStorage IMMEDIATELY
-        const tempIndividual = sessionStorage.getItem('tempIndividual');
-        if (tempIndividual) {
-            try {
-                currentIndividual = JSON.parse(tempIndividual);
-                sessionStorage.removeItem('tempIndividual');
-            } catch (e) {}
+        // Check if coming from dashboard - CLEAR EVERYTHING
+        const fromDashboard = document.referrer.includes('dashboard') || 
+                             sessionStorage.getItem('fromDashboard') === 'true';
+        
+        if (fromDashboard) {
+            // Clear ALL storage
+            sessionStorage.removeItem('tempIndividual');
+            sessionStorage.removeItem('tempScroll');
+            sessionStorage.removeItem('fromDashboard');
+            currentIndividual = null;
+        } else {
+            // Only restore if NOT from dashboard
+            const tempIndividual = sessionStorage.getItem('tempIndividual');
+            if (tempIndividual) {
+                try {
+                    currentIndividual = JSON.parse(tempIndividual);
+                    sessionStorage.removeItem('tempIndividual');
+                } catch (e) {}
+            }
         }
 
         // =========================================================================
@@ -429,7 +459,9 @@ body {
         }
 
         function showDashboard() {
-            // Clear any stored state before going to dashboard
+            // Set flag before going to dashboard
+            sessionStorage.setItem('fromDashboard', 'true');
+            // Clear all state
             sessionStorage.removeItem('tempIndividual');
             sessionStorage.removeItem('tempScroll');
             window.location.href = '6-dashboard-mobile.html';
@@ -699,13 +731,15 @@ body {
         };
 
         // =========================================================================
-        // FULL SCREEN TOGGLE
+        // FULL SCREEN TOGGLE - IMPROVED FOR ZOOM
         // =========================================================================
         window.toggleCanvasView = function() {
             document.body.classList.toggle('canvas-only');
             const btn = document.getElementById('toggleViewBtn');
             if (document.body.classList.contains('canvas-only')) {
                 btn.innerHTML = '<span>🔍</span> <span>Exit</span>';
+                // Reset any transforms that might be blocking zoom
+                document.querySelector('.tree-root-layout').style.transform = 'none';
             } else {
                 btn.innerHTML = '<span>👁️</span> <span>Full Screen</span>';
             }
@@ -718,12 +752,6 @@ body {
         if (saved) {
             db = JSON.parse(saved);
             LOAD_STAMP = 'Last data updated on: ' + new Date().toLocaleString();
-        }
-
-        // Clear search input when coming from dashboard
-        const urlParams = new URLSearchParams(window.location.search);
-        if (document.referrer.includes('dashboard')) {
-            document.getElementById('individualSearch').value = '';
         }
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -752,11 +780,11 @@ body {
 
             updateHeaderButtons();
 
-            if (currentIndividual) {
+            if (currentIndividual && !fromDashboard) {
                 renderIndividualTree();
-                // Update search field
                 document.getElementById('individualSearch').value = displayName(currentIndividual.name) + ' (' + currentIndividual.gen + ')';
             } else {
+                // Force reset if coming from dashboard
                 resetIndividual();
             }
         });
@@ -771,7 +799,7 @@ body {
         });
 
         window.addEventListener('beforeunload', function() {
-            if (currentIndividual) {
+            if (currentIndividual && !fromDashboard) {
                 sessionStorage.setItem('tempIndividual', JSON.stringify(currentIndividual));
                 sessionStorage.setItem('tempScroll', scrollTop);
             }
@@ -780,7 +808,7 @@ body {
         // Restore scroll position after page load
         window.addEventListener('load', function() {
             const tempScroll = sessionStorage.getItem('tempScroll');
-            if (tempScroll) {
+            if (tempScroll && !fromDashboard) {
                 setTimeout(() => {
                     window.scrollTo(0, parseInt(tempScroll));
                     sessionStorage.removeItem('tempScroll');
@@ -795,5 +823,8 @@ body {
     })();
 </script>
 
+<!-- ========================================= -->
+<!-- JAVASCRIPT END                            -->
+<!-- ========================================= -->
 </body>
 </html>
