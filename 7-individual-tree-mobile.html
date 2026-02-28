@@ -95,15 +95,38 @@
             font-size: 16px;
         }
         
-        /* Equal sized header buttons */
-        .header-actions {
+        /* Top row - Reset button */
+        .top-reset-btn {
+            background: var(--reset-red);
+            color: white;
+            border: 2px solid var(--gold);
+            border-radius: 4px;
+            padding: 6px 14px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
             display: flex;
-            gap: 6px;
-            flex-wrap: nowrap;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.2s;
+        }
+        .top-reset-btn:hover {
+            background: var(--reset-red-dark);
+            transform: translateY(-2px);
         }
         
-        .header-btn {
-            padding: 6px 8px;
+        /* Bottom row - Three equal buttons */
+        .action-buttons-row {
+            display: flex;
+            gap: 8px;
+            width: 100%;
+            padding: 10px 20px;
+            background: var(--dark-blue);
+            border-bottom: 2px solid var(--gold);
+        }
+        .action-btn {
+            flex: 1;
+            padding: 8px 5px;
             font-weight: 600;
             font-size: 12px;
             cursor: pointer;
@@ -113,29 +136,30 @@
             gap: 4px;
             white-space: nowrap;
             border: 2px solid var(--gold);
-            background: transparent;
-            color: var(--gold);
-            transition: all 0.2s;
             border-radius: 4px;
-            min-width: 85px;
+            transition: all 0.2s;
+            min-width: 0;
             text-align: center;
         }
-        .header-btn:hover {
-            background: var(--gold);
-            color: var(--dark-blue);
-            transform: translateY(-2px);
+        .action-btn.table {
+            background: var(--bronze);
+            color: white;
+            border-color: transparent;
         }
-        .header-btn.dashboard {
+        .action-btn.pdf {
+            background: var(--pdf-grey);
+            color: white;
+            border-color: transparent;
+        }
+        .action-btn.dashboard {
             background: var(--dashboard-green);
             color: white;
             border-color: transparent;
         }
-        .header-btn.reset { background: var(--reset-red); color: white; border-color: transparent; }
-        .header-btn.reset:hover { background: var(--reset-red-dark); }
-        .header-btn.pdf { background: var(--pdf-grey); color: white; border-color: transparent; }
-        .header-btn.pdf:hover { background: var(--pdf-grey-dark); }
-        .header-btn.table { background: var(--bronze); color: white; border-color: transparent; }
-        .header-btn.table:hover { background: #9e6f3a; }
+        .action-btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+        }
         
         .menu-toggle { display: none; }
         
@@ -203,6 +227,16 @@
             .app-header { position: relative; padding: 10px 15px; }
             .header-title { font-size: 18px; width: calc(100% - 50px); }
             .menu-toggle { display: flex !important; position: absolute; top: 50%; right: 15px; transform: translateY(-50%); background: var(--gold); color: black; border: none; border-radius: 50%; width: 44px; height: 44px; font-size: 26px; font-weight: bold; cursor: pointer; z-index: 2000; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+            
+            .action-buttons-row {
+                padding: 8px 10px;
+                gap: 5px;
+            }
+            .action-btn {
+                font-size: 10px;
+                padding: 8px 2px;
+            }
+            
             .fixed-header-section { transition: max-height 0.3s ease, padding 0.3s ease, margin 0.3s ease; overflow: hidden; max-height: 500px; padding: 15px 15px 10px 15px; background: #fffcf8; }
             .fixed-header-section.collapsed { max-height: 0; padding-top: 0; padding-bottom: 0; margin: 0; border-bottom: none; }
             .search-row { flex-direction: column; align-items: stretch; gap: 12px; }
@@ -210,19 +244,6 @@
             .search-input { width: 100%; font-size: 16px; padding: 12px 15px; height: 48px; }
             .filter-buttons { width: 100%; justify-content: space-between; gap: 8px; }
             .filter-btn { flex: 1; padding: 10px 5px; font-size: 12px; justify-content: center; height: 44px; }
-            
-            /* Mobile header buttons */
-            .header-actions {
-                width: 100%;
-                justify-content: space-between;
-                gap: 3px;
-            }
-            .header-btn {
-                flex: 1;
-                min-width: 0;
-                padding: 8px 2px;
-                font-size: 10px;
-            }
             
             .box { min-width: 200px; max-width: 260px; margin: 0 auto; }
             .member-name { font-size: 18px !important; }
@@ -242,7 +263,7 @@
             .box { min-width: 160px; max-width: 220px; }
             .member-name { font-size: 16px !important; }
             .filter-btn { font-size: 11px; padding: 8px 4px; }
-            .header-btn { font-size: 9px; padding: 8px 2px; }
+            .action-btn { font-size: 9px; }
         }
 
         /* ----- numbered sections for easy html editing ----- */
@@ -282,14 +303,21 @@
 <body>
     <!-- ⑦ INDIVIDUAL TREE – MOBILE WIDE -->
     <div class="app-container">
-        <!-- HEADER - MODIFIED -->
+        <!-- HEADER - TOP ROW with Reset on right -->
         <div class="app-header">
             <div class="header-title">
                 <span class="header-icon">🌿</span> 
                 <span>Rizvi family - Tree View</span>
             </div>
-            <div class="header-actions" id="headerActions"></div>
+            <div class="top-reset-btn" onclick="resetIndividual()">🔄 Reset</div>
             <button class="menu-toggle" id="mobileMenuToggle">☰</button>
+        </div>
+        
+        <!-- SECOND ROW - Three equal buttons -->
+        <div class="action-buttons-row">
+            <div class="action-btn table" onclick="switchToTableView()">📋 Show Table</div>
+            <div class="action-btn pdf" onclick="exportIndividualPDF()">📑 Save PDF</div>
+            <div class="action-btn dashboard" onclick="showDashboard()">🏠 Dashboard</div>
         </div>
         
         <!-- hidden file input -->
@@ -411,15 +439,6 @@
             window.location.href = '8-individual-table-mobile.html';
         }
 
-        function updateHeaderButtons() {
-            document.getElementById('headerActions').innerHTML = `
-                <div class="header-btn reset" onclick="resetIndividual()">🔄 Reset</div>
-                <div class="header-btn table" onclick="switchToTableView()">📋 Show Table</div>
-                <div class="header-btn pdf" onclick="exportIndividualPDF()">📑 Save PDF</div>
-                <div class="header-btn dashboard" onclick="showDashboard()">🏠 Dashboard</div>
-            `;
-        }
-
         function showDashboard() {
             // Set flag before going to dashboard
             sessionStorage.setItem('fromDashboard', 'true');
@@ -437,7 +456,6 @@
                 '<div style="font-size:48px; margin-bottom:15px; opacity:0.5;">👤</div>' +
                 '<div style="font-size:18px; font-weight:600; color:var(--maroon); margin-bottom:8px;">Select a member to view</div>' +
                 '<div style="font-size:13px; color:#666;">Search and select a family member above to see their tree</div></div>';
-            updateHeaderButtons();
             sessionStorage.removeItem('tempIndividual');
         }
 
@@ -724,8 +742,6 @@
                     localStorage.removeItem('tableViewFilters');
                 }
             }
-
-            updateHeaderButtons();
 
             if (currentIndividual) {
                 renderIndividualTree();
