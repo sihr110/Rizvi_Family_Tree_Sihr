@@ -202,8 +202,19 @@ body.canvas-only .scrollable-content {
 }
 
 body.canvas-only .tree-root-layout {
-    transform: scale(0.9);
+    transform: none; /* Remove fixed scale */
     transform-origin: top center;
+}
+
+/* Allow pinch zoom in canvas mode */
+body.canvas-only {
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
+}
+
+body.canvas-only .scrollable-content {
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
 }
 
         /* ----- MOBILE WIDE HORIZONTAL ADAPTATION (exactly like file 2's mobile section) ----- */
