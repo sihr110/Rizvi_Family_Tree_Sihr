@@ -219,6 +219,30 @@
         .section-marker {
             display: none;
         }
+
+    /* Better vertical mode handling */
+@media screen and (max-width: 480px) and (orientation: portrait) {
+    .scrollable-content {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding: 10px 5px;
+    }
+    
+    .tree-root-layout {
+        min-width: 600px; /* Forces horizontal scroll */
+        transform: none;
+        margin: 0;
+        padding: 10px;
+    }
+    
+    .box {
+        min-width: 160px;
+    }
+}
+    
+    
+    
+    
     </style>
 </head>
 <body>
@@ -659,3 +683,4 @@
 </body>
 
 </html>
+
