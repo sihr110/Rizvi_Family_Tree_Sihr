@@ -201,11 +201,31 @@ body.canvas-only .scrollable-content {
     -webkit-overflow-scrolling: touch;
 }
 
-body.canvas-only .tree-root-layout {
-    transform: none; /* Remove fixed scale */
-    transform-origin: top center;
+/* Canvas mode - keeps header visible and allows zoom */
+body.canvas-only {
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
 }
 
+body.canvas-only .app-header,
+body.canvas-only .fixed-header-section,
+body.canvas-only .filter-buttons,
+body.canvas-only .search-row,
+body.canvas-only .border-line,
+body.canvas-only .app-footer,
+body.canvas-only .toggle-view-btn {
+    /* Keep everything visible */
+}
+
+body.canvas-only .main-content {
+    height: auto !important;
+    overflow: visible !important;
+}
+
+body.canvas-only .scrollable-content {
+    overflow: visible !important;
+    -webkit-overflow-scrolling: touch;
+}
 /* Allow pinch zoom in canvas mode */
 body.canvas-only {
     overflow: auto !important;
