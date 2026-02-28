@@ -1,11 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Your existing code -->
-    <script src="family-data.js"></script>  <!-- ADD THIS LINE -->
-</head>
-
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=3.0, user-scalable=yes, viewport-fit=cover">
     <title>Rizvi family · structured tree (mobile→pc layout)</title>
@@ -15,6 +10,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <!-- Load external family data -->
+    <script src="family-data.js"></script>
     
 <!-- ========================================= -->
 <!-- CSS START                                 -->
@@ -372,6 +370,22 @@
         let showAncestors = false;
         let LOAD_STAMP = '';
         
+        // =========================================================================
+        // LOAD DATA - FROM family-data.js FIRST, THEN FALLBACK
+        // =========================================================================
+        if (typeof FAMILY_DATA !== 'undefined' && FAMILY_DATA.length > 0) {
+            db = FAMILY_DATA;
+            LOAD_STAMP = 'Last data updated on: ' + new Date().toLocaleString();
+            console.log('Loaded data from family-data.js: ' + db.length + ' members');
+        } else {
+            // Fallback to localStorage
+            const saved = localStorage.getItem('familyDB');
+            if (saved) {
+                db = JSON.parse(saved);
+                LOAD_STAMP = 'Last data updated on: ' + new Date().toLocaleString();
+            }
+        }
+        
         // Check if coming from dashboard
         const fromDashboard = sessionStorage.getItem('fromDashboard') === 'true';
 
@@ -529,44 +543,37 @@
         };
 
         // =========================================================================
-        // GROUP SISTERS - FIXED VERSION with Gen under name
+        // GROUP SISTERS
         // =========================================================================
-
-
-function groupSisters(sistersArray, fatherName, type) {
-    if (!sistersArray || sistersArray.length === 0) return '';
-    let headerText = type === 'siblings' ? 'SISTERS' : 'DAUGHTERS';
-    let html = `<div class="sisters-group-box"><div class="sisters-header"># ${headerText}</div>`;
-    
-    // Table with two columns - Name and Gen
-    html += `<table style="width:100%; border-collapse: collapse; margin: 8px 0; table-layout: fixed;">`;
-    
-    // Table header - center justified
-    html += `<tr style="border-bottom: 2px solid var(--sisters-border);">
-                <th style="text-align: center; padding: 8px 4px 4px 8px; font-size: 11px; color: var(--maroon); width: 60%;">Name</th>
-                <th style="text-align: center; padding: 8px 8px 4px 4px; font-size: 11px; color: var(--maroon); width: 40%;">Gen</th>
-            </tr>`;
-    
-    // Table rows - left aligned
-    sistersArray.forEach(sister => {
-        const memberData = encodeURIComponent(JSON.stringify(sister));
-        html += `<tr onclick='handleBoxClick(JSON.parse(decodeURIComponent("${memberData}")))' style="cursor: pointer;">
-                    <td style="text-align: left; padding: 8px 4px 8px 8px; border-bottom: 1px dashed #fecaca; font-weight: 600; transition: background 0.2s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" onmouseover="this.style.background='#faebcd'" onmouseout="this.style.background='transparent'">${displayName(sister.name)}</td>
-                    <td style="text-align: left; padding: 8px 8px 8px 4px; border-bottom: 1px dashed #fecaca; color: var(--maroon); transition: background 0.2s; white-space: nowrap;" onmouseover="this.style.background='#faebcd'" onmouseout="this.style.background='transparent'">${sister.gen}</td>
-                </tr>`;
-    });
-    
-    html += `</table>`;
-    
-    // Father name at the bottom - left aligned
-    html += `<div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--sisters-border); font-size: 11px; color: #64748b; text-align: left;">
-                ${sistersArray[0]?.gender?.startsWith('F') ? 'D/o' : 'S/o'}: ${displayName(fatherName)}
-            </div>`;
-    
-    html += `</div>`;
-    return html;
-}
-
+        function groupSisters(sistersArray, fatherName, type) {
+            if (!sistersArray || sistersArray.length === 0) return '';
+            let headerText = type === 'siblings' ? 'SISTERS' : 'DAUGHTERS';
+            let html = `<div class="sisters-group-box"><div class="sisters-header"># ${headerText}</div>`;
+            
+            html += `<table style="width:100%; border-collapse: collapse; margin: 8px 0; table-layout: fixed;">`;
+            
+            html += `<tr style="border-bottom: 2px solid var(--sisters-border);">
+                        <th style="text-align: center; padding: 8px 4px 4px 8px; font-size: 11px; color: var(--maroon); width: 60%;">Name</th>
+                        <th style="text-align: center; padding: 8px 8px 4px 4px; font-size: 11px; color: var(--maroon); width: 40%;">Gen</th>
+                    </tr>`;
+            
+            sistersArray.forEach(sister => {
+                const memberData = encodeURIComponent(JSON.stringify(sister));
+                html += `<tr onclick='handleBoxClick(JSON.parse(decodeURIComponent("${memberData}")))' style="cursor: pointer;">
+                            <td style="text-align: left; padding: 8px 4px 8px 8px; border-bottom: 1px dashed #fecaca; font-weight: 600; transition: background 0.2s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" onmouseover="this.style.background='#faebcd'" onmouseout="this.style.background='transparent'">${displayName(sister.name)}</td>
+                            <td style="text-align: left; padding: 8px 8px 8px 4px; border-bottom: 1px dashed #fecaca; color: var(--maroon); transition: background 0.2s; white-space: nowrap;" onmouseover="this.style.background='#faebcd'" onmouseout="this.style.background='transparent'">${sister.gen}</td>
+                        </tr>`;
+            });
+            
+            html += `</table>`;
+            
+            html += `<div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--sisters-border); font-size: 11px; color: #64748b; text-align: left;">
+                        ${sistersArray[0]?.gender?.startsWith('F') ? 'D/o' : 'S/o'}: ${displayName(fatherName)}
+                    </div>`;
+            
+            html += `</div>`;
+            return html;
+        }
 
         // =========================================================================
         // RENDER TREE
@@ -728,30 +735,35 @@ function groupSisters(sistersArray, fatherName, type) {
         };
 
         // =========================================================================
-        // LOAD DATA & INIT
+        // INITIALIZATION
         // =========================================================================
-       // =========================================================================
-// LOAD DATA - MODIFIED TO USE family-data.js FIRST
-// =========================================================================
-let db = [];
+        document.addEventListener('DOMContentLoaded', function() {
+            // mobile menu toggle
+            document.getElementById('mobileMenuToggle')?.addEventListener('click', function() {
+                document.querySelector('.fixed-header-section')?.classList.toggle('collapsed');
+            });
 
-// Check if FAMILY_DATA exists from external file
-if (typeof FAMILY_DATA !== 'undefined' && FAMILY_DATA.length > 0) {
-    db = FAMILY_DATA;
-    LOAD_STAMP = 'Last data updated on: ' + new Date().toLocaleString();
-} else {
-    // Fallback to localStorage
-    const saved = localStorage.getItem('familyDB');
-    if (saved) {
-        db = JSON.parse(saved);
-        LOAD_STAMP = 'Last data updated on: ' + new Date().toLocaleString();
-    }
-}
+            const tableMember = localStorage.getItem('tableViewMember');
+            if (tableMember) {
+                currentIndividual = JSON.parse(tableMember);
+                document.getElementById('individualSearch').value = displayName(currentIndividual.name) + ' (' + currentIndividual.gen + ')';
+                localStorage.removeItem('tableViewMember');
+                const savedFilters = localStorage.getItem('tableViewFilters');
+                if (savedFilters) {
+                    const filters = JSON.parse(savedFilters);
+                    showSiblings = filters.showSiblings;
+                    showDescendants = filters.showDescendants;
+                    showAncestors = filters.showAncestors;
+                    document.getElementById('filterSiblings').classList.toggle('active', showSiblings);
+                    document.getElementById('filterDescendants').classList.toggle('active', showDescendants);
+                    document.getElementById('filterAncestors').classList.toggle('active', showAncestors);
+                    localStorage.removeItem('tableViewFilters');
+                }
+            }
 
             if (currentIndividual) {
                 renderIndividualTree();
                 document.getElementById('individualSearch').value = displayName(currentIndividual.name) + ' (' + currentIndividual.gen + ')';
-                // Clear tempIndividual after rendering
                 sessionStorage.removeItem('tempIndividual');
             } else {
                 resetIndividual();
