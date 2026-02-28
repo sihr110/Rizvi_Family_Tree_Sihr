@@ -2,10 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=3.0, user-scalable=yes, viewport-fit=cover">
-
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=3.0, user-scalable=yes, viewport-fit=cover">
     <title>Rizvi family · structured tree (mobile→pc layout)</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
@@ -14,13 +11,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     
-
 <!-- ========================================= -->
 <!-- CSS START                                 -->
 <!-- ========================================= -->
 
     <style>
-        /* ===== GLOBAL RESET & VARIABLES (identical to file 2) ===== */
+        /* ===== GLOBAL RESET & VARIABLES ===== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
             --maroon: #5a0000;
@@ -46,7 +42,7 @@
             --sisters-box-bg: #fff0f5;
         }
 
-        /* ----- BASE LAYOUT – exactly as file 2 (pc) but applied to mobile wide screen ----- */
+        /* ----- BASE LAYOUT ----- */
         body {
             font-family: 'Inter', sans-serif;
             background: #1a1a1a;
@@ -67,6 +63,8 @@
             overflow: hidden;
             box-shadow: 0 0 50px rgba(212, 175, 55, 0.2);
         }
+        
+        /* ----- HEADER SECTION ----- */
         .app-header {
             background: linear-gradient(135deg, var(--dark-blue) 0%, #1e3d3d 100%);
             color: var(--gold);
@@ -96,18 +94,22 @@
             justify-content: center;
             font-size: 16px;
         }
+        
+        /* Equal sized header buttons */
         .header-actions {
             display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
+            gap: 6px;
+            flex-wrap: nowrap;
         }
+        
         .header-btn {
-            padding: 6px 14px;
+            padding: 6px 8px;
             font-weight: 600;
-            font-size: 13px;
+            font-size: 12px;
             cursor: pointer;
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 4px;
             white-space: nowrap;
             border: 2px solid var(--gold);
@@ -115,6 +117,8 @@
             color: var(--gold);
             transition: all 0.2s;
             border-radius: 4px;
+            min-width: 85px;
+            text-align: center;
         }
         .header-btn:hover {
             background: var(--gold);
@@ -125,20 +129,24 @@
             background: var(--dashboard-green);
             color: white;
             border-color: transparent;
-            border-radius: 4px;
         }
-        .header-btn.reset { background: var(--reset-red); color: white; border-color: transparent; border-radius: 4px; }
+        .header-btn.reset { background: var(--reset-red); color: white; border-color: transparent; }
         .header-btn.reset:hover { background: var(--reset-red-dark); }
-        .header-btn.pdf { background: var(--pdf-grey); color: white; border-color: transparent; border-radius: 4px; }
+        .header-btn.pdf { background: var(--pdf-grey); color: white; border-color: transparent; }
         .header-btn.pdf:hover { background: var(--pdf-grey-dark); }
-        .header-btn.table { background: var(--bronze); color: white; border-color: transparent; border-radius: 4px; }
+        .header-btn.table { background: var(--bronze); color: white; border-color: transparent; }
         .header-btn.table:hover { background: #9e6f3a; }
-        .menu-toggle { display: none; }  /* hidden on pc layout, but we keep markup for js */
+        
+        .menu-toggle { display: none; }
+        
+        /* ----- MAIN CONTENT ----- */
         .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: #fffcf8; }
         #individualSection { display: flex; flex-direction: column; height: 100%; overflow: hidden; flex: 1; }
         .fixed-header-section { padding: 15px 15px 0 15px; background: #fffcf8; flex-shrink: 0; }
         .border-line { border-top: 3px solid var(--gold); margin: 20px 0 0 0; }
         .scrollable-content { flex: 1; overflow-y: auto; overflow-x: auto; padding: 0 15px 15px 15px; }
+        
+        /* ----- SEARCH SECTION ----- */
         .search-row { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; }
         .search-label { font-weight: 700; color: var(--maroon); font-size: 13px; text-transform: uppercase; white-space: nowrap; }
         .search-wrapper { position: relative; flex: 2; min-width: 300px; }
@@ -149,14 +157,20 @@
         .result-item:hover { background: #faebcd; }
         .result-item .main-name { font-weight: 700; color: var(--dark-blue); }
         .result-item .gen { color: var(--maroon); font-size: 11px; margin-left: 6px; }
+        
+        /* ----- FILTER BUTTONS ----- */
         .filter-buttons { display: flex; gap: 6px; flex-wrap: wrap; }
         .filter-btn { padding: 6px 14px; border-radius: 4px; font-weight: 600; font-size: 13px; cursor: pointer; border: 2px solid var(--gold); background: white; color: var(--dark-blue); white-space: nowrap; display: flex; align-items: center; gap: 4px; }
         .filter-btn.active { background: #d4edda; border-color: var(--dark-green); }
+        
+        /* ----- TREE LAYOUT ----- */
         .tree-root-layout { display: flex; flex-direction: column; align-items: center; gap: 15px; width: fit-content; margin: 0 auto; padding: 15px; }
         .family-group { display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; }
         .children-row { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; margin-top: 5px; }
         .relation-label { font-size: 11px; color: var(--gold); font-weight: bold; text-transform: uppercase; letter-spacing: 1px; background: var(--dark-blue); padding: 4px 12px; border-radius: 4px; color: white; margin: 5px 0; text-align: center; display: inline-block; width: auto; }
         .descendant-heading { font-size: 14px; color: var(--maroon); font-weight: 800; margin: 15px 0 5px 0; font-family: 'Playfair Display', serif; text-align: center; width: 100%; border-bottom: 2px solid var(--gold); padding-bottom: 5px; }
+        
+        /* ----- SISTERS GROUP BOX ----- */
         .sisters-group-box { border: 2px solid var(--sisters-border); border-radius: 12px; background: var(--sisters-box-bg); min-width: 300px; max-width: 380px; text-align: center; box-shadow: 0 4px 8px rgba(0,0,0,0.05); padding: 12px; margin: 10px auto; }
         .sisters-group-box .sisters-header { font-size: 14px; font-weight: 800; color: var(--maroon); padding-bottom: 6px; margin-bottom: 6px; text-align: left; border-bottom: 2px solid var(--sisters-border); font-family: 'Playfair Display', serif; }
         .sisters-group-box table { width: 100%; border-collapse: collapse; margin: 8px 0; }
@@ -164,6 +178,8 @@
         .sisters-group-box td { padding: 4px 8px; border-bottom: 1px dashed #fecaca; }
         .sisters-group-box td:first-child { font-weight: 600; text-align: left; }
         .sisters-group-box td:last-child { text-align: right; color: var(--maroon); }
+        
+        /* ----- MEMBER BOX ----- */
         .box { border: 2px solid var(--gold); border-radius: 12px; background: white; min-width: 240px; max-width: 280px; text-align: center; cursor: pointer; position: relative; box-shadow: 0 4px 8px rgba(0,0,0,0.05); transition: transform 0.2s; }
         .box:hover { transform: translateY(-3px); }
         .box.blinking-box { animation: blinkBoxLightGreen 1.5s infinite; border-width: 4px; z-index: 10; transform: scale(1.02); }
@@ -176,73 +192,11 @@
         .v-line { width: 3px; height: 25px; background: var(--gold); margin: 5px auto; }
         .golden-heart { position: absolute; bottom: 5px; right: 8px; color: var(--gold); font-size: 16px; }
         .hidden { display: none !important; }
-        .app-footer { background: var(--dark-blue); color: var(--gold); text-align: center; padding: 8px; font-size: 11px; border-top: 2px solid var(--gold); }
-        .toggle-view-btn { position: fixed; bottom: 20px; left: 20px; z-index: 9999; background: #5a0000; color: white; border: 2px solid #d4af37; border-radius: 50px; padding: 10px 20px; font-size: 14px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px; opacity: 0.8; }
-        .toggle-view-btn:hover { opacity: 1; }
         
-
-/* Canvas mode - keeps header visible and allows zoom */
-body.canvas-only {
-    overflow: auto !important;
-}
-
-body.canvas-only .app-header,
-body.canvas-only .fixed-header-section,
-body.canvas-only .filter-buttons,
-body.canvas-only .search-row,
-body.canvas-only .border-line,
-body.canvas-only .app-footer,
-body.canvas-only .toggle-view-btn {
-    /* Keep everything visible - remove display:none */
-}
-
-body.canvas-only .main-content {
-    height: auto !important;
-    overflow: visible !important;
-}
-
-body.canvas-only .scrollable-content {
-    overflow: visible !important;
-    -webkit-overflow-scrolling: touch;
-}
-
-/* Canvas mode - keeps header visible and allows zoom */
-body.canvas-only {
-    overflow: auto !important;
-    -webkit-overflow-scrolling: touch;
-}
-
-body.canvas-only .app-header,
-body.canvas-only .fixed-header-section,
-body.canvas-only .filter-buttons,
-body.canvas-only .search-row,
-body.canvas-only .border-line,
-body.canvas-only .app-footer,
-body.canvas-only .toggle-view-btn {
-    /* Keep everything visible */
-}
-
-body.canvas-only .main-content {
-    height: auto !important;
-    overflow: visible !important;
-}
-
-body.canvas-only .scrollable-content {
-    overflow: visible !important;
-    -webkit-overflow-scrolling: touch;
-}
-/* Allow pinch zoom in canvas mode */
-body.canvas-only {
-    overflow: auto !important;
-    -webkit-overflow-scrolling: touch;
-}
-
-body.canvas-only .scrollable-content {
-    overflow: auto !important;
-    -webkit-overflow-scrolling: touch;
-}
-
-        /* ----- MOBILE WIDE HORIZONTAL ADAPTATION (exactly like file 2's mobile section) ----- */
+        /* ----- FOOTER ----- */
+        .app-footer { background: var(--dark-blue); color: var(--gold); text-align: center; padding: 8px; font-size: 11px; border-top: 2px solid var(--gold); }
+        
+        /* ----- MOBILE RESPONSIVE ----- */
         @media screen and (max-width: 768px) {
             body { overflow: auto; -webkit-overflow-scrolling: touch; height: auto; min-height: 100vh; padding: 5px; }
             .app-container { height: auto; min-height: calc(100vh - 10px); border-radius: 16px; overflow: hidden; }
@@ -256,8 +210,20 @@ body.canvas-only .scrollable-content {
             .search-input { width: 100%; font-size: 16px; padding: 12px 15px; height: 48px; }
             .filter-buttons { width: 100%; justify-content: space-between; gap: 8px; }
             .filter-btn { flex: 1; padding: 10px 5px; font-size: 12px; justify-content: center; height: 44px; }
-            .header-actions { width: 100%; justify-content: space-between; gap: 5px; }
-            .header-btn { flex: 1; padding: 10px 5px; font-size: 11px; justify-content: center; height: 44px; white-space: nowrap; }
+            
+            /* Mobile header buttons */
+            .header-actions {
+                width: 100%;
+                justify-content: space-between;
+                gap: 3px;
+            }
+            .header-btn {
+                flex: 1;
+                min-width: 0;
+                padding: 8px 2px;
+                font-size: 10px;
+            }
+            
             .box { min-width: 200px; max-width: 260px; margin: 0 auto; }
             .member-name { font-size: 18px !important; }
             .father-name { font-size: 11px; }
@@ -268,7 +234,6 @@ body.canvas-only .scrollable-content {
             .scrollable-content { overflow-y: visible; -webkit-overflow-scrolling: touch; padding: 0 12px 20px 12px; }
             #individualSection { overflow-y: auto; -webkit-overflow-scrolling: touch; }
             .main-content { overflow-y: auto; -webkit-overflow-scrolling: touch; }
-            .toggle-view-btn { bottom: 15px; left: 15px; padding: 10px 18px; font-size: 14px; height: 48px; opacity: 0.95; }
             .dropdown { max-height: 200px; font-size: 14px; }
             .result-item { padding: 12px 15px; }
             .app-footer { padding: 10px; font-size: 10px; }
@@ -277,52 +242,36 @@ body.canvas-only .scrollable-content {
             .box { min-width: 160px; max-width: 220px; }
             .member-name { font-size: 16px !important; }
             .filter-btn { font-size: 11px; padding: 8px 4px; }
-            .header-btn { font-size: 10px; padding: 8px 4px; }
+            .header-btn { font-size: 9px; padding: 8px 2px; }
         }
 
-        /* ----- numbered sections for easy html editing (invisible markers) ----- */
-        .section-marker {
-            display: none;
+        /* ----- numbered sections for easy html editing ----- */
+        .section-marker { display: none; }
+
+        /* Better vertical mode handling */
+        @media screen and (max-width: 480px) and (orientation: portrait) {
+            .scrollable-content {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                padding: 10px 5px;
+            }
+            .tree-root-layout {
+                min-width: 600px;
+                transform: none;
+                margin: 0;
+                padding: 10px;
+            }
+            .box { min-width: 160px; }
         }
 
-/* Better vertical mode handling */
-@media screen and (max-width: 480px) and (orientation: portrait) {
-    .scrollable-content {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        padding: 10px 5px;
-    }
-    
-    .tree-root-layout {
-        min-width: 600px; /* Forces horizontal scroll */
-        transform: none;
-        margin: 0;
-        padding: 10px;
-    }
-    
-    .box {
-        min-width: 160px;
-    }
-}
+        /* Prevent pull-to-refresh */
+        body {
+            overscroll-behavior-y: contain;
+            -webkit-overflow-scrolling: touch;
+        }
 
-
-/* Prevent pull-to-refresh */
-body {
-    overscroll-behavior-y: contain;
-    -webkit-overflow-scrolling: touch;
-}
-
-/* Ensure tree stays after scroll */
-#individualTree {
-    min-height: 100%;
-}
-
-/* Ensure canvas mode allows full zoom control */
-body.canvas-only .tree-root-layout {
-    transform: none !important;
-    transition: none !important;
-}
-
+        /* Ensure tree stays after scroll */
+        #individualTree { min-height: 100%; }
     </style>
 
 <!-- ========================================= -->
@@ -331,21 +280,25 @@ body.canvas-only .tree-root-layout {
 
 </head>
 <body>
-    <!-- ⑦ INDIVIDUAL TREE – MOBILE WIDE (exact copy of file 2 structure) -->
+    <!-- ⑦ INDIVIDUAL TREE – MOBILE WIDE -->
     <div class="app-container">
-        <!-- header :: section 1 -->
+        <!-- HEADER - MODIFIED -->
         <div class="app-header">
-            <div class="header-title"><span class="header-icon">🌿</span> <span>Rizvi family · structured tree</span></div>
-            <button class="menu-toggle" id="mobileMenuToggle">☰</button>
+            <div class="header-title">
+                <span class="header-icon">🌿</span> 
+                <span>Rizvi family - Tree View</span>
+            </div>
             <div class="header-actions" id="headerActions"></div>
+            <button class="menu-toggle" id="mobileMenuToggle">☰</button>
         </div>
-        <!-- hidden file input (kept) -->
+        
+        <!-- hidden file input -->
         <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" style="display:none;">
         
-        <!-- main area :: section 2 -->
+        <!-- main area -->
         <div class="main-content" id="mainContent">
             <div id="individualSection">
-                <!-- fixed header with search & filters :: section 3 -->
+                <!-- fixed header with search & filters -->
                 <div class="fixed-header-section">
                     <div class="search-row">
                         <span class="search-label">SEARCH MEMBER</span>
@@ -361,26 +314,24 @@ body.canvas-only .tree-root-layout {
                     </div>
                     <div class="border-line"></div>
                 </div>
-                <!-- scrollable tree area :: section 4 -->
+                <!-- scrollable tree area -->
                 <div class="scrollable-content">
                     <div id="individualTree" class="tree-root-layout"></div>
                 </div>
             </div>
         </div>
-        <!-- footer :: section 5 -->
+        <!-- footer -->
         <div class="app-footer">Imran Haider S/o Syed Risalat Hussain Rizvi | 0332-787-6010</div>
     </div>
-    <!-- floating fullscreen toggle :: section 6 -->
-    <div class="toggle-view-btn" id="toggleViewBtn" onclick="toggleCanvasView()"><span>👁️</span> <span>Full Screen</span></div>
+    
+    <!-- Toggle button REMOVED -->
 
-    <!-- hidden markers for html editing – each major section numbered -->
+    <!-- hidden markers for html editing -->
     <div class="section-marker" data-section="1-header"></div>
     <div class="section-marker" data-section="2-main"></div>
     <div class="section-marker" data-section="3-search-filters"></div>
     <div class="section-marker" data-section="4-tree-container"></div>
     <div class="section-marker" data-section="5-footer"></div>
-    <div class="section-marker" data-section="6-fullscreen-btn"></div>
-    <!-- note: no extra headings or text inserted, just hidden markers -->
 
 <!-- ========================================= -->
 <!-- JAVASCRIPT Start                          -->
@@ -398,38 +349,37 @@ body.canvas-only .tree-root-layout {
         let showAncestors = false;
         let LOAD_STAMP = '';
         
-        // Check if coming from dashboard - SIMPLE AND WORKING
-       // Check if coming from dashboard
-const fromDashboard = sessionStorage.getItem('fromDashboard') === 'true';
+        // Check if coming from dashboard
+        const fromDashboard = sessionStorage.getItem('fromDashboard') === 'true';
 
-// Check if this is a page refresh (not from dashboard)
-const isPageRefresh = !document.referrer || document.referrer.includes(window.location.host);
+        // Check if this is a page refresh (not from dashboard)
+        const isPageRefresh = !document.referrer || document.referrer.includes(window.location.host);
 
-if (fromDashboard) {
-    // Clear ALL storage when coming from dashboard
-    sessionStorage.removeItem('tempIndividual');
-    sessionStorage.removeItem('tempScroll');
-    sessionStorage.removeItem('fromDashboard');
-    currentIndividual = null;
-} else if (isPageRefresh) {
-    // This is a page refresh - restore tree if available
-    const tempIndividual = sessionStorage.getItem('tempIndividual');
-    if (tempIndividual) {
-        try {
-            currentIndividual = JSON.parse(tempIndividual);
-            // Don't remove tempIndividual yet - we'll need it after DOM loads
-        } catch (e) {}
-    }
-} else {
-    // Normal navigation - restore if available
-    const tempIndividual = sessionStorage.getItem('tempIndividual');
-    if (tempIndividual) {
-        try {
-            currentIndividual = JSON.parse(tempIndividual);
+        if (fromDashboard) {
+            // Clear ALL storage when coming from dashboard
             sessionStorage.removeItem('tempIndividual');
-        } catch (e) {}
-    }
-} 
+            sessionStorage.removeItem('tempScroll');
+            sessionStorage.removeItem('fromDashboard');
+            currentIndividual = null;
+        } else if (isPageRefresh) {
+            // This is a page refresh - restore tree if available
+            const tempIndividual = sessionStorage.getItem('tempIndividual');
+            if (tempIndividual) {
+                try {
+                    currentIndividual = JSON.parse(tempIndividual);
+                    // Don't remove tempIndividual yet - we'll need it after DOM loads
+                } catch (e) {}
+            }
+        } else {
+            // Normal navigation - restore if available
+            const tempIndividual = sessionStorage.getItem('tempIndividual');
+            if (tempIndividual) {
+                try {
+                    currentIndividual = JSON.parse(tempIndividual);
+                    sessionStorage.removeItem('tempIndividual');
+                } catch (e) {}
+            }
+        }
 
         // =========================================================================
         // UTILITIES
@@ -463,8 +413,8 @@ if (fromDashboard) {
 
         function updateHeaderButtons() {
             document.getElementById('headerActions').innerHTML = `
-                <div class="header-btn table" onclick="switchToTableView()">📋 Switch to Table</div>
                 <div class="header-btn reset" onclick="resetIndividual()">🔄 Reset</div>
+                <div class="header-btn table" onclick="switchToTableView()">📋 Show Table</div>
                 <div class="header-btn pdf" onclick="exportIndividualPDF()">📑 Save PDF</div>
                 <div class="header-btn dashboard" onclick="showDashboard()">🏠 Dashboard</div>
             `;
@@ -743,20 +693,6 @@ if (fromDashboard) {
         };
 
         // =========================================================================
-        // FULL SCREEN TOGGLE
-        // =========================================================================
-        window.toggleCanvasView = function() {
-            document.body.classList.toggle('canvas-only');
-            const btn = document.getElementById('toggleViewBtn');
-            if (document.body.classList.contains('canvas-only')) {
-                btn.innerHTML = '<span>🔍</span> <span>Exit</span>';
-                document.querySelector('.tree-root-layout').style.transform = 'none';
-            } else {
-                btn.innerHTML = '<span>👁️</span> <span>Full Screen</span>';
-            }
-        };
-
-        // =========================================================================
         // LOAD DATA & INIT
         // =========================================================================
         const saved = localStorage.getItem('familyDB');
@@ -791,15 +727,16 @@ if (fromDashboard) {
 
             updateHeaderButtons();
 
-if (currentIndividual) {
-    renderIndividualTree();
-    document.getElementById('individualSearch').value = displayName(currentIndividual.name) + ' (' + currentIndividual.gen + ')';
-    // Clear tempIndividual after rendering
-    sessionStorage.removeItem('tempIndividual');
-} else {
-    resetIndividual();
-    document.getElementById('individualSearch').value = '';
-}      });
+            if (currentIndividual) {
+                renderIndividualTree();
+                document.getElementById('individualSearch').value = displayName(currentIndividual.name) + ' (' + currentIndividual.gen + ')';
+                // Clear tempIndividual after rendering
+                sessionStorage.removeItem('tempIndividual');
+            } else {
+                resetIndividual();
+                document.getElementById('individualSearch').value = '';
+            }
+        });
 
         // =========================================================================
         // STATE PRESERVATION FOR REFRESH
@@ -836,5 +773,6 @@ if (currentIndividual) {
 
 <!-- ========================================= -->
 <!-- JAVASCRIPT END                            -->
-<!-- ========================================= --></body>
+<!-- ========================================= -->
+</body>
 </html>
