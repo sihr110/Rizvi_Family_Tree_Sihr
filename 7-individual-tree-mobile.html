@@ -399,24 +399,37 @@ body.canvas-only .tree-root-layout {
         let LOAD_STAMP = '';
         
         // Check if coming from dashboard - SIMPLE AND WORKING
-        const fromDashboard = sessionStorage.getItem('fromDashboard') === 'true';
-        
-        if (fromDashboard) {
-            // Clear ALL storage
+       // Check if coming from dashboard
+const fromDashboard = sessionStorage.getItem('fromDashboard') === 'true';
+
+// Check if this is a page refresh (not from dashboard)
+const isPageRefresh = !document.referrer || document.referrer.includes(window.location.host);
+
+if (fromDashboard) {
+    // Clear ALL storage when coming from dashboard
+    sessionStorage.removeItem('tempIndividual');
+    sessionStorage.removeItem('tempScroll');
+    sessionStorage.removeItem('fromDashboard');
+    currentIndividual = null;
+} else if (isPageRefresh) {
+    // This is a page refresh - restore tree if available
+    const tempIndividual = sessionStorage.getItem('tempIndividual');
+    if (tempIndividual) {
+        try {
+            currentIndividual = JSON.parse(tempIndividual);
+            // Don't remove tempIndividual yet - we'll need it after DOM loads
+        } catch (e) {}
+    }
+} else {
+    // Normal navigation - restore if available
+    const tempIndividual = sessionStorage.getItem('tempIndividual');
+    if (tempIndividual) {
+        try {
+            currentIndividual = JSON.parse(tempIndividual);
             sessionStorage.removeItem('tempIndividual');
-            sessionStorage.removeItem('tempScroll');
-            sessionStorage.removeItem('fromDashboard');
-            currentIndividual = null;
-        } else {
-            // Only restore if NOT from dashboard
-            const tempIndividual = sessionStorage.getItem('tempIndividual');
-            if (tempIndividual) {
-                try {
-                    currentIndividual = JSON.parse(tempIndividual);
-                    sessionStorage.removeItem('tempIndividual');
-                } catch (e) {}
-            }
-        }
+        } catch (e) {}
+    }
+} 
 
         // =========================================================================
         // UTILITIES
@@ -778,15 +791,15 @@ body.canvas-only .tree-root-layout {
 
             updateHeaderButtons();
 
-            if (currentIndividual && !fromDashboard) {
-                renderIndividualTree();
-                document.getElementById('individualSearch').value = displayName(currentIndividual.name) + ' (' + currentIndividual.gen + ')';
-            } else {
-                resetIndividual();
-                // Extra safety: clear search field
-                document.getElementById('individualSearch').value = '';
-            }
-        });
+if (currentIndividual) {
+    renderIndividualTree();
+    document.getElementById('individualSearch').value = displayName(currentIndividual.name) + ' (' + currentIndividual.gen + ')';
+    // Clear tempIndividual after rendering
+    sessionStorage.removeItem('tempIndividual');
+} else {
+    resetIndividual();
+    document.getElementById('individualSearch').value = '';
+}      });
 
         // =========================================================================
         // STATE PRESERVATION FOR REFRESH
