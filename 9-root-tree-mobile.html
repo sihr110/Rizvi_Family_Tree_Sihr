@@ -348,18 +348,16 @@
         }
         
         /* ----- WIDE TREE LAYOUT - FIXED FOR SIDE BY SIDE ----- */
-        /* Replace the entire .tree-wide-layout and .tree-column with this: */
-
 .tree-wide-layout {
     display: flex;
     flex-direction: row;
     gap: 30px;
     justify-content: center;
-    flex-wrap: wrap;
-    width: 100%;
+    width: fit-content;
+    min-width: 100%;
+    margin: 0 auto;
     padding: 15px;
 }
-
 .tree-column {
     flex: 1 1 300px;
     min-width: 280px;
