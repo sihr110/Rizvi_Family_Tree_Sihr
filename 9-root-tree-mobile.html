@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=3.0, user-scalable=yes, viewport-fit=cover">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=10.0, user-scalable=yes">
     <title>Rizvi family · root tree (mobile→pc layout)</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
@@ -173,14 +173,13 @@
             z-index: 2000;
         }
         .border-line { border-top: 3px solid var(--gold); margin: 20px 0 0 0; }
-        .scrollable-content { 
-            flex: 1; 
-            overflow-y: auto; 
-            overflow-x: auto; 
-            padding: 0 15px 15px 15px;
-            position: relative;
-            z-index: 1;
-        }
+       .scrollable-content {
+    flex: 1;
+    overflow: auto;
+    padding: 0 15px 15px 15px;
+    /* This ensures the scrollbars account for the smaller items */
+    display: block; 
+}
         
         /* ----- SEARCH SECTION ----- */
         .search-row { margin-bottom: 15px; width: 100%; position: relative; }
@@ -207,17 +206,20 @@
         .gap-value.highlight { background: var(--bronze); color: white; }
         
         /* ----- WIDE TREE LAYOUT (SIDE BY SIDE) ----- */
-        .tree-wide-layout {
-            display: inline-flex;
-            align-items: flex-start;
-            flex-direction: row;
-            gap: 30px;
-            justify-content: center;
-            width: fit-content;
-            min-width: 100%;
-            margin: 0; /* FIXED: Removed auto-center for better canvas alignment */
-            padding: 15px;
-        }
+.tree-wide-layout {
+    transform: scale(0.5);
+    transform-origin: top left;
+    display: inline-flex;
+    align-items: flex-start;
+    flex-direction: row;
+    gap: 30px;
+    justify-content: center;
+    width: fit-content;
+    /* These negative margins remove the "Ghost Space" created by scale(0.5) */
+    margin-right: -50%; 
+    margin-bottom: -50%;
+    padding: 15px;
+}
         .tree-column {
             flex: 0 0 320px;
             min-width: 280px;
