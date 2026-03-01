@@ -11,8 +11,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-    <!-- Load external family data -->
-    <script src="family-data.js"></script>
+<script src="family-data.js"></script>
     
 <!-- ========================================= -->
 <!-- CSS START                                 -->
@@ -262,15 +261,6 @@
         }
 
         body { overscroll-behavior-y: contain; -webkit-overflow-scrolling: touch; }
-
-
-/* Prevent pull-to-refresh on mobile */
-body {
-    overscroll-behavior-y: contain;
-    -webkit-overflow-scrolling: touch;
-}
-
-
     </style>
 
 <!-- ========================================= -->
@@ -278,6 +268,7 @@ body {
 <!-- ========================================= -->
 
 </head>
+
 <body>
     <!-- ⑨ ROOT TREE – MOBILE WIDE -->
     <div class="app-container">
@@ -719,64 +710,38 @@ body {
         // =========================================================================
         // LOAD DATA & INIT
         // =========================================================================
-        let db = [];
-if (typeof FAMILY_DATA !== 'undefined') {
-    db = FAMILY_DATA;
-} else {
-    // Fallback if the external file isn't loaded yet
-    const saved = localStorage.getItem('familyDB');
-    if (saved) db = JSON.parse(saved);
-}
+        const saved = localStorage.getItem('familyDB');
+        if (saved) {
+            db = JSON.parse(saved);
+            LOAD_STAMP = 'Last data updated on: ' + new Date().toLocaleString();
+        }
 
-// =========================================================================
-// STATE PRESERVATION (Saves data during mobile refresh)
-// =========================================================================
-window.addEventListener('beforeunload', function() {
-    // If members are selected, save them to temporary session memory
-    if (member1 || member2) {
-        sessionStorage.setItem('tempMember1', JSON.stringify(member1));
-        sessionStorage.setItem('tempMember2', JSON.stringify(member2));
-    }
-});
+        document.addEventListener('DOMContentLoaded', function() {
+            // mobile menu toggle
+            document.getElementById('mobileMenuToggle')?.addEventListener('click', function() {
+                document.querySelector('.fixed-header-section')?.classList.toggle('collapsed');
+            });
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Mobile menu toggle logic
-    document.getElementById('mobileMenuToggle')?.addEventListener('click', function() {
-        document.querySelector('.fixed-header-section')?.classList.toggle('collapsed');
-    });
+            const saved1 = localStorage.getItem('rootMember1');
+            const saved2 = localStorage.getItem('rootMember2');
+            if (saved1 && saved2) {
+                member1 = JSON.parse(saved1);
+                member2 = JSON.parse(saved2);
+                document.getElementById('search1').value = displayName(member1.name) + ' (' + member1.gen + ')';
+                document.getElementById('search2').value = displayName(member2.name) + ' (' + member2.gen + ')';
+                localStorage.removeItem('rootMember1');
+                localStorage.removeItem('rootMember2');
+                renderRootTree();
+            } else {
+                resetSearch();
+            }
+        });
 
-    // 1. Check for data coming from Dashboard (localStorage)
-    const saved1 = localStorage.getItem('rootMember1');
-    const saved2 = localStorage.getItem('rootMember2');
-    
-    // 2. Check for data from a Page Refresh (sessionStorage)
-    const temp1 = sessionStorage.getItem('tempMember1');
-    const temp2 = sessionStorage.getItem('tempMember2');
-
-    if (saved1 && saved2) {
-        // Priority 1: New search from Dashboard
-        member1 = JSON.parse(saved1);
-        member2 = JSON.parse(saved2);
-        localStorage.removeItem('rootMember1');
-        localStorage.removeItem('rootMember2');
-        renderFromState();
-    } else if (temp1 || temp2) {
-        // Priority 2: Restore from Refresh
-        if(temp1) member1 = JSON.parse(temp1);
-        if(temp2) member2 = JSON.parse(temp2);
-        renderFromState();
-    } else {
-        resetSearch();
-    }
-});
-
-// Helper to update UI and Tree
-function renderFromState() {
-    if(member1) document.getElementById('search1').value = displayName(member1.name) + ' (' + member1.gen + ')';
-    if(member2) document.getElementById('search2').value = displayName(member2.name) + ' (' + member2.gen + ')';
-    renderRootTree();
-}
-
+        // expose globals
+        window.switchToTable = switchToTable;
+        window.goToDashboard = goToDashboard;
+        window.resetSearch = resetSearch;
+    })();
 </script>
 
 <!-- ========================================= -->
