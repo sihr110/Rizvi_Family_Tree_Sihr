@@ -188,7 +188,7 @@
             background: #fffcf8; 
             flex-shrink: 0;
             position: relative;
-            z-index: 2000; /* Higher than scrollable content */
+            z-index: 2000;
         }
         .border-line { border-top: 3px solid var(--gold); margin: 20px 0 0 0; }
         .scrollable-content { 
@@ -197,10 +197,10 @@
             overflow-x: auto; 
             padding: 0 15px 15px 15px;
             position: relative;
-            z-index: 1; /* Lower than dropdown */
+            z-index: 1;
         }
         
-        /* ----- SEARCH SECTION (TWO ROWS) ----- */
+        /* ----- SEARCH SECTION ----- */
         .search-row {
             margin-bottom: 15px;
             width: 100%;
@@ -235,7 +235,7 @@
             box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
         }
         
-        /* DROPDOWN FIXED - HIGHER Z-INDEX AND POSITIONING */
+        /* DROPDOWN STYLES */
         .dropdown {
             position: absolute;
             top: 100%;
@@ -247,7 +247,7 @@
             max-height: 300px;
             overflow-y: auto;
             display: none;
-            z-index: 9999; /* Very high to appear above everything */
+            z-index: 9999;
             box-shadow: 0 8px 20px rgba(0,0,0,0.25);
             margin-top: 2px;
         }
@@ -356,15 +356,17 @@
             margin: 0 auto;
             padding: 20px;
             width: 100%;
+            flex-wrap: wrap;
         }
         
         .tree-column {
-            flex: 1;
-            min-width: 280px;
+            flex: 0 1 400px;
+            min-width: 300px;
             max-width: 450px;
             display: flex;
             flex-direction: column;
             align-items: center;
+            margin: 0 auto;
         }
         
         .tree-column h3 {
@@ -480,6 +482,15 @@
         }
         
         /* ----- MOBILE RESPONSIVE - FIXED FOR SIDE BY SIDE ----- */
+        @media screen and (min-width: 769px) {
+            .tree-wide-layout {
+                flex-wrap: nowrap;
+            }
+            .tree-column {
+                flex: 1 1 0;
+            }
+        }
+        
         @media screen and (max-width: 768px) {
             body { overflow: auto; -webkit-overflow-scrolling: touch; height: auto; min-height: 100vh; padding: 5px; }
             .app-container { height: auto; min-height: calc(100vh - 10px); border-radius: 16px; overflow: hidden; }
@@ -498,7 +509,7 @@
             
             .fixed-header-section { 
                 transition: max-height 0.3s ease, padding 0.3s ease, margin 0.3s ease; 
-                overflow: visible; /* Changed from hidden to visible */
+                overflow: visible;
                 max-height: 500px; 
                 padding: 15px 15px 10px 15px; 
                 background: #fffcf8;
@@ -522,21 +533,21 @@
                 height: 48px;
             }
             
-            .box { min-width: 200px; max-width: 260px; margin: 0 auto; }
+            .box { min-width: 220px; max-width: 280px; margin: 0 auto; }
             .member-name { font-size: 16px !important; }
             .father-name { font-size: 11px; }
             
-            /* Fixed: Trees side by side on tablets and landscape */
+            /* Fixed: Trees side by side on tablets */
             .tree-wide-layout {
                 flex-direction: row;
                 flex-wrap: wrap;
                 gap: 20px;
-                padding: 15px;
+                justify-content: center;
             }
             .tree-column {
-                width: calc(50% - 10px);
-                min-width: 240px;
-                flex: 1 1 auto;
+                flex: 0 1 calc(50% - 20px);
+                min-width: 280px;
+                max-width: 350px;
             }
             
             .dropdown { 
@@ -550,15 +561,16 @@
             .v-line { height: 20px; }
         }
         
-        /* Fixed: Stack on very small screens */
-        @media screen and (max-width: 600px) {
+        /* Fixed: Stack on small mobile */
+        @media screen and (max-width: 650px) {
             .tree-wide-layout {
                 flex-direction: column;
                 align-items: center;
             }
             .tree-column {
+                flex: 0 1 100%;
                 width: 100%;
-                max-width: 320px;
+                max-width: 350px;
             }
         }
         
@@ -568,12 +580,13 @@
             .action-btn { font-size: 9px; }
         }
 
-        /* Landscape mode */
-        @media screen and (min-width: 1024px) and (orientation: landscape) {
+        /* Landscape mode for larger screens */
+        @media screen and (min-width: 1024px) {
             .tree-wide-layout {
                 gap: 40px;
             }
             .tree-column {
+                flex: 1 1 0;
                 max-width: 450px;
             }
         }
@@ -743,7 +756,7 @@
         }
 
         // =========================================================================
-        // SEARCH DROPDOWN - FIXED FOR BETTER DISPLAY
+        // SEARCH DROPDOWN
         // =========================================================================
         window.searchMember = function(query, num) {
             const drop = document.getElementById(`dropdown${num}`);
@@ -754,7 +767,6 @@
                 return;
             }
             
-            // Show up to 8 results
             const found = db.filter(p => p.name.toLowerCase().includes(query.toLowerCase())).slice(0, 8);
             if (found.length === 0) {
                 drop.style.display = 'none';
@@ -779,7 +791,6 @@
                 
                 div.onclick = (e) => {
                     e.stopPropagation();
-                    // Show full name with generation in search input
                     document.getElementById(`search${num}`).value = `${nameDisplay} (${p.gen})`;
                     if (num === 1) member1 = p;
                     else member2 = p;
@@ -792,7 +803,6 @@
                 drop.appendChild(div);
             });
             
-            // Make sure dropdown appears above everything
             drop.style.display = 'block';
             drop.style.zIndex = '9999';
         };
@@ -833,11 +843,10 @@
         window.handleBoxClick = function(member) {
             if (!member || !member.name) return;
             console.log('Box clicked:', member);
-            alert('Clicked: ' + displayName(member.name));
         };
 
         // =========================================================================
-        // RENDER ROOT TREE - FIXED FOR SIDE BY SIDE
+        // RENDER ROOT TREE
         // =========================================================================
         function renderRootTree() {
             if (!member1 || !member2) return;
