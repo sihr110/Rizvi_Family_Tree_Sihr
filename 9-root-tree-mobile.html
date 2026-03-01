@@ -46,9 +46,9 @@
         font-family: 'Inter', sans-serif;
         background: #1a1a1a;
         height: 100vh;
-        overflow: hidden; /* Keeps the app from bouncing */
         margin: 0;
         padding: 10px;
+        overflow: hidden; 
     }
     .app-container {
         max-width: 1400px;
@@ -60,7 +60,6 @@
         border-radius: 20px;
         border: 2px solid var(--gold);
         overflow: hidden;
-        box-shadow: 0 0 50px rgba(212, 175, 55, 0.2);
     }
     
     .app-header {
@@ -71,23 +70,12 @@
         justify-content: space-between;
         align-items: center;
         border-bottom: 3px solid var(--gold);
-        position: relative;
-        z-index: 100;
+        min-height: 60px;
     }
-    .header-title {
-        font-family: 'Playfair Display', serif;
-        font-size: 20px;
-        font-weight: 900;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-    .top-reset-btn { background: var(--reset-red); color: white; border: 1px solid var(--gold); border-radius: 4px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; }
 
     .action-buttons-row {
         display: flex;
         gap: 8px;
-        width: 100%;
         padding: 10px 20px;
         background: var(--dark-blue);
         border-bottom: 2px solid var(--gold);
@@ -97,14 +85,10 @@
         padding: 8px 5px;
         font-weight: 600;
         font-size: 12px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 4px;
         border: 2px solid var(--gold);
         border-radius: 4px;
         color: white;
+        text-align: center;
     }
     .action-btn.table { background: var(--bronze); }
     .action-btn.pdf { background: var(--pdf-grey); }
@@ -117,7 +101,7 @@
         border-bottom: 2px solid #e2e8f0;
     }
     .search-row { margin-bottom: 12px; position: relative; }
-    .search-label { font-size: 11px; font-weight: 700; color: var(--maroon); margin-bottom: 4px; }
+    .search-label { font-size: 11px; font-weight: 700; color: var(--maroon); margin-bottom: 4px; display: block; }
     .search-input {
         width: 100%;
         padding: 10px 12px;
@@ -134,13 +118,10 @@
         max-height: 250px;
         overflow-y: auto;
         display: none;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
         z-index: 9999;
     }
-    .result-item { padding: 10px; border-bottom: 1px solid #f1f5f9; cursor: pointer; text-align: left; }
-    .main-name { font-weight: 700; color: var(--dark-blue); }
 
-    /* ----- SCROLLING & TREE AREA (FIXED FOR VERTICAL) ----- */
+    /* ----- THE CANVAS / SCROLLING AREA ----- */
     .main-content { 
         flex: 1; 
         display: flex; 
@@ -151,68 +132,46 @@
     
     .scrollable-content { 
         flex: 1; 
-        overflow: auto; /* ENABLE BOTH HORIZONTAL AND VERTICAL SCROLL */
-        padding: 15px;
+        overflow: auto; /* ALLOWS BOTH X AND Y SCROLLING */
+        padding: 20px;
         -webkit-overflow-scrolling: touch;
     }
 
     .tree-wide-layout {
         display: flex !important;
         flex-direction: row !important;
-        flex-wrap: nowrap !important;
-        gap: 40px;
-        width: max-content; /* Allows horizontal expansion */
-        min-height: min-content; /* Allows vertical expansion */
+        flex-wrap: nowrap !important; /* SIDE BY SIDE */
+        gap: 50px;
+        width: max-content; 
+        min-height: min-content;
         margin: 0 auto;
     }
 
-    .tree-column {
-        flex: 0 0 300px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    /* ----- BOX DESIGN (ORIGINAL) ----- */
+    /* ----- BOXES & FOOTER (AS PER ORIGINAL) ----- */
+    .tree-column { flex: 0 0 300px; display: flex; flex-direction: column; align-items: center; }
     .box {
         border: 2px solid var(--gold);
         border-radius: 12px;
         background: white;
-        width: 260px;
-        padding: 0;
+        width: 270px;
         overflow: hidden;
-        margin-bottom: 0;
         position: relative;
     }
-    .box-header { background: var(--dark-blue); color: var(--gold); font-size: 10px; padding: 3px; font-weight: 700; text-align: center; }
+    .box-header { background: var(--dark-blue); color: var(--gold); font-size: 10px; padding: 4px; text-align: center; font-weight: 700; }
     .box-body { padding: 12px; text-align: center; }
-    .member-name { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 16px; color: var(--maroon); display: block; }
-    .v-line { width: 3px; height: 25px; background: var(--gold); margin: 0 auto; }
-    .golden-heart { position: absolute; top: 5px; right: 5px; font-size: 12px; }
-
-    /* ----- ROOT CARD ----- */
-    .root-card {
-        background: white;
-        border: 3px solid var(--gold);
-        border-radius: 15px;
-        padding: 15px;
-        margin: 0 auto 30px auto;
-        text-align: center;
-        max-width: 600px;
-    }
-
-    /* ----- FOOTER ----- */
+    .member-name { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 17px; color: var(--maroon); }
+    .v-line { width: 3px; height: 30px; background: var(--gold); margin: 0 auto; }
+    
     .app-footer { 
         background: var(--dark-blue); 
         color: var(--gold); 
-        padding: 8px; 
+        padding: 10px; 
         text-align: center; 
         font-size: 11px; 
         font-weight: 600; 
         border-top: 2px solid var(--gold); 
     }
 </style>
-
 <!-- ========================================= -->
 <!-- CSS END                                   -->
 <!-- ========================================= -->
