@@ -10,6 +10,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <!-- Load external family data -->
+    <script src="family-data.js"></script>
     
 <!-- ========================================= -->
 <!-- CSS START                                 -->
@@ -716,11 +719,14 @@ body {
         // =========================================================================
         // LOAD DATA & INIT
         // =========================================================================
-        const saved = localStorage.getItem('familyDB');
-        if (saved) {
-            db = JSON.parse(saved);
-            LOAD_STAMP = 'Last data updated on: ' + new Date().toLocaleString();
-        }
+        let db = [];
+if (typeof FAMILY_DATA !== 'undefined') {
+    db = FAMILY_DATA;
+} else {
+    // Fallback if the external file isn't loaded yet
+    const saved = localStorage.getItem('familyDB');
+    if (saved) db = JSON.parse(saved);
+}
 
 // =========================================================================
 // STATE PRESERVATION (Saves data during mobile refresh)
