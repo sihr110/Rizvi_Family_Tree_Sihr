@@ -74,6 +74,7 @@
             align-items: center;
             border-bottom: 3px solid var(--gold);
             position: relative;
+            z-index: 100;
         }
         .header-title {
             font-family: 'Playfair Display', serif;
@@ -123,6 +124,8 @@
             padding: 10px 20px;
             background: var(--dark-blue);
             border-bottom: 2px solid var(--gold);
+            position: relative;
+            z-index: 90;
         }
         .action-btn {
             flex: 1;
@@ -164,16 +167,44 @@
         .menu-toggle { display: none; }
         
         /* ----- MAIN CONTENT ----- */
-        .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: #fffcf8; }
-        #rootSection { display: flex; flex-direction: column; height: 100%; overflow: hidden; flex: 1; }
-        .fixed-header-section { padding: 15px 15px 0 15px; background: #fffcf8; flex-shrink: 0; }
+        .main-content { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            overflow: hidden; 
+            background: #fffcf8;
+            position: relative;
+        }
+        #rootSection { 
+            display: flex; 
+            flex-direction: column; 
+            height: 100%; 
+            overflow: hidden; 
+            flex: 1;
+            position: relative;
+        }
+        .fixed-header-section { 
+            padding: 15px 15px 0 15px; 
+            background: #fffcf8; 
+            flex-shrink: 0;
+            position: relative;
+            z-index: 2000; /* Higher than scrollable content */
+        }
         .border-line { border-top: 3px solid var(--gold); margin: 20px 0 0 0; }
-        .scrollable-content { flex: 1; overflow-y: auto; overflow-x: auto; padding: 0 15px 15px 15px; }
+        .scrollable-content { 
+            flex: 1; 
+            overflow-y: auto; 
+            overflow-x: auto; 
+            padding: 0 15px 15px 15px;
+            position: relative;
+            z-index: 1; /* Lower than dropdown */
+        }
         
-        /* ----- SEARCH SECTION (TWO ROWS) - FIXED FOR NAME DISPLAY ----- */
+        /* ----- SEARCH SECTION (TWO ROWS) ----- */
         .search-row {
             margin-bottom: 15px;
             width: 100%;
+            position: relative;
         }
         .search-label {
             font-weight: 700;
@@ -189,7 +220,7 @@
         }
         .search-input {
             width: 100%;
-            padding: 10px 15px;
+            padding: 12px 15px;
             border: 2px solid #cbd5e1;
             border-radius: 8px;
             font-size: 14px;
@@ -198,16 +229,13 @@
             background: white;
             color: var(--dark-blue);
             font-weight: 500;
-            text-overflow: ellipsis;
         }
         .search-input:focus {
             border-color: var(--gold);
             box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
         }
-        .search-input::placeholder {
-            color: #94a3b8;
-            font-weight: 400;
-        }
+        
+        /* DROPDOWN FIXED - HIGHER Z-INDEX AND POSITIONING */
         .dropdown {
             position: absolute;
             top: 100%;
@@ -216,18 +244,23 @@
             background: white;
             border: 2px solid var(--gold);
             border-radius: 0 0 8px 8px;
-            max-height: 250px;
+            max-height: 300px;
             overflow-y: auto;
             display: none;
-            z-index: 1000;
-            box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+            z-index: 9999; /* Very high to appear above everything */
+            box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+            margin-top: 2px;
         }
+        
         .result-item {
-            padding: 10px 15px;
+            padding: 12px 15px;
             border-bottom: 1px solid #eee;
             cursor: pointer;
             font-size: 14px;
             transition: background 0.2s;
+        }
+        .result-item:last-child {
+            border-bottom: none;
         }
         .result-item:hover {
             background: #faebcd;
@@ -235,18 +268,20 @@
         .result-item .main-name {
             font-weight: 700;
             color: var(--dark-blue);
-            font-size: 14px;
+            font-size: 15px;
+            display: inline-block;
         }
         .result-item .gen {
             color: var(--maroon);
-            font-size: 12px;
+            font-size: 13px;
             margin-left: 8px;
             font-weight: 600;
+            display: inline-block;
         }
         .result-item .father-info {
             font-size: 12px;
             color: #64748b;
-            margin-top: 4px;
+            margin-top: 5px;
         }
         
         /* ----- ROOT CARD STYLES ----- */
@@ -312,19 +347,20 @@
             color: white;
         }
         
-        /* ----- WIDE TREE LAYOUT (like file 7) ----- */
+        /* ----- WIDE TREE LAYOUT - FIXED FOR SIDE BY SIDE ----- */
         .tree-wide-layout {
             display: flex;
             flex-direction: row;
-            gap: 40px;
+            gap: 30px;
             justify-content: center;
             margin: 0 auto;
             padding: 20px;
+            width: 100%;
         }
         
         .tree-column {
             flex: 1;
-            min-width: 300px;
+            min-width: 280px;
             max-width: 450px;
             display: flex;
             flex-direction: column;
@@ -350,7 +386,7 @@
             width: 100%;
         }
         
-        /* ----- MEMBER BOX (updated for wide layout) ----- */
+        /* ----- MEMBER BOX ----- */
         .box {
             border: 2px solid var(--gold);
             border-radius: 12px;
@@ -400,11 +436,15 @@
             font-weight: 700;
             font-size: 16px;
             display: block;
+            white-space: normal;
+            word-break: break-word;
         }
         .father-name {
             font-size: 11px;
             color: #64748b;
             margin-top: 4px;
+            white-space: normal;
+            word-break: break-word;
         }
         .female-box {
             background-color: var(--light-pink) !important;
@@ -439,7 +479,7 @@
             max-width: 500px;
         }
         
-        /* ----- MOBILE RESPONSIVE (updated) ----- */
+        /* ----- MOBILE RESPONSIVE - FIXED FOR SIDE BY SIDE ----- */
         @media screen and (max-width: 768px) {
             body { overflow: auto; -webkit-overflow-scrolling: touch; height: auto; min-height: 100vh; padding: 5px; }
             .app-container { height: auto; min-height: calc(100vh - 10px); border-radius: 16px; overflow: hidden; }
@@ -456,8 +496,23 @@
                 padding: 8px 2px;
             }
             
-            .fixed-header-section { transition: max-height 0.3s ease, padding 0.3s ease, margin 0.3s ease; overflow: hidden; max-height: 500px; padding: 15px 15px 10px 15px; background: #fffcf8; }
-            .fixed-header-section.collapsed { max-height: 0; padding-top: 0; padding-bottom: 0; margin: 0; border-bottom: none; }
+            .fixed-header-section { 
+                transition: max-height 0.3s ease, padding 0.3s ease, margin 0.3s ease; 
+                overflow: visible; /* Changed from hidden to visible */
+                max-height: 500px; 
+                padding: 15px 15px 10px 15px; 
+                background: #fffcf8;
+                position: relative;
+                z-index: 2000;
+            }
+            .fixed-header-section.collapsed { 
+                max-height: 0; 
+                padding-top: 0; 
+                padding-bottom: 0; 
+                margin: 0; 
+                border-bottom: none;
+                overflow: hidden;
+            }
             
             .search-wrapper { width: 100%; }
             .search-input { 
@@ -467,58 +522,59 @@
                 height: 48px;
             }
             
-            .box { min-width: 220px; max-width: 280px; margin: 0 auto; }
-            .member-name { font-size: 18px !important; }
+            .box { min-width: 200px; max-width: 260px; margin: 0 auto; }
+            .member-name { font-size: 16px !important; }
             .father-name { font-size: 11px; }
             
+            /* Fixed: Trees side by side on tablets and landscape */
             .tree-wide-layout {
                 flex-direction: row;
                 flex-wrap: wrap;
-                align-items: flex-start;
-                gap: 30px;
+                gap: 20px;
                 padding: 15px;
             }
             .tree-column {
-                width: calc(50% - 15px);
-                min-width: 280px;
-                max-width: none;
+                width: calc(50% - 10px);
+                min-width: 240px;
                 flex: 1 1 auto;
             }
             
-            .dropdown { max-height: 200px; font-size: 14px; }
+            .dropdown { 
+                max-height: 250px; 
+                font-size: 14px;
+                position: absolute;
+                z-index: 9999;
+            }
             .result-item { padding: 12px 15px; }
             .app-footer { padding: 10px; font-size: 10px; }
             .v-line { height: 20px; }
         }
         
-        @media screen and (max-width: 650px) {
+        /* Fixed: Stack on very small screens */
+        @media screen and (max-width: 600px) {
             .tree-wide-layout {
                 flex-direction: column;
                 align-items: center;
             }
             .tree-column {
                 width: 100%;
-                max-width: 350px;
+                max-width: 320px;
             }
         }
         
         @media screen and (max-width: 380px) {
-            .box { min-width: 180px; max-width: 240px; }
-            .member-name { font-size: 16px !important; }
+            .box { min-width: 160px; max-width: 220px; }
+            .member-name { font-size: 14px !important; }
             .action-btn { font-size: 9px; }
         }
 
-        /* Better vertical mode handling for landscape/wide screens */
+        /* Landscape mode */
         @media screen and (min-width: 1024px) and (orientation: landscape) {
             .tree-wide-layout {
-                gap: 60px;
+                gap: 40px;
             }
             .tree-column {
-                max-width: 500px;
-            }
-            .box {
-                min-width: 300px;
-                max-width: 400px;
+                max-width: 450px;
             }
         }
 
@@ -687,7 +743,7 @@
         }
 
         // =========================================================================
-        // SEARCH DROPDOWN - FIXED for better display
+        // SEARCH DROPDOWN - FIXED FOR BETTER DISPLAY
         // =========================================================================
         window.searchMember = function(query, num) {
             const drop = document.getElementById(`dropdown${num}`);
@@ -698,6 +754,7 @@
                 return;
             }
             
+            // Show up to 8 results
             const found = db.filter(p => p.name.toLowerCase().includes(query.toLowerCase())).slice(0, 8);
             if (found.length === 0) {
                 drop.style.display = 'none';
@@ -708,7 +765,6 @@
                 const div = document.createElement('div');
                 div.className = 'result-item';
                 
-                // Create better formatted result item
                 const nameDisplay = displayName(p.name);
                 const fatherDisplay = displayName(p.father);
                 const relation = p.gender?.startsWith('F') ? 'D/o' : 'S/o';
@@ -723,7 +779,7 @@
                 
                 div.onclick = (e) => {
                     e.stopPropagation();
-                    // Set the input value with full name and generation
+                    // Show full name with generation in search input
                     document.getElementById(`search${num}`).value = `${nameDisplay} (${p.gen})`;
                     if (num === 1) member1 = p;
                     else member2 = p;
@@ -736,7 +792,9 @@
                 drop.appendChild(div);
             });
             
+            // Make sure dropdown appears above everything
             drop.style.display = 'block';
+            drop.style.zIndex = '9999';
         };
 
         document.addEventListener('click', function(e) {
@@ -747,17 +805,15 @@
         });
 
         // =========================================================================
-        // RENDER BOX (updated with heart for children)
+        // RENDER BOX
         // =========================================================================
         function renderBox(member, label, isRoot, isSelected) {
             const isFemale = member.gender?.startsWith('F');
             const blinkClass = isSelected ? 'blinking-box' : '';
             const rootClass = isRoot ? 'root-box' : '';
             
-            // Check if member has children
             const hasChildren = db.some(x => x.father && x.father.toLowerCase() === member.name.toLowerCase());
             
-            // Create a safe string for the onclick handler
             const memberStr = JSON.stringify(member).replace(/"/g, '&quot;');
             
             return `<div class="box ${isFemale ? 'female-box' : ''} ${blinkClass} ${rootClass}" onclick='handleBoxClick(${memberStr})'>
@@ -777,12 +833,11 @@
         window.handleBoxClick = function(member) {
             if (!member || !member.name) return;
             console.log('Box clicked:', member);
-            // You can add functionality here, like selecting this member
             alert('Clicked: ' + displayName(member.name));
         };
 
         // =========================================================================
-        // RENDER ROOT TREE (FIXED for side-by-side layout)
+        // RENDER ROOT TREE - FIXED FOR SIDE BY SIDE
         // =========================================================================
         function renderRootTree() {
             if (!member1 || !member2) return;
@@ -815,7 +870,6 @@
             const gap2 = Math.abs(gen2 - genRoot);
             const gap12 = Math.abs(gen1 - gen2);
             
-            // Build the header card
             let html = `
                 <div class="root-card">
                     <div class="root-title">Common Root Ancestor</div>
@@ -834,7 +888,6 @@
                         <div class="path-chain">
             `;
             
-            // Member 1 path (from selected to root)
             [...path1].reverse().forEach((member, index) => {
                 const isRoot = member.name.toLowerCase() === commonRoot.name.toLowerCase();
                 const label = index === 0 ? 'Selected' : (isRoot ? 'Root' : '');
@@ -854,7 +907,6 @@
                         <div class="path-chain">
             `;
             
-            // Member 2 path (from selected to root)
             [...path2].reverse().forEach((member, index) => {
                 const isRoot = member.name.toLowerCase() === commonRoot.name.toLowerCase();
                 const label = index === 0 ? 'Selected' : (isRoot ? 'Root' : '');
@@ -876,7 +928,7 @@
         }
 
         // =========================================================================
-        // PDF EXPORT (updated for wide layout)
+        // PDF EXPORT
         // =========================================================================
         window.exportPDF = async function() {
             if (!member1 || !member2) {
