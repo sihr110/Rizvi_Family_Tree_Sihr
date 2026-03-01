@@ -173,12 +173,13 @@
             z-index: 2000;
         }
         .border-line { border-top: 3px solid var(--gold); margin: 20px 0 0 0; }
-       .scrollable-content {
+.scrollable-content {
     flex: 1;
     overflow: auto;
-    padding: 0 15px 15px 15px;
-    /* This ensures the scrollbars account for the smaller items */
-    display: block; 
+    padding: 10px;
+    display: flex;
+    /* Aligns the tree to the top-left so it doesn't float in the middle */
+    align-items: flex-start; 
 }
         
         /* ----- SEARCH SECTION ----- */
@@ -207,18 +208,14 @@
         
         /* ----- WIDE TREE LAYOUT (SIDE BY SIDE) ----- */
 .tree-wide-layout {
-    transform: scale(0.5);
-    transform-origin: top left;
     display: inline-flex;
     align-items: flex-start;
     flex-direction: row;
     gap: 30px;
-    justify-content: center;
-    width: fit-content;
-    /* These negative margins remove the "Ghost Space" created by scale(0.5) */
-    margin-right: -50%; 
-    margin-bottom: -50%;
-    padding: 15px;
+    padding: 20px;
+    /* This makes the canvas shrink and wrap tightly around the trees */
+    zoom: 0.5; 
+    width: max-content;
 }
         .tree-column {
             flex: 0 0 320px;
