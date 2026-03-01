@@ -348,27 +348,26 @@
         }
         
         /* ----- WIDE TREE LAYOUT - FIXED FOR SIDE BY SIDE ----- */
-        .tree-wide-layout {
-            display: flex;
-            flex-direction: row;
-            gap: 30px;
-            justify-content: center;
-            margin: 0 auto;
-            padding: 20px;
-            width: 100%;
-            flex-wrap: wrap;
-        }
-        
-        .tree-column {
-            flex: 0 1 400px;
-            min-width: 300px;
-            max-width: 450px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 0 auto;
-        }
-        
+        /* Replace the entire .tree-wide-layout and .tree-column with this: */
+
+.tree-wide-layout {
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 100%;
+    padding: 15px;
+}
+
+.tree-column {
+    flex: 1 1 300px;
+    min-width: 280px;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
         .tree-column h3 {
             color: var(--maroon);
             margin-bottom: 20px;
