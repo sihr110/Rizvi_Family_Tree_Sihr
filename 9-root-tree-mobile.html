@@ -14,7 +14,6 @@
 <!-- ========================================= -->
 <!-- CSS START                                 -->
 <!-- ========================================= -->
-
 <style>
         /* ===== GLOBAL RESET & VARIABLES ===== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -43,11 +42,11 @@
         }
 
         /* ----- BASE LAYOUT ----- */
-        body {
+      body {
             font-family: 'Inter', sans-serif;
             background: #1a1a1a;
-            height: 100vh;
-            overflow: hidden;
+            height: auto;      /* CHANGE THIS from 100vh */
+            overflow: auto;    /* This is now correct */
             margin: 0;
             padding: 10px;
         }
@@ -55,12 +54,12 @@
             max-width: 1400px;
             margin: 0 auto;
             background: white;
-            height: calc(100vh - 20px);
+            min-height: calc(100vh - 20px);
             display: flex;
             flex-direction: column;
             border-radius: 20px;
             border: 2px solid var(--gold);
-            overflow: hidden;
+            overflow: visible;
             box-shadow: 0 0 50px rgba(212, 175, 55, 0.2);
         }
         
@@ -154,15 +153,15 @@
             flex: 1; 
             display: flex; 
             flex-direction: column; 
-            overflow: hidden; 
+            overflow: visible;
             background: #fffcf8;
             position: relative;
         }
         #rootSection { 
             display: flex; 
             flex-direction: column; 
-            height: 100%; 
-            overflow: hidden; 
+            height: auto;
+            overflow: visible; /* FIXED: Removed hidden lock */
             flex: 1;
             position: relative;
         }
@@ -209,17 +208,18 @@
         
         /* ----- WIDE TREE LAYOUT (SIDE BY SIDE) ----- */
         .tree-wide-layout {
-            display: flex;
+            display: inline-flex;
+            align-items: flex-start;
             flex-direction: row;
             gap: 30px;
             justify-content: center;
             width: fit-content;
             min-width: 100%;
-            margin: 0 auto;
+            margin: 0; /* FIXED: Removed auto-center for better canvas alignment */
             padding: 15px;
         }
         .tree-column {
-            flex: 1 1 300px;
+            flex: 0 0 320px;
             min-width: 280px;
             max-width: 400px;
             display: flex;
@@ -252,8 +252,7 @@
         
         /* ----- RESPONSIVE STACKING ----- */
         @media screen and (max-width: 650px) {
-            .tree-wide-layout { flex-direction: column; align-items: center; }
-            .tree-column { flex: 0 1 100%; width: 100%; max-width: 350px; }
+            .tree-column { flex: 0 0 320px; width: 320px; max-width: 350px; } /* FIXED: Keeps side-by-side on mobile */
             body { overflow: auto; height: auto; padding: 5px; }
             .app-container { height: auto; border-radius: 16px; }
             .fixed-header-section { padding: 15px 15px 10px 15px; }
