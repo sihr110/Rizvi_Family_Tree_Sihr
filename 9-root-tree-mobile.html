@@ -170,33 +170,43 @@
         .border-line { border-top: 3px solid var(--gold); margin: 20px 0 0 0; }
         .scrollable-content { flex: 1; overflow-y: auto; overflow-x: auto; padding: 0 15px 15px 15px; }
         
-        /* ----- SEARCH SECTION (TWO ROWS) ----- */
+        /* ----- SEARCH SECTION (TWO ROWS) - FIXED FOR NAME DISPLAY ----- */
         .search-row {
-            margin-bottom: 12px;
+            margin-bottom: 15px;
+            width: 100%;
         }
         .search-label {
             font-weight: 700;
             color: var(--maroon);
             font-size: 13px;
             text-transform: uppercase;
-            margin-bottom: 5px;
+            margin-bottom: 6px;
             white-space: nowrap;
         }
         .search-wrapper {
             position: relative;
+            width: 100%;
         }
         .search-input {
             width: 100%;
-            padding: 8px 15px;
+            padding: 10px 15px;
             border: 2px solid #cbd5e1;
-            border-radius: 4px;
-            font-size: 13px;
+            border-radius: 8px;
+            font-size: 14px;
             outline: none;
             transition: all 0.3s;
+            background: white;
+            color: var(--dark-blue);
+            font-weight: 500;
+            text-overflow: ellipsis;
         }
         .search-input:focus {
             border-color: var(--gold);
             box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+        }
+        .search-input::placeholder {
+            color: #94a3b8;
+            font-weight: 400;
         }
         .dropdown {
             position: absolute;
@@ -205,18 +215,19 @@
             right: 0;
             background: white;
             border: 2px solid var(--gold);
-            border-radius: 0 0 4px 4px;
-            max-height: 200px;
+            border-radius: 0 0 8px 8px;
+            max-height: 250px;
             overflow-y: auto;
             display: none;
             z-index: 1000;
-            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.15);
         }
         .result-item {
-            padding: 8px 12px;
+            padding: 10px 15px;
             border-bottom: 1px solid #eee;
             cursor: pointer;
-            font-size: 13px;
+            font-size: 14px;
+            transition: background 0.2s;
         }
         .result-item:hover {
             background: #faebcd;
@@ -224,11 +235,18 @@
         .result-item .main-name {
             font-weight: 700;
             color: var(--dark-blue);
+            font-size: 14px;
         }
         .result-item .gen {
             color: var(--maroon);
-            font-size: 11px;
-            margin-left: 6px;
+            font-size: 12px;
+            margin-left: 8px;
+            font-weight: 600;
+        }
+        .result-item .father-info {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 4px;
         }
         
         /* ----- ROOT CARD STYLES ----- */
@@ -294,48 +312,58 @@
             color: white;
         }
         
-        /* ----- PATHS CONTAINER (TWO COLUMNS) ----- */
-        .paths-container {
+        /* ----- WIDE TREE LAYOUT (like file 7) ----- */
+        .tree-wide-layout {
             display: flex;
             flex-direction: row;
-            gap: 30px;
+            gap: 40px;
             justify-content: center;
-            padding: 10px;
+            margin: 0 auto;
+            padding: 20px;
         }
         
-        .path-column {
+        .tree-column {
             flex: 1;
-            max-width: 350px;
-            min-width: 280px;
+            min-width: 300px;
+            max-width: 450px;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
         
-        .path-column h3 {
+        .tree-column h3 {
             color: var(--maroon);
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             font-size: 14px;
             text-align: center;
             border-bottom: 2px solid var(--gold);
-            padding-bottom: 5px;
+            padding-bottom: 8px;
+            width: 100%;
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+        }
+        
+        .path-chain {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             width: 100%;
         }
         
-        /* ----- MEMBER BOX ----- */
+        /* ----- MEMBER BOX (updated for wide layout) ----- */
         .box {
             border: 2px solid var(--gold);
             border-radius: 12px;
             background: white;
-            min-width: 240px;
-            max-width: 280px;
+            min-width: 260px;
+            max-width: 320px;
             width: 100%;
             text-align: center;
             cursor: pointer;
             position: relative;
             box-shadow: 0 4px 8px rgba(0,0,0,0.05);
             transition: transform 0.2s;
-            margin: 0 auto 8px;
+            margin: 0 auto;
         }
         .box:hover {
             transform: translateY(-3px);
@@ -386,13 +414,14 @@
             width: 3px;
             height: 25px;
             background: var(--gold);
-            margin: 5px auto;
+            margin: 10px auto;
         }
-        .path-connector {
-            width: 3px;
-            height: 20px;
-            background: var(--gold);
-            margin: 5px auto;
+        .golden-heart {
+            position: absolute;
+            bottom: 5px;
+            right: 8px;
+            color: var(--gold);
+            font-size: 16px;
         }
         
         /* ----- FOOTER ----- */
@@ -410,7 +439,7 @@
             max-width: 500px;
         }
         
-        /* ----- MOBILE RESPONSIVE ----- */
+        /* ----- MOBILE RESPONSIVE (updated) ----- */
         @media screen and (max-width: 768px) {
             body { overflow: auto; -webkit-overflow-scrolling: touch; height: auto; min-height: 100vh; padding: 5px; }
             .app-container { height: auto; min-height: calc(100vh - 10px); border-radius: 16px; overflow: hidden; }
@@ -431,40 +460,66 @@
             .fixed-header-section.collapsed { max-height: 0; padding-top: 0; padding-bottom: 0; margin: 0; border-bottom: none; }
             
             .search-wrapper { width: 100%; }
-            .search-input { width: 100%; font-size: 16px; padding: 12px 15px; height: 48px; }
+            .search-input { 
+                width: 100%; 
+                font-size: 16px; 
+                padding: 12px 15px; 
+                height: 48px;
+            }
             
-            .box { min-width: 200px; max-width: 260px; margin: 0 auto; }
+            .box { min-width: 220px; max-width: 280px; margin: 0 auto; }
             .member-name { font-size: 18px !important; }
             .father-name { font-size: 11px; }
             
-            .paths-container {
-                flex-direction: column;
-                align-items: center;
+            .tree-wide-layout {
+                flex-direction: row;
+                flex-wrap: wrap;
+                align-items: flex-start;
                 gap: 30px;
+                padding: 15px;
             }
-            .path-column {
-                width: 100%;
-                max-width: 320px;
+            .tree-column {
+                width: calc(50% - 15px);
+                min-width: 280px;
+                max-width: none;
+                flex: 1 1 auto;
             }
             
             .dropdown { max-height: 200px; font-size: 14px; }
             .result-item { padding: 12px 15px; }
             .app-footer { padding: 10px; font-size: 10px; }
+            .v-line { height: 20px; }
         }
+        
+        @media screen and (max-width: 650px) {
+            .tree-wide-layout {
+                flex-direction: column;
+                align-items: center;
+            }
+            .tree-column {
+                width: 100%;
+                max-width: 350px;
+            }
+        }
+        
         @media screen and (max-width: 380px) {
-            .box { min-width: 160px; max-width: 220px; }
+            .box { min-width: 180px; max-width: 240px; }
             .member-name { font-size: 16px !important; }
             .action-btn { font-size: 9px; }
         }
 
-        /* Better vertical mode handling */
-        @media screen and (max-width: 480px) and (orientation: portrait) {
-            .scrollable-content {
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-                padding: 10px 5px;
+        /* Better vertical mode handling for landscape/wide screens */
+        @media screen and (min-width: 1024px) and (orientation: landscape) {
+            .tree-wide-layout {
+                gap: 60px;
             }
-            .box { min-width: 160px; }
+            .tree-column {
+                max-width: 500px;
+            }
+            .box {
+                min-width: 300px;
+                max-width: 400px;
+            }
         }
 
         /* Prevent pull-to-refresh */
@@ -632,7 +687,7 @@
         }
 
         // =========================================================================
-        // SEARCH DROPDOWN
+        // SEARCH DROPDOWN - FIXED for better display
         // =========================================================================
         window.searchMember = function(query, num) {
             const drop = document.getElementById(`dropdown${num}`);
@@ -652,11 +707,24 @@
             found.forEach(p => {
                 const div = document.createElement('div');
                 div.className = 'result-item';
-                div.innerHTML = `<div><span class="main-name">${displayName(p.name)}</span> <span class="gen">(${p.gen})</span></div>
-                    <div style="font-size:11px;">${p.gender?.startsWith('F') ? 'D/o' : 'S/o'} ${displayName(p.father)}</div>`;
+                
+                // Create better formatted result item
+                const nameDisplay = displayName(p.name);
+                const fatherDisplay = displayName(p.father);
+                const relation = p.gender?.startsWith('F') ? 'D/o' : 'S/o';
+                
+                div.innerHTML = `
+                    <div>
+                        <span class="main-name">${nameDisplay}</span> 
+                        <span class="gen">${p.gen}</span>
+                    </div>
+                    <div class="father-info">${relation} ${fatherDisplay}</div>
+                `;
+                
                 div.onclick = (e) => {
                     e.stopPropagation();
-                    document.getElementById(`search${num}`).value = displayName(p.name) + ' (' + p.gen + ')';
+                    // Set the input value with full name and generation
+                    document.getElementById(`search${num}`).value = `${nameDisplay} (${p.gen})`;
                     if (num === 1) member1 = p;
                     else member2 = p;
                     
@@ -679,25 +747,42 @@
         });
 
         // =========================================================================
-        // RENDER BOX
+        // RENDER BOX (updated with heart for children)
         // =========================================================================
         function renderBox(member, label, isRoot, isSelected) {
             const isFemale = member.gender?.startsWith('F');
             const blinkClass = isSelected ? 'blinking-box' : '';
             const rootClass = isRoot ? 'root-box' : '';
             
-            return `<div class="box ${isFemale ? 'female-box' : ''} ${blinkClass} ${rootClass}">
+            // Check if member has children
+            const hasChildren = db.some(x => x.father && x.father.toLowerCase() === member.name.toLowerCase());
+            
+            // Create a safe string for the onclick handler
+            const memberStr = JSON.stringify(member).replace(/"/g, '&quot;');
+            
+            return `<div class="box ${isFemale ? 'female-box' : ''} ${blinkClass} ${rootClass}" onclick='handleBoxClick(${memberStr})'>
                 <div class="box-header"><span>${label}</span></div>
                 <div class="box-body">
                     <span class="member-name">${displayName(member.name)}</span>
                     <span style="font-size: 11px; color: #64748b; display: block; margin: 2px 0 4px 0;">${member.gen}</span>
                     <span class="father-name">${isFemale ? 'D/o' : 'S/o'}: ${displayName(member.father)}</span>
+                    ${hasChildren ? '<div class="golden-heart">❤️</div>' : ''}
                 </div>
             </div>`;
         }
 
         // =========================================================================
-        // RENDER ROOT TREE
+        // BOX CLICK HANDLER
+        // =========================================================================
+        window.handleBoxClick = function(member) {
+            if (!member || !member.name) return;
+            console.log('Box clicked:', member);
+            // You can add functionality here, like selecting this member
+            alert('Clicked: ' + displayName(member.name));
+        };
+
+        // =========================================================================
+        // RENDER ROOT TREE (FIXED for side-by-side layout)
         // =========================================================================
         function renderRootTree() {
             if (!member1 || !member2) return;
@@ -730,6 +815,7 @@
             const gap2 = Math.abs(gen2 - genRoot);
             const gap12 = Math.abs(gen1 - gen2);
             
+            // Build the header card
             let html = `
                 <div class="root-card">
                     <div class="root-title">Common Root Ancestor</div>
@@ -742,11 +828,13 @@
                     </div>
                 </div>
                 
-                <div class="paths-container">
-                    <div class="path-column">
+                <div class="tree-wide-layout">
+                    <div class="tree-column">
                         <h3>${displayName(member1.name)}'s Path to Root</h3>
+                        <div class="path-chain">
             `;
             
+            // Member 1 path (from selected to root)
             [...path1].reverse().forEach((member, index) => {
                 const isRoot = member.name.toLowerCase() === commonRoot.name.toLowerCase();
                 const label = index === 0 ? 'Selected' : (isRoot ? 'Root' : '');
@@ -754,12 +842,19 @@
                 
                 html += renderBox(member, label, isRoot, isSelected);
                 if (index < path1.length - 1) {
-                    html += '<div class="path-connector"></div>';
+                    html += '<div class="v-line"></div>';
                 }
             });
             
-            html += `</div><div class="path-column"><h3>${displayName(member2.name)}'s Path to Root</h3>`;
+            html += `
+                        </div>
+                    </div>
+                    <div class="tree-column">
+                        <h3>${displayName(member2.name)}'s Path to Root</h3>
+                        <div class="path-chain">
+            `;
             
+            // Member 2 path (from selected to root)
             [...path2].reverse().forEach((member, index) => {
                 const isRoot = member.name.toLowerCase() === commonRoot.name.toLowerCase();
                 const label = index === 0 ? 'Selected' : (isRoot ? 'Root' : '');
@@ -767,16 +862,21 @@
                 
                 html += renderBox(member, label, isRoot, isSelected);
                 if (index < path2.length - 1) {
-                    html += '<div class="path-connector"></div>';
+                    html += '<div class="v-line"></div>';
                 }
             });
             
-            html += `</div></div>`;
+            html += `
+                        </div>
+                    </div>
+                </div>
+            `;
+            
             document.getElementById('rootTree').innerHTML = html;
         }
 
         // =========================================================================
-        // PDF EXPORT
+        // PDF EXPORT (updated for wide layout)
         // =========================================================================
         window.exportPDF = async function() {
             if (!member1 || !member2) {
