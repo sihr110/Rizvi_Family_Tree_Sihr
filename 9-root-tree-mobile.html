@@ -674,10 +674,14 @@ window.exportPDF = async function() {
 
         pdf.addImage(imgData, 'PNG', 10, 10, pdfW, pdfH);
        
-// 1. Create a clean filename using the actual names
-const name1 = member1.name.replace(/\s+/g, '_');
-const name2 = member2.name.replace(/\s+/g, '_');
-const fileName = `Root_${name1}_and_${name2}.pdf`;
+// 1. Create a clean filename (Safe for GitHub & PC)
+const clean = (str) => str.trim().replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-]/g, '');
+
+const name1 = clean(member1.name);
+const name2 = clean(member2.name);
+
+// This creates the clean format: Name1-and-Name2.pdf
+const fileName = `${name1}-and-${name2}.pdf`;
 
 // 2. Save the PDF with the new name
 pdf.save(fileName);
