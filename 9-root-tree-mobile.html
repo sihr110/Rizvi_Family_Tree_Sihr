@@ -605,107 +605,77 @@
         // =========================================================================
         // PDF EXPORT
         // =========================================================================
-        window.exportPDF = async function() {
-            if (!member1 || !member2) {
-                alert('Please select both members first');
-                return;
-            }
-            
-            const content = document.getElementById('rootTree');
-            
-            try {
-                const header = document.createElement('div');
-                header.style.marginBottom = '30px';
-                header.style.textAlign = 'center';
-                header.innerHTML = `
-                    <h1 style="color: #d4af37; font-size: 36px; font-family: 'Playfair Display', serif; margin:0 0 10px 0;">Rizvi Family - Root Analysis</h1>
-                    <h2 style="color:#5a0000; font-size:24px; font-family:'Playfair Display', serif; margin:0;">${displayName(member1.name)} & ${displayName(member2.name)}</h2>
-                `;
-                
-                const footer = document.createElement('div');
-                footer.style.marginTop = '40px';
-                footer.style.padding = '15px 20px';
-                footer.style.border = '2px solid #d4af37';
-                footer.style.borderRadius = '4px';
-                footer.style.background = '#0f172a';
-                footer.style.color = '#d4af37';
-                footer.style.display = 'flex';
-                footer.style.justifyContent = 'space-between';
-                footer.style.alignItems = 'center';
-                footer.style.fontSize = '11px';
-                
-                const timeStr = formatCurrentTime();
-                footer.innerHTML = `<span>${LOAD_STAMP || 'Last data updated on: Unknown'}</span><span style="font-weight: 500;">PDF generated: ${timeStr}</span>`;
-                
-                const signature = document.createElement('div');
-                signature.style.marginTop = '20px';
-                signature.style.paddingTop = '15px';
-                signature.style.borderTop = '1px solid #ddd';
-                signature.style.textAlign = 'center';
-                signature.style.color = '#000';
-                signature.style.fontSize = '12px';
-                signature.style.fontWeight = '500';
-                signature.textContent = 'Imran Haider S/o Syed Risalat Hussain Rizvi | 0332-787-6010';
-                
-                content.insertBefore(header, content.firstChild);
-                content.appendChild(footer);
-                content.appendChild(signature);
-                
-                const loadingMsg = document.createElement('div');
-                loadingMsg.style.position = 'fixed';
-                loadingMsg.style.top = '50%';
-                loadingMsg.style.left = '50%';
-                loadingMsg.style.transform = 'translate(-50%, -50%)';
-                loadingMsg.style.background = '#5a0000';
-                loadingMsg.style.color = 'white';
-                loadingMsg.style.padding = '20px 40px';
-                loadingMsg.style.borderRadius = '8px';
-                loadingMsg.style.zIndex = '9999';
-                loadingMsg.style.boxShadow = '0 4px 20px rgba(0,0,0,0.3)';
-                loadingMsg.textContent = '📄 Preparing PDF... please wait';
-                document.body.appendChild(loadingMsg);
-                
-                await new Promise(resolve => setTimeout(resolve, 500));
-                
-             const canvas = await html2canvas(content, {
-    scale: 2,
-    backgroundColor: '#ffffff',
-    logging: false,
-    allowTaint: true,
-    useCORS: true,
-    // Add these two lines to capture the full horizontal width
-    width: content.scrollWidth, 
-    windowWidth: content.scrollWidth 
-});
-                
-                content.removeChild(header);
-                content.removeChild(footer);
-                content.removeChild(signature);
-                document.body.removeChild(loadingMsg);
-                
-                const imgData = canvas.toDataURL('image/png');
-                const { jsPDF } = window.jspdf;
-                
-                const w = canvas.width / 2 * 0.264583;
-                const h = canvas.height / 2 * 0.264583;
-                
-                const pdf = new jsPDF({
-                    orientation: w > h ? 'l' : 'p',
-                    unit: 'mm',
-                    format: [w + 40, h + 40]
-                });
-                
-                pdf.addImage(imgData, 'PNG', 20, 20, w, h);
-                
-                const safeName1 = displayName(member1.name).replace(/[^a-z0-9]/gi, '_').toLowerCase();
-                const safeName2 = displayName(member2.name).replace(/[^a-z0-9]/gi, '_').toLowerCase();
-                pdf.save(`root_${safeName1}_${safeName2}_${Date.now()}.pdf`);
-                
-            } catch (err) {
-                console.error('PDF Error:', err);
-                alert('❌ PDF generation failed: ' + err.message);
-            }
-        };
+
+window.exportPDF = async function() {
+    if (!member1 || !member2) {
+        alert('Please select both members first');
+        return;
+    }
+    
+    const content = document.getElementById('rootTree');
+    const treeLayout = document.querySelector('.tree-wide-layout');
+    
+    // SAVE ORIGINAL STATE
+    const originalZoom = treeLayout.style.zoom;
+    
+    try {
+        // 1. Prepare for high-res capture: Remove the 0.5 zoom
+        treeLayout.style.zoom = "1"; 
+        
+        // Add Header/Footer for PDF
+        const header = document.createElement('div');
+        header.style.cssText = "margin-bottom:30px; text-align:center; width:100%;";
+        header.innerHTML = `
+            <h1 style="color: #d4af37; font-size: 36px; font-family: 'Playfair Display', serif; margin:0 0 10px 0;">Rizvi Family - Root Analysis</h1>
+            <h2 style="color:#5a0000; font-size:24px; font-family:'Playfair Display', serif; margin:0;">${displayName(member1.name)} & ${displayName(member2.name)}</h2>
+        `;
+        
+        const footer = document.createElement('div');
+        footer.style.cssText = "margin-top:40px; padding:15px; border:2px solid #d4af37; background:#0f172a; color:#d4af37; display:flex; justify-content:space-between; font-size:12px; width:100%;";
+        footer.innerHTML = `<span>Generated: ${formatCurrentTime()}</span><span>Developer: Imran Haider</span>`;
+        
+        content.insertBefore(header, content.firstChild);
+        content.appendChild(footer);
+
+        // 2. Capture using the full "un-zoomed" width to prevent cutting
+        const canvas = await html2canvas(content, {
+            scale: 2, 
+            backgroundColor: '#ffffff',
+            useCORS: true,
+            logging: false,
+            width: content.scrollWidth,    // Captures the full horizontal spread
+            windowWidth: content.scrollWidth 
+        });
+
+        // 3. RESTORE original mobile layout immediately
+        treeLayout.style.zoom = originalZoom;
+        content.removeChild(header);
+        content.removeChild(footer);
+
+        // 4. Create PDF
+        const { jsPDF } = window.jspdf;
+        const imgData = canvas.toDataURL('image/png');
+        
+        // Calculate dimensions in mm (1px = 0.264583mm)
+        const pdfW = (canvas.width / 2) * 0.264583;
+        const pdfH = (canvas.height / 2) * 0.264583;
+
+        const pdf = new jsPDF({
+            orientation: pdfW > pdfH ? 'l' : 'p',
+            unit: 'mm',
+            format: [pdfW + 20, pdfH + 20] // Adds a small margin
+        });
+
+        pdf.addImage(imgData, 'PNG', 10, 10, pdfW, pdfH);
+        pdf.save(`root_analysis_${Date.now()}.pdf`);
+
+    } catch (err) {
+        // Safety: Ensure zoom is restored even if it fails
+        treeLayout.style.zoom = originalZoom;
+        console.error('PDF Error:', err);
+        alert('❌ Error: ' + err.message);
+    }
+};
 
         // =========================================================================
         // LOAD DATA & INIT
