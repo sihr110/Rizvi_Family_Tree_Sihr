@@ -606,7 +606,8 @@
         // PDF EXPORT
         // =========================================================================
 
-window.exportPDF = async function() {
+window.export
+ = async function() {
     if (!member1 || !member2) {
         alert('Please select both members first');
         return;
@@ -667,7 +668,16 @@ window.exportPDF = async function() {
         });
 
         pdf.addImage(imgData, 'PNG', 10, 10, pdfW, pdfH);
-        pdf.save(`root_analysis_${Date.now()}.pdf`);
+       
+// 1. Create a clean filename using the actual names
+const name1 = member1.name.replace(/\s+/g, '_');
+const name2 = member2.name.replace(/\s+/g, '_');
+const fileName = `Root_${name1}_and_${name2}.pdf`;
+
+// 2. Save the PDF with the new name
+pdf.save(fileName);
+
+
 
     } catch (err) {
         // Safety: Ensure zoom is restored even if it fails
