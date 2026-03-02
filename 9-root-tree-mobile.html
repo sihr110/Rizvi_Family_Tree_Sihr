@@ -680,10 +680,10 @@ const clean = (str) => str.trim().replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-]/g,
 const name1 = clean(member1.name);
 const name2 = clean(member2.name);
 
-// This creates the clean format: Name1-and-Name2.pdf
-const fileName = `${name1}-and-${name2}.pdf`;
+// 2. This creates: Root-Tree-Name1-and-Name2.pdf
+const fileName = `Root-Tree-${name1}-and-${name2}.pdf`;
 
-// 2. Save the PDF with the new name
+// 3. Save the PDF with the new name
 pdf.save(fileName);
 
 
