@@ -169,15 +169,18 @@
         /* ----- MAIN CONTENT ----- */
         .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: #fffcf8; }
         
-#individualSection { display: block; height: 100%; overflow: auto; flex: 1; }
-
-
+        #individualSection { display: block; height: 100%; overflow: auto; flex: 1; }
 
         .fixed-header-section { padding: 15px 15px 0 15px; background: #fffcf8; flex-shrink: 0; }
         .border-line { border-top: 3px solid var(--gold); margin: 20px 0 0 0; }
         
-
-.scrollable-content { display: flex; align-items: flex-start; justify-content: flex-start; padding: 10px; }
+        .scrollable-content { 
+            display: flex; 
+            align-items: flex-start; 
+            justify-content: flex-start; 
+            padding: 10px;
+            overflow-x: auto;
+        }
         
         /* ----- SEARCH SECTION ----- */
         .search-row { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; }
@@ -197,9 +200,7 @@
         .filter-btn.active { background: #d4edda; border-color: var(--dark-green); }
         
         /* ----- TREE LAYOUT ----- */
-
-
-.tree-root-layout {
+        .tree-root-layout {
             display: inline-flex;
             flex-direction: column;
             align-items: center;
@@ -217,50 +218,113 @@
         .descendant-heading { font-size: 14px; color: var(--maroon); font-weight: 800; margin: 15px 0 5px 0; font-family: 'Playfair Display', serif; text-align: center; width: 100%; border-bottom: 2px solid var(--gold); padding-bottom: 5px; }
         
         /* ----- SISTERS GROUP BOX ----- */
-        .sisters-group-box { border: 2px solid var(--sisters-border); border-radius: 12px; background: var(--sisters-box-bg); min-width: 300px; max-width: 380px; text-align: center; box-shadow: 0 4px 8px rgba(0,0,0,0.05); padding: 12px; margin: 10px auto; }
-        .sisters-group-box .sisters-header { font-size: 14px; font-weight: 800; color: var(--maroon); padding-bottom: 6px; margin-bottom: 6px; text-align: left; border-bottom: 2px solid var(--sisters-border); font-family: 'Playfair Display', serif; }
+        .sisters-group-box { 
+            border: 2px solid var(--sisters-border); 
+            border-radius: 12px; 
+            background: var(--sisters-box-bg); 
+            min-width: 300px; 
+            max-width: 380px; 
+            text-align: left;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05); 
+            padding: 12px; 
+            margin: 10px auto; 
+        }
+        
+        .sisters-group-box .sisters-header { 
+            font-size: 14px; 
+            font-weight: 800; 
+            color: var(--maroon); 
+            padding-bottom: 6px; 
+            margin-bottom: 6px; 
+            text-align: left; 
+            border-bottom: 2px solid var(--sisters-border); 
+            font-family: 'Playfair Display', serif; 
+        }
+        
+        .sisters-group-box table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 8px 0;
+            table-layout: fixed;
+        }
+        
+        .sisters-group-box th {
+            text-align: left;
+            padding: 8px 4px 4px 8px;
+            font-size: 11px;
+            color: var(--maroon);
+            font-weight: 700;
+            background: rgba(251, 113, 133, 0.1);
+        }
+        
+        .sisters-group-box th:last-child {
+            padding: 8px 8px 4px 4px;
+        }
+        
+        .sisters-group-box td {
+            padding: 8px 4px 8px 8px;
+            border-bottom: 1px dashed #fecaca;
+            font-weight: 600;
+            transition: background 0.2s;
+            word-break: break-word;
+            cursor: pointer;
+        }
+        
+        .sisters-group-box td:last-child {
+            padding: 8px 8px 8px 4px;
+            color: var(--maroon);
+            white-space: nowrap;
+        }
+        
+        .sisters-group-box td:hover {
+            background: #faebcd;
+        }
+        
+        .sisters-group-box .father-info {
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid var(--sisters-border);
+            font-size: 11px;
+            color: #64748b;
+            text-align: left;
+        }
         
         /* ----- MEMBER BOX ----- */
-
-.box { border: 2px solid var(--gold); border-radius: 12px; background: white; min-width: 240px; width: auto; max-width: max-content; white-space: nowrap; padding: 0 20px;
-
- text-align: center; position: relative; box-shadow: 0 4px 8px rgba(0,0,0,0.05); transition: transform 0.2s; }
-.female-box { background-color: var(--light-pink) !important; border-color: #fb7185 !important; width: auto !important; max-width: max-content !important; }
-PASTE these lines in their place:
-
-CSS
-.box { 
-    border: 2px solid var(--gold); 
-    border-radius: 12px; 
-    background: white; 
-    min-width: 240px; 
-    width: auto;             /* Added: Allows box to grow */
-    max-width: fit-content;  /* Added: Fits the name exactly */
-    text-align: center; 
-    position: relative; 
-    box-shadow: 0 4px 8px rgba(0,0,0,0.05); 
-    transition: transform 0.2s; 
-    white-space: nowrap;     /* Added: Keeps name on one line */
-    padding-right: 30px;     /* Added: Space for the heart emoji */
-}
-
+        .box { 
+            border: 2px solid var(--gold); 
+            border-radius: 12px; 
+            background: white; 
+            min-width: 240px; 
+            width: auto;
+            max-width: fit-content;
+            text-align: center; 
+            position: relative; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05); 
+            transition: transform 0.2s; 
+            white-space: nowrap;
+            padding-right: 30px;
+            cursor: pointer;
+        }
 
         .box:hover { transform: translateY(-3px); }
         .box.blinking-box { animation: blinkBoxLightGreen 1.5s infinite; border-width: 4px; z-index: 10; transform: scale(1.02); }
-        @keyframes blinkBoxLightGreen { 0%,100%{ border-color:#2e7d32; background:#e8f5e9; box-shadow:0 0 15px rgba(46,125,50,0.4); } 50%{ border-color:#4caf50; background:#c8e6c9; box-shadow:0 0 30px rgba(76,175,80,0.6); transform:scale(1.05); } }
+        
+        @keyframes blinkBoxLightGreen { 
+            0%,100%{ border-color:#2e7d32; background:#e8f5e9; box-shadow:0 0 15px rgba(46,125,50,0.4); } 
+            50%{ border-color:#4caf50; background:#c8e6c9; box-shadow:0 0 30px rgba(76,175,80,0.6); transform:scale(1.05); } 
+        }
+        
         .box-header { display: flex; justify-content: space-between; padding: 6px 10px; background: #f8fafc; font-size: 10px; font-weight: 800; border-bottom: 1px solid #ddd; }
         .box-body { padding: 12px; }
         .member-name { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 16px; display: block; }
         .father-name { font-size: 11px; color: #64748b; margin-top: 4px; }
         
-
-.female-box { 
-    background-color: var(--light-pink) !important; 
-    border-color: #fb7185 !important; 
-    width: auto !important; 
-    max-width: fit-content !important; 
-}
-
+        .female-box { 
+            background-color: var(--light-pink) !important; 
+            border-color: #fb7185 !important; 
+            width: auto !important; 
+            max-width: fit-content !important; 
+        }
 
         .v-line { width: 3px; height: 25px; background: var(--gold); margin: 5px auto; }
         .golden-heart { position: absolute; bottom: 5px; right: 8px; color: var(--gold); font-size: 16px; }
@@ -308,6 +372,7 @@ CSS
             .result-item { padding: 12px 15px; }
             .app-footer { padding: 10px; font-size: 10px; }
         }
+        
         @media screen and (max-width: 380px) {
             .box { min-width: 160px; max-width: 220px; }
             .member-name { font-size: 16px !important; }
@@ -594,33 +659,30 @@ CSS
         };
 
         // =========================================================================
-        // GROUP SISTERS
+        // GROUP SISTERS - FIXED VERSION
         // =========================================================================
         function groupSisters(sistersArray, fatherName, type) {
             if (!sistersArray || sistersArray.length === 0) return '';
             let headerText = type === 'siblings' ? 'SISTERS' : 'DAUGHTERS';
             let html = `<div class="sisters-group-box"><div class="sisters-header"># ${headerText}</div>`;
             
-            html += `<table style="width:100%; border-collapse: collapse; margin: 8px 0; table-layout: fixed;">`;
-            
-            html += `<tr style="border-bottom: 2px solid var(--sisters-border);">
-                        <th style="text-align: center; padding: 8px 4px 4px 8px; font-size: 11px; color: var(--maroon); width: 60%;">Name</th>
-                        <th style="text-align: center; padding: 8px 8px 4px 4px; font-size: 11px; color: var(--maroon); width: 40%;">Gen</th>
+            html += `<table>`;
+            html += `<tr>
+                        <th>Name</th>
+                        <th>Gen</th>
                     </tr>`;
             
             sistersArray.forEach(sister => {
                 const memberData = encodeURIComponent(JSON.stringify(sister));
-                html += `<tr onclick='handleBoxClick(JSON.parse(decodeURIComponent("${memberData}")))' style="cursor: pointer;">
-         
-<td style="text-align: left; padding: 8px 4px 8px 8px; border-bottom: 1px dashed #fecaca; font-weight: 600; transition: background 0.2s; word-break: break-word;" onmouseover="this.style.background='#faebcd'" onmouseout="this.style.background='transparent'">${displayName(sister.name)}</td>
-                            <td style="text-align: left; padding: 8px 4px 8px 8px; border-bottom: 1px dashed #fecaca; font-weight: 600; transition: background 0.2s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" onmouseover="this.style.background='#faebcd'" onmouseout="this.style.background='transparent'">${displayName(sister.name)}</td>
-                            <td style="text-align: left; padding: 8px 8px 8px 4px; border-bottom: 1px dashed #fecaca; color: var(--maroon); transition: background 0.2s; white-space: nowrap;" onmouseover="this.style.background='#faebcd'" onmouseout="this.style.background='transparent'">${sister.gen}</td>
-                        </tr>`;
+                html += `<tr onclick='handleBoxClick(JSON.parse(decodeURIComponent("${memberData}")))'>`;
+                html += `<td>${displayName(sister.name)}</td>`;
+                html += `<td>${sister.gen}</td>`;
+                html += `</tr>`;
             });
             
             html += `</table>`;
             
-            html += `<div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--sisters-border); font-size: 11px; color: #64748b; text-align: left;">
+            html += `<div class="father-info">
                         ${sistersArray[0]?.gender?.startsWith('F') ? 'D/o' : 'S/o'}: ${displayName(fatherName)}
                     </div>`;
             
