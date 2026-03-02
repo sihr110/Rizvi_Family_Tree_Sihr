@@ -17,6 +17,14 @@
 <!-- CSS START                                 -->
 <!-- ========================================= -->
 <style>
+
+	/* Prevent pull-to-refresh */
+	body {
+    	overscroll-behavior-y: contain;
+    	-webkit-overflow-scrolling: touch;
+	}
+
+
         /* ===== GLOBAL RESET & VARIABLES ===== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
@@ -266,7 +274,6 @@
             .search-input { font-size: 16px; height: 48px; }
         }
 
-        body { overscroll-behavior-y: contain; -webkit-overflow-scrolling: touch; }
     </style>
 
 <!-- ========================================= -->
@@ -705,31 +712,88 @@ pdf.save(fileName);
             LOAD_STAMP = 'Last data updated on: ' + new Date().toLocaleString();
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            // mobile menu toggle
-            document.getElementById('mobileMenuToggle')?.addEventListener('click', function() {
-                document.querySelector('.fixed-header-section')?.classList.toggle('collapsed');
-            });
-
-            const saved1 = localStorage.getItem('rootMember1');
-            const saved2 = localStorage.getItem('rootMember2');
-            if (saved1 && saved2) {
-                member1 = JSON.parse(saved1);
-                member2 = JSON.parse(saved2);
-                document.getElementById('search1').value = displayName(member1.name) + ' (' + member1.gen + ')';
-                document.getElementById('search2').value = displayName(member2.name) + ' (' + member2.gen + ')';
-                localStorage.removeItem('rootMember1');
-                localStorage.removeItem('rootMember2');
-                renderRootTree();
-            } else {
-                resetSearch();
-            }
-        });
+        
 
         // expose globals
         window.switchToTable = switchToTable;
         window.goToDashboard = goToDashboard;
         window.resetSearch = resetSearch;
+
+// 3. FINAL LOGIC: State Preservation & Initialization
+        const fromDashboard = sessionStorage.getItem('fromDashboard') === 'true';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mobile menu toggle
+            document.getElementById('mobileMenuToggle')?.addEventListener('click', function() {
+                document.querySelector('.fixed-header-section')?.classList.toggle('collapsed');
+            });
+
+            if (fromDashboard) {
+                // CLEANUP: If coming from dashboard, wipe all temporary data
+                sessionStorage.removeItem('tempRoot1');
+                sessionStorage.removeItem('tempRoot2');
+                sessionStorage.removeItem('fromDashboard');
+                resetSearch();
+            } else {
+                // RESTORE: Check for state from dashboard click OR page refresh
+                const saved1 = localStorage.getItem('rootMember1');
+                const saved2 = localStorage.getItem('rootMember2');
+                const temp1 = sessionStorage.getItem('tempRoot1');
+                const temp2 = sessionStorage.getItem('tempRoot2');
+
+                if (saved1 && saved2) {
+                    member1 = JSON.parse(saved1);
+                    member2 = JSON.parse(saved2);
+                    localStorage.removeItem('rootMember1');
+                    localStorage.removeItem('rootMember2');
+                    updateInputsAndRender();
+                } else if (temp1 && temp2) {
+                    member1 = JSON.parse(temp1);
+                    member2 = JSON.parse(temp2);
+                    updateInputsAndRender();
+                } else {
+                    resetSearch();
+                }
+            }
+        });
+
+        function updateInputsAndRender() {
+            if (member1) document.getElementById('search1').value = displayName(member1.name) + ' (' + member1.gen + ')';
+            if (member2) document.getElementById('search2').value = displayName(member2.name) + ' (' + member2.gen + ')';
+            renderRootTree();
+        }
+
+        // SAVE STATE: Store data before refresh (pull-to-refresh protection)
+        window.addEventListener('beforeunload', function() {
+            if (member1 && member2 && !fromDashboard) {
+                sessionStorage.setItem('tempRoot1', JSON.stringify(member1));
+                sessionStorage.setItem('tempRoot2', JSON.stringify(member2));
+            }
+        });
+
+        // RESET: Ensure everything is cleaned on manual reset
+        function resetSearch() {
+            member1 = null;
+            member2 = null;
+            document.getElementById('search1').value = '';
+            document.getElementById('search2').value = '';
+            document.getElementById('rootTree').innerHTML = `
+                <div class="empty-state">
+                    <div style="font-size:48px; margin-bottom:15px; opacity:0.5;">👥</div>
+                    <div style="font-size:18px; font-weight:600; color:var(--maroon); margin-bottom:8px;">Select two members</div>
+                    <div style="font-size:13px; color:#666;">Search and select two family members above to find their common root</div>
+                </div>
+            `;
+            sessionStorage.removeItem('tempRoot1');
+            sessionStorage.removeItem('tempRoot2');
+        }
+
+        function goToDashboard() {
+            // Signal to clean state when returning
+            sessionStorage.setItem('fromDashboard', 'true');
+            window.location.href = '6-dashboard-mobile.html'; 
+        }
+
     })();
 </script>
 
@@ -738,3 +802,4 @@ pdf.save(fileName);
 <!-- ========================================= -->
 </body>
 </html>
+
