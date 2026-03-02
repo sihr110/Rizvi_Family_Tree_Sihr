@@ -221,7 +221,30 @@
         .sisters-group-box .sisters-header { font-size: 14px; font-weight: 800; color: var(--maroon); padding-bottom: 6px; margin-bottom: 6px; text-align: left; border-bottom: 2px solid var(--sisters-border); font-family: 'Playfair Display', serif; }
         
         /* ----- MEMBER BOX ----- */
-        .box { border: 2px solid var(--gold); border-radius: 12px; background: white; min-width: 240px; max-width: 280px; text-align: center; cursor: pointer; position: relative; box-shadow: 0 4px 8px rgba(0,0,0,0.05); transition: transform 0.2s; }
+
+.box { border: 2px solid var(--gold); border-radius: 12px; background: white; min-width: 240px; width: auto; max-width: max-content; white-space: nowrap; padding: 0 20px;
+
+ text-align: center; position: relative; box-shadow: 0 4px 8px rgba(0,0,0,0.05); transition: transform 0.2s; }
+.female-box { background-color: var(--light-pink) !important; border-color: #fb7185 !important; width: auto !important; max-width: max-content !important; }
+PASTE these lines in their place:
+
+CSS
+.box { 
+    border: 2px solid var(--gold); 
+    border-radius: 12px; 
+    background: white; 
+    min-width: 240px; 
+    width: auto;             /* Added: Allows box to grow */
+    max-width: fit-content;  /* Added: Fits the name exactly */
+    text-align: center; 
+    position: relative; 
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05); 
+    transition: transform 0.2s; 
+    white-space: nowrap;     /* Added: Keeps name on one line */
+    padding-right: 30px;     /* Added: Space for the heart emoji */
+}
+
+
         .box:hover { transform: translateY(-3px); }
         .box.blinking-box { animation: blinkBoxLightGreen 1.5s infinite; border-width: 4px; z-index: 10; transform: scale(1.02); }
         @keyframes blinkBoxLightGreen { 0%,100%{ border-color:#2e7d32; background:#e8f5e9; box-shadow:0 0 15px rgba(46,125,50,0.4); } 50%{ border-color:#4caf50; background:#c8e6c9; box-shadow:0 0 30px rgba(76,175,80,0.6); transform:scale(1.05); } }
@@ -229,7 +252,16 @@
         .box-body { padding: 12px; }
         .member-name { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 16px; display: block; }
         .father-name { font-size: 11px; color: #64748b; margin-top: 4px; }
-        .female-box { background-color: var(--light-pink) !important; border-color: #fb7185 !important; }
+        
+
+.female-box { 
+    background-color: var(--light-pink) !important; 
+    border-color: #fb7185 !important; 
+    width: auto !important; 
+    max-width: fit-content !important; 
+}
+
+
         .v-line { width: 3px; height: 25px; background: var(--gold); margin: 5px auto; }
         .golden-heart { position: absolute; bottom: 5px; right: 8px; color: var(--gold); font-size: 16px; }
         .hidden { display: none !important; }
@@ -579,6 +611,8 @@
             sistersArray.forEach(sister => {
                 const memberData = encodeURIComponent(JSON.stringify(sister));
                 html += `<tr onclick='handleBoxClick(JSON.parse(decodeURIComponent("${memberData}")))' style="cursor: pointer;">
+         
+<td style="text-align: left; padding: 8px 4px 8px 8px; border-bottom: 1px dashed #fecaca; font-weight: 600; transition: background 0.2s; word-break: break-word;" onmouseover="this.style.background='#faebcd'" onmouseout="this.style.background='transparent'">${displayName(sister.name)}</td>
                             <td style="text-align: left; padding: 8px 4px 8px 8px; border-bottom: 1px dashed #fecaca; font-weight: 600; transition: background 0.2s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" onmouseover="this.style.background='#faebcd'" onmouseout="this.style.background='transparent'">${displayName(sister.name)}</td>
                             <td style="text-align: left; padding: 8px 8px 8px 4px; border-bottom: 1px dashed #fecaca; color: var(--maroon); transition: background 0.2s; white-space: nowrap;" onmouseover="this.style.background='#faebcd'" onmouseout="this.style.background='transparent'">${sister.gen}</td>
                         </tr>`;
