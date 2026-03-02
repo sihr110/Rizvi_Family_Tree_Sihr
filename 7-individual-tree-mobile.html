@@ -294,40 +294,96 @@
             border: 2px solid var(--gold); 
             border-radius: 12px; 
             background: white; 
-            min-width: 240px; 
-            width: auto;
-            max-width: fit-content;
+            min-width: auto !important;
+            width: fit-content !important;
+            max-width: none !important;
             text-align: center; 
             position: relative; 
             box-shadow: 0 4px 8px rgba(0,0,0,0.05); 
             transition: transform 0.2s; 
-            white-space: nowrap;
-            padding-right: 30px;
+            white-space: nowrap !important;
+            padding: 0 30px 0 20px !important;
             cursor: pointer;
+            display: inline-block;
+            overflow: visible !important;
+        }
+
+        .box * {
+            white-space: nowrap !important;
+            overflow: visible !important;
+            text-overflow: clip !important;
         }
 
         .box:hover { transform: translateY(-3px); }
-        .box.blinking-box { animation: blinkBoxLightGreen 1.5s infinite; border-width: 4px; z-index: 10; transform: scale(1.02); }
         
+        .box.blinking-box { 
+            animation: blinkBoxLightGreen 1.5s infinite; 
+            border-width: 4px; 
+            z-index: 10; 
+            transform: scale(1.02); 
+        }
+
         @keyframes blinkBoxLightGreen { 
             0%,100%{ border-color:#2e7d32; background:#e8f5e9; box-shadow:0 0 15px rgba(46,125,50,0.4); } 
             50%{ border-color:#4caf50; background:#c8e6c9; box-shadow:0 0 30px rgba(76,175,80,0.6); transform:scale(1.05); } 
         }
         
-        .box-header { display: flex; justify-content: space-between; padding: 6px 10px; background: #f8fafc; font-size: 10px; font-weight: 800; border-bottom: 1px solid #ddd; }
-        .box-body { padding: 12px; }
-        .member-name { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 16px; display: block; }
-        .father-name { font-size: 11px; color: #64748b; margin-top: 4px; }
+        .box-header { 
+            display: flex; 
+            justify-content: space-between; 
+            padding: 6px 10px; 
+            background: #f8fafc; 
+            font-size: 10px; 
+            font-weight: 800; 
+            border-bottom: 1px solid #ddd; 
+            white-space: nowrap !important;
+        }
+        
+        .box-body { 
+            padding: 12px 0 !important;
+            white-space: nowrap !important;
+        }
+        
+        .member-name { 
+            font-family: 'Playfair Display', serif; 
+            font-weight: 700; 
+            font-size: 16px; 
+            display: inline-block !important;
+            white-space: nowrap !important;
+            margin-right: 4px;
+            vertical-align: middle;
+        }
+        
+        .father-name { 
+            font-size: 11px; 
+            color: #64748b; 
+            margin-top: 4px; 
+            white-space: nowrap !important;
+            display: block !important;
+            width: 100%;
+            clear: both;
+        }
         
         .female-box { 
             background-color: var(--light-pink) !important; 
             border-color: #fb7185 !important; 
-            width: auto !important; 
-            max-width: fit-content !important; 
+            width: fit-content !important; 
+            max-width: none !important; 
+            min-width: auto !important;
+            white-space: nowrap !important;
         }
 
         .v-line { width: 3px; height: 25px; background: var(--gold); margin: 5px auto; }
-        .golden-heart { position: absolute; bottom: 5px; right: 8px; color: var(--gold); font-size: 16px; }
+        
+        .golden-heart { 
+            position: absolute; 
+            bottom: 5px; 
+            right: 8px; 
+            color: var(--gold); 
+            font-size: 16px;
+            line-height: 1;
+        }
+        
         .hidden { display: none !important; }
         
         /* ----- FOOTER ----- */
@@ -358,9 +414,21 @@
             .filter-buttons { width: 100%; justify-content: space-between; gap: 8px; }
             .filter-btn { flex: 1; padding: 10px 5px; font-size: 12px; justify-content: center; height: 44px; }
             
-            .box { min-width: 200px; max-width: 260px; margin: 0 auto; }
-            .member-name { font-size: 18px !important; }
-            .father-name { font-size: 11px; }
+            .box { 
+                min-width: auto !important; 
+                max-width: none !important; 
+                margin: 0 auto; 
+                white-space: nowrap !important;
+                width: fit-content !important;
+            }
+            .member-name { 
+                font-size: 18px !important; 
+                white-space: nowrap !important;
+            }
+            .father-name { 
+                font-size: 11px; 
+                white-space: nowrap !important;
+            }
             .children-row { gap: 12px; }
             .sisters-group-box { min-width: 240px; max-width: 300px; width: 100%; margin: 8px auto; }
             .v-line { height: 20px; }
@@ -374,8 +442,16 @@
         }
         
         @media screen and (max-width: 380px) {
-            .box { min-width: 160px; max-width: 220px; }
-            .member-name { font-size: 16px !important; }
+            .box { 
+                min-width: auto !important; 
+                max-width: none !important; 
+                white-space: nowrap !important;
+                width: fit-content !important;
+            }
+            .member-name { 
+                font-size: 16px !important; 
+                white-space: nowrap !important;
+            }
             .filter-btn { font-size: 11px; padding: 8px 4px; }
             .action-btn { font-size: 9px; }
         }
@@ -393,7 +469,11 @@
                 margin: 0;
                 padding: 10px;
             }
-            .box { min-width: 160px; }
+            .box { 
+                min-width: auto !important; 
+                white-space: nowrap !important;
+                width: fit-content !important;
+            }
         }
 
         /* Prevent pull-to-refresh */
@@ -791,7 +871,7 @@
                 <div class="box-header"><span>${label}</span></div>
                 <div class="box-body">
                     <span class="member-name">${displayName(p.name)}</span>
-                    <span style="font-size: 11px; color: #64748b; display: block; margin: 2px 0 4px 0;">${p.gen}</span>
+                    <span style="font-size: 11px; color: #64748b; display: inline-block; margin: 2px 4px 4px 0; vertical-align: middle;">${p.gen}</span>
                     <span class="father-name">${isFemale ? 'D/o' : 'S/o'}: ${displayName(p.father)}</span>
                     ${hasChildren ? '<div class="golden-heart">❤️</div>' : ''}
                 </div>
