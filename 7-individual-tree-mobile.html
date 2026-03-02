@@ -168,10 +168,16 @@
         
         /* ----- MAIN CONTENT ----- */
         .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: #fffcf8; }
-        #individualSection { display: flex; flex-direction: column; height: 100%; overflow: hidden; flex: 1; }
+        
+#individualSection { display: block; height: 100%; overflow: auto; flex: 1; }
+
+
+
         .fixed-header-section { padding: 15px 15px 0 15px; background: #fffcf8; flex-shrink: 0; }
         .border-line { border-top: 3px solid var(--gold); margin: 20px 0 0 0; }
-        .scrollable-content { flex: 1; overflow-y: auto; overflow-x: auto; padding: 0 15px 15px 15px; }
+        
+
+.scrollable-content { display: flex; align-items: flex-start; justify-content: flex-start; padding: 10px; }
         
         /* ----- SEARCH SECTION ----- */
         .search-row { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; }
@@ -191,7 +197,20 @@
         .filter-btn.active { background: #d4edda; border-color: var(--dark-green); }
         
         /* ----- TREE LAYOUT ----- */
-        .tree-root-layout { display: flex; flex-direction: column; align-items: center; gap: 15px; width: fit-content; margin: 0 auto; padding: 15px; }
+
+
+.tree-root-layout {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+            padding: 40px;
+            width: max-content;
+            min-width: 100%;
+            zoom: 0.5;
+            position: relative;
+        }
+
         .family-group { display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; }
         .children-row { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; margin-top: 5px; }
         .relation-label { font-size: 11px; color: var(--gold); font-weight: bold; text-transform: uppercase; letter-spacing: 1px; background: var(--dark-blue); padding: 4px 12px; border-radius: 4px; color: white; margin: 5px 0; text-align: center; display: inline-block; width: auto; }
