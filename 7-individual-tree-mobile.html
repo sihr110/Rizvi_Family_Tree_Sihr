@@ -289,31 +289,23 @@
             text-align: left;
         }
         
-        /* ----- MEMBER BOX ----- */
-   
-        /* ----- MEMBER BOX ----- */
+               /* ----- MEMBER BOX ----- */
         .box { 
             border: 2px solid var(--gold); 
             border-radius: 12px; 
             background: white; 
             min-width: auto !important;
-            width: fit-content !important;
+            width: auto !important;
             max-width: none !important;
             text-align: center; 
             position: relative; 
             box-shadow: 0 4px 8px rgba(0,0,0,0.05); 
             transition: transform 0.2s; 
-            white-space: nowrap !important;
-            padding: 0 30px 0 20px !important;
+            white-space: normal !important;  /* Changed to normal */
+            padding: 0 !important;  /* Reset padding */
             cursor: pointer;
             display: inline-block;
             overflow: visible !important;
-        }
-
-        .box * {
-            white-space: nowrap !important;
-            overflow: visible !important;
-            text-overflow: clip !important;
         }
 
         .box:hover { transform: translateY(-3px); }
@@ -342,7 +334,7 @@
         }
         
         .box-body { 
-            padding: 12px 0 !important;
+            padding: 12px 15px !important;
             white-space: nowrap !important;
         }
         
@@ -350,10 +342,8 @@
             font-family: 'Playfair Display', serif; 
             font-weight: 700; 
             font-size: 16px; 
-            display: inline-block !important;
+            display: inline !important;
             white-space: nowrap !important;
-            margin-right: 4px;
-            vertical-align: middle;
         }
         
         .father-name { 
@@ -362,20 +352,22 @@
             margin-top: 4px; 
             white-space: nowrap !important;
             display: block !important;
-            width: 100%;
-            clear: both;
         }
         
-     
         .female-box { 
             background-color: var(--light-pink) !important; 
             border-color: #fb7185 !important; 
-            width: fit-content !important; 
+            width: auto !important;
             max-width: none !important; 
             min-width: auto !important;
+            white-space: normal !important;
+            padding: 0 !important;
+            display: inline-block !important;
+        }
+
+        .female-box .box-body {
             white-space: nowrap !important;
-            padding: 0 30px 0 20px !important;  /* Add this line */
-            display: inline-block !important;     /* Add this line */
+            padding: 12px 15px !important;
         }
 
         .v-line { width: 3px; height: 25px; background: var(--gold); margin: 5px auto; }
@@ -876,8 +868,8 @@
                 <div class="box-header"><span>${label}</span></div>
                 <div class="box-body">
                     <span class="member-name">${displayName(p.name)}</span>
-                    <span style="font-size: 11px; color: #64748b; display: inline-block; margin: 2px 4px 4px 0; vertical-align: middle;">${p.gen}</span>
-                    <span class="father-name">${isFemale ? 'D/o' : 'S/o'}: ${displayName(p.father)}</span>
+                    <span style="font-size: 11px; color: #64748b; display: inline; margin-left: 4px; white-space: nowrap;">${p.gen}</span>
+                    <span class="father-name" style="display: block; width: 100%; clear: both; margin-top: 4px;">${isFemale ? 'D/o' : 'S/o'}: ${displayName(p.father)}</span>
                     ${hasChildren ? '<div class="golden-heart">❤️</div>' : ''}
                 </div>
             </div>`;
