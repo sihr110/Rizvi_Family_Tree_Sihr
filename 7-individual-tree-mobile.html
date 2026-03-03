@@ -201,6 +201,8 @@ body {
 .filter-btn.active { background: #d4edda; border-color: var(--dark-green); }
 
 /* ----- TREE LAYOUT ----- */
+
+
 .tree-root-layout {
     display: inline-flex;
     flex-direction: column;
@@ -213,13 +215,25 @@ body {
     position: relative;
 }
 
+/* For very small screens, zoom out more */
+@media screen and (max-width: 480px) {
+    .tree-root-layout {
+        zoom: 0.4;
+    }
+}
+
+@media screen and (max-width: 360px) {
+    .tree-root-layout {
+        zoom: 0.35;
+    }
+}
+
 .family-group { display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; }
 .children-row { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; margin-top: 5px; }
 .relation-label { font-size: 11px; color: var(--gold); font-weight: bold; text-transform: uppercase; letter-spacing: 1px; background: var(--dark-blue); padding: 4px 12px; border-radius: 4px; color: white; margin: 5px 0; text-align: center; display: inline-block; width: auto; }
 .descendant-heading { font-size: 14px; color: var(--maroon); font-weight: 800; margin: 15px 0 5px 0; font-family: 'Playfair Display', serif; text-align: center; width: 100%; border-bottom: 2px solid var(--gold); padding-bottom: 5px; }
 
 
-/* ----- SISTERS GROUP BOX ----- */
 
 /* ----- SISTERS GROUP BOX ----- */
 .sisters-group-box { 
