@@ -218,13 +218,15 @@ body {
 .relation-label { font-size: 11px; color: var(--gold); font-weight: bold; text-transform: uppercase; letter-spacing: 1px; background: var(--dark-blue); padding: 4px 12px; border-radius: 4px; color: white; margin: 5px 0; text-align: center; display: inline-block; width: auto; }
 .descendant-heading { font-size: 14px; color: var(--maroon); font-weight: 800; margin: 15px 0 5px 0; font-family: 'Playfair Display', serif; text-align: center; width: 100%; border-bottom: 2px solid var(--gold); padding-bottom: 5px; }
 
+
 /* ----- SISTERS GROUP BOX ----- */
 .sisters-group-box { 
     border: 2px solid var(--sisters-border); 
     border-radius: 12px; 
     background: var(--sisters-box-bg); 
     min-width: 300px; 
-    max-width: 380px; 
+    max-width: none; 
+    width: auto;
     text-align: left;
     box-shadow: 0 4px 8px rgba(0,0,0,0.05); 
     padding: 12px; 
@@ -246,33 +248,32 @@ body {
     width: 100%;
     border-collapse: collapse;
     margin: 8px 0;
-    table-layout: fixed;
+    table-layout: auto;
 }
 
 .sisters-group-box th {
     text-align: left;
-    padding: 8px 4px 4px 8px;
+    padding: 8px 12px;
     font-size: 11px;
     color: var(--maroon);
     font-weight: 700;
     background: rgba(251, 113, 133, 0.1);
-}
-
-.sisters-group-box th:last-child {
-    padding: 8px 8px 4px 4px;
+    white-space: nowrap;
 }
 
 .sisters-group-box td {
-    padding: 8px 4px 8px 8px;
+    padding: 8px 12px;
     border-bottom: 1px dashed #fecaca;
     font-weight: 600;
     transition: background 0.2s;
-    word-break: break-word;
     cursor: pointer;
 }
 
+.sisters-group-box td:first-child {
+    white-space: nowrap;
+}
+
 .sisters-group-box td:last-child {
-    padding: 8px 8px 8px 4px;
     color: var(--maroon);
     white-space: nowrap;
 }
@@ -288,7 +289,9 @@ body {
     font-size: 11px;
     color: #64748b;
     text-align: left;
+    white-space: nowrap;
 }
+
 
 /* ----- MEMBER BOX ----- */
 .box { 
@@ -468,7 +471,7 @@ body {
         flex-wrap: nowrap !important;
     }
     .children-row { gap: 12px; }
-    .sisters-group-box { min-width: 240px; max-width: 300px; width: 100%; margin: 8px auto; }
+    .sisters-group-box { min-width: 240px; max-width: none; width: auto; margin: 8px auto; overflow-x: auto; }
     .v-line { height: 20px; }
     .relation-label { font-size: 11px; padding: 5px 15px; }
     .scrollable-content { overflow-y: visible; -webkit-overflow-scrolling: touch; padding: 0 12px 20px 12px; }
