@@ -154,7 +154,13 @@ body {
 /* ----- MAIN CONTENT ----- */
 .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: #fffcf8; }
 #individualSection { display: block; height: 100%; overflow: auto; flex: 1; }
-.fixed-header-section { padding: 15px 15px 0 15px; background: #fffcf8; flex-shrink: 0; }
+.fixed-header-section { 
+    padding: 15px 15px 0 15px; 
+    background: #fffcf8; 
+    flex-shrink: 0;
+    position: relative;
+    z-index: 100;
+}
 .border-line { border-top: 3px solid var(--gold); margin: 20px 0 0 0; }
 .scrollable-content { 
     display: flex; 
@@ -162,9 +168,11 @@ body {
     justify-content: flex-start; 
     padding: 10px;
     overflow-x: auto;
+    position: relative;
+    z-index: 1;
 }
 
-/* ===== SEARCH SECTION - FROM FILE 9 ===== */
+/* ===== SEARCH SECTION - EXACTLY FROM FILE 9 ===== */
 .search-row { 
     margin-bottom: 15px; 
     width: 100%; 
@@ -358,7 +366,7 @@ body {
     white-space: nowrap;
 }
 
-/* ----- MEMBER BOX ----- */
+/* ----- MEMBER BOX - FIXED FEMALE BOX ----- */
 .box { 
     border: 2px solid var(--gold); 
     border-radius: 12px; 
@@ -426,32 +434,40 @@ body {
     display: block;
 }
 
+/* FIXED FEMALE BOX - NO CUTTING */
 .female-box { 
     background-color: var(--light-pink) !important; 
     border-color: #fb7185 !important; 
     width: auto !important;
-    max-width: none !important; 
-    min-width: auto !important;
-    white-space: nowrap !important;
+    max-width: 300px !important;
+    min-width: 200px !important;
+    white-space: normal !important;
     padding: 0 !important;
     display: inline-block !important;
+    height: auto !important;
 }
 
 .female-box .box-body {
-    white-space: nowrap !important;
+    white-space: normal !important;
     padding: 12px 15px !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 4px !important;
-    flex-wrap: nowrap !important;
+    display: block !important;
+    text-align: center !important;
+    word-wrap: break-word !important;
+}
+
+.female-box .member-name {
+    white-space: normal !important;
+    word-wrap: break-word !important;
+    display: block !important;
 }
 
 .female-box .father-name {
-    display: inline-block !important;
-    white-space: nowrap !important;
-    margin-top: 0 !important;
-    margin-left: 4px !important;
+    display: block !important;
+    white-space: normal !important;
+    margin-top: 4px !important;
+    margin-left: 0 !important;
     width: auto !important;
+    word-wrap: break-word !important;
 }
 
 .v-line { width: 3px; height: 25px; background: var(--gold); margin: 5px auto; }
@@ -485,12 +501,6 @@ body {
     .fixed-header-section { transition: max-height 0.3s ease; overflow: hidden; max-height: 500px; padding: 15px 15px 10px 15px; }
     .fixed-header-section.collapsed { max-height: 0; padding-top: 0; padding-bottom: 0; margin: 0; border-bottom: none; }
     
-    .search-row { 
-        flex-direction: column; 
-        align-items: stretch; 
-        gap: 8px; 
-        margin-bottom: 10px;
-    }
     .search-input { 
         width: 100%; 
         font-size: 16px; 
@@ -503,11 +513,6 @@ body {
         font-size: 14px;
         z-index: 9999;
         position: absolute;
-    }
-    
-    .result-item { 
-        padding: 12px 15px; 
-        font-size: 14px;
     }
     
     .filter-buttons { 
@@ -549,6 +554,7 @@ body {
         <div class="main-content" id="mainContent">
             <div id="individualSection">
                 <div class="fixed-header-section">
+                    <!-- FILE 9 SEARCH STRUCTURE -->
                     <div class="search-row">
                         <div class="search-label">SEARCH MEMBER</div>
                         <div class="search-wrapper">
@@ -557,6 +563,7 @@ body {
                         </div>
                     </div>
                     
+                    <!-- FILE 7 FILTER BUTTONS -->
                     <div class="filter-buttons">
                         <div id="filterSiblings" class="filter-btn active" onclick="toggleFilter('siblings')">👥 Siblings</div>
                         <div id="filterDescendants" class="filter-btn active" onclick="toggleFilter('descendants')">👶 Descendants</div>
@@ -865,59 +872,69 @@ body {
         </div>`;
     }
    
+    // FIXED PDF FUNCTION - LIKE FILE 9
     window.exportIndividualPDF = async function() {
         if (!currentIndividual) { alert('Please select a member first'); return; }
-        const content = document.getElementById('individualTree');
-        if (!content) return alert('No content to export');
-        const treeElement = content.querySelector('.tree-root-layout') || content;
+        
+        const treeElement = document.querySelector('.tree-root-layout');
+        if (!treeElement) return alert('No tree to export');
+        
         try {
-            const header = document.createElement('div');
-            header.style.marginBottom = '30px'; header.style.textAlign = 'center';
-            header.innerHTML = `<h1 style="color: #d4af37; font-size: 36px; font-family: 'Playfair Display', serif; margin:0 0 10px 0;">Rizvi Family Tree</h1><h2 style="color:#5a0000; font-size:24px; font-family:'Playfair Display', serif; margin:0;">${displayName(currentIndividual.name)}</h2>`;
-            const footer = document.createElement('div');
-            footer.style.marginTop = '40px'; footer.style.padding = '15px 20px'; footer.style.border = '2px solid #d4af37'; footer.style.borderRadius = '4px';
-            footer.style.background = '#0f172a'; footer.style.color = '#d4af37'; footer.style.display = 'flex'; footer.style.justifyContent = 'space-between'; footer.style.alignItems = 'center'; footer.style.fontSize = '11px';
-            const timeStr = formatCurrentTime();
-            footer.innerHTML = `<span>${LOAD_STAMP || 'Last data updated on: Unknown'}</span><span style="font-weight: 500;">PDF generated: ${timeStr}</span>`;
-            const signature = document.createElement('div');
-            signature.style.marginTop = '20px'; signature.style.paddingTop = '15px'; signature.style.borderTop = '1px solid #ddd'; signature.style.textAlign = 'center'; signature.style.color = '#000'; signature.style.fontSize = '12px'; signature.style.fontWeight = '500';
-            signature.textContent = 'Imran Haider S/o Syed Risalat Hussain Rizvi | 0332-787-6010';
-
-            treeElement.insertBefore(header, treeElement.firstChild);
-            treeElement.appendChild(footer);
-            treeElement.appendChild(signature);
-
+            // Save original zoom
+            const originalZoom = treeElement.style.zoom;
+            
+            // Set to 1 for PDF capture
+            treeElement.style.zoom = '1';
+            
             const loadingMsg = document.createElement('div');
-            loadingMsg.style.position = 'fixed'; loadingMsg.style.top = '50%'; loadingMsg.style.left = '50%'; loadingMsg.style.transform = 'translate(-50%, -50%)';
-            loadingMsg.style.background = '#5a0000'; loadingMsg.style.color = 'white'; loadingMsg.style.padding = '20px 40px'; loadingMsg.style.borderRadius = '8px'; loadingMsg.style.zIndex = '9999'; loadingMsg.style.boxShadow = '0 4px 20px rgba(0,0,0,0.3)';
+            loadingMsg.style.position = 'fixed';
+            loadingMsg.style.top = '50%';
+            loadingMsg.style.left = '50%';
+            loadingMsg.style.transform = 'translate(-50%, -50%)';
+            loadingMsg.style.background = '#5a0000';
+            loadingMsg.style.color = 'white';
+            loadingMsg.style.padding = '20px 40px';
+            loadingMsg.style.borderRadius = '8px';
+            loadingMsg.style.zIndex = '9999';
+            loadingMsg.style.boxShadow = '0 4px 20px rgba(0,0,0,0.3)';
             loadingMsg.textContent = '📄 Preparing PDF... please wait';
             document.body.appendChild(loadingMsg);
-            await new Promise(resolve => setTimeout(resolve, 500));
-
-            const originalZoom = treeElement.style.zoom;
-            treeElement.style.zoom = '1';
-
-            const canvas = await html2canvas(treeElement, { 
-                scale: 3, 
-                backgroundColor: '#ffffff', 
-                logging: false, 
-                allowTaint: true, 
-                useCORS: true 
-            });
-
-            treeElement.style.zoom = originalZoom;
             
-            treeElement.removeChild(header); treeElement.removeChild(footer); treeElement.removeChild(signature);
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            // Capture the tree
+            const canvas = await html2canvas(treeElement, {
+                scale: 2,
+                backgroundColor: '#ffffff',
+                logging: false,
+                allowTaint: true,
+                useCORS: true
+            });
+            
+            // Restore original zoom
+            treeElement.style.zoom = originalZoom;
             document.body.removeChild(loadingMsg);
-
+            
+            // Create PDF
             const imgData = canvas.toDataURL('image/png');
             const { jsPDF } = window.jspdf;
-            const w = canvas.width / 2 * 0.264583;
-            const h = canvas.height / 2 * 0.264583;
-            const pdf = new jsPDF({ orientation: w > h ? 'l' : 'p', unit: 'mm', format: [w + 40, h + 40] });
-            pdf.addImage(imgData, 'PNG', 20, 20, w, h);
+            
+            // Calculate dimensions
+            const pdf = new jsPDF({
+                orientation: 'landscape',
+                unit: 'mm',
+                format: 'a4'
+            });
+            
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+            
+            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+            
+            // Save with clean filename
             const safeName = displayName(currentIndividual.name).replace(/[^a-z0-9]/gi, '_').toLowerCase();
-            pdf.save(`family_${safeName}_${Date.now()}.pdf`);
+            pdf.save(`family_tree_${safeName}.pdf`);
+            
         } catch (err) {
             console.error('PDF Error:', err);
             alert('❌ PDF generation failed: ' + err.message);
