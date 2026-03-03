@@ -952,7 +952,21 @@ function renderBox(p, label, isSelected, hasChildren) {
                 document.body.appendChild(loadingMsg);
                 await new Promise(resolve => setTimeout(resolve, 500));
 
-                const canvas = await html2canvas(treeElement, { scale: 2, backgroundColor: '#ffffff', logging: false, allowTaint: true, useCORS: true });
+                // Store original zoom
+const originalZoom = treeElement.style.zoom;
+treeElement.style.zoom = '1';
+
+// Capture with higher scale for clarity
+const canvas = await html2canvas(treeElement, { 
+    scale: 3, 
+    backgroundColor: '#ffffff', 
+    logging: false, 
+    allowTaint: true, 
+    useCORS: true 
+});
+
+// Restore zoom
+treeElement.style.zoom = originalZoom;
                 
                 treeElement.removeChild(header); treeElement.removeChild(footer); treeElement.removeChild(signature);
                 document.body.removeChild(loadingMsg);
