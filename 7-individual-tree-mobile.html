@@ -220,6 +220,8 @@ body {
 
 
 /* ----- SISTERS GROUP BOX ----- */
+
+/* ----- SISTERS GROUP BOX ----- */
 .sisters-group-box { 
     border: 2px solid var(--sisters-border); 
     border-radius: 12px; 
@@ -291,6 +293,7 @@ body {
     text-align: left;
     white-space: nowrap;
 }
+/* ----- MEMBER BOX ----- */
 
 
 /* ----- MEMBER BOX ----- */
@@ -334,35 +337,25 @@ body {
     font-size: 10px; 
     font-weight: 800; 
     border-bottom: 1px solid #ddd; 
-    white-space: nowrap !important;
 }
 
 .box-body { 
     padding: 12px 15px !important;
-    white-space: nowrap !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 4px !important;
-    flex-wrap: nowrap !important;
+    text-align: center;
 }
 
 .member-name { 
     font-family: 'Playfair Display', serif; 
     font-weight: 700; 
     font-size: 16px; 
-    display: inline-block !important;
-    white-space: nowrap !important;
+    display: block;
+    margin-bottom: 4px;
 }
 
 .father-name { 
     font-size: 11px; 
     color: #64748b; 
-    margin-top: 0 !important;
-    margin-left: 4px !important;
-    white-space: nowrap !important;
-    display: inline-block !important;
-    width: auto !important;
-    clear: none !important;
+    display: block;
 }
 
 .female-box { 
@@ -396,12 +389,9 @@ body {
 .v-line { width: 3px; height: 25px; background: var(--gold); margin: 5px auto; }
 
 .golden-heart { 
-    display: inline-block !important;
-    margin-left: 4px !important;
-    position: relative !important;
-    bottom: auto !important;
-    right: auto !important;
-    vertical-align: middle !important;
+    position: absolute; 
+    bottom: 5px; 
+    right: 8px; 
     color: var(--gold); 
     font-size: 16px;
     line-height: 1;
@@ -912,12 +902,14 @@ function renderBox(p, label, isSelected, hasChildren) {
     const memberData = encodeURIComponent(JSON.stringify(p));
     
     return `<div class="box ${isFemale ? 'female-box' : ''} ${blinkClass}" onclick='handleBoxClick(JSON.parse(decodeURIComponent("${memberData}")))'>
-        <div class="box-header"><span>${label}</span></div>
+        <div class="box-header">
+            <span>${label}</span>
+            <span>${p.gen}</span>
+        </div>
         <div class="box-body">
-            <span class="member-name">${displayName(p.name)}</span>
-            <span style="font-size: 11px; color: #64748b; display: inline-block; white-space: nowrap; vertical-align: middle;">${p.gen}</span>
-            <span class="father-name" style="display: inline-block; white-space: nowrap; vertical-align: middle; margin-left: 4px;">${isFemale ? 'D/o' : 'S/o'}: ${displayName(p.father)}</span>
-            ${hasChildren ? '<span class="golden-heart" style="display: inline-block; vertical-align: middle; margin-left: 4px;">❤️</span>' : ''}
+            <div class="member-name">${displayName(p.name)}</div>
+            <div class="father-name">${isFemale ? 'D/o' : 'S/o'}: ${displayName(p.father)}</div>
+            ${hasChildren ? '<div class="golden-heart">❤️</div>' : ''}
         </div>
     </div>`;
 }
