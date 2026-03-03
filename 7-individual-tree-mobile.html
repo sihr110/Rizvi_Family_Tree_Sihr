@@ -164,7 +164,7 @@ body {
     overflow-x: auto;
 }
 
-/* ===== SEARCH SECTION - EXACTLY LIKE FILE 9 ===== */
+/* ===== SEARCH SECTION ===== */
 .search-row { 
     display: flex; 
     align-items: center; 
@@ -179,12 +179,14 @@ body {
     text-transform: uppercase; 
     white-space: nowrap; 
 }
+
 .search-wrapper { 
     position: relative; 
     flex: 2; 
     min-width: 300px; 
     width: 100%;
 }
+
 .search-input { 
     width: 100%; 
     padding: 12px 15px; 
@@ -202,7 +204,6 @@ body {
     box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2); 
 }
 
-/* DROPDOWN - EXACTLY LIKE FILE 9 */
 .dropdown { 
     position: absolute; 
     top: 100%; 
@@ -219,7 +220,6 @@ body {
     margin-top: 2px;
 }
 
-/* RESULT ITEMS - COMPACT LIKE FILE 9 */
 .result-item { 
     padding: 10px 15px; 
     border-bottom: 1px solid #eee; 
@@ -244,32 +244,6 @@ body {
     font-size: 11px; 
     color: #64748b; 
     margin-top: 4px; 
-}
-
-/* ----- FILTER BUTTONS ----- */
-.filter-buttons { 
-    display: flex; 
-    gap: 6px; 
-    flex-wrap: wrap; 
-    margin-top: 5px;
-}
-.filter-btn { 
-    padding: 8px 14px; 
-    border-radius: 4px; 
-    font-weight: 600; 
-    font-size: 13px; 
-    cursor: pointer; 
-    border: 2px solid var(--gold); 
-    background: white; 
-    color: var(--dark-blue); 
-    white-space: nowrap; 
-    display: flex; 
-    align-items: center; 
-    gap: 4px; 
-}
-.filter-btn.active { 
-    background: #d4edda; 
-    border-color: var(--dark-green); 
 }
 
 /* ----- TREE LAYOUT ----- */
@@ -473,7 +447,7 @@ body {
 /* ----- FOOTER ----- */
 .app-footer { background: var(--dark-blue); color: var(--gold); text-align: center; padding: 8px; font-size: 11px; border-top: 2px solid var(--gold); }
 
-/* ===== MOBILE RESPONSIVE - OPTIMIZED FOR DROPDOWN ===== */
+/* ===== MOBILE RESPONSIVE ===== */
 @media screen and (max-width: 768px) {
     body { overflow: auto; -webkit-overflow-scrolling: touch; height: auto; min-height: 100vh; padding: 5px; }
     .app-container { height: auto; min-height: calc(100vh - 10px); border-radius: 16px; overflow: hidden; }
@@ -488,7 +462,6 @@ body {
     .fixed-header-section { transition: max-height 0.3s ease; overflow: hidden; max-height: 500px; padding: 15px 15px 10px 15px; }
     .fixed-header-section.collapsed { max-height: 0; padding-top: 0; padding-bottom: 0; margin: 0; border-bottom: none; }
     
-    /* SEARCH ON MOBILE - EXACTLY LIKE FILE 9 */
     .search-row { 
         flex-direction: column; 
         align-items: stretch; 
@@ -510,7 +483,6 @@ body {
         height: 52px; 
     }
     
-    /* DROPDOWN ON MOBILE - SHOWS MULTIPLE ITEMS */
     .dropdown { 
         max-height: 280px; 
         font-size: 14px;
@@ -520,7 +492,6 @@ body {
         box-shadow: 0 8px 20px rgba(0,0,0,0.3);
     }
     
-    /* COMPACT RESULT ITEMS TO SHOW MORE */
     .result-item { 
         padding: 10px 15px; 
         font-size: 13px;
@@ -534,20 +505,6 @@ body {
     .result-item .father-info { 
         font-size: 10px; 
         margin-top: 3px;
-    }
-    
-    .filter-buttons { 
-        width: 100%; 
-        justify-content: space-between; 
-        gap: 5px; 
-        margin-top: 5px;
-    }
-    .filter-btn { 
-        flex: 1; 
-        padding: 10px 2px; 
-        font-size: 11px; 
-        justify-content: center; 
-        height: 44px; 
     }
     
     .box { 
@@ -597,7 +554,6 @@ body {
 @media screen and (max-width: 380px) {
     .result-item { padding: 8px 12px; }
     .result-item .main-name { font-size: 13px; }
-    .filter-btn { font-size: 10px; padding: 8px 2px; }
 }
 
 #individualTree { min-height: 100%; }
@@ -633,13 +589,9 @@ body {
                             <div id="individualDropdown" class="dropdown"></div>
                         </div>
                     </div>
-                    <div class="filter-buttons">
-                        <div id="filterSiblings" class="filter-btn active" onclick="toggleFilter('siblings')">👥 Siblings</div>
-                        <div id="filterDescendants" class="filter-btn active" onclick="toggleFilter('descendants')">👶 Descendants</div>
-                        <div id="filterAncestors" class="filter-btn" onclick="toggleFilter('ancestors')">🌳 Ancestors</div>
-                    </div>
                     <div class="border-line"></div>
                 </div>
+
                 <div class="scrollable-content">
                     <div id="individualTree" class="tree-root-layout"></div>
                 </div>
@@ -732,9 +684,9 @@ body {
 
     window.toggleFilter = function(filter) {
         if (!currentIndividual) return;
-        if (filter === 'siblings') { showSiblings = !showSiblings; document.getElementById('filterSiblings').classList.toggle('active', showSiblings); }
-        else if (filter === 'descendants') { showDescendants = !showDescendants; document.getElementById('filterDescendants').classList.toggle('active', showDescendants); }
-        else if (filter === 'ancestors') { showAncestors = !showAncestors; document.getElementById('filterAncestors').classList.toggle('active', showAncestors); }
+        if (filter === 'siblings') { showSiblings = !showSiblings; }
+        else if (filter === 'descendants') { showDescendants = !showDescendants; }
+        else if (filter === 'ancestors') { showAncestors = !showAncestors; }
         renderIndividualTree();
     };
 
@@ -754,7 +706,6 @@ body {
         return chain;
     }
 
-    // ===== SEARCH FUNCTION - EXACTLY LIKE FILE 9 =====
     window.searchIndividual = function(query) {
         if (!db.length) return;
         const drop = document.getElementById('individualDropdown');
@@ -1015,9 +966,6 @@ body {
                 showSiblings = filters.showSiblings;
                 showDescendants = filters.showDescendants;
                 showAncestors = filters.showAncestors;
-                document.getElementById('filterSiblings').classList.toggle('active', showSiblings);
-                document.getElementById('filterDescendants').classList.toggle('active', showDescendants);
-                document.getElementById('filterAncestors').classList.toggle('active', showAncestors);
                 localStorage.removeItem('tableViewFilters');
             }
         }
