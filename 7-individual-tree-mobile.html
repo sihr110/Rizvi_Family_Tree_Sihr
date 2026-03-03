@@ -54,18 +54,8 @@ body {
     overflow: hidden;
     margin: 0;
     padding: 10px;
-}
-.app-container {
-    max-width: 1400px;
-    margin: 0 auto;
-    background: white;
-    height: calc(100vh - 20px);
-    display: flex;
-    flex-direction: column;
-    border-radius: 20px;
-    border: 2px solid var(--gold);
-    overflow: hidden;
-    box-shadow: 0 0 50px rgba(212, 175, 55, 0.2);
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
 }
 
 /* ----- HEADER SECTION ----- */
@@ -529,11 +519,6 @@ body {
     }
 }
 
-/* Prevent pull-to-refresh */
-body {
-    overscroll-behavior-y: contain;
-    -webkit-overflow-scrolling: touch;
-}
 
 /* Ensure tree stays after scroll */
 #individualTree { min-height: 100%; }
