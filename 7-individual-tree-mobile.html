@@ -164,29 +164,24 @@ body {
     overflow-x: auto;
 }
 
-/* ===== SEARCH SECTION ===== */
+/* ===== SEARCH SECTION - FROM FILE 9 ===== */
 .search-row { 
-    display: flex; 
-    align-items: center; 
-    gap: 15px; 
     margin-bottom: 15px; 
-    flex-wrap: wrap; 
+    width: 100%; 
+    position: relative; 
 }
 .search-label { 
     font-weight: 700; 
     color: var(--maroon); 
     font-size: 13px; 
     text-transform: uppercase; 
+    margin-bottom: 6px; 
     white-space: nowrap; 
 }
-
 .search-wrapper { 
     position: relative; 
-    flex: 2; 
-    min-width: 300px; 
-    width: 100%;
+    width: 100%; 
 }
-
 .search-input { 
     width: 100%; 
     padding: 12px 15px; 
@@ -221,10 +216,10 @@ body {
 }
 
 .result-item { 
-    padding: 10px 15px; 
+    padding: 12px 15px; 
     border-bottom: 1px solid #eee; 
     cursor: pointer; 
-    font-size: 13px; 
+    font-size: 14px; 
     transition: background 0.2s; 
 }
 .result-item:last-child { border-bottom: none; }
@@ -232,18 +227,46 @@ body {
 .result-item .main-name { 
     font-weight: 700; 
     color: var(--dark-blue); 
-    font-size: 14px; 
+    font-size: 15px; 
+    display: inline-block; 
 }
 .result-item .gen { 
     color: var(--maroon); 
-    font-size: 12px; 
+    font-size: 13px; 
     margin-left: 8px; 
     font-weight: 600; 
+    display: inline-block; 
 }
 .result-item .father-info { 
-    font-size: 11px; 
+    font-size: 12px; 
     color: #64748b; 
-    margin-top: 4px; 
+    margin-top: 5px; 
+}
+
+/* ----- FILTER BUTTONS ----- */
+.filter-buttons { 
+    display: flex; 
+    gap: 6px; 
+    flex-wrap: wrap; 
+    margin: 15px 0 5px 0;
+}
+.filter-btn { 
+    padding: 8px 14px; 
+    border-radius: 4px; 
+    font-weight: 600; 
+    font-size: 13px; 
+    cursor: pointer; 
+    border: 2px solid var(--gold); 
+    background: white; 
+    color: var(--dark-blue); 
+    white-space: nowrap; 
+    display: flex; 
+    align-items: center; 
+    gap: 4px; 
+}
+.filter-btn.active { 
+    background: #d4edda; 
+    border-color: var(--dark-green); 
 }
 
 /* ----- TREE LAYOUT ----- */
@@ -468,14 +491,6 @@ body {
         gap: 8px; 
         margin-bottom: 10px;
     }
-    .search-label { 
-        font-size: 12px; 
-        margin-bottom: 2px;
-    }
-    .search-wrapper { 
-        min-width: 100%; 
-        width: 100%; 
-    }
     .search-input { 
         width: 100%; 
         font-size: 16px; 
@@ -488,72 +503,26 @@ body {
         font-size: 14px;
         z-index: 9999;
         position: absolute;
-        border-radius: 0 0 8px 8px;
-        box-shadow: 0 8px 20px rgba(0,0,0,0.3);
     }
     
     .result-item { 
-        padding: 10px 15px; 
-        font-size: 13px;
+        padding: 12px 15px; 
+        font-size: 14px;
     }
-    .result-item .main-name { 
-        font-size: 14px; 
+    
+    .filter-buttons { 
+        width: 100%; 
+        justify-content: space-between; 
+        gap: 5px; 
+        margin: 10px 0 5px 0;
     }
-    .result-item .gen { 
+    .filter-btn { 
+        flex: 1; 
+        padding: 10px 2px; 
         font-size: 11px; 
+        justify-content: center; 
+        height: 44px; 
     }
-    .result-item .father-info { 
-        font-size: 10px; 
-        margin-top: 3px;
-    }
-    
-    .box { 
-        min-width: auto !important; 
-        max-width: none !important; 
-        margin: 0 auto; 
-        white-space: nowrap !important;
-        width: fit-content !important;
-    }
-    
-    .box-body {
-        display: block !important;
-        text-align: center !important;
-        padding: 10px 12px !important;
-    }
-    .member-name { 
-        font-size: 18px !important; 
-        white-space: nowrap !important;
-        display: block !important;
-        margin-bottom: 4px !important;
-    }
-    .father-name { 
-        font-size: 11px; 
-        white-space: nowrap !important;
-        display: block !important;
-        margin-top: 0 !important;
-        margin-left: 0 !important;
-        width: auto !important;
-    }
-    .female-box .box-body {
-        display: flex !important;
-        align-items: center !important;
-        gap: 4px !important;
-        flex-wrap: nowrap !important;
-    }
-    
-    .scrollable-content { 
-        overflow-y: visible; 
-        -webkit-overflow-scrolling: touch; 
-        padding: 0 12px 20px 12px; 
-    }
-    #individualSection { overflow-y: auto; -webkit-overflow-scrolling: touch; }
-    .main-content { overflow-y: auto; -webkit-overflow-scrolling: touch; }
-    .app-footer { padding: 10px; font-size: 10px; }
-}
-
-@media screen and (max-width: 380px) {
-    .result-item { padding: 8px 12px; }
-    .result-item .main-name { font-size: 13px; }
 }
 
 #individualTree { min-height: 100%; }
@@ -577,18 +546,23 @@ body {
             <div class="action-btn dashboard" onclick="showDashboard()">🏠 Dashboard</div>
         </div>
         
-        <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" style="display:none;">
-        
         <div class="main-content" id="mainContent">
             <div id="individualSection">
                 <div class="fixed-header-section">
                     <div class="search-row">
-                        <span class="search-label">SEARCH MEMBER</span>
+                        <div class="search-label">SEARCH MEMBER</div>
                         <div class="search-wrapper">
                             <input type="text" id="individualSearch" class="search-input" placeholder="Type name..." onkeyup="searchIndividual(this.value)" autocomplete="off">
                             <div id="individualDropdown" class="dropdown"></div>
                         </div>
                     </div>
+                    
+                    <div class="filter-buttons">
+                        <div id="filterSiblings" class="filter-btn active" onclick="toggleFilter('siblings')">👥 Siblings</div>
+                        <div id="filterDescendants" class="filter-btn active" onclick="toggleFilter('descendants')">👶 Descendants</div>
+                        <div id="filterAncestors" class="filter-btn" onclick="toggleFilter('ancestors')">🌳 Ancestors</div>
+                    </div>
+                    
                     <div class="border-line"></div>
                 </div>
 
@@ -684,9 +658,9 @@ body {
 
     window.toggleFilter = function(filter) {
         if (!currentIndividual) return;
-        if (filter === 'siblings') { showSiblings = !showSiblings; }
-        else if (filter === 'descendants') { showDescendants = !showDescendants; }
-        else if (filter === 'ancestors') { showAncestors = !showAncestors; }
+        if (filter === 'siblings') { showSiblings = !showSiblings; document.getElementById('filterSiblings').classList.toggle('active', showSiblings); }
+        else if (filter === 'descendants') { showDescendants = !showDescendants; document.getElementById('filterDescendants').classList.toggle('active', showDescendants); }
+        else if (filter === 'ancestors') { showAncestors = !showAncestors; document.getElementById('filterAncestors').classList.toggle('active', showAncestors); }
         renderIndividualTree();
     };
 
@@ -966,6 +940,9 @@ body {
                 showSiblings = filters.showSiblings;
                 showDescendants = filters.showDescendants;
                 showAncestors = filters.showAncestors;
+                document.getElementById('filterSiblings').classList.toggle('active', showSiblings);
+                document.getElementById('filterDescendants').classList.toggle('active', showDescendants);
+                document.getElementById('filterAncestors').classList.toggle('active', showAncestors);
                 localStorage.removeItem('tableViewFilters');
             }
         }
