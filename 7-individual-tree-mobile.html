@@ -293,8 +293,6 @@ body {
     text-align: left;
     white-space: nowrap;
 }
-/* ----- MEMBER BOX ----- */
-
 
 /* ----- MEMBER BOX ----- */
 .box { 
@@ -313,6 +311,13 @@ body {
     cursor: pointer;
     display: inline-block;
     overflow: visible !important;
+}
+
+/* Male boxes only - fixed width based on 30 character names */
+.box:not(.female-box) {
+    width: 300px !important;
+    max-width: 300px !important;
+    min-width: 300px !important;
 }
 
 .box:hover { transform: translateY(-3px); }
