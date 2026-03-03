@@ -172,7 +172,7 @@ body {
     z-index: 1;
 }
 
-/* ===== SEARCH SECTION - EXACTLY FROM FILE 9 ===== */
+/* ===== SEARCH SECTION - COPIED DIRECTLY FROM FILE 9 ===== */
 .search-row { 
     margin-bottom: 15px; 
     width: 100%; 
@@ -207,6 +207,7 @@ body {
     box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2); 
 }
 
+/* DROPDOWN - COPIED FROM FILE 9 */
 .dropdown { 
     position: absolute; 
     top: 100%; 
@@ -223,6 +224,7 @@ body {
     margin-top: 2px;
 }
 
+/* RESULT ITEMS - COPIED FROM FILE 9 */
 .result-item { 
     padding: 12px 15px; 
     border-bottom: 1px solid #eee; 
@@ -251,7 +253,7 @@ body {
     margin-top: 5px; 
 }
 
-/* ----- FILTER BUTTONS ----- */
+/* ----- FILTER BUTTONS (KEPT FROM FILE 7) ----- */
 .filter-buttons { 
     display: flex; 
     gap: 6px; 
@@ -434,7 +436,7 @@ body {
     display: block;
 }
 
-/* FIXED FEMALE BOX - NO CUTTING */
+/* FIXED FEMALE BOX */
 .female-box { 
     background-color: var(--light-pink) !important; 
     border-color: #fb7185 !important; 
@@ -554,7 +556,7 @@ body {
         <div class="main-content" id="mainContent">
             <div id="individualSection">
                 <div class="fixed-header-section">
-                    <!-- FILE 9 SEARCH STRUCTURE -->
+                    <!-- SEARCH - COPIED FROM FILE 9 -->
                     <div class="search-row">
                         <div class="search-label">SEARCH MEMBER</div>
                         <div class="search-wrapper">
@@ -563,7 +565,7 @@ body {
                         </div>
                     </div>
                     
-                    <!-- FILE 7 FILTER BUTTONS -->
+                    <!-- FILTER BUTTONS - KEPT FROM FILE 7 -->
                     <div class="filter-buttons">
                         <div id="filterSiblings" class="filter-btn active" onclick="toggleFilter('siblings')">👥 Siblings</div>
                         <div id="filterDescendants" class="filter-btn active" onclick="toggleFilter('descendants')">👶 Descendants</div>
@@ -687,6 +689,7 @@ body {
         return chain;
     }
 
+    // SEARCH FUNCTION - COPIED FROM FILE 9
     window.searchIndividual = function(query) {
         if (!db.length) return;
         const drop = document.getElementById('individualDropdown');
@@ -872,72 +875,71 @@ body {
         </div>`;
     }
    
-    // FIXED PDF FUNCTION - LIKE FILE 9
+    // PDF FUNCTION - COPIED DIRECTLY FROM FILE 9
     window.exportIndividualPDF = async function() {
-        if (!currentIndividual) { alert('Please select a member first'); return; }
+        if (!currentIndividual) {
+            alert('Please select a member first');
+            return;
+        }
         
-        const treeElement = document.querySelector('.tree-root-layout');
-        if (!treeElement) return alert('No tree to export');
+        const content = document.getElementById('individualTree');
+        const treeLayout = document.querySelector('.tree-root-layout');
+        
+        const originalZoom = treeLayout.style.zoom;
         
         try {
-            // Save original zoom
-            const originalZoom = treeElement.style.zoom;
+            treeLayout.style.zoom = "1";
             
-            // Set to 1 for PDF capture
-            treeElement.style.zoom = '1';
+            const header = document.createElement('div');
+            header.style.cssText = "margin-bottom:30px; text-align:center; width:100%;";
+            header.innerHTML = `
+                <h1 style="color: #d4af37; font-size: 36px; font-family: 'Playfair Display', serif; margin:0 0 10px 0;">Rizvi Family Tree</h1>
+                <h2 style="color:#5a0000; font-size:24px; font-family:'Playfair Display', serif; margin:0;">${displayName(currentIndividual.name)}</h2>
+            `;
             
-            const loadingMsg = document.createElement('div');
-            loadingMsg.style.position = 'fixed';
-            loadingMsg.style.top = '50%';
-            loadingMsg.style.left = '50%';
-            loadingMsg.style.transform = 'translate(-50%, -50%)';
-            loadingMsg.style.background = '#5a0000';
-            loadingMsg.style.color = 'white';
-            loadingMsg.style.padding = '20px 40px';
-            loadingMsg.style.borderRadius = '8px';
-            loadingMsg.style.zIndex = '9999';
-            loadingMsg.style.boxShadow = '0 4px 20px rgba(0,0,0,0.3)';
-            loadingMsg.textContent = '📄 Preparing PDF... please wait';
-            document.body.appendChild(loadingMsg);
+            const footer = document.createElement('div');
+            footer.style.cssText = "margin-top:40px; padding:15px; border:2px solid #d4af37; background:#0f172a; color:#d4af37; display:flex; justify-content:space-between; font-size:12px; width:100%;";
+            footer.innerHTML = `<span>Generated: ${formatCurrentTime()}</span><span>Developer: Imran Haider</span>`;
             
-            await new Promise(resolve => setTimeout(resolve, 500));
-            
-            // Capture the tree
-            const canvas = await html2canvas(treeElement, {
+            content.insertBefore(header, content.firstChild);
+            content.appendChild(footer);
+
+            const canvas = await html2canvas(content, {
                 scale: 2,
                 backgroundColor: '#ffffff',
+                useCORS: true,
                 logging: false,
-                allowTaint: true,
-                useCORS: true
+                width: content.scrollWidth,
+                windowWidth: content.scrollWidth
             });
-            
-            // Restore original zoom
-            treeElement.style.zoom = originalZoom;
-            document.body.removeChild(loadingMsg);
-            
-            // Create PDF
-            const imgData = canvas.toDataURL('image/png');
+
+            treeLayout.style.zoom = originalZoom;
+            content.removeChild(header);
+            content.removeChild(footer);
+
             const { jsPDF } = window.jspdf;
+            const imgData = canvas.toDataURL('image/png');
             
-            // Calculate dimensions
+            const pdfW = (canvas.width / 2) * 0.264583;
+            const pdfH = (canvas.height / 2) * 0.264583;
+
             const pdf = new jsPDF({
-                orientation: 'landscape',
+                orientation: pdfW > pdfH ? 'l' : 'p',
                 unit: 'mm',
-                format: 'a4'
+                format: [pdfW + 20, pdfH + 20]
             });
+
+            pdf.addImage(imgData, 'PNG', 10, 10, pdfW, pdfH);
             
-            const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-            
-            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-            
-            // Save with clean filename
-            const safeName = displayName(currentIndividual.name).replace(/[^a-z0-9]/gi, '_').toLowerCase();
-            pdf.save(`family_tree_${safeName}.pdf`);
-            
+            const clean = (str) => str.trim().replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-]/g, '');
+            const name1 = clean(currentIndividual.name);
+            const fileName = `Family-Tree-${name1}.pdf`;
+            pdf.save(fileName);
+
         } catch (err) {
+            treeLayout.style.zoom = originalZoom;
             console.error('PDF Error:', err);
-            alert('❌ PDF generation failed: ' + err.message);
+            alert('❌ Error: ' + err.message);
         }
     };
 
