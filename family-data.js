@@ -1,4 +1,4 @@
-// Family Tree Data - Generated on 28/02/2026, 11:08:39 pm
+// Family Tree Data - Generated on 03/03/2026, 5:00:29 pm
 // Total Members: 350
 
 const FAMILY_DATA = [
@@ -981,7 +981,7 @@ const FAMILY_DATA = [
     "gender": "MALE"
   },
   {
-    "name": "Syed Aaley Mohammad",
+    "name": "Syed Aley Mohammad",
     "father": "Syed Ansar Hussain - 02",
     "gen": "G-039-S2",
     "gender": "MALE"
@@ -1269,8 +1269,8 @@ const FAMILY_DATA = [
     "gender": "FEMALE"
   },
   {
-    "name": "Syed Aaley Haider",
-    "father": "Syed Aaley Mohammad",
+    "name": "Syed Aley Haider",
+    "father": "Syed Aley Mohammad",
     "gen": "G-040-S1",
     "gender": "MALE"
   },
@@ -1666,13 +1666,13 @@ const FAMILY_DATA = [
   },
   {
     "name": "Syed Mohammad Samar",
-    "father": "Syed Aaley Haider",
+    "father": "Syed Aley Haider",
     "gen": "G-041-S1",
     "gender": "MALE"
   },
   {
     "name": "Syed Mohammad Shabbar",
-    "father": "Syed Aaley Haider",
+    "father": "Syed Aley Haider",
     "gen": "G-041-S2",
     "gender": "MALE"
   },
