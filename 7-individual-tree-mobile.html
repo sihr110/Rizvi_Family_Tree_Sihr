@@ -134,6 +134,9 @@ body {
     transition: all 0.2s;
     min-width: 0;
     text-align: center;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
 }
 .action-btn.table {
     background: var(--bronze);
@@ -173,14 +176,49 @@ body {
     overflow-x: auto;
 }
 
-/* ----- SEARCH SECTION ----- */
+/* ----- SEARCH SECTION - IMPROVED FROM FILE 9 ----- */
 .search-row { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; }
 .search-label { font-weight: 700; color: var(--maroon); font-size: 13px; text-transform: uppercase; white-space: nowrap; }
-.search-wrapper { position: relative; flex: 2; min-width: 300px; }
-.search-input { width: 100%; padding: 8px 15px; border: 2px solid #cbd5e1; border-radius: 4px; font-size: 13px; outline: none; transition: all 0.3s; }
-.search-input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2); }
-.dropdown { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 2px solid var(--gold); border-radius: 0 0 4px 4px; max-height: 200px; overflow-y: auto; display: none; z-index: 1000; box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
-.result-item { padding: 8px 12px; border-bottom: 1px solid #eee; cursor: pointer; font-size: 13px; }
+.search-wrapper { position: relative; flex: 2; min-width: 300px; width: 100%; }
+.search-input { 
+    width: 100%; 
+    padding: 12px 15px; 
+    border: 2px solid #cbd5e1; 
+    border-radius: 8px; 
+    font-size: 14px; 
+    outline: none; 
+    transition: all 0.3s; 
+    background: white; 
+    color: var(--dark-blue); 
+    font-weight: 500;
+}
+.search-input:focus { 
+    border-color: var(--gold); 
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2); 
+}
+.dropdown { 
+    position: absolute; 
+    top: 100%; 
+    left: 0; 
+    right: 0; 
+    background: white; 
+    border: 2px solid var(--gold); 
+    border-radius: 0 0 8px 8px; 
+    max-height: 300px; 
+    overflow-y: auto; 
+    display: none; 
+    z-index: 9999; 
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25); 
+    margin-top: 2px;
+}
+.result-item { 
+    padding: 12px 15px; 
+    border-bottom: 1px solid #eee; 
+    cursor: pointer; 
+    font-size: 14px; 
+    transition: background 0.2s; 
+}
+.result-item:last-child { border-bottom: none; }
 .result-item:hover { background: #faebcd; }
 .result-item .main-name { font-weight: 700; color: var(--dark-blue); }
 .result-item .gen { color: var(--maroon); font-size: 11px; margin-left: 6px; }
@@ -191,8 +229,6 @@ body {
 .filter-btn.active { background: #d4edda; border-color: var(--dark-green); }
 
 /* ----- TREE LAYOUT ----- */
-
-
 .tree-root-layout {
     display: inline-flex;
     flex-direction: column;
@@ -222,8 +258,6 @@ body {
 .children-row { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; margin-top: 5px; }
 .relation-label { font-size: 11px; color: var(--gold); font-weight: bold; text-transform: uppercase; letter-spacing: 1px; background: var(--dark-blue); padding: 4px 12px; border-radius: 4px; color: white; margin: 5px 0; text-align: center; display: inline-block; width: auto; }
 .descendant-heading { font-size: 14px; color: var(--maroon); font-weight: 800; margin: 15px 0 5px 0; font-family: 'Playfair Display', serif; text-align: center; width: 100%; border-bottom: 2px solid var(--gold); padding-bottom: 5px; }
-
-
 
 /* ----- SISTERS GROUP BOX ----- */
 .sisters-group-box { 
@@ -411,7 +445,7 @@ body {
 /* ----- FOOTER ----- */
 .app-footer { background: var(--dark-blue); color: var(--gold); text-align: center; padding: 8px; font-size: 11px; border-top: 2px solid var(--gold); }
 
-/* ----- MOBILE RESPONSIVE ----- */
+/* ----- MOBILE RESPONSIVE - IMPROVED DROPDOWN ----- */
 @media screen and (max-width: 768px) {
     body { overflow: auto; -webkit-overflow-scrolling: touch; height: auto; min-height: 100vh; padding: 5px; }
     .app-container { height: auto; min-height: calc(100vh - 10px); border-radius: 16px; overflow: hidden; }
@@ -433,6 +467,15 @@ body {
     .search-row { flex-direction: column; align-items: stretch; gap: 12px; }
     .search-wrapper { min-width: 100%; width: 100%; }
     .search-input { width: 100%; font-size: 16px; padding: 12px 15px; height: 48px; }
+    .dropdown { 
+        max-height: 250px; 
+        font-size: 14px;
+        z-index: 9999;
+        position: absolute;
+        border-radius: 0 0 8px 8px;
+    }
+    .result-item { padding: 12px 15px; }
+    
     .filter-buttons { width: 100%; justify-content: space-between; gap: 8px; }
     .filter-btn { flex: 1; padding: 10px 5px; font-size: 12px; justify-content: center; height: 44px; }
     
@@ -444,25 +487,25 @@ body {
         width: fit-content !important;
     }
        
-.box-body {
-    display: block !important;
-    text-align: center !important;
-    padding: 10px 12px !important;
-}
-.member-name { 
-    font-size: 18px !important; 
-    white-space: nowrap !important;
-    display: block !important;
-    margin-bottom: 4px !important;
-}
-.father-name { 
-    font-size: 11px; 
-    white-space: nowrap !important;
-    display: block !important;
-    margin-top: 0 !important;
-    margin-left: 0 !important;
-    width: auto !important;
-}
+    .box-body {
+        display: block !important;
+        text-align: center !important;
+        padding: 10px 12px !important;
+    }
+    .member-name { 
+        font-size: 18px !important; 
+        white-space: nowrap !important;
+        display: block !important;
+        margin-bottom: 4px !important;
+    }
+    .father-name { 
+        font-size: 11px; 
+        white-space: nowrap !important;
+        display: block !important;
+        margin-top: 0 !important;
+        margin-left: 0 !important;
+        width: auto !important;
+    }
     .female-box .box-body {
         display: flex !important;
         align-items: center !important;
@@ -476,8 +519,6 @@ body {
     .scrollable-content { overflow-y: visible; -webkit-overflow-scrolling: touch; padding: 0 12px 20px 12px; }
     #individualSection { overflow-y: auto; -webkit-overflow-scrolling: touch; }
     .main-content { overflow-y: auto; -webkit-overflow-scrolling: touch; }
-    .dropdown { max-height: 200px; font-size: 14px; }
-    .result-item { padding: 12px 15px; }
     .app-footer { padding: 10px; font-size: 10px; }
 }
 
@@ -518,7 +559,6 @@ body {
         width: fit-content !important;
     }
 }
-
 
 /* Ensure tree stays after scroll */
 #individualTree { min-height: 100%; }
@@ -734,31 +774,53 @@ body {
         }
 
         // =========================================================================
-        // SEARCH DROPDOWN
+        // SEARCH DROPDOWN - IMPROVED FROM FILE 9
         // =========================================================================
         window.searchIndividual = function(query) {
             if (!db.length) return;
             const drop = document.getElementById('individualDropdown');
             if (!drop) return;
             drop.innerHTML = '';
-            if (!query || query.length < 1) { drop.style.display = 'none'; return; }
+            
+            if (!query || query.length < 1) { 
+                drop.style.display = 'none'; 
+                return; 
+            }
+            
             const found = db.filter(p => p.name.toLowerCase().includes(query.toLowerCase())).slice(0, 8);
-            if (found.length === 0) { drop.style.display = 'none'; return; }
+            if (found.length === 0) { 
+                drop.style.display = 'none'; 
+                return; 
+            }
+            
             found.forEach(p => {
                 const div = document.createElement('div');
                 div.className = 'result-item';
-                div.innerHTML = `<div><span class="main-name">${displayName(p.name)}</span> <span class="gen">(${p.gen})</span></div>
-                    <div style="font-size:11px;">${p.gender?.startsWith('F') ? 'D/o' : 'S/o'} ${displayName(p.father)}</div>`;
+                
+                const nameDisplay = displayName(p.name);
+                const fatherDisplay = displayName(p.father);
+                const relation = p.gender?.startsWith('F') ? 'D/o' : 'S/o';
+                
+                div.innerHTML = `
+                    <div>
+                        <span class="main-name">${nameDisplay}</span> 
+                        <span class="gen">${p.gen}</span>
+                    </div>
+                    <div style="font-size:11px; color:#64748b; margin-top:5px;">${relation} ${fatherDisplay}</div>
+                `;
+                
                 div.onclick = (e) => {
                     e.stopPropagation();
-                    document.getElementById('individualSearch').value = displayName(p.name) + ' (' + p.gen + ')';
+                    document.getElementById('individualSearch').value = `${nameDisplay} (${p.gen})`;
                     currentIndividual = p;
                     renderIndividualTree();
                     drop.style.display = 'none';
                 };
                 drop.appendChild(div);
             });
+            
             drop.style.display = 'block';
+            drop.style.zIndex = '9999';
         };
 
         document.addEventListener('click', function(e) {
@@ -900,25 +962,25 @@ body {
             html += '</div>';
             document.getElementById('individualTree').innerHTML = html;
         }
-function renderBox(p, label, isSelected, hasChildren) {
-    const isFemale = p.gender?.startsWith('F');
-    const blinkClass = isSelected ? 'blinking-box' : '';
-    const memberData = encodeURIComponent(JSON.stringify(p));
-    
-    return `<div class="box ${isFemale ? 'female-box' : ''} ${blinkClass}" onclick='handleBoxClick(JSON.parse(decodeURIComponent("${memberData}")))'>
-        <div class="box-header">
-            <span>${label}</span>
-            <span>${p.gen}</span>
-        </div>
-        <div class="box-body">
-            <div class="member-name">${displayName(p.name)}</div>
-            <div class="father-name">${isFemale ? 'D/o' : 'S/o'}: ${displayName(p.father)}</div>
-            ${hasChildren ? '<div class="golden-heart">❤️</div>' : ''}
-        </div>
-    </div>`;
-}
+        
+        function renderBox(p, label, isSelected, hasChildren) {
+            const isFemale = p.gender?.startsWith('F');
+            const blinkClass = isSelected ? 'blinking-box' : '';
+            const memberData = encodeURIComponent(JSON.stringify(p));
+            
+            return `<div class="box ${isFemale ? 'female-box' : ''} ${blinkClass}" onclick='handleBoxClick(JSON.parse(decodeURIComponent("${memberData}")))'>
+                <div class="box-header">
+                    <span>${label}</span>
+                    <span>${p.gen}</span>
+                </div>
+                <div class="box-body">
+                    <div class="member-name">${displayName(p.name)}</div>
+                    <div class="father-name">${isFemale ? 'D/o' : 'S/o'}: ${displayName(p.father)}</div>
+                    ${hasChildren ? '<div class="golden-heart">❤️</div>' : ''}
+                </div>
+            </div>`;
+        }
        
-
         // =========================================================================
         // PDF EXPORT
         // =========================================================================
@@ -952,20 +1014,20 @@ function renderBox(p, label, isSelected, hasChildren) {
                 await new Promise(resolve => setTimeout(resolve, 500));
 
                 // Store original zoom
-const originalZoom = treeElement.style.zoom;
-treeElement.style.zoom = '1';
+                const originalZoom = treeElement.style.zoom;
+                treeElement.style.zoom = '1';
 
-// Capture with higher scale for clarity
-const canvas = await html2canvas(treeElement, { 
-    scale: 3, 
-    backgroundColor: '#ffffff', 
-    logging: false, 
-    allowTaint: true, 
-    useCORS: true 
-});
+                // Capture with higher scale for clarity
+                const canvas = await html2canvas(treeElement, { 
+                    scale: 3, 
+                    backgroundColor: '#ffffff', 
+                    logging: false, 
+                    allowTaint: true, 
+                    useCORS: true 
+                });
 
-// Restore zoom
-treeElement.style.zoom = originalZoom;
+                // Restore zoom
+                treeElement.style.zoom = originalZoom;
                 
                 treeElement.removeChild(header); treeElement.removeChild(footer); treeElement.removeChild(signature);
                 document.body.removeChild(loadingMsg);
