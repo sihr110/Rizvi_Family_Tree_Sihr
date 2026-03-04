@@ -292,7 +292,7 @@
                 <span>Rizvi family - Root Tree</span>
             </div>
             <div class="top-reset-btn" onclick="resetSearch()">🔄 Reset</div>
-            <button class="menu-toggle" id="mobileMenuToggle">☰</button>
+           
         </div>
         
         <!-- SECOND ROW - Three equal buttons -->
@@ -724,10 +724,7 @@ pdf.save(fileName);
 
         document.addEventListener('DOMContentLoaded', function() {
             // Mobile menu toggle
-            document.getElementById('mobileMenuToggle')?.addEventListener('click', function() {
-                document.querySelector('.fixed-header-section')?.classList.toggle('collapsed');
-            });
-
+        
             if (fromDashboard) {
                 // CLEANUP: If coming from dashboard, wipe all temporary data
                 sessionStorage.removeItem('tempRoot1');

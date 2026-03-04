@@ -452,7 +452,7 @@
                 <span>Rizvi family - Root Table</span>
             </div>
             <div class="top-reset-btn" onclick="resetSearch()">🔄 Reset</div>
-            <button class="menu-toggle" id="mobileMenuToggle">☰</button>
+            
         </div>
         
         <!-- SECOND ROW - Three equal buttons -->
@@ -839,9 +839,7 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             // mobile menu toggle
-            document.getElementById('mobileMenuToggle')?.addEventListener('click', function() {
-                document.querySelector('.fixed-header-section')?.classList.toggle('collapsed');
-            });
+          
 
             const saved1 = localStorage.getItem('rootMember1');
             const saved2 = localStorage.getItem('rootMember2');
