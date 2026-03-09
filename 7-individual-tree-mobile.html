@@ -38,7 +38,6 @@
     --pdf-grey: #6c757d;
     --pdf-grey-dark: #5a6268;
     --dashboard-green: #1b5e20;
-    --sisters-box-bg: #fff0f5;
 }
 
 /* ----- BASE LAYOUT ----- */
@@ -149,8 +148,6 @@ body {
 .action-btn.dashboard { background: var(--dashboard-green); color: white; border-color: transparent; }
 .action-btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
 
-
-
 /* ----- MAIN CONTENT ----- */
 .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: #fffcf8; }
 #individualSection { display: block; height: 100%; overflow: auto; flex: 1; }
@@ -164,14 +161,12 @@ body {
     overflow: visible !important; 
 }
 
-
 .border-line { border-top: 3px solid var(--gold); margin: 20px 0 0 0; }
 .scrollable-content { 
     position: relative;
     z-index: 1;
 }
 
- 
 .search-row { 
     margin-bottom: 15px; 
     width: 100%; 
@@ -208,7 +203,7 @@ body {
     box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2); 
 }
 
-/* DROPDOWN - COPIED FROM FILE 9 */
+/* DROPDOWN */
 .dropdown { 
     position: absolute; 
     top: 100%; 
@@ -225,7 +220,6 @@ body {
     margin-top: 2px;
 }
 
-/* RESULT ITEMS - COPIED FROM FILE 9 */
 .result-item { 
     padding: 12px 15px; 
     border-bottom: 1px solid #eee; 
@@ -254,7 +248,7 @@ body {
     margin-top: 5px; 
 }
 
-/* ----- FILTER BUTTONS (KEPT FROM FILE 7) ----- */
+/* ----- FILTER BUTTONS ----- */
 .filter-buttons { 
     display: flex; 
     gap: 6px; 
@@ -282,10 +276,10 @@ body {
 
 /* ----- TREE LAYOUT ----- */
 .tree-root-layout {
-    display: inline-flex;
+    display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0;
+    gap: 15px;
     padding: 40px;
     width: max-content;
     min-width: 100%;
@@ -300,110 +294,76 @@ body {
     .tree-root-layout { zoom: 0.35; }
 }
 
-.family-group { display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; }
+.family-group { 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    gap: 15px;
+    width: 100%; 
+    margin-bottom: 30px;
+}
 
 .children-row { 
     display: flex; 
     gap: 20px; 
     flex-wrap: wrap; 
     justify-content: center; 
-    margin-top: 5px; 
-    max-width: 850px; 
+    margin: 20px 0 25px 0;
+    max-width: 1200px; 
     margin-left: auto;
     margin-right: auto;
 }
 
-.relation-label { font-size: 11px; color: var(--gold); font-weight: bold; text-transform: uppercase; letter-spacing: 1px; background: var(--dark-blue); padding: 4px 12px; border-radius: 4px; color: white; margin: 5px 0; text-align: center; display: inline-block; width: auto; }
-.descendant-heading { font-size: 14px; color: var(--maroon); font-weight: 800; margin: 15px 0 5px 0; font-family: 'Playfair Display', serif; text-align: center; width: 100%; border-bottom: 2px solid var(--gold); padding-bottom: 5px; }
-
-/* ----- SISTERS GROUP BOX ----- */
-.sisters-group-box { 
-    border: 2px solid var(--sisters-border); 
-    border-radius: 12px; 
-    background: var(--sisters-box-bg); 
-    min-width: 300px; 
-    max-width: none; 
-    width: auto;
-    text-align: left;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.05); 
-    padding: 12px; 
-    margin: 10px auto; 
+.v-line { 
+    width: 3px; 
+    height: 30px;
+    background: var(--gold); 
+    margin: 15px auto;
 }
 
-.sisters-group-box .sisters-header { 
+.relation-label { 
+    font-size: 11px; 
+    color: var(--gold); 
+    font-weight: bold; 
+    text-transform: uppercase; 
+    letter-spacing: 1px; 
+    background: var(--dark-blue); 
+    padding: 6px 16px;
+    border-radius: 4px; 
+    color: white; 
+    margin: 20px 0 25px 0;
+    text-align: center; 
+    display: inline-block; 
+    width: auto; 
+}
+
+.descendant-heading { 
     font-size: 14px; 
-    font-weight: 800; 
     color: var(--maroon); 
-    padding-bottom: 6px; 
-    margin-bottom: 6px; 
-    text-align: left; 
-    border-bottom: 2px solid var(--sisters-border); 
+    font-weight: 800; 
+    margin: 40px 0 20px 0;
     font-family: 'Playfair Display', serif; 
+    text-align: center; 
+    width: 100%; 
+    border-bottom: 2px solid var(--gold); 
+    padding-bottom: 8px;
 }
 
-.sisters-group-box table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 8px 0;
-    table-layout: auto;
-}
-
-.sisters-group-box th {
-    text-align: left;
-    padding: 8px 12px;
-    font-size: 11px;
-    color: var(--maroon);
-    font-weight: 700;
-    background: rgba(251, 113, 133, 0.1);
-    white-space: nowrap;
-}
-
-.sisters-group-box td {
-    padding: 8px 12px;
-    border-bottom: 1px dashed #fecaca;
-    font-weight: 600;
-    transition: background 0.2s;
-    cursor: pointer;
-}
-
-.sisters-group-box td:first-child { white-space: nowrap; }
-.sisters-group-box td:last-child { color: var(--maroon); white-space: nowrap; }
-.sisters-group-box td:hover { background: #faebcd; }
-
-.sisters-group-box .father-info {
-    margin-top: 8px;
-    padding-top: 8px;
-    border-top: 1px solid var(--sisters-border);
-    font-size: 11px;
-    color: #64748b;
-    text-align: left;
-    white-space: nowrap;
-}
-
-/* ----- MEMBER BOX - FIXED FEMALE BOX ----- */
+/* ----- MEMBER BOX - COMPLETE FILE 2 STYLING ----- */
 .box { 
     border: 2px solid var(--gold); 
     border-radius: 12px; 
     background: white; 
-    min-width: auto !important;
-    width: auto !important;
-    max-width: none !important;
-    text-align: center; 
+    min-width: 260px;
+    max-width: 280px;
+    text-align: left;
+    cursor: pointer;
     position: relative; 
     box-shadow: 0 4px 8px rgba(0,0,0,0.05); 
     transition: transform 0.2s; 
-    white-space: nowrap !important;
-    padding: 0 !important;
-    cursor: pointer;
     display: inline-block;
     overflow: visible !important;
-}
-
-.box:not(.female-box) {
-    width: 250px !important;
-    max-width: 250px !important;
-    min-width: 250px !important;
-    flex-shrink: 0;
+    margin: 0 auto;
 }
 
 .box:hover { transform: translateY(-3px); }
@@ -420,6 +380,11 @@ body {
     50%{ border-color:#4caf50; background:#c8e6c9; box-shadow:0 0 30px rgba(76,175,80,0.6); transform:scale(1.05); } 
 }
 
+.female-box { 
+    background-color: var(--light-pink) !important; 
+    border-color: #fb7185 !important; 
+}
+
 .box-header { 
     display: flex; 
     justify-content: space-between; 
@@ -431,8 +396,8 @@ body {
 }
 
 .box-body { 
-    padding: 12px 15px !important;
-    text-align: center;
+    padding: 12px;
+    text-align: left;
 }
 
 .member-name { 
@@ -440,52 +405,14 @@ body {
     font-weight: 700; 
     font-size: 16px; 
     display: block;
-    margin-bottom: 4px;
+    margin-bottom: 8px;
 }
 
 .father-name { 
     font-size: 11px; 
     color: #64748b; 
-    display: block;
+    margin-top: 4px;
 }
-
-/* FIXED FEMALE BOX */
-.female-box { 
-    background-color: var(--light-pink) !important; 
-    border-color: #fb7185 !important; 
-    width: auto !important;
-    max-width: 300px !important;
-    min-width: 200px !important;
-    white-space: normal !important;
-    padding: 0 !important;
-    display: inline-block !important;
-    height: auto !important;
-}
-
-.female-box .box-body {
-    white-space: normal !important;
-    padding: 12px 15px !important;
-    display: block !important;
-    text-align: center !important;
-    word-wrap: break-word !important;
-}
-
-.female-box .member-name {
-    white-space: normal !important;
-    word-wrap: break-word !important;
-    display: block !important;
-}
-
-.female-box .father-name {
-    display: block !important;
-    white-space: normal !important;
-    margin-top: 4px !important;
-    margin-left: 0 !important;
-    width: auto !important;
-    word-wrap: break-word !important;
-}
-
-.v-line { width: 3px; height: 25px; background: var(--gold); margin: 5px auto; }
 
 .golden-heart { 
     position: absolute; 
@@ -569,7 +496,7 @@ body {
         <div class="main-content" id="mainContent">
             <div id="individualSection">
                 <div class="fixed-header-section">
-                    <!-- SEARCH - COPIED FROM FILE 9 -->
+                    <!-- SEARCH -->
                     <div class="search-row">
                         <div class="search-label">SEARCH MEMBER</div>
                         <div class="search-wrapper">
@@ -578,7 +505,7 @@ body {
                         </div>
                     </div>
                     
-                    <!-- FILTER BUTTONS - KEPT FROM FILE 7 -->
+                    <!-- FILTER BUTTONS -->
                     <div class="filter-buttons">
                         <div id="filterSiblings" class="filter-btn active" onclick="toggleFilter('siblings')">👥 Siblings</div>
                         <div id="filterDescendants" class="filter-btn active" onclick="toggleFilter('descendants')">👶 Descendants</div>
@@ -702,7 +629,7 @@ body {
         return chain;
     }
 
-    // SEARCH FUNCTION - COPIED FROM FILE 9
+    // SEARCH FUNCTION
     window.searchIndividual = function(query) {
         if (!db.length) return;
         const drop = document.getElementById('individualDropdown');
@@ -763,28 +690,84 @@ body {
         renderIndividualTree();
     };
 
-    function groupSisters(sistersArray, fatherName, type) {
-        if (!sistersArray || sistersArray.length === 0) return '';
-        let headerText = type === 'siblings' ? 'SISTERS' : 'DAUGHTERS';
-        let html = `<div class="sisters-group-box"><div class="sisters-header"># ${headerText}</div>`;
-        html += `<table><tr><th>Name</th><th>Gen</th></tr>`;
-        sistersArray.forEach(sister => {
-            const memberData = encodeURIComponent(JSON.stringify(sister));
-            html += `<tr onclick='handleBoxClick(JSON.parse(decodeURIComponent("${memberData}")))'>`;
-            html += `<td>${displayName(sister.name)}</td>`;
-            html += `<td>${sister.gen}</td>`;
-            html += `</tr>`;
-        });
-        html += `</table>`;
-        html += `<div class="father-info">${sistersArray[0]?.gender?.startsWith('F') ? 'D/o' : 'S/o'}: ${displayName(fatherName)}</div>`;
-        html += `</div>`;
-        return html;
+    // RENDER BOX FUNCTION - COMPLETE FROM FILE 2
+    function renderBox(p, label, isSelected, hasChildren) {
+        const isFemale = p.gender?.startsWith('F');
+        const blinkClass = isSelected ? 'blinking-box' : '';
+        const memberData = encodeURIComponent(JSON.stringify(p));
+        
+        // Find mother (spouse of father)
+        let motherName = '';
+        if (p.father) {
+            const father = db.find(f => f.name.toLowerCase() === p.father.toLowerCase());
+            if (father && father.spouse) {
+                motherName = father.spouse;
+            }
+        }
+        
+        // Rose for vital status
+        const roseIcon = p.alive === 'No' ? '🥀' : '🌹';
+        const roseColor = p.alive === 'No' ? '#666' : '#e31b23';
+        
+        // Marital status display
+        let maritalDisplay = '';
+        if (p.maritalStatus === 'Married') maritalDisplay = '💍';
+        else if (p.maritalStatus === 'Unmarried') maritalDisplay = '';
+        else if (p.maritalStatus === 'Widow' || p.maritalStatus === 'Widower') maritalDisplay = '👤';
+        else if (p.maritalStatus === 'Divorced') maritalDisplay = '⚖️';
+        
+        // Family icon
+        const familyIcon = '👪';
+        
+        return `<div class="box ${isFemale ? 'female-box' : ''} ${blinkClass}" onclick='handleBoxClick(JSON.parse(decodeURIComponent("${memberData}")))'>
+            <div class="box-header">
+                <span>${label}</span>
+                <span>${p.gen}</span>
+            </div>
+            <div class="box-body">
+                <!-- Name with rose in front -->
+                <div style="display: flex; align-items: center; gap: 5px; margin-bottom: 8px;">
+                    <span style="color: ${roseColor}; font-size: 20px;">${roseIcon}</span>
+                    <span class="member-name">${displayName(p.name)}</span>
+                </div>
+                
+                <!-- Father -->
+                <div style="display: flex; align-items: center; gap: 5px; margin-top: 3px;">
+                    <span style="font-size: 14px; min-width: 50px;">Father :</span>
+                    <span class="father-name">${displayName(p.father)}</span>
+                </div>
+                
+                <!-- Mother (if found) -->
+                ${motherName ? `<div style="display: flex; align-items: center; gap: 5px; margin-top: 3px;">
+                    <span style="font-size: 14px; min-width: 50px;">Mother :</span>
+                    <span class="father-name" style="color: #b85c5c;">${displayName(motherName)}</span>
+                </div>` : ''}
+                
+                <!-- Spouse (if exists) -->
+                ${p.spouse ? `<div style="display: flex; align-items: center; gap: 5px; margin-top: 3px;">
+                    <span style="font-size: 14px; min-width: 50px;">Spouse :</span>
+                    <span class="father-name" style="color: #8B4513;">${displayName(p.spouse)}</span>
+                </div>` : ''}
+                
+                <!-- Status -->
+                <div style="display: flex; align-items: center; gap: 5px; margin-top: 3px;">
+                    <span style="font-size: 14px; min-width: 50px;">Status :</span>
+                    <span style="font-size: 14px;">${maritalDisplay}</span>
+                    <span class="father-name">${p.maritalStatus || 'Married'}</span>
+                </div>
+                
+                <!-- Family icon for children -->
+                ${hasChildren ? `<div class="golden-heart" style="font-size: 18px;">${familyIcon}</div>` : ''}
+            </div>
+        </div>`;
     }
 
+    // RENDER INDIVIDUAL TREE - WITH ALL SIBLINGS AS INDIVIDUAL BOXES
     function renderIndividualTree() {
         if (!currentIndividual) return;
         let html = '<div>';
 
+        // ANCESTORS SECTION
         if (showAncestors) {
             const ancestors = getAncestryChain(currentIndividual).slice(1);
             if (ancestors.length > 0) {
@@ -800,6 +783,7 @@ body {
             }
         }
 
+        // CURRENT MEMBER AND FATHER
         const father = findParent(currentIndividual);
         const ancestors = showAncestors ? getAncestryChain(currentIndividual).slice(1) : [];
         const fatherInAncestors = father && ancestors.some(a => a.name === father.name);
@@ -819,49 +803,45 @@ body {
             html += '</div>';
         }
 
+        // SIBLINGS SECTION - ALL as individual boxes (NO TABLES)
         if (showSiblings && father) {
             const siblings = db.filter(s => s.father && s.father.toLowerCase() === currentIndividual.father.toLowerCase() && s.name !== currentIndividual.name);
             if (siblings.length > 0) {
-                const maleSiblings = siblings.filter(s => !s.gender?.startsWith('F'));
-                const femaleSiblings = siblings.filter(s => s.gender?.startsWith('F'));
                 html += '<div class="family-group">';
                 html += `<div class="descendant-heading">DESCENDANTS OF ${displayName(father.name).toUpperCase()}</div>`;
                 html += '<div class="relation-label">SIBLINGS</div>';
-                if (maleSiblings.length > 0) {
-                    html += '<div class="children-row">';
-                    maleSiblings.forEach(s => {
-                        const hasChildren = db.some(x => x.father && x.father.toLowerCase() === s.name.toLowerCase());
-                        html += renderBox(s, 'Brother', false, hasChildren);
-                    });
-                    html += '</div>';
-                }
-                if (femaleSiblings.length > 0) {
-                    html += groupSisters(femaleSiblings, father.name, 'siblings');
-                }
+                
+                // ALL siblings in children-row (both male and female as individual boxes)
+                html += '<div class="children-row">';
+                siblings.forEach(s => {
+                    const hasChildren = db.some(x => x.father && x.father.toLowerCase() === s.name.toLowerCase());
+                    const siblingLabel = s.gender?.startsWith('F') ? 'Sister' : 'Brother';
+                    html += renderBox(s, siblingLabel, false, hasChildren);
+                });
+                html += '</div>';
+                
                 html += '</div>';
             }
         }
 
+        // DESCENDANTS SECTION - ALL as individual boxes
         if (showDescendants) {
             const children = db.filter(c => c.father && c.father.toLowerCase() === currentIndividual.name.toLowerCase());
             if (children.length > 0) {
-                const maleChildren = children.filter(c => !c.gender?.startsWith('F'));
-                const femaleChildren = children.filter(c => c.gender?.startsWith('F'));
                 html += '<div class="family-group">';
                 html += '<div class="v-line"></div>';
                 html += `<div class="descendant-heading">DESCENDANTS OF ${displayName(currentIndividual.name).toUpperCase()}</div>`;
                 html += '<div class="relation-label">CHILDREN</div>';
-                if (maleChildren.length > 0) {
-                    html += '<div class="children-row">';
-                    maleChildren.forEach(c => {
-                        const hasChildren = db.some(x => x.father && x.father.toLowerCase() === c.name.toLowerCase());
-                        html += renderBox(c, 'Son', false, hasChildren);
-                    });
-                    html += '</div>';
-                }
-                if (femaleChildren.length > 0) {
-                    html += groupSisters(femaleChildren, currentIndividual.name, 'children');
-                }
+                
+                // ALL children in children-row (both male and female as individual boxes)
+                html += '<div class="children-row">';
+                children.forEach(c => {
+                    const hasChildren = db.some(x => x.father && x.father.toLowerCase() === c.name.toLowerCase());
+                    const childLabel = c.gender?.startsWith('F') ? 'Daughter' : 'Son';
+                    html += renderBox(c, childLabel, false, hasChildren);
+                });
+                html += '</div>';
+                
                 html += '</div>';
             }
         }
@@ -869,26 +849,8 @@ body {
         html += '</div>';
         document.getElementById('individualTree').innerHTML = html;
     }
-    
-    function renderBox(p, label, isSelected, hasChildren) {
-        const isFemale = p.gender?.startsWith('F');
-        const blinkClass = isSelected ? 'blinking-box' : '';
-        const memberData = encodeURIComponent(JSON.stringify(p));
-        
-        return `<div class="box ${isFemale ? 'female-box' : ''} ${blinkClass}" onclick='handleBoxClick(JSON.parse(decodeURIComponent("${memberData}")))'>
-            <div class="box-header">
-                <span>${label}</span>
-                <span>${p.gen}</span>
-            </div>
-            <div class="box-body">
-                <div class="member-name">${displayName(p.name)}</div>
-                <div class="father-name">${isFemale ? 'D/o' : 'S/o'}: ${displayName(p.father)}</div>
-                ${hasChildren ? '<div class="golden-heart">❤️</div>' : ''}
-            </div>
-        </div>`;
-    }
    
-    // PDF FUNCTION - COPIED DIRECTLY FROM FILE 9
+    // PDF FUNCTION
     window.exportIndividualPDF = async function() {
         if (!currentIndividual) {
             alert('Please select a member first');
