@@ -701,14 +701,14 @@ function renderBox(p, label, isSelected, hasChildren) {
     const memberData = encodeURIComponent(JSON.stringify(p));
     
     // Find mother by looking for a person whose spouse is this person's father
-    let motherName = '';
-    if (p.father) {
-        // Look for a person whose spouse field equals the father's name
-        const mother = db.find(m => m.spouse && m.spouse.toLowerCase() === p.father.toLowerCase());
-        if (mother) {
-            motherName = mother.name;
-        }
+// Find mother (spouse of father)
+let motherName = '';
+if (p.father) {
+    const father = db.find(f => f.name.toLowerCase() === p.father.toLowerCase());
+    if (father && father.spouse) {
+        motherName = father.spouse;
     }
+}
     
     // Rose for vital status
     const roseIcon = p.alive === 'No' ? '🥀' : '🌹';
