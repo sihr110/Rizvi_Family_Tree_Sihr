@@ -6,6 +6,9 @@
     <title>Rizvi Family · Mobile Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <!-- Load external family data - updated to 13-family-data.js -->
+    <script src="13-family-data.js"></script>
+    
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -156,13 +159,7 @@
 
         .hidden { display: none; }
     </style>
-
-
-<head>
-    <!-- Your existing code -->
-    <script src="family-data.js"></script>  <!-- ADD THIS LINE -->
 </head>
-
 <body>
     <div class="app-container">
         <div class="app-header">
@@ -236,8 +233,11 @@
                     db = rows.map(r => ({
                         name: String(r.Name || r.name || '').trim(),
                         father: String(r.Father || r.father || '').trim(),
+                        spouse: String(r.Spouse || r.spouse || '').trim(),
                         gen: String(r.Gen || r.gen || '').trim(),
-                        gender: String(r.Gender || r.gender || 'M').trim().toUpperCase()
+                        gender: String(r.Gender || r.gender || 'Male').trim().toUpperCase(),
+                        maritalStatus: String(r['Marital Status'] || r.maritalStatus || r.marital_status || 'Married').trim(),
+                        alive: String(r.Alive || r.alive || 'Yes').trim()
                     })).filter(p => p.name);
 
                     localStorage.setItem('familyDB', JSON.stringify(db));
@@ -276,26 +276,26 @@
             window.location.href = '9-root-tree-mobile.html';
         }
 
-   function initializeData() {
-    // First check if FAMILY_DATA exists (from the external file)
-    if (typeof FAMILY_DATA !== 'undefined' && FAMILY_DATA.length > 0) {
-        db = FAMILY_DATA;
-        localStorage.setItem('familyDB', JSON.stringify(db));
-        document.getElementById('dataStatus').innerHTML = `✅ ${db.length} members`;
-        document.getElementById('dataStatus').style.color = '#2e7d32';
-        return;
-    }
-    
-    // Fallback to localStorage if no external data
-    const saved = localStorage.getItem('familyDB');
-    if (saved) {
-        db = JSON.parse(saved);
-        document.getElementById('dataStatus').innerHTML = `✅ ${db.length} members`;
-        document.getElementById('dataStatus').style.color = '#2e7d32';
-    } else {
-        autoLoadData(); // Your existing auto-load function
-    }
-}
+        function initializeData() {
+            // First check if FAMILY_DATA exists (from 13-family-data.js)
+            if (typeof FAMILY_DATA !== 'undefined' && FAMILY_DATA.length > 0) {
+                db = FAMILY_DATA;
+                localStorage.setItem('familyDB', JSON.stringify(db));
+                document.getElementById('dataStatus').innerHTML = `✅ ${db.length} members`;
+                document.getElementById('dataStatus').style.color = '#2e7d32';
+                return;
+            }
+            
+            // Fallback to localStorage if no external data
+            const saved = localStorage.getItem('familyDB');
+            if (saved) {
+                db = JSON.parse(saved);
+                document.getElementById('dataStatus').innerHTML = `✅ ${db.length} members`;
+                document.getElementById('dataStatus').style.color = '#2e7d32';
+            } else {
+                autoLoadData();
+            }
+        }
 
         function autoLoadData() {
             const possiblePaths = [
@@ -352,6 +352,7 @@
             tryNextPath();
         }
 
+        // Initialize data when page loads
         initializeData();
     </script>
 </body>

@@ -690,78 +690,82 @@ body {
         renderIndividualTree();
     };
 
-    // RENDER BOX FUNCTION - COMPLETE FROM FILE 2
-    function renderBox(p, label, isSelected, hasChildren) {
-        const isFemale = p.gender?.startsWith('F');
-        const blinkClass = isSelected ? 'blinking-box' : '';
-        const memberData = encodeURIComponent(JSON.stringify(p));
-        
-        // Find mother (spouse of father)
-        let motherName = '';
-        if (p.father) {
-            const father = db.find(f => f.name.toLowerCase() === p.father.toLowerCase());
-            if (father && father.spouse) {
-                motherName = father.spouse;
-            }
-        }
-        
-        // Rose for vital status
-        const roseIcon = p.alive === 'No' ? '🥀' : '🌹';
-        const roseColor = p.alive === 'No' ? '#666' : '#e31b23';
-        
-        // Marital status display
-        let maritalDisplay = '';
-        if (p.maritalStatus === 'Married') maritalDisplay = '💍';
-        else if (p.maritalStatus === 'Unmarried') maritalDisplay = '';
-        else if (p.maritalStatus === 'Widow' || p.maritalStatus === 'Widower') maritalDisplay = '👤';
-        else if (p.maritalStatus === 'Divorced') maritalDisplay = '⚖️';
-        
-        // Family icon
-        const familyIcon = '👪';
-        
-        return `<div class="box ${isFemale ? 'female-box' : ''} ${blinkClass}" onclick='handleBoxClick(JSON.parse(decodeURIComponent("${memberData}")))'>
-            <div class="box-header">
-                <span>${label}</span>
-                <span>${p.gen}</span>
-            </div>
-            <div class="box-body">
-                <!-- Name with rose in front -->
-                <div style="display: flex; align-items: center; gap: 5px; margin-bottom: 8px;">
-                    <span style="color: ${roseColor}; font-size: 20px;">${roseIcon}</span>
-                    <span class="member-name">${displayName(p.name)}</span>
-                </div>
-                
-                <!-- Father -->
-                <div style="display: flex; align-items: center; gap: 5px; margin-top: 3px;">
-                    <span style="font-size: 14px; min-width: 50px;">Father :</span>
-                    <span class="father-name">${displayName(p.father)}</span>
-                </div>
-                
-                <!-- Mother (if found) -->
-                ${motherName ? `<div style="display: flex; align-items: center; gap: 5px; margin-top: 3px;">
-                    <span style="font-size: 14px; min-width: 50px;">Mother :</span>
-                    <span class="father-name" style="color: #b85c5c;">${displayName(motherName)}</span>
-                </div>` : ''}
-                
-                <!-- Spouse (if exists) -->
-                ${p.spouse ? `<div style="display: flex; align-items: center; gap: 5px; margin-top: 3px;">
-                    <span style="font-size: 14px; min-width: 50px;">Spouse :</span>
-                    <span class="father-name" style="color: #8B4513;">${displayName(p.spouse)}</span>
-                </div>` : ''}
-                
-                <!-- Status -->
-                <div style="display: flex; align-items: center; gap: 5px; margin-top: 3px;">
-                    <span style="font-size: 14px; min-width: 50px;">Status :</span>
-                    <span style="font-size: 14px;">${maritalDisplay}</span>
-                    <span class="father-name">${p.maritalStatus || 'Married'}</span>
-                </div>
-                
-                <!-- Family icon for children -->
-                ${hasChildren ? `<div class="golden-heart" style="font-size: 18px;">${familyIcon}</div>` : ''}
-            </div>
-        </div>`;
-    }
+   
 
+
+
+
+function renderBox(p, label, isSelected, hasChildren) {
+    const isFemale = p.gender?.startsWith('F');
+    const blinkClass = isSelected ? 'blinking-box' : '';
+    const memberData = encodeURIComponent(JSON.stringify(p));
+    
+    // Find mother by looking for a person whose spouse is this person's father
+    let motherName = '';
+    if (p.father) {
+        // Look for a person whose spouse field equals the father's name
+        const mother = db.find(m => m.spouse && m.spouse.toLowerCase() === p.father.toLowerCase());
+        if (mother) {
+            motherName = mother.name;
+        }
+    }
+    
+    // Rose for vital status
+    const roseIcon = p.alive === 'No' ? '🥀' : '🌹';
+    const roseColor = p.alive === 'No' ? '#666' : '#e31b23';
+    
+    // Marital status display
+    let maritalDisplay = '';
+    if (p.maritalStatus === 'Married') maritalDisplay = '💍';
+    else if (p.maritalStatus === 'Unmarried') maritalDisplay = '';
+    else if (p.maritalStatus === 'Widow' || p.maritalStatus === 'Widower') maritalDisplay = '👤';
+    else if (p.maritalStatus === 'Divorced') maritalDisplay = '⚖️';
+    
+    // Family icon
+    const familyIcon = '👪';
+    
+    return `<div class="box ${isFemale ? 'female-box' : ''} ${blinkClass}" onclick='handleBoxClick(JSON.parse(decodeURIComponent("${memberData}")))'>
+        <div class="box-header">
+            <span>${label}</span>
+            <span>${p.gen}</span>
+        </div>
+        <div class="box-body">
+            <!-- Name with rose in front -->
+            <div style="display: flex; align-items: center; gap: 5px; margin-bottom: 8px;">
+                <span style="color: ${roseColor}; font-size: 20px;">${roseIcon}</span>
+                <span class="member-name">${displayName(p.name)}</span>
+            </div>
+            
+            <!-- Father -->
+            <div style="display: flex; align-items: center; gap: 5px; margin-top: 3px;">
+                <span style="font-size: 14px; min-width: 50px;">Father :</span>
+                <span class="father-name">${displayName(p.father)}</span>
+            </div>
+            
+            <!-- Mother (if found) -->
+            ${motherName ? `<div style="display: flex; align-items: center; gap: 5px; margin-top: 3px;">
+                <span style="font-size: 14px; min-width: 50px;">Mother :</span>
+                <span class="father-name" style="color: #b85c5c;">${displayName(motherName)}</span>
+            </div>` : ''}
+            
+            <!-- Spouse (if exists) -->
+            ${p.spouse ? `<div style="display: flex; align-items: center; gap: 5px; margin-top: 3px;">
+                <span style="font-size: 14px; min-width: 50px;">Spouse :</span>
+                <span class="father-name" style="color: #8B4513;">${displayName(p.spouse)}</span>
+            </div>` : ''}
+            
+            <!-- Status -->
+            <div style="display: flex; align-items: center; gap: 5px; margin-top: 3px;">
+                <span style="font-size: 14px; min-width: 50px;">Status :</span>
+                <span style="font-size: 14px;">${maritalDisplay}</span>
+                <span class="father-name">${p.maritalStatus || 'Married'}</span>
+            </div>
+            
+            <!-- Family icon for children -->
+            ${hasChildren ? `<div class="golden-heart" style="font-size: 18px;">${familyIcon}</div>` : ''}
+        </div>
+    </div>`;
+}
     // RENDER INDIVIDUAL TREE - WITH ALL SIBLINGS AS INDIVIDUAL BOXES
     function renderIndividualTree() {
         if (!currentIndividual) return;
