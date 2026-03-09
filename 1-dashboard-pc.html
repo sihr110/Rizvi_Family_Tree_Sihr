@@ -7,6 +7,8 @@
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <!-- Include 13-family-data.js for auto-loading on PC -->
+    <script src="13-family-data.js"></script>
     
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -17,6 +19,7 @@
             --gold: #d4af37;
             --bronze: #bc8c4f;
             --dashboard-green: #1b5e20;
+            --admin-purple: #6b21a8;
         }
 
         body {
@@ -77,26 +80,14 @@
             gap: 8px;
         }
 
-        .header-btn {
-            padding: 6px 14px;
-            font-weight: 600;
-            font-size: 13px;
-            cursor: pointer;
-            border: 2px solid var(--gold);
-            background: transparent;
-            color: var(--gold);
-            border-radius: 4px;
-        }
-
-        .header-btn:hover {
+        .status-badge {
             background: var(--gold);
             color: var(--dark-blue);
-        }
-
-        .header-btn.reset {
-            background: var(--maroon);
-            color: white;
-            border-color: transparent;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            white-space: nowrap;
         }
 
         .main-content {
@@ -110,8 +101,8 @@
         .dashboard-grid {
             display: flex;
             flex-direction: column;
-            gap: 20px;
-            max-width: 900px;
+            gap: 30px;
+            max-width: 1000px;
             width: 100%;
             padding: 20px;
         }
@@ -119,23 +110,25 @@
         .top-row {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
+            gap: 25px;
         }
 
         .bottom-row {
             display: flex;
+            gap: 25px;
             justify-content: center;
+            margin-top: 10px;
         }
 
         .dashboard-card {
             background: white;
             border: 2px solid var(--gold);
             border-radius: 16px;
-            padding: 20px 10px;
+            padding: 25px 15px;
             text-align: center;
             cursor: pointer;
             transition: all 0.2s;
-            height: 140px;
+            min-height: 160px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -146,42 +139,56 @@
             border-color: var(--bronze);
         }
 
+        .dashboard-card.admin-card {
+            border-color: var(--admin-purple);
+            background: linear-gradient(145deg, #fff, #f8f4ff);
+        }
+
+        .dashboard-card.admin-card:hover {
+            border-color: #8b5cf6;
+            box-shadow: 0 5px 15px rgba(107, 33, 168, 0.2);
+        }
+
         .card-icon {
-            font-size: 36px;
-            margin-bottom: 8px;
+            font-size: 42px;
+            margin-bottom: 10px;
         }
 
         .card-title {
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 700;
             color: var(--dark-blue);
-            margin-bottom: 5px;
+            margin-bottom: 8px;
         }
 
         .card-desc {
             color: #666;
-            font-size: 11px;
+            font-size: 13px;
         }
 
-        .data-status {
-            margin-top: 8px;
-            color: var(--maroon);
-            font-size: 10px;
-            font-weight: 600;
+        .admin-badge {
+            background: var(--admin-purple);
+            color: white;
+            font-size: 11px;
+            padding: 3px 10px;
+            border-radius: 12px;
+            margin-top: 10px;
+            display: inline-block;
         }
 
         .exit-btn-container {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             background: #991b1b;
             color: white;
-            padding: 8px 16px;
-            border-radius: 4px;
+            padding: 12px 24px;
+            border-radius: 8px;
             cursor: pointer;
             border: 2px solid #991b1b;
-            width: 70%;
+            min-width: 240px;
             justify-content: center;
+            font-size: 15px;
         }
 
         .exit-btn-container:hover {
@@ -196,208 +203,439 @@
             font-size: 11px;
             border-top: 2px solid var(--gold);
         }
+
+        /* Admin Page Styles */
+        .admin-container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .admin-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            color: var(--admin-purple);
+            border-bottom: 2px solid var(--gold);
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+
+        .admin-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .admin-card-large {
+            background: white;
+            border: 2px solid var(--gold);
+            border-radius: 20px;
+            padding: 30px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .admin-card-large:hover {
+            transform: translateY(-5px);
+            border-color: var(--admin-purple);
+            box-shadow: 0 10px 25px rgba(107, 33, 168, 0.15);
+        }
+
+        .admin-card-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .admin-card-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--dark-blue);
+            margin-bottom: 10px;
+        }
+
+        .admin-card-desc {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .home-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: var(--dark-blue);
+            color: var(--gold);
+            text-decoration: none;
+            border-radius: 40px;
+            border: 2px solid var(--gold);
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .home-link:hover {
+            background: var(--gold);
+            color: var(--dark-blue);
+        }
     </style>
 </head>
 <body>
-    <div class="app-container">
-        <div class="app-header">
+    <div class="app-container" id="appContainer">
+        <div class="app-header" id="appHeader">
             <div class="header-title">
                 <span class="header-icon">🌿</span>
-                <span>Rizvi Family Dashboard</span>
+                <span id="headerTitle">Rizvi Family Dashboard (PC)</span>
             </div>
-            <div class="header-actions">
-                <!-- No duplicate logout button -->
+            <div class="header-actions" id="headerActions">
+                <span class="status-badge" id="headerStatus">📊 Total member records: 0</span>
             </div>
         </div>
 
         <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" style="display:none;">
 
-        <div class="main-content">
-            <div class="dashboard-grid">
-                <div class="top-row">
-                    <div class="dashboard-card" onclick="loadDataWithPassword()">
-                        <div class="card-icon">📂</div>
-                        <div class="card-title">Load Data</div>
-                        <div class="card-desc">Upload Excel file</div>
-                        <div class="data-status" id="dataStatus">🔍 Searching...</div>
-                    </div>
-                    <div class="dashboard-card" onclick="goToIndividual()">
-                        <div class="card-icon">👤</div>
-                        <div class="card-title">Individual</div>
-                        <div class="card-desc">Single member search</div>
-                    </div>
-                    <div class="dashboard-card" onclick="goToRoot()">
-                        <div class="card-icon">👥</div>
-                        <div class="card-title">Root Relative</div>
-                        <div class="card-desc">Two member search</div>
-                    </div>
-                </div>
-                <div class="bottom-row">
-                    <div class="exit-btn-container" onclick="logout()">
-                        <span class="exit-btn-icon">🚪</span>
-                        <span class="exit-btn-text">Exit</span>
-                        <span class="exit-btn-subtext">- (Back to login)</span>
-                    </div>
-                </div>
-            </div>
+        <div class="main-content" id="mainContent">
+            <!-- Dynamic content will be inserted here -->
         </div>
 
-        <div class="app-footer">
+        <div class="app-footer" id="appFooter">
             Developer: Imran Haider S/o Syed Risalat Hussain Rizvi | 0332-787-6010
         </div>
     </div>
 
-    <script>
-        let db = [];
 
-        function logout() {
-            // Clear all data when going back to password screen
-            localStorage.removeItem('familyDB');
-            db = [];
-            window.location.href = 'index.html';
-        }
+<script>
 
-        function loadDataWithPassword() {
-            const pwd = prompt('Enter data password:');
+// Check URL parameters on page load
+function checkURLParams() {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('view') && urlParams.get('view') === 'admin') {
+        // Automatically prompt for admin password
+        setTimeout(() => {
+            const pwd = prompt('Enter Admin Password:');
             if (pwd === '6010') {
-                document.getElementById('fileInput').click();
+                currentView = 'admin';
+                isAdminAuthenticated = true;
+                renderAdminView();
             } else if (pwd !== null) {
-                alert('❌ Invalid password');
-            }
-        }
-
-        document.getElementById('fileInput').onchange = function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = new Uint8Array(e.target.result);
-                    const wb = XLSX.read(data, { type: 'array' });
-                    const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
-                    
-                    db = rows.map(r => ({
-                        name: String(r.Name || r.name || '').trim(),
-                        father: String(r.Father || r.father || '').trim(),
-                        gen: String(r.Gen || r.gen || '').trim(),
-                        gender: String(r.Gender || r.gender || 'M').trim().toUpperCase()
-                    })).filter(p => p.name);
-
-                    // Save to localStorage for other pages
-                    localStorage.setItem('familyDB', JSON.stringify(db));
-                    document.getElementById('dataStatus').innerHTML = `✅ ${db.length} members`;
-                    document.getElementById('dataStatus').style.color = '#2e7d32';
-                } catch (err) {
-                    alert('❌ Error: ' + err.message);
-                }
-            };
-            reader.readAsArrayBuffer(file);
-        };
-
-        function goToIndividual() {
-            // Check if data exists in memory OR in localStorage
-            if (db.length === 0) {
-                const saved = localStorage.getItem('familyDB');
-                if (saved) {
-                    db = JSON.parse(saved);
-                } else {
-                    alert('Please load data first');
-                    return;
-                }
-            }
-            window.location.href = '2-individual-tree-pc.html';
-        }
-
-        function goToRoot() {
-            // Check if data exists in memory OR in localStorage
-            if (db.length === 0) {
-                const saved = localStorage.getItem('familyDB');
-                if (saved) {
-                    db = JSON.parse(saved);
-                } else {
-                    alert('Please load data first');
-                    return;
-                }
-            }
-            window.location.href = '4-root-tree-pc.html';
-        }
-
-        // Check if data already exists in localStorage from previous session
-        function initializeData() {
-            const saved = localStorage.getItem('familyDB');
-            if (saved) {
-                db = JSON.parse(saved);
-                document.getElementById('dataStatus').innerHTML = `✅ ${db.length} members`;
-                document.getElementById('dataStatus').style.color = '#2e7d32';
+                alert('❌ Invalid Admin Password');
+                renderDashboardView();
             } else {
-                // Only auto-load if no cached data
-                autoLoadData();
+                renderDashboardView();
             }
-        }
+        }, 100); // Small delay to ensure page is loaded
+    }
+}
 
-        // Auto-load function - runs only if no cached data
-        function autoLoadData() {
-            const possiblePaths = [
-                'data.xlsx',
-                './data.xlsx',
-                'Rizvi Family Tree.xlsx',
-                './Rizvi Family Tree.xlsx',
-                'data/data.xlsx',
-                'family-tree.xlsx'
-            ];
+let db = [];
+let currentView = 'dashboard'; // 'dashboard' or 'admin'
+let isAdminAuthenticated = false; // Track if admin is already logged in
+
+function logout() {
+    // Clear all data when going back to password screen
+    localStorage.removeItem('familyDB');
+    localStorage.removeItem('fileInfo');
+    localStorage.removeItem('tableViewMember');
+    localStorage.removeItem('tableViewFilters');
+    db = [];
+    isAdminAuthenticated = false;
+    window.location.href = 'index.html';
+}
+
+function hardReset() {
+    const confirmation = confirm("🚨 WARNING: This will permanently delete ALL family data from this browser. Are you sure?");
+    
+    if (confirmation) {
+        // Clear all localStorage items
+        localStorage.removeItem('familyDB');
+        localStorage.removeItem('fileInfo');
+        localStorage.removeItem('tableViewMember');
+        localStorage.removeItem('tableViewFilters');
+        
+        // Reset the database variable
+        db = [];
+        isAdminAuthenticated = false;
+        
+        // Update header status
+        updateHeaderStatus();
+        
+        // Update the UI based on current view
+        if (currentView === 'admin') {
+            renderAdminView();
+        }
+        
+        alert("✅ All data has been cleared from browser storage.");
+        
+        // Try to auto-load again
+        autoLoadFromJS();
+    }
+}
+
+// Admin login with password
+function goToAdminWithPassword() {
+    const pwd = prompt('Enter Admin Password:');
+    if (pwd === '6010') {
+        currentView = 'admin';
+        isAdminAuthenticated = true;
+        renderAdminView();
+    } else if (pwd !== null) {
+        alert('❌ Invalid Admin Password');
+    }
+}
+
+// No password required for data load (protected by admin gateway)
+function loadData() {
+    document.getElementById('fileInput').click();
+}
+
+document.getElementById('fileInput').onchange = function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const data = new Uint8Array(e.target.result);
+            const wb = XLSX.read(data, { type: 'array' });
+            const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
             
-            let attempted = 0;
-            let loadingIndicator = document.getElementById('dataStatus');
+            db = rows.map(r => ({
+                name: String(r.Name || r.name || '').trim(),
+                father: String(r.Father || r.father || '').trim(),
+                gen: String(r.Gen || r.gen || '').trim(),
+                gender: String(r.Gender || r.gender || 'Male').trim().toUpperCase()
+            })).filter(p => p.name);
+
+            // Save to localStorage for other pages
+            localStorage.setItem('familyDB', JSON.stringify(db));
             
-            function tryNextPath() {
-                if (attempted >= possiblePaths.length) {
-                    loadingIndicator.innerHTML = '⚠️ Click to load manually';
-                    loadingIndicator.style.color = '#f59e0b';
-                    return;
+            updateHeaderStatus();
+            
+            if (currentView === 'admin') {
+                renderAdminView();
+            }
+        } catch (err) {
+            alert('❌ Error: ' + err.message);
+        }
+    };
+    reader.readAsArrayBuffer(file);
+};
+
+function updateHeaderStatus() {
+    const count = db.length || (localStorage.getItem('familyDB') ? JSON.parse(localStorage.getItem('familyDB')).length : 0);
+    document.getElementById('headerStatus').innerHTML = `📊 Total member records: ${count}`;
+}
+
+function goToIndividual() {
+    // Check if data exists in memory OR in localStorage
+    if (db.length === 0) {
+        const saved = localStorage.getItem('familyDB');
+        if (saved) {
+            db = JSON.parse(saved);
+        } else {
+            alert('Please load data first (Use Admin panel)');
+            return;
+        }
+    }
+    window.location.href = '2-individual-tree-pc.html';
+}
+
+function goToRoot() {
+    // Check if data exists in memory OR in localStorage
+    if (db.length === 0) {
+        const saved = localStorage.getItem('familyDB');
+        if (saved) {
+            db = JSON.parse(saved);
+        } else {
+            alert('Please load data first (Use Admin panel)');
+            return;
+        }
+    }
+    window.location.href = '4-root-tree-pc.html';
+}
+
+function goToDashboard() {
+    currentView = 'dashboard';
+    renderDashboardView();
+}
+
+function renderDashboardView() {
+    document.getElementById('headerTitle').innerText = 'Rizvi Family Dashboard (PC)';
+    document.getElementById('headerActions').innerHTML = `
+        <span class="status-badge" id="headerStatus">📊 Total member records: ${db.length || (localStorage.getItem('familyDB') ? JSON.parse(localStorage.getItem('familyDB')).length : 0)}</span>
+    `;
+    
+    const mainContent = document.getElementById('mainContent');
+    mainContent.innerHTML = `
+        <div class="dashboard-grid">
+            <div class="top-row">
+                <div class="dashboard-card" onclick="goToIndividual()">
+                    <div class="card-icon">👤</div>
+                    <div class="card-title">Individual</div>
+                    <div class="card-desc">Single member search</div>
+                </div>
+                <div class="dashboard-card" onclick="goToRoot()">
+                    <div class="card-icon">👥</div>
+                    <div class="card-title">Root Relative</div>
+                    <div class="card-desc">Two member search</div>
+                </div>
+                <div class="dashboard-card admin-card" onclick="goToAdminWithPassword()">
+                    <div class="card-icon">⚙️</div>
+                    <div class="card-title">Admin Use Only</div>
+                    <div class="card-desc">Data management</div>
+                    <span class="admin-badge">Restricted - Password Protected</span>
+                </div>
+            </div>
+           
+            <div class="bottom-row">
+                <div class="exit-btn-container" onclick="logout()">
+                    <span class="exit-btn-icon">🚪</span>
+                    <span class="exit-btn-text">Exit</span>
+                    <span class="exit-btn-subtext">- (Back to login)</span>
+                </div>
+                
+                <div class="exit-btn-container" onclick="hardReset()" style="background: #4169E1;">
+                    <span class="exit-btn-icon">⚠️</span>
+                    <span class="exit-btn-text">Hard Reset</span>
+                    <span class="exit-btn-subtext">- (Delete all data)</span>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function renderAdminView() {
+    document.getElementById('headerTitle').innerText = 'Admin Control Panel';
+    document.getElementById('headerActions').innerHTML = `
+        <span class="status-badge" id="headerStatus">📊 Total member records: ${db.length || (localStorage.getItem('familyDB') ? JSON.parse(localStorage.getItem('familyDB')).length : 0)}</span>
+    `;
+    
+    const dbCount = db.length || (localStorage.getItem('familyDB') ? JSON.parse(localStorage.getItem('familyDB')).length : 0);
+    
+    const mainContent = document.getElementById('mainContent');
+    mainContent.innerHTML = `
+        <div class="admin-container">
+            <div class="admin-title">⚙️ Admin Use Only</div>
+            
+            <div class="admin-grid" style="grid-template-columns: repeat(3, 1fr);">
+                <div class="admin-card-large" onclick="loadData()">
+                    <div class="admin-card-icon">📂</div>
+                    <div class="admin-card-title">Load Data</div>
+                    <div class="admin-card-desc">Upload Excel file to database</div>
+                    <div class="data-status" style="margin-top: 15px; color: #2e7d32;">
+                        ${dbCount > 0 ? `✅ ${dbCount} members loaded` : '⏳ No data loaded'}
+                    </div>
+                </div>
+                
+                <div class="admin-card-large" onclick="window.location.href='11- add-data.html'">
+                    <div class="admin-card-icon">✏️</div>
+                    <div class="admin-card-title">Add / Edit Member</div>
+                    <div class="admin-card-desc">Add new members or edit existing records</div>
+                    <div class="data-status" style="margin-top: 15px;">→ Open 11- add-data.html</div>
+                </div>
+
+                <div class="admin-card-large" onclick="window.location.href='12- excel-to-js-converter.html'">
+                    <div class="admin-card-icon">🔄</div>
+                    <div class="admin-card-title">Data Converter</div>
+                    <div class="admin-card-desc">Excel to JS / JSON converter</div>
+                    <div class="data-status" style="margin-top: 15px;">→ Open Converter</div>
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: 25px; justify-content: center; margin-top: 30px;">
+                <div class="exit-btn-container" onclick="goToDashboard()" style="background: var(--dark-blue); min-width: 200px; white-space: nowrap;">
+                    <span class="exit-btn-icon">⬅️</span>
+                    <span class="exit-btn-text">Back - (to Dashboard)</span>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// Auto-load from 13-family-data.js on PC
+function autoLoadFromJS() {
+    // Check if FAMILY_DATA is available (from 13-family-data.js)
+    if (typeof FAMILY_DATA !== 'undefined' && FAMILY_DATA.length > 0) {
+        try {
+            // Save the family members data
+            db = FAMILY_DATA;
+            localStorage.setItem('familyDB', JSON.stringify(db));
+            
+            // Save the file info (timestamp) to localStorage
+            if (typeof FILE_INFO !== 'undefined') {
+                localStorage.setItem('fileInfo', JSON.stringify(FILE_INFO));
+                console.log('✅ Timestamp saved:', FILE_INFO.saved_time);
+            }
+            
+            updateHeaderStatus();
+            
+        } catch (err) {
+            console.error('Error:', err);
+        }
+    }
+}
+
+// Initialize on page load
+function initializeData() {
+    // First check if we have data in localStorage (from previous session)
+    const saved = localStorage.getItem('familyDB');
+    if (saved) {
+        db = JSON.parse(saved);
+        updateHeaderStatus();
+        
+        // Also load fileInfo if available
+        const savedInfo = localStorage.getItem('fileInfo');
+        if (savedInfo) {
+            console.log('📅 Cached timestamp:', JSON.parse(savedInfo).saved_time);
+        }
+        return;
+    }
+
+    // If no cached data, auto-load from 13-family-data.js
+    autoLoadFromJS();
+}
+
+// Check for hash on page load (FOR BACK TO ADMIN BUTTON)
+function checkHash() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const isPreAuth = urlParams.get('auth') === 'true';
+
+    if (window.location.hash === '#admin') {
+        setTimeout(() => {
+            // If we have the auth flag OR are already authenticated in this session
+            if (isPreAuth || isAdminAuthenticated) {
+                currentView = 'admin';
+                isAdminAuthenticated = true;
+                renderAdminView();
+                
+                // Clean the URL so the 'auth' flag doesn't stay there forever
+                window.history.replaceState({}, document.title, "1-dashboard-pc.html#admin");
+            } else {
+                // Otherwise, ask for the password as usual
+                const pwd = prompt('Enter Admin Password:');
+                if (pwd === '6010') {
+                    currentView = 'admin';
+                    isAdminAuthenticated = true;
+                    renderAdminView();
+                } else {
+                    renderDashboardView();
                 }
-                
-                const path = possiblePaths[attempted];
-                attempted++;
-                
-                fetch(path, { method: 'GET', mode: 'cors' })
-                    .then(response => {
-                        if (!response.ok) throw new Error('Not found');
-                        return response.arrayBuffer();
-                    })
-                    .then(data => {
-                        try {
-                            const wb = XLSX.read(new Uint8Array(data), { type: 'array' });
-                            const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
-                            
-                            db = rows.map(r => ({
-                                name: String(r.Name || r.name || '').trim(),
-                                father: String(r.Father || r.father || '').trim(),
-                                gen: String(r.Gen || r.gen || '').trim(),
-                                gender: String(r.Gender || r.gender || 'M').trim().toUpperCase()
-                            })).filter(p => p.name);
-
-                            if (db.length > 0) {
-                                localStorage.setItem('familyDB', JSON.stringify(db));
-                                loadingIndicator.innerHTML = `✅ ${db.length} members loaded`;
-                                loadingIndicator.style.color = '#2e7d32';
-                            } else {
-                                tryNextPath();
-                            }
-                        } catch (err) {
-                            tryNextPath();
-                        }
-                    })
-                    .catch(() => {
-                        tryNextPath();
-                    });
             }
-            
-            tryNextPath();
-        }
+        }, 100);
+    }
+}
+// Initialize everything
+initializeData();
+renderDashboardView();
+checkURLParams();
+checkHash();
 
-        // Initialize on page load
-        initializeData();
-    </script>
+</script>
+
 </body>
-</html>
+</html>    
