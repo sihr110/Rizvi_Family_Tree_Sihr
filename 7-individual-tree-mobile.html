@@ -293,24 +293,27 @@
             margin-top: 2px;
         }
 
-        .tree-container {
-            flex: 1;
-            overflow: hidden;
-            padding: 20px;
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-        }
+.tree-container {
+    flex: 1;
+    overflow: auto;   /* ← Changed to auto for scrolling */
+    padding: 20px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
 
-        .tree-root-layout {
-            transform-origin: top left;
-            zoom: 0.5;
-            min-width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+
+
+.tree-root-layout {
+    transform-origin: top left;
+    transition: transform 0.1s;
+    zoom: 0.5;  /* ← ADD THIS BACK for mobile */
+    min-width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
         .welcome-container {
             display: flex;
@@ -516,13 +519,36 @@
             margin: 0 auto 10px auto;
         }
 
-        .children-row.four-in-row {
-            display: grid;
-            grid-template-columns: repeat(4, auto);
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
+.children-row.four-in-row {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(250px, auto));
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+
+.children-row.one-box,
+.children-row.two-boxes,
+.children-row.three-boxes {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+.children-row.remaining-center {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+
+
 
         .family-group {
             display: flex;
@@ -810,26 +836,47 @@
             return arr;
         }
 
-        function renderBox(person, label, isSiblingOrChild = false) {
-            const isFemale = person.gender?.startsWith('F');
-            const isSelected = currentIndividual?.name === person.name;
-            const hasKids = db.some(c => c.father === person.name);
-            const statusIcon = (person.alive || '').toLowerCase() === 'yes' ? '🌹' : '🥀';
-            const fatherStatus = (person.father) ? (db.find(f => f.name === person.father)?.alive || '').toLowerCase() === 'yes' ? '🌹' : '🥀' : '';
+       
 
-            let html = `<div class="box ${isFemale ? 'female-box' : ''} ${isSelected ? 'selected' : ''}" data-name="${person.name}" onclick="handleBoxClick(this)">`;
-            html += `<div class="box-header"><span>${label}</span><span>${person.gen || '—'}</span></div>`;
-            html += `<div class="box-body">`;
-            // USING displayName FOR NAME
-            html += `<div class="box-row"><span class="box-label">Name :</span><span class="box-value"><span class="member-name">${displayName(person.name)}</span> ${statusIcon}</span></div>`;
-            // USING displayName FOR FATHER
-            html += `<div class="box-row"><span class="box-label">Father :</span><span class="box-value">${displayName(person.father) || '—'} ${fatherStatus}</span></div>`;
-            html += `<div class="box-row"><span class="box-label">Status :</span><span class="box-value">${person.maritalStatus || '—'}</span></div>`;
-            if (hasKids) html += `<div class="child-icon">👪</div>`;
-            html += `</div></div>`;
-            return html;
-        }
 
+
+
+
+
+
+function renderBox(person, label, isSiblingOrChild = false) {
+    const isFemale = person.gender?.startsWith('F');
+    const isSelected = currentIndividual?.name === person.name;
+    const mother = (person.father) ? (db.find(f => f.name === person.father)?.spouse || '—') : '—';
+    const hasKids = db.some(c => c.father === person.name);
+    const statusIcon = (person.alive || '').toLowerCase() === 'yes' ? '🌹' : '🥀';
+    const fatherStatus = (person.father) ? (db.find(f => f.name === person.father)?.alive || '').toLowerCase() === 'yes' ? '🌹' : '🥀' : '';
+
+    let html = `<div class="box ${isFemale ? 'female-box' : ''} ${isSelected ? 'selected' : ''}" data-name="${person.name}" onclick="handleBoxClick(this)">`;
+    html += `<div class="box-header"><span>${label}</span><span>${person.gen || '—'}</span></div>`;
+    html += `<div class="box-body">`;
+    
+    // Name with rose icon
+    html += `<div class="box-row"><span class="box-label">Name :</span><span class="box-value"><span class="member-name">${displayName(person.name)}</span> ${statusIcon}</span></div>`;
+    
+    if (isSiblingOrChild) {
+        // SIBLING OR CHILD BOX - only show Spouse and Status
+        html += `<div class="box-row"><span class="box-label">Spouse :</span><span class="box-value">${person.spouse || '—'}</span></div>`;
+        html += `<div class="box-row"><span class="box-label">Status :</span><span class="box-value">${person.maritalStatus || '—'}</span></div>`;
+    } else {
+        // SELECTED, FATHER, ANCESTOR BOXES - show all fields
+        html += `<div class="box-row"><span class="box-label">Father :</span><span class="box-value">${displayName(person.father) || '—'} ${fatherStatus}</span></div>`;
+        html += `<div class="box-row"><span class="box-label">Mother :</span><span class="box-value">${mother || '—'}</span></div>`;
+        html += `<div class="box-row"><span class="box-label">Spouse :</span><span class="box-value">${person.spouse || '—'}</span></div>`;
+        html += `<div class="box-row"><span class="box-label">Status :</span><span class="box-value">${person.maritalStatus || '—'}</span></div>`;
+    }
+    
+    // Child icon if person has children
+    if (hasKids) html += `<div class="child-icon">👪</div>`;
+    
+    html += `</div></div>`;
+    return html;
+}
         function renderMembersWithLayout(members, type) {
             if (members.length === 0) return '';
             
@@ -1049,7 +1096,7 @@
         
         function closeShortcutsHelp() { document.getElementById('shortcutsHelp').classList.remove('show'); }
         
-        function showDashboard() { window.location.href = '6-dashboard-pc.html'; }
+        function showDashboard() { window.location.href = '1-dashboard-pc.html'; }
         
         window.showTableView = function() {
             if (currentIndividual) {
@@ -1086,5 +1133,4 @@
         window.resetIndividual = resetIndividual;
     </script>
 </body>
-
 </html>
