@@ -308,7 +308,7 @@
 .tree-root-layout {
     transform-origin: top left;
     transition: transform 0.1s;
-    zoom: 0.5;  /* ← ADD THIS BACK for mobile */
+     zoom: 0.5;  /* ← ADD THIS BACK for mobile */ 
     min-width: 100%;
     display: flex;
     flex-direction: column;
@@ -877,45 +877,111 @@ function renderBox(person, label, isSiblingOrChild = false) {
     html += `</div></div>`;
     return html;
 }
-        function renderMembersWithLayout(members, type) {
-            if (members.length === 0) return '';
-            
-            const count = members.length;
-            const getLabel = (m) => type === 'sibling' ? (m.gender?.startsWith('F') ? 'Sister' : 'Brother') : (m.gender?.startsWith('F') ? 'Daughter' : 'Son');
-            
-            if (count === 1) {
-                return `<div class="children-row one-box">${members.map(m => renderBox(m, getLabel(m), true)).join('')}</div>`;
-            }
-            else if (count === 2) {
-                return `<div class="children-row two-boxes">${members.map(m => renderBox(m, getLabel(m), true)).join('')}</div>`;
-            }
-            else if (count === 3) {
-                return `<div class="children-row three-boxes">${members.map(m => renderBox(m, getLabel(m), true)).join('')}</div>`;
-            }
-            else if (count === 4) {
-                return `<div class="children-row four-in-row">${members.map(m => renderBox(m, getLabel(m), true)).join('')}</div>`;
-            }
-            else {
-                const firstFour = members.slice(0, 4);
-                const remaining = members.slice(4);
-                const remainingCount = remaining.length;
-                
-                let remainingClass = 'remaining-center';
-                if (remainingCount === 1) remainingClass = 'one-box';
-                else if (remainingCount === 2) remainingClass = 'two-boxes';
-                else if (remainingCount === 3) remainingClass = 'three-boxes';
-                
-                return `
-                    <div class="children-row four-in-row">
-                        ${firstFour.map(m => renderBox(m, getLabel(m), true)).join('')}
-                    </div>
-                    <div class="children-row ${remainingClass}">
-                        ${remaining.map(m => renderBox(m, getLabel(m), true)).join('')}
-                    </div>
-                `;
-            }
-        }
 
+function renderGenderGroup(genderMembers, type) {
+    const count = genderMembers.length;
+    const getLabel = (m) => type === 'sibling' ? (m.gender?.startsWith('F') ? 'Sister' : 'Brother') : (m.gender?.startsWith('F') ? 'Daughter' : 'Son');
+    
+    if (count === 1) {
+        return `<div class="children-row one-box">${genderMembers.map(m => renderBox(m, getLabel(m), true)).join('')}</div>`;
+    }
+    else if (count === 2) {
+        return `<div class="children-row two-boxes">${genderMembers.map(m => renderBox(m, getLabel(m), true)).join('')}</div>`;
+    }
+    else if (count === 3) {
+        return `<div class="children-row three-boxes">${genderMembers.map(m => renderBox(m, getLabel(m), true)).join('')}</div>`;
+    }
+    else if (count === 4) {
+        return `<div class="children-row four-in-row">${genderMembers.map(m => renderBox(m, getLabel(m), true)).join('')}</div>`;
+    }
+    else {
+        const firstFour = genderMembers.slice(0, 4);
+        const remaining = genderMembers.slice(4);
+        const remainingCount = remaining.length;
+        
+        let remainingClass = 'remaining-center';
+        if (remainingCount === 1) remainingClass = 'one-box';
+        else if (remainingCount === 2) remainingClass = 'two-boxes';
+        else if (remainingCount === 3) remainingClass = 'three-boxes';
+        
+        return `
+            <div class="children-row four-in-row">
+                ${firstFour.map(m => renderBox(m, getLabel(m), true)).join('')}
+            </div>
+            <div class="children-row ${remainingClass}">
+                ${remaining.map(m => renderBox(m, getLabel(m), true)).join('')}
+            </div>
+        `;
+    }
+}
+
+
+function renderMembersWithLayout(members, type) {
+    if (members.length === 0) return '';
+    
+    // If more than 5 members, split by gender
+    if (members.length > 5) {
+        const males = members.filter(m => {
+            const g = (m.gender || '').toString().toUpperCase();
+            return g === 'MALE' || g === 'M' || g.startsWith('M');
+        });
+        
+        const females = members.filter(m => {
+            const g = (m.gender || '').toString().toUpperCase();
+            return g === 'FEMALE' || g === 'F' || g.startsWith('F');
+        });
+        
+        let html = '';
+        
+        // Add males section if any
+        if (males.length > 0) {
+            html += renderGenderGroup(males, type);
+        }
+        
+        // Add females section if any
+        if (females.length > 0) {
+            html += renderGenderGroup(females, type);
+        }
+        
+        return html;
+    }
+    
+    // For 5 or fewer members, use direct layout
+    const count = members.length;
+    const getLabel = (m) => type === 'sibling' ? (m.gender?.startsWith('F') ? 'Sister' : 'Brother') : (m.gender?.startsWith('F') ? 'Daughter' : 'Son');
+    
+    if (count === 1) {
+        return `<div class="children-row one-box">${members.map(m => renderBox(m, getLabel(m), true)).join('')}</div>`;
+    }
+    else if (count === 2) {
+        return `<div class="children-row two-boxes">${members.map(m => renderBox(m, getLabel(m), true)).join('')}</div>`;
+    }
+    else if (count === 3) {
+        return `<div class="children-row three-boxes">${members.map(m => renderBox(m, getLabel(m), true)).join('')}</div>`;
+    }
+    else if (count === 4) {
+        return `<div class="children-row four-in-row">${members.map(m => renderBox(m, getLabel(m), true)).join('')}</div>`;
+    }
+    else {
+        const firstFour = members.slice(0, 4);
+        const remaining = members.slice(4);
+        const remainingCount = remaining.length;
+        
+        let remainingClass = 'remaining-center';
+        if (remainingCount === 1) remainingClass = 'one-box';
+        else if (remainingCount === 2) remainingClass = 'two-boxes';
+        else if (remainingCount === 3) remainingClass = 'three-boxes';
+        
+        return `
+            <div class="children-row four-in-row">
+                ${firstFour.map(m => renderBox(m, getLabel(m), true)).join('')}
+            </div>
+            <div class="children-row ${remainingClass}">
+                ${remaining.map(m => renderBox(m, getLabel(m), true)).join('')}
+            </div>
+        `;
+    }
+}
         function renderTree() {
             if (!currentIndividual) return;
             let html = '<div>';
@@ -1096,7 +1162,7 @@ function renderBox(person, label, isSiblingOrChild = false) {
         
         function closeShortcutsHelp() { document.getElementById('shortcutsHelp').classList.remove('show'); }
         
-        function showDashboard() { window.location.href = '6-dashboard-pc.html'; }
+        function showDashboard() { window.location.href = '1-dashboard-pc.html'; }
         
         window.showTableView = function() {
             if (currentIndividual) {
@@ -1133,5 +1199,4 @@ function renderBox(person, label, isSiblingOrChild = false) {
         window.resetIndividual = resetIndividual;
     </script>
 </body>
-
 </html>
