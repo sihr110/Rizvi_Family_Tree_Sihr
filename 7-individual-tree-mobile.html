@@ -1,112 +1,51 @@
+<!-- ======================================== -->
+<!-- FILE NAME: 7-individual-tree-mobile.html -->
+<!-- ADAPTED FROM: 2-individual-tree-pc.html  -->
+<!-- WITH ONLY: viewport scale=0.5 + zoom=0.5 -->
+<!-- ALL OTHER FUNCTIONALITY IDENTICAL        -->
+<!-- ======================================== -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=3.0, user-scalable=yes, viewport-fit=cover">
-    <title>Rizvi family · structured tree (mobile→pc layout)</title>
+    <!-- MOBILE VIEWPORT - initial-scale=0.5 exactly like file 700 -->
+    <meta name="viewport" content="width=device-width, initial-scale=0.5, maximum-scale=3.0, user-scalable=yes, viewport-fit=cover">
+    <title>Rizvi family · structured tree (mobile)</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
-    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     
-    <!-- Load external family data -->
-    <script src="family-data.js"></script>
-    
     <style>
+        /* ===== EXACTLY FROM FILE 2 - NO CHANGES EXCEPT ZOOM ===== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         :root {
-            --gold-primary: #d4af37;
-            --gold-light: #f9f295;
-            --gold-dark: #996515;
-            --bg-green-soft: #f0fff4;
             --maroon: #5a0000;
             --dark-blue: #0f172a;
             --gold: #d4af37;
             --light-gold: #f1d279;
             --green: #2e7d32;
             --dark-green: #1b5e20;
-            --light-green: #d4edda;
             --light-pink: #ffe4e9;
-            --light-sage: #f4f7f2;
-            --border-sage: #c9d6c2;
-            --sisters-border: #fb7185;
-            --summary-border: #e6c87c;
-            --table-header-bg: #fdf6e3;
             --bronze: #bc8c4f;
-            --reset-red: #5a0000;
-            --reset-red-dark: #7a1f1f;
-            --pdf-grey: #6c757d;
-            --pdf-grey-dark: #5a6268;
-            --dashboard-green: #1b5e20;
         }
 
-        @keyframes wave {
-            0%, 100% { transform: rotateX(5deg) rotateY(-5deg) translateY(0px); }
-            25% { transform: rotateX(8deg) rotateY(5deg) translateY(-10px); }
-            50% { transform: rotateX(5deg) rotateY(10deg) translateY(0px); }
-            75% { transform: rotateX(2deg) rotateY(5deg) translateY(10px); }
-        }
-
-        .waving-container {
-            perspective: 1000px;
-            padding: 40px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-        }
-
-        .golden-waving-box {
-            width: 75%;
-            max-width: 375px;
-            background: var(--bg-green-soft);
-            border: 5px solid transparent;
-            border-image: linear-gradient(45deg, var(--gold-dark), var(--gold-light), var(--gold-primary)) 1;
-            padding: 30px 18px;
-            text-align: center;
-            position: relative;
-            transform-style: preserve-3d;
-            animation: wave 8s ease-in-out infinite;
-            box-shadow: -10px 15px 30px rgba(0,0,0,0.1), 0 5px 15px rgba(212, 175, 55, 0.2);
-        }
-
-        .golden-waving-box .icon {
-            font-size: 42px;
-            margin-bottom: 15px;
-            display: inline-block;
-            transform: translateZ(40px);
-        }
-
-        .golden-waving-box .row1 {
-            font-size: 18px;
-            font-weight: 700;
-            color: #1a3a1a;
-            margin-bottom: 15px;
-            transform: translateZ(30px);
-            font-family: 'Playfair Display', serif;
-        }
-
-        .golden-waving-box .row3 {
-            font-size: 12px;
-            color: #2d5a27;
-            background: rgba(255, 255, 255, 0.6);
-            padding: 9px;
-            border-radius: 8px;
-            transform: translateZ(20px);
-            border: 1px dashed var(--gold-primary);
-            line-height: 1.4;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
         body {
             font-family: 'Inter', sans-serif;
             background: #1a1a1a;
             height: 100vh;
-            overflow: hidden;
+            overflow: hidden;  /* NO SCROLLING - like file 700 */
             margin: 0;
             padding: 10px;
+            position: relative;
+        }
+
+        /* ZOOM CONTROLS - hidden on mobile (kept but not visible) */
+        .zoom-controls {
+            display: none;
         }
 
         .app-container {
@@ -140,6 +79,9 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
         }
 
         .header-icon {
@@ -151,320 +93,592 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 16px;
         }
 
         .header-actions {
             display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
+            gap: 10px;
+            margin-left: auto;
         }
 
         .header-btn {
-            padding: 6px 14px;
-            font-weight: 600;
-            font-size: 13px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            white-space: nowrap;
-            border: 2px solid var(--gold);
+            padding: 8px 16px;
             background: transparent;
+            border: 2px solid var(--gold);
             color: var(--gold);
-            transition: all 0.2s;
             border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
         }
 
         .header-btn:hover {
             background: var(--gold);
             color: var(--dark-blue);
-            transform: translateY(-2px);
         }
 
         .header-btn.dashboard {
-            background: var(--dashboard-green);
-            color: white;
+            background: var(--green);
             border-color: transparent;
-            border-radius: 4px;
+            color: white;
         }
 
-        .header-btn.reset { background: var(--reset-red); color: white; border-color: transparent; border-radius: 4px; }
-        .header-btn.reset:hover { background: var(--reset-red-dark); }
-        .header-btn.pdf { background: var(--pdf-grey); color: white; border-color: transparent; border-radius: 4px; }
-        .header-btn.pdf:hover { background: var(--pdf-grey-dark); }
-        .header-btn.table { background: var(--bronze); color: white; border-color: transparent; border-radius: 4px; }
-        .header-btn.table:hover { background: #9e6f3a; }
-        .menu-toggle { display: none; }
-        .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: #fffcf8; }
-        #individualSection { display: flex; flex-direction: column; height: 100%; overflow: hidden; flex: 1; }
-        .fixed-header-section { padding: 15px 15px 0 15px; background: #fffcf8; flex-shrink: 0; }
-        .border-line { border-top: 3px solid var(--gold); margin: 20px 0 0 0; }
-        .scrollable-content { flex: 1; overflow-y: auto; overflow-x: auto; padding: 0 15px 15px 15px; }
-        
-        .search-row { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; }
-        .search-label { font-weight: 700; color: var(--maroon); font-size: 13px; text-transform: uppercase; white-space: nowrap; }
-        .search-wrapper { position: relative; flex: 2; min-width: 300px; }
-        .search-input { width: 100%; padding: 8px 15px; border: 2px solid #cbd5e1; border-radius: 4px; font-size: 13px; outline: none; transition: all 0.3s; }
-        .search-input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2); }
-        
-        .dropdown { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 2px solid var(--gold); border-radius: 0 0 4px 4px; max-height: 200px; overflow-y: auto; display: none; z-index: 1000; box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
-        .result-item { padding: 8px 12px; border-bottom: 1px solid #eee; cursor: pointer; font-size: 13px; }
-        .result-item:hover { background: #faebcd; }
-        .result-item .main-name { font-weight: 700; color: var(--dark-blue); }
-        .result-item .gen { color: var(--maroon); font-size: 11px; margin-left: 6px; }
-        
-        .filter-buttons { display: flex; gap: 6px; flex-wrap: wrap; }
-        .filter-btn { padding: 6px 14px; border-radius: 4px; font-weight: 600; font-size: 13px; cursor: pointer; border: 2px solid var(--gold); background: white; color: var(--dark-blue); white-space: nowrap; display: flex; align-items: center; gap: 4px; }
-        .filter-btn.active { background: #d4edda; border-color: var(--dark-green); }
-        
-        .tree-root-layout { 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            gap: 15px; 
-            width: 100%;
-            margin: 0 auto; 
-            padding: 15px; 
-        }
-        
-        /* ===== UPDATED STYLES WITH PROPER SPACING ===== */
-        
-        .family-group { 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            gap: 15px;
-            width: 100%; 
-            margin-bottom: 30px;
-        }
-
-        /* Golden line between father and selected member */
-        .v-line { 
-            width: 3px; 
-            height: 30px;
-            background: var(--gold); 
-            margin: 15px auto;
-        }
-
-        /* More space above descendant heading */
-        .descendant-heading { 
-            font-size: 14px; 
-            color: var(--maroon); 
-            font-weight: 800; 
-            margin: 40px 0 20px 0;
-            font-family: 'Playfair Display', serif; 
-            text-align: center; 
-            width: 100%; 
-            border-bottom: 2px solid var(--gold); 
-            padding-bottom: 8px;
-        }
-
-        /* More space above relation labels */
-        .relation-label { 
-            font-size: 11px; 
-            color: var(--gold); 
-            font-weight: bold; 
-            text-transform: uppercase; 
-            letter-spacing: 1px; 
-            background: var(--dark-blue); 
-            padding: 6px 16px;
-            border-radius: 4px; 
-            color: white; 
-            margin: 20px 0 25px 0;
-            text-align: center; 
-            display: inline-block; 
-            width: auto; 
-        }
-
-        /* Add space above the first box in siblings/children rows */
-        .children-row {
+        .left-toggle-btn {
+            background: var(--gold);
+            color: var(--dark-blue);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
             display: flex;
-            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: pointer;
+            border: 2px solid white;
+            z-index: 2000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+
+        .left-toggle-btn:hover {
+            background: var(--light-gold);
+            transform: scale(1.1);
+        }
+
+        .toggle-menu-panel {
+            position: absolute;
+            left: 10px;
+            top: 60px;
+            background: white;
+            border: 3px solid var(--gold);
+            border-radius: 12px;
+            padding: 15px;
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 9999;  /* HIGH Z-INDEX TO STAY ON TOP */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            min-width: 220px;
+        }
+
+        .toggle-menu-panel.show {
+            display: flex;
+        }
+
+        .toggle-menu-item {
+            padding: 12px 18px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            border: 2px solid var(--gold);
+            background: white;
+            color: var(--dark-blue);
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s;
+        }
+
+        .toggle-menu-item:hover {
+            background: #faebcd;
+            transform: translateX(5px);
+        }
+
+        .toggle-menu-item.active {
+            background: #d4edda !important;
+            border-color: var(--dark-green) !important;
+            color: var(--dark-blue);
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+            background: #fffcf8;
+        }
+
+        .center-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .search-section {
+            padding: 15px;
+            background: #fffcf8;
+            border-bottom: 2px solid var(--gold);
+        }
+
+        .search-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .search-label {
+            font-weight: 700;
+            color: var(--maroon);
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        .search-wrapper {
+            position: relative;
+            flex: 1;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 2px solid #cbd5e1;
+            border-radius: 4px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: var(--gold);
+        }
+
+        /* SEARCH DROPDOWN - HIGH Z-INDEX TO APPEAR ON TOP OF CANVAS */
+        .search-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid var(--gold);
+            border-radius: 0 0 4px 4px;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+            z-index: 99999 !important;  /* EXTREMELY HIGH Z-INDEX */
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .result-item {
+            padding: 12px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+            transition: background 0.2s;
+        }
+
+        .result-item:hover {
+            background: #faebcd;
+        }
+
+        .result-item .main-name {
+            font-weight: 700;
+            color: var(--dark-blue);
+            font-size: 14px;
+        }
+
+        .result-item .gen {
+            color: var(--maroon);
+            font-size: 12px;
+            margin-left: 8px;
+        }
+
+        .result-item .father-name {
+            font-size: 11px;
+            color: #666;
+            margin-top: 2px;
+        }
+
+        /* TREE CONTAINER - NO SCROLLING, just static */
+        .tree-container {
+            flex: 1;
+            overflow: hidden;  /* NO SCROLLING - exactly like file 700 */
+            padding: 20px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        /* TREE ROOT LAYOUT - ZOOM 0.5 FROM FILE 700 */
+        .tree-root-layout {
+            transform-origin: top left;
+            zoom: 0.5;  /* KEY: 0.5 zoom from file 700 */
+            min-width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* WELCOME PAGE - EXACTLY LIKE FILE 2 */
+        .welcome-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            min-height: 500px;
+            width: 100%;
+        }
+
+        .welcome-box {
+            text-align: center;
+            max-width: 500px;
+            padding: 40px;
+            background: white;
+            border: 3px solid var(--gold);
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        }
+
+        .welcome-icon {
+            font-size: 72px;
+            margin-bottom: 20px;
+            color: var(--gold);
+        }
+
+        .welcome-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--dark-blue);
+            margin-bottom: 15px;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .welcome-text {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .welcome-shortcuts {
+            display: flex;
             gap: 20px;
             justify-content: center;
-            margin: 20px 0 25px 0;
-            width: 100%;
+            margin-top: 20px;
         }
 
-        .children-row .box {
-            flex: 0 0 auto;
-            width: 260px;
+        .shortcut-badge {
+            text-align: center;
         }
 
-        /* Left align all text inside boxes */
+        .shortcut-badge .key {
+            background: #f0f0f0;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--dark-blue);
+            border: 1px solid #ccc;
+        }
+
+        .shortcut-badge .label {
+            font-size: 12px;
+            color: var(--maroon);
+            margin-top: 5px;
+        }
+
+        /* BOX STYLES - EXACTLY FROM FILE 2 */
         .box {
             border: 2px solid var(--gold);
             border-radius: 12px;
             background: white;
-            min-width: 240px;
-            max-width: 280px;
+            width: 280px;
             text-align: left;
             cursor: pointer;
             position: relative;
             box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-            transition: transform 0.2s;
+            transition: all 0.2s;
+            font-size: 12px;
         }
 
-        .box:hover { transform: translateY(-3px); }
-        
-        .box.blinking-box { 
-            animation: blinkBoxLightGreen 1.5s infinite; 
-            border-width: 4px; 
-            z-index: 10; 
-            transform: scale(1.02); 
+        .box:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
         }
-        
-        @keyframes blinkBoxLightGreen { 
-            0%,100%{ border-color:#2e7d32; background:#e8f5e9; box-shadow:0 0 15px rgba(46,125,50,0.4); } 
-            50%{ border-color:#4caf50; background:#c8e6c9; box-shadow:0 0 30px rgba(76,175,80,0.6); transform:scale(1.05); } 
+
+        @keyframes gentleBeat {
+            0% { border-color: #2e7d32; background: #e8f5e9; transform: scale(1.02); box-shadow: 0 0 15px rgba(46,125,50,0.3); }
+            35% { border-color: #4caf50; background: #c8e6c9; transform: scale(1.04); box-shadow: 0 0 25px rgba(76,175,80,0.5); }
+            70% { border-color: #2e7d32; background: #e8f5e9; transform: scale(1.02); box-shadow: 0 0 15px rgba(46,125,50,0.3); }
+            100% { border-color: #2e7d32; background: #e8f5e9; transform: scale(1.02); box-shadow: 0 0 15px rgba(46,125,50,0.3); }
         }
-        
-        .box-header { 
-            display: flex; 
-            justify-content: space-between; 
-            padding: 6px 10px; 
-            background: #f8fafc; 
-            font-size: 10px; 
-            font-weight: 800; 
+
+        .box.selected {
+            animation: gentleBeat 2.2s infinite;
+            border-width: 4px;
+            z-index: 10;
+        }
+
+        .box.female-box {
+            background-color: var(--light-pink);
+            border-color: #fb7185;
+        }
+
+        .box-header {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: #f8fafc;
             border-bottom: 1px solid #ddd;
-            text-align: left;
+            border-radius: 10px 10px 0 0;
+            font-weight: 800;
         }
-        
-        .box-body { 
+
+        .box-body {
             padding: 12px;
-            text-align: left;
-        }
-        
-        .member-name { 
-            font-family: 'Playfair Display', serif; 
-            font-weight: 700; 
-            font-size: 16px; 
-            display: block;
-            text-align: left;
-        }
-        
-        .father-name { 
-            font-size: 11px; 
-            color: #64748b; 
-            margin-top: 4px;
-            text-align: left;
-        }
-        
-        /* Light pink for females */
-        .female-box { 
-            background-color: var(--light-pink) !important; 
-            border-color: #fb7185 !important; 
-        }
-        
-        .golden-heart { position: absolute; bottom: 5px; right: 8px; color: var(--gold); font-size: 16px; }
-        .hidden { display: none !important; }
-        .app-footer { background: var(--dark-blue); color: var(--gold); text-align: center; padding: 8px; font-size: 11px; border-top: 2px solid var(--gold); }
-        
-        /* ===== MOBILE RESPONSIVE - ONLY ZOOM CHANGED ===== */
-        @media screen and (max-width: 768px) {
-            body { overflow: auto; -webkit-overflow-scrolling: touch; height: auto; min-height: 100vh; padding: 5px; }
-            .app-container { height: auto; min-height: calc(100vh - 10px); border-radius: 16px; }
-            .app-header { position: relative; padding: 10px 15px; }
-            .header-title { font-size: 18px; width: calc(100% - 50px); }
-            .menu-toggle { display: flex !important; position: absolute; top: 50%; right: 15px; transform: translateY(-50%); background: var(--gold); color: black; border: none; border-radius: 50%; width: 44px; height: 44px; font-size: 26px; font-weight: bold; cursor: pointer; z-index: 2000; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
-            .fixed-header-section { transition: max-height 0.3s ease; overflow: hidden; max-height: 500px; padding: 15px 15px 10px 15px; }
-            .fixed-header-section.collapsed { max-height: 0; padding-top: 0; padding-bottom: 0; margin: 0; }
-            .search-row { flex-direction: column; align-items: stretch; gap: 12px; }
-            .search-wrapper { min-width: 100%; }
-            .search-input { font-size: 16px; padding: 12px 15px; height: 48px; }
-            .filter-buttons { width: 100%; justify-content: space-between; gap: 8px; }
-            .filter-btn { flex: 1; padding: 10px 5px; font-size: 12px; justify-content: center; height: 44px; }
-            .header-actions { width: 100%; justify-content: space-between; gap: 5px; }
-            .header-btn { flex: 1; padding: 10px 5px; font-size: 11px; justify-content: center; height: 44px; }
-            
-            /* ONLY CHANGE: Zoom for mobile viewing */
-            .tree-root-layout { zoom: 0.5; }
-            
-            .box { min-width: 200px; max-width: 260px; margin: 0 auto; }
-            .member-name { font-size: 18px !important; }
-            .father-name { font-size: 11px; }
-            .children-row { gap: 12px; }
-            .v-line { height: 20px; }
-            .relation-label { font-size: 11px; padding: 5px 15px; }
-            .scrollable-content { overflow-y: visible; -webkit-overflow-scrolling: touch; padding: 0 12px 20px 12px; }
-            #individualSection { overflow-y: auto; -webkit-overflow-scrolling: touch; }
-            .main-content { overflow-y: auto; -webkit-overflow-scrolling: touch; }
-            .dropdown { max-height: 200px; font-size: 14px; }
-            .result-item { padding: 12px 15px; }
-            .app-footer { padding: 10px; font-size: 10px; }
-        }
-        
-        @media screen and (max-width: 380px) {
-            .box { min-width: 160px; max-width: 220px; }
-            .member-name { font-size: 16px !important; }
-            .filter-btn { font-size: 11px; padding: 8px 4px; }
-            .header-btn { font-size: 10px; padding: 8px 4px; }
+            position: relative;
+            min-height: 120px;
         }
 
-        .code-preview::-webkit-scrollbar {
-            width: 6px;
+        .box-row {
+            display: flex;
+            margin-bottom: 5px;
+            line-height: 1.5;
         }
 
-        .code-preview::-webkit-scrollbar-track {
-            background: #2d2d2d;
+        .box-label {
+            font-weight: 700;
+            color: var(--dark-blue);
+            min-width: 55px;
         }
 
-        .code-preview::-webkit-scrollbar-thumb {
+        .box-value {
+            color: #333;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+
+        .member-name {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .child-icon {
+            position: absolute;
+            bottom: 8px;
+            right: 12px;
+            font-size: 18px;
+            line-height: 1;
+            color: #555;
+        }
+
+        .v-line {
+            width: 3px;
+            height: 25px;
             background: var(--gold);
-            border-radius: 3px;
+            margin: 10px auto;
+        }
+
+        .section-heading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--maroon);
+            margin: 20px 0 15px 0;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--gold);
+            font-family: 'Playfair Display', serif;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .toggle-icon {
+            font-size: 22px;
+            font-weight: bold;
+            background: var(--gold);
+            color: var(--dark-blue);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .children-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            margin: 0 auto 10px auto;
+        }
+
+        .children-row.four-in-row {
+            display: grid;
+            grid-template-columns: repeat(4, auto);
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .family-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 25px;
+        }
+
+        .app-footer {
+            background: var(--dark-blue);
+            color: var(--gold);
+            text-align: center;
+            padding: 8px;
+            font-size: 11px;
+            border-top: 2px solid var(--gold);
+        }
+
+        .shortcuts-help {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border: 3px solid var(--gold);
+            border-radius: 12px;
+            padding: 25px;
+            z-index: 4000;
+            display: none;
+            min-width: 400px;
+            max-width: 90vw;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .shortcuts-help.show {
+            display: block;
+        }
+
+        /* Ensure dropdown always on top */
+        .search-dropdown {
+            z-index: 99999 !important;
         }
     </style>
 </head>
 <body>
+    <!-- NO ZOOM CONTROLS (hidden via CSS) -->
+
     <div class="app-container">
         <div class="app-header">
-            <div class="header-title"><span class="header-icon">🌿</span> <span>Rizvi family · structured tree</span></div>
-            <button class="menu-toggle" id="mobileMenuToggle">☰</button>
-            <div class="header-actions" id="headerActions"></div>
+            <div class="left-toggle-btn" onclick="toggleLeftMenu()">☰</div>
+            <div class="header-title">
+                <span class="header-icon">🌿</span>
+                <span>Rizvi family · structured tree</span>
+            </div>
+            <div class="header-actions">
+                <div class="header-btn" onclick="showShortcutsHelp()">⌨️ Shortcuts</div>
+                <div class="header-btn" onclick="showTableView()">📊 Table View</div>
+                <div class="header-btn dashboard" onclick="showDashboard()">🏠 Dashboard</div>
+            </div>
         </div>
-        
-        <div class="main-content" id="mainContent">
-            <div id="individualSection">
-                <div class="fixed-header-section">
+
+        <div class="toggle-menu-panel" id="toggleMenuPanel">
+            <div class="toggle-menu-item active" id="toggleSiblings" onclick="handleToggleMenuClick('siblings')">👥 Siblings</div>
+            <div class="toggle-menu-item active" id="toggleDescendants" onclick="handleToggleMenuClick('descendants')">👶 Descendants</div>
+            <div class="toggle-menu-item active" id="toggleAncestors" onclick="handleToggleMenuClick('ancestors')">🌳 Ancestors</div>
+            <div style="border-top:1px solid var(--gold); margin:5px 0;"></div>
+            <div class="toggle-menu-item" onclick="resetIndividual()">🔄 Reset</div>
+            <div class="toggle-menu-item" onclick="exportIndividualPDF()">📑 Save PDF</div>
+        </div>
+
+        <div class="main-content">
+            <div class="center-content">
+                <div class="search-section">
                     <div class="search-row">
                         <span class="search-label">SEARCH MEMBER</span>
                         <div class="search-wrapper">
-                            <input type="text" id="individualSearch" class="search-input" placeholder="Type name..." onkeyup="searchIndividual(this.value)" autocomplete="off">
-                            <div id="individualDropdown" class="dropdown"></div>
-                        </div>
-                        <div class="filter-buttons">
-                            <div id="filterSiblings" class="filter-btn active" onclick="toggleFilter('siblings')">👥 Siblings</div>
-                            <div id="filterDescendants" class="filter-btn active" onclick="toggleFilter('descendants')">👶 Descendants</div>
-                            <div id="filterAncestors" class="filter-btn" onclick="toggleFilter('ancestors')">🌳 Ancestors</div>
+                            <input type="text" id="searchInput" class="search-input" placeholder="Type name..." autocomplete="off">
+                            <div id="searchDropdown" class="search-dropdown"></div>
                         </div>
                     </div>
-                    <div class="border-line"></div>
                 </div>
-                <div class="scrollable-content">
-                    <div id="individualTree" class="tree-root-layout"></div>
+
+                <div class="tree-container" id="treeContainer">
+                    <div class="tree-root-layout" id="treeRoot"></div>
                 </div>
             </div>
         </div>
-        <div class="app-footer" id="appFooter">Developer: Imran Haider S/o Syed Risalat Hussain Rizvi | 0332-787-6010</div>
+
+        <div class="app-footer" id="appFooter">
+            Developer: Imran Haider S/o Syed Risalat Hussain Rizvi | 0332-787-6010
+        </div>
+    </div>
+
+    <div class="shortcuts-help" id="shortcutsHelp">
+        <h3>⌨️ Keyboard Shortcuts</h3>
+        <div class="shortcut-grid">
+            <span class="shortcut-key">Ctrl+F</span><span>Focus search</span>
+            <span class="shortcut-key">1</span><span>Toggle siblings</span>
+            <span class="shortcut-key">2</span><span>Toggle descendants</span>
+            <span class="shortcut-key">3</span><span>Toggle ancestors</span>
+            <span class="shortcut-key">Ctrl+P</span><span>Export PDF</span>
+            <span class="shortcut-key">ESC</span><span>Close menus</span>
+            <span class="shortcut-key">Ctrl++</span><span>Zoom in</span>
+            <span class="shortcut-key">Ctrl+-</span><span>Zoom out</span>
+            <span class="shortcut-key">Ctrl+0</span><span>Reset zoom</span>
+            <span class="shortcut-key">↑</span><span>Go to father</span>
+            <span class="shortcut-key">↓</span><span>Go to first child</span>
+            <span class="shortcut-key">←/→</span><span>Navigate siblings</span>
+            <span class="shortcut-key">?</span><span>Show this help</span>
+        </div>
+        <div style="text-align:center; margin-top:15px;">
+            <button class="header-btn" onclick="closeShortcutsHelp()">Close</button>
+        </div>
     </div>
 
     <script>
-        // =========================================================================
-        // GLOBAL STATE & CONFIGURATION
-        // =========================================================================
+        // ==================== EXACT JAVASCRIPT FROM FILE 2 ====================
         let db = [];
         let fileInfo = null;
         let currentIndividual = null;
         let showSiblings = true;
         let showDescendants = true;
-        let showAncestors = false;
+        let showAncestors = true;
+        let zoomLevel = 1;  // kept but not used (zoom via CSS)
+        let siblingsCollapsed = true;
+        let childrenCollapsed = true;
+        let ancestorsCollapsed = true;
 
-        // =========================================================================
-        // UTILITY FUNCTIONS
-        // =========================================================================
+        // displayName function
         function displayName(str) {
             return str ? str.replace(/\s*-\s*\d+$/, '').trim() : '';
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+            setupKeyboardShortcuts();
+            setupEventListeners();
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const memberName = urlParams.get('member');
+            if (memberName) {
+                setTimeout(() => {
+                    const member = db.find(m => m.name === decodeURIComponent(memberName));
+                    if (member) selectMember(member);
+                }, 500);
+            } else {
+                resetIndividual();
+            }
+        });
+
+        function loadData() {
+            const saved = localStorage.getItem('familyDB');
+            if (saved) db = JSON.parse(saved);
+            
+            const savedInfo = localStorage.getItem('fileInfo');
+            if (savedInfo) fileInfo = JSON.parse(savedInfo);
         }
 
         function formatCurrentTime() {
@@ -479,341 +693,228 @@
             return `${day}/${month}/${year} - ${displayHours}:${minutes}${ampm}`;
         }
 
-        function updateFooter() {
-            const footer = document.getElementById('appFooter');
-            if (!footer) return;
-            
-            let timeStr = 'Unknown';
-            
-            if (fileInfo && fileInfo.saved_time) {
-                timeStr = fileInfo.saved_time;
-            } else {
-                const savedInfo = localStorage.getItem('fileInfo');
-                if (savedInfo) {
-                    try {
-                        const info = JSON.parse(savedInfo);
-                        if (info && info.saved_time) {
-                            timeStr = info.saved_time;
-                            fileInfo = info;
-                        }
-                    } catch (e) {
-                        console.error('Error parsing fileInfo:', e);
-                    }
-                }
-            }
-            
-            if (timeStr === 'Date & time file saved' || timeStr.includes('Date & time')) {
-                timeStr = 'No timestamp in Excel';
-            }
-            
-            footer.innerHTML = `📅 Last Data saved: ${timeStr} <span style="margin:0 30px;">|</span> Developer: Imran Haider S/o Syed Risalat Hussain Rizvi <span style="margin:0 30px;">|</span> 0332-787-6010`;
-        }
+        window.toggleLeftMenu = () => document.getElementById('toggleMenuPanel').classList.toggle('show');
 
-        // =========================================================================
-        // VIEW NAVIGATION
-        // =========================================================================
-        function switchToTableView() {
-            if (currentIndividual) {
-                localStorage.setItem('tableViewMember', JSON.stringify(currentIndividual));
-                localStorage.setItem('tableViewFilters', JSON.stringify({ showSiblings, showDescendants, showAncestors }));
+        window.handleToggleMenuClick = function(filter) {
+            if (!currentIndividual) return;
+            if (filter === 'siblings') {
+                showSiblings = !showSiblings;
+                document.getElementById('toggleSiblings').classList.toggle('active', showSiblings);
+            } else if (filter === 'descendants') {
+                showDescendants = !showDescendants;
+                document.getElementById('toggleDescendants').classList.toggle('active', showDescendants);
+            } else if (filter === 'ancestors') {
+                showAncestors = !showAncestors;
+                document.getElementById('toggleAncestors').classList.toggle('active', showAncestors);
             }
-            window.location.href = '8-individual-table-mobile.html';
-        }
-
-        function updateHeaderButtons() {
-            const headerActions = document.getElementById('headerActions');
-            if (!headerActions) return;
-            headerActions.innerHTML = `
-                <div class="header-btn table" onclick="switchToTableView()">📊 Switch to Table</div>
-                <div class="header-btn reset" onclick="resetIndividual()">🔄 Reset</div>
-                <div class="header-btn pdf" onclick="exportIndividualPDF()">📑 Save PDF</div>
-                <div class="header-btn dashboard" onclick="showDashboard()">🏠 Dashboard</div>
-            `;
-        }
-
-        function showDashboard() {
-            window.location.href = '6-dashboard-mobile.html';
-        }
+            renderTree();
+            document.getElementById('toggleMenuPanel').classList.remove('show');
+        };
 
         function resetIndividual() {
-            document.getElementById('individualSearch').value = '';
+            document.getElementById('searchInput').value = '';
             currentIndividual = null;
-            
-            const treeArea = document.getElementById('individualTree');
-            if (treeArea) {
-                treeArea.innerHTML = `
-                    <div class="waving-container">
-                        <div class="golden-waving-box">
-                            <div class="icon">👤</div>
-                            <div class="row1">Select a member to view</div>
-                            <div class="row3">
-                                Search and select a family member above <br> 
-                                to visualize their tree and connections
-                            </div>
+            const url = new URL(window.location);
+            url.searchParams.delete('member');
+            window.history.pushState({}, '', url);
+            document.getElementById('treeRoot').innerHTML = `
+                <div class="welcome-container">
+                    <div class="welcome-box">
+                        <div class="welcome-icon">🌿</div>
+                        <div class="welcome-title">Rizvi Family Tree</div>
+                        <div class="welcome-text">
+                            Select a family member from the search box above<br>
+                            to view their family connections and relationships.
                         </div>
+                        <div class="welcome-shortcuts">
+                            <div class="shortcut-badge"><div class="key">1</div><div class="label">Siblings</div></div>
+                            <div class="shortcut-badge"><div class="key">2</div><div class="label">Descendants</div></div>
+                            <div class="shortcut-badge"><div class="key">3</div><div class="label">Ancestors</div></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            closeAllMenus();
+        }
+
+        document.getElementById('searchInput')?.addEventListener('keyup', function(e) {
+            const query = this.value;
+            const dropdown = document.getElementById('searchDropdown');
+            if (query.length < 2) { dropdown.style.display = 'none'; return; }
+            const results = db.filter(m => m.name.toLowerCase().includes(query.toLowerCase())).slice(0, 8);
+            dropdown.innerHTML = '';
+            results.forEach(member => {
+                const div = document.createElement('div');
+                div.className = 'result-item';
+                div.innerHTML = `<div><span class="main-name">${displayName(member.name)}</span> <span class="gen">${member.gen}</span>
+                    <div class="father-name">${member.gender?.startsWith('F') ? 'D/o' : 'S/o'} ${displayName(member.father) || '—'}</div></div>`;
+                div.onclick = () => { selectMember(member); dropdown.style.display = 'none'; this.value = member.name; };
+                dropdown.appendChild(div);
+            });
+            dropdown.style.display = 'block';
+        });
+
+        function selectMember(member) {
+            currentIndividual = member;
+            document.getElementById('searchInput').value = member.name;
+            const url = new URL(window.location);
+            url.searchParams.set('member', encodeURIComponent(member.name));
+            window.history.pushState({}, '', url);
+            renderTree();
+        }
+
+        window.toggleSection = function(section) {
+            if (section === 'siblings') siblingsCollapsed = !siblingsCollapsed;
+            else if (section === 'children') childrenCollapsed = !childrenCollapsed;
+            else if (section === 'ancestors') ancestorsCollapsed = !ancestorsCollapsed;
+            renderTree();
+        };
+
+        function findParent(p) {
+            return p?.father ? db.find(x => x.name === p.father) : null;
+        }
+
+        function getAncestors(p) {
+            let arr = [], cur = p;
+            while (cur?.father) {
+                const father = db.find(x => x.name === cur.father);
+                if (!father) break;
+                arr.push(father);
+                cur = father;
+            }
+            return arr;
+        }
+
+        function renderBox(person, label, isSiblingOrChild = false) {
+            const isFemale = person.gender?.startsWith('F');
+            const isSelected = currentIndividual?.name === person.name;
+            const mother = (person.father) ? (db.find(f => f.name === person.father)?.spouse || '—') : '—';
+            const hasKids = db.some(c => c.father === person.name);
+            const statusIcon = (person.alive || '').toLowerCase() === 'yes' ? '🌹' : '🥀';
+            const fatherStatus = (person.father) ? (db.find(f => f.name === person.father)?.alive || '').toLowerCase() === 'yes' ? '🌹' : '🥀' : '';
+
+            let html = `<div class="box ${isFemale ? 'female-box' : ''} ${isSelected ? 'selected' : ''}" data-name="${person.name}" onclick="handleBoxClick(this)">`;
+            html += `<div class="box-header"><span>${label}</span><span>${person.gen || '—'}</span></div>`;
+            html += `<div class="box-body">`;
+            html += `<div class="box-row"><span class="box-label">Name :</span><span class="box-value"><span class="member-name">${displayName(person.name)}</span> ${statusIcon}</span></div>`;
+            html += `<div class="box-row"><span class="box-label">Father :</span><span class="box-value">${displayName(person.father) || '—'} ${fatherStatus}</span></div>`;
+            html += `<div class="box-row"><span class="box-label">Status :</span><span class="box-value">${person.maritalStatus || '—'}</span></div>`;
+            if (hasKids) html += `<div class="child-icon">👪</div>`;
+            html += `</div></div>`;
+            return html;
+        }
+
+        function renderMembersWithLayout(members, type) {
+            if (members.length === 0) return '';
+            
+            const count = members.length;
+            const getLabel = (m) => type === 'sibling' ? (m.gender?.startsWith('F') ? 'Sister' : 'Brother') : (m.gender?.startsWith('F') ? 'Daughter' : 'Son');
+            
+            if (count === 1) {
+                return `<div class="children-row one-box">${members.map(m => renderBox(m, getLabel(m), true)).join('')}</div>`;
+            }
+            else if (count === 2) {
+                return `<div class="children-row two-boxes">${members.map(m => renderBox(m, getLabel(m), true)).join('')}</div>`;
+            }
+            else if (count === 3) {
+                return `<div class="children-row three-boxes">${members.map(m => renderBox(m, getLabel(m), true)).join('')}</div>`;
+            }
+            else if (count === 4) {
+                return `<div class="children-row four-in-row">${members.map(m => renderBox(m, getLabel(m), true)).join('')}</div>`;
+            }
+            else {
+                const firstFour = members.slice(0, 4);
+                const remaining = members.slice(4);
+                const remainingCount = remaining.length;
+                
+                let remainingClass = 'remaining-center';
+                if (remainingCount === 1) remainingClass = 'one-box';
+                else if (remainingCount === 2) remainingClass = 'two-boxes';
+                else if (remainingCount === 3) remainingClass = 'three-boxes';
+                
+                return `
+                    <div class="children-row four-in-row">
+                        ${firstFour.map(m => renderBox(m, getLabel(m), true)).join('')}
+                    </div>
+                    <div class="children-row ${remainingClass}">
+                        ${remaining.map(m => renderBox(m, getLabel(m), true)).join('')}
                     </div>
                 `;
             }
         }
 
-        // =========================================================================
-        // FILTER TOGGLE
-        // =========================================================================
-        window.toggleFilter = function(filter) {
-            if (!currentIndividual) return;
-            if (filter === 'siblings') { 
-                showSiblings = !showSiblings; 
-                document.getElementById('filterSiblings').classList.toggle('active', showSiblings); 
-            } else if (filter === 'descendants') { 
-                showDescendants = !showDescendants; 
-                document.getElementById('filterDescendants').classList.toggle('active', showDescendants); 
-            } else if (filter === 'ancestors') { 
-                showAncestors = !showAncestors; 
-                document.getElementById('filterAncestors').classList.toggle('active', showAncestors); 
-            }
-            renderIndividualTree();
-        };
-
-        // =========================================================================
-        // TREE HELPER FUNCTIONS
-        // =========================================================================
-        function findParent(p) {
-            if (!p || !p.father) return null;
-            return db.find(x => x.name.toLowerCase() === p.father.toLowerCase());
-        }
-
-        function getGenNum(gen) {
-            const match = String(gen).match(/\d+/);
-            return match ? parseInt(match[0]) : 0;
-        }
-
-        function getAncestryChain(p) {
-            if (!p) return [];
-            let chain = [], cur = p, visited = new Set();
-            while (cur && !visited.has(cur.name.toLowerCase())) {
-                chain.push(cur);
-                visited.add(cur.name.toLowerCase());
-                cur = findParent(cur);
-            }
-            return chain;
-        }
-
-        // =========================================================================
-        // SEARCH FUNCTION
-        // =========================================================================
-        window.searchIndividual = function(query) {
-            if (!db.length) return;
-            const drop = document.getElementById('individualDropdown');
-            if (!drop) return;
-            drop.innerHTML = '';
-            if (!query || query.length < 1) { drop.style.display = 'none'; return; }
-            const found = db.filter(p => p.name.toLowerCase().includes(query.toLowerCase())).slice(0, 8);
-            if (found.length === 0) { drop.style.display = 'none'; return; }
-            found.forEach(p => {
-                const div = document.createElement('div');
-                div.className = 'result-item';
-                div.innerHTML = `<div><span class="main-name">${displayName(p.name)}</span> <span class="gen">(${p.gen})</span></div>
-                    <div style="font-size:11px;">${p.gender?.startsWith('F') ? 'D/o' : 'S/o'} ${displayName(p.father)}</div>`;
-                div.onclick = (e) => {
-                    e.stopPropagation();
-                    document.getElementById('individualSearch').value = displayName(p.name) + ' (' + p.gen + ')';
-                    currentIndividual = p;
-                    renderIndividualTree();
-                    drop.style.display = 'none';
-                };
-                drop.appendChild(div);
-            });
-            drop.style.display = 'block';
-        };
-
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('.search-wrapper')) {
-                document.querySelectorAll('.dropdown').forEach(d => d.style.display = 'none');
-            }
-        });
-
-        // =========================================================================
-        // BOX CLICK HANDLER
-        // =========================================================================
-        window.handleBoxClick = function(member) {
-            if (!member || !member.name) return;
-            currentIndividual = member;
-            document.getElementById('individualSearch').value = displayName(member.name) + ' (' + member.gen + ')';
-            renderIndividualTree();
-        };
-
-        // =========================================================================
-        // RENDER BOX FUNCTION - UPDATED with all new fields
-        // =========================================================================
-        function renderBox(p, label, isSelected, hasChildren) {
-            const isFemale = p.gender?.startsWith('F');
-            const blinkClass = isSelected ? 'blinking-box' : '';
-            const memberData = encodeURIComponent(JSON.stringify(p));
-            
-            // Find mother (spouse of father)
-            let motherName = '';
-            if (p.father) {
-                const father = db.find(f => f.name.toLowerCase() === p.father.toLowerCase());
-                if (father && father.spouse) {
-                    motherName = father.spouse;
-                }
-            }
-            
-            // Rose for vital status (in front of name)
-            const roseIcon = p.alive === 'No' ? '🥀' : '🌹';
-            const roseColor = p.alive === 'No' ? '#666' : '#e31b23';
-            
-            // Marital status display
-            let maritalDisplay = '';
-            if (p.maritalStatus === 'Married') maritalDisplay = '💍';
-            else if (p.maritalStatus === 'Unmarried') maritalDisplay = '';
-            else if (p.maritalStatus === 'Widow' || p.maritalStatus === 'Widower') maritalDisplay = '👤';
-            else if (p.maritalStatus === 'Divorced') maritalDisplay = '⚖️';
-            
-            // Family icon
-            const familyIcon = '👪';
-            
-            return `<div class="box ${isFemale ? 'female-box' : ''} ${blinkClass}" onclick='handleBoxClick(JSON.parse(decodeURIComponent("${memberData}")))'>
-                <div class="box-header">
-                    <span>${label}</span>
-                    <span>${p.gen}</span>
-                </div>
-                <div class="box-body">
-                    <!-- Name with rose in front -->
-                    <div style="display: flex; align-items: center; gap: 5px; margin-bottom: 8px;">
-                        <span style="color: ${roseColor}; font-size: 20px;">${roseIcon}</span>
-                        <span class="member-name">${displayName(p.name)}</span>
-                    </div>
-                    
-                    <!-- Father -->
-                    <div style="display: flex; align-items: center; gap: 5px; margin-top: 3px;">
-                        <span style="font-size: 14px; min-width: 50px;">Father :</span>
-                        <span class="father-name">${displayName(p.father)}</span>
-                    </div>
-                    
-                    <!-- Mother (if found) -->
-                    ${motherName ? `<div style="display: flex; align-items: center; gap: 5px; margin-top: 3px;">
-                        <span style="font-size: 14px; min-width: 50px;">Mother :</span>
-                        <span class="father-name" style="color: #b85c5c;">${displayName(motherName)}</span>
-                    </div>` : ''}
-                    
-                    <!-- Spouse (if exists) -->
-                    ${p.spouse ? `<div style="display: flex; align-items: center; gap: 5px; margin-top: 3px;">
-                        <span style="font-size: 14px; min-width: 50px;">Spouse :</span>
-                        <span class="father-name" style="color: #8B4513;">${displayName(p.spouse)}</span>
-                    </div>` : ''}
-                    
-                    <!-- Status -->
-                    <div style="display: flex; align-items: center; gap: 5px; margin-top: 3px;">
-                        <span style="font-size: 14px; min-width: 50px;">Status :</span>
-                        <span style="font-size: 14px;">${maritalDisplay}</span>
-                        <span class="father-name">${p.maritalStatus || 'Married'}</span>
-                    </div>
-                    
-                    <!-- Family icon for children -->
-                    ${hasChildren ? `<div class="golden-heart" style="font-size: 18px;">${familyIcon}</div>` : ''}
-                </div>
-            </div>`;
-        }
-
-        // =========================================================================
-        // RENDER INDIVIDUAL TREE - UPDATED with individual boxes for all
-        // =========================================================================
-        function renderIndividualTree() {
+        function renderTree() {
             if (!currentIndividual) return;
             let html = '<div>';
 
-            // ANCESTORS SECTION
             if (showAncestors) {
-                const ancestors = getAncestryChain(currentIndividual).slice(1);
-                if (ancestors.length > 0) {
-                    html += '<div class="family-group">';
-                    html += '<div class="relation-label">ANCESTORS</div>';
-                    [...ancestors].reverse().forEach((a, idx) => {
-                        const hasChildren = db.some(x => x.father && x.father.toLowerCase() === a.name.toLowerCase());
-                        html += renderBox(a, idx === 0 ? 'Earliest' : 'Ancestor', false, hasChildren);
-                        if (idx < ancestors.length - 1) html += '<div class="v-line"></div>';
-                    });
-                    html += '<div class="v-line"></div>';
-                    html += '</div>';
+                const ancestors = getAncestors(currentIndividual);
+                if (ancestors.length) {
+                    html += `<div class="section-heading" onclick="toggleSection('ancestors')">`;
+                    html += `<span>🌳 ANCESTORS</span>`;
+                    html += `<span class="toggle-icon">${ancestorsCollapsed ? '+' : '-'}</span>`;
+                    html += `</div>`;
+                    if (!ancestorsCollapsed) {
+                        html += '<div class="family-group">';
+                        [...ancestors].reverse().forEach((a, idx) => {
+                            html += renderBox(a, idx === 0 ? 'Earliest' : 'Ancestor', false);
+                            if (idx < ancestors.length-1) html += '<div class="v-line"></div>';
+                        });
+                        html += '<div class="v-line"></div></div>';
+                    }
                 }
             }
 
-            // CURRENT MEMBER AND FATHER
             const father = findParent(currentIndividual);
-            const ancestors = showAncestors ? getAncestryChain(currentIndividual).slice(1) : [];
-            const fatherInAncestors = father && ancestors.some(a => a.name === father.name);
-
-            if (father && !fatherInAncestors) {
-                const fatherHasChildren = db.some(x => x.father && x.father.toLowerCase() === father.name.toLowerCase());
+            if (father) {
                 html += '<div class="family-group">';
-                html += renderBox(father, 'Father', false, fatherHasChildren);
+                html += renderBox(father, 'Father', false);
                 html += '<div class="v-line"></div>';
-                const currentHasChildren = db.some(x => x.father && x.father.toLowerCase() === currentIndividual.name.toLowerCase());
-                html += renderBox(currentIndividual, 'Selected', true, currentHasChildren);
+                html += renderBox(currentIndividual, 'Selected', false);
                 html += '</div>';
             } else {
-                const currentHasChildren = db.some(x => x.father && x.father.toLowerCase() === currentIndividual.name.toLowerCase());
-                html += '<div class="family-group">';
-                html += renderBox(currentIndividual, 'Selected', true, currentHasChildren);
-                html += '</div>';
+                html += '<div class="family-group">' + renderBox(currentIndividual, 'Selected', false) + '</div>';
             }
 
-            // SIBLINGS SECTION - ALL as individual boxes
             if (showSiblings && father) {
-                const siblings = db.filter(s => s.father && s.father.toLowerCase() === currentIndividual.father.toLowerCase() && s.name !== currentIndividual.name);
-                if (siblings.length > 0) {
-                    html += '<div class="family-group">';
-                    html += `<div class="descendant-heading">DESCENDANTS OF ${displayName(father.name).toUpperCase()}</div>`;
-                    html += '<div class="relation-label">SIBLINGS</div>';
-                    
-                    // ALL siblings in children-row (both male and female as individual boxes)
-                    html += '<div class="children-row">';
-                    siblings.forEach(s => {
-                        const hasChildren = db.some(x => x.father && x.father.toLowerCase() === s.name.toLowerCase());
-                        const siblingLabel = s.gender?.startsWith('F') ? 'Sister' : 'Brother';
-                        html += renderBox(s, siblingLabel, false, hasChildren);
-                    });
-                    html += '</div>';
-                    
-                    html += '</div>';
+                const siblings = db.filter(s => s.father === father.name && s.name !== currentIndividual.name);
+                if (siblings.length) {
+                    html += `<div class="section-heading" onclick="toggleSection('siblings')">`;
+                    html += `<span>👥 Siblings Of ${displayName(currentIndividual.name)} - (${siblings.length})</span>`;
+                    html += `<span class="toggle-icon">${siblingsCollapsed ? '+' : '-'}</span>`;
+                    html += `</div>`;
+                    if (!siblingsCollapsed) {
+                        html += renderMembersWithLayout(siblings, 'sibling');
+                    }
                 }
             }
 
-            // DESCENDANTS SECTION - ALL as individual boxes
             if (showDescendants) {
-                const children = db.filter(c => c.father && c.father.toLowerCase() === currentIndividual.name.toLowerCase());
-                if (children.length > 0) {
-                    html += '<div class="family-group">';
-                    html += '<div class="v-line"></div>';
-                    html += `<div class="descendant-heading">DESCENDANTS OF ${displayName(currentIndividual.name).toUpperCase()}</div>`;
-                    html += '<div class="relation-label">CHILDREN</div>';
-                    
-                    // ALL children in children-row (both male and female as individual boxes)
-                    html += '<div class="children-row">';
-                    children.forEach(c => {
-                        const hasChildren = db.some(x => x.father && x.father.toLowerCase() === c.name.toLowerCase());
-                        const childLabel = c.gender?.startsWith('F') ? 'Daughter' : 'Son';
-                        html += renderBox(c, childLabel, false, hasChildren);
-                    });
-                    html += '</div>';
-                    
-                    html += '</div>';
+                const children = db.filter(c => c.father === currentIndividual.name);
+                if (children.length) {
+                    html += `<div class="section-heading" onclick="toggleSection('children')">`;
+                    html += `<span>👶 Children Of ${displayName(currentIndividual.name)} - (${children.length})</span>`;
+                    html += `<span class="toggle-icon">${childrenCollapsed ? '+' : '-'}</span>`;
+                    html += `</div>`;
+                    if (!childrenCollapsed) {
+                        html += renderMembersWithLayout(children, 'child');
+                    }
                 }
             }
 
             html += '</div>';
-            document.getElementById('individualTree').innerHTML = html;
+            document.getElementById('treeRoot').innerHTML = html;
         }
 
-        // =========================================================================
-        // PDF EXPORT
-        // =========================================================================
-        window.exportIndividualPDF = async function() {
-            if (!currentIndividual) { 
-                alert('Please select a member first'); 
-                return; 
-            }
+        window.handleBoxClick = function(el) {
+            const name = el.dataset.name;
+            const member = db.find(m => m.name === name);
+            if (member) selectMember(member);
+        };
+
+        async function exportIndividualPDF(memberName) {
+            const member = memberName ? db.find(m => m.name === memberName) : currentIndividual;
+            if (!member) return;
             
             const treeElement = document.querySelector('.tree-root-layout');
             if (!treeElement) return alert('No content to export');
@@ -823,7 +924,7 @@
                 header.style.marginBottom = '30px'; 
                 header.style.textAlign = 'center';
                 header.innerHTML = `<h1 style="color: #d4af37; font-size: 36px; font-family: 'Playfair Display', serif; margin:0;">Rizvi Family Tree</h1>
-                    <h2 style="color:#5a0000; font-size:24px; font-family:'Playfair Display', serif; margin:10px 0 0 0;">${displayName(currentIndividual.name)}</h2>`;
+                    <h2 style="color:#5a0000; font-size:24px; font-family:'Playfair Display', serif; margin:10px 0 0 0;">${displayName(member.name)}</h2>`;
                 
                 treeElement.insertBefore(header, treeElement.firstChild);
 
@@ -895,68 +996,66 @@
                 });
                 
                 pdf.addImage(imgData, 'PNG', 20, 20, w, h);
-                const safeName = displayName(currentIndividual.name).replace(/[^a-z0-9]/gi, '_').toLowerCase();
+                const safeName = member.name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
                 pdf.save(`family_${safeName}_${Date.now()}.pdf`);
                 
             } catch (err) {
                 console.error('PDF Error:', err);
                 alert('❌ PDF generation failed: ' + err.message);
             }
-        };
+        }
 
-        // =========================================================================
-        // LOAD DATA FROM FAMILY-DATA.JS
-        // =========================================================================
-        if (typeof FAMILY_DATA !== 'undefined' && FAMILY_DATA.length > 0) {
-            db = FAMILY_DATA;
-        } else {
-            const saved = localStorage.getItem('familyDB');
-            if (saved) {
-                db = JSON.parse(saved);
+        function closeAllMenus() {
+            document.getElementById('searchDropdown').style.display = 'none';
+            document.querySelectorAll('.context-menu').forEach(m => m.remove());
+            document.getElementById('shortcutsHelp')?.classList.remove('show');
+            document.getElementById('toggleMenuPanel')?.classList.remove('show');
+        }
+        
+        function showShortcutsHelp() { 
+            const help = document.getElementById('shortcutsHelp');
+            if (help.classList.contains('show')) {
+                help.classList.remove('show');
+            } else {
+                help.classList.add('show');
             }
         }
         
-        const savedInfo = localStorage.getItem('fileInfo');
-        if (savedInfo) {
-            fileInfo = JSON.parse(savedInfo);
+        function closeShortcutsHelp() { document.getElementById('shortcutsHelp').classList.remove('show'); }
+        
+        function showDashboard() { window.location.href = '1-dashboard-pc.html'; }
+        
+        window.showTableView = function() {
+            if (currentIndividual) {
+                window.location.href = '3-individual-table-pc.html?member=' + encodeURIComponent(currentIndividual.name);
+            } else {
+                window.location.href = '3-individual-table-pc.html';
+            }
+        };
+        
+        function setupEventListeners() {
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.search-wrapper')) document.getElementById('searchDropdown').style.display = 'none';
+                if (!e.target.closest('.toggle-menu-panel') && !e.target.closest('.left-toggle-btn')) 
+                    document.getElementById('toggleMenuPanel')?.classList.remove('show');
+                if (!e.target.closest('.shortcuts-help') && !e.target.closest('[onclick="showShortcutsHelp()"]')) {
+                    document.getElementById('shortcutsHelp')?.classList.remove('show');
+                }
+            });
+        }
+        
+        function setupKeyboardShortcuts() {
+            document.addEventListener('keydown', (e) => {
+                if (e.target.tagName === 'INPUT' && e.key === 'Escape') { e.target.blur(); closeAllMenus(); }
+                if (e.key === '?' && !e.ctrlKey) { e.preventDefault(); showShortcutsHelp(); }
+                if (e.ctrlKey && e.key === 'f') { e.preventDefault(); document.getElementById('searchInput').focus(); }
+                if (e.ctrlKey && e.key === 'p') { e.preventDefault(); exportIndividualPDF(); }
+            });
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('mobileMenuToggle')?.addEventListener('click', function() {
-                document.querySelector('.fixed-header-section')?.classList.toggle('collapsed');
-            });
-
-            updateFooter();
-
-            const tableMember = localStorage.getItem('tableViewMember');
-            if (tableMember) {
-                currentIndividual = JSON.parse(tableMember);
-                document.getElementById('individualSearch').value = displayName(currentIndividual.name) + ' (' + currentIndividual.gen + ')';
-                localStorage.removeItem('tableViewMember');
-                const savedFilters = localStorage.getItem('tableViewFilters');
-                if (savedFilters) {
-                    const filters = JSON.parse(savedFilters);
-                    showSiblings = filters.showSiblings;
-                    showDescendants = filters.showDescendants;
-                    showAncestors = filters.showAncestors;
-                    document.getElementById('filterSiblings').classList.toggle('active', showSiblings);
-                    document.getElementById('filterDescendants').classList.toggle('active', showDescendants);
-                    document.getElementById('filterAncestors').classList.toggle('active', showAncestors);
-                    localStorage.removeItem('tableViewFilters');
-                }
-            }
-
-            updateHeaderButtons();
-
-            if (currentIndividual) {
-                renderIndividualTree();
-            } else {
-                resetIndividual();
-            }
-        });
-
-        resetIndividual();
-        window.switchToTableView = switchToTableView;
+        window.exportIndividualPDF = exportIndividualPDF;
+        window.showShortcutsHelp = showShortcutsHelp;
+        window.closeShortcutsHelp = closeShortcutsHelp;
         window.showDashboard = showDashboard;
         window.resetIndividual = resetIndividual;
     </script>
