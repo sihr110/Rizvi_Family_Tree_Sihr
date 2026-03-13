@@ -1,17 +1,20 @@
+<!-- ===================================== -->
+<!-- FILE NAME: 8-individual-table-mobile.html -->
+<!-- LAST UPDATED: 13/03/2026              -->
+<!-- Table view for Rizvi Family - Mobile version -->
+<!-- ===================================== -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=3.0, user-scalable=yes">
-    <title>Rizvi family · table view (Mobile)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=0.5">
+    <title>Rizvi family · table view (mobile)</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    
-    <!-- Load external family data -->
-    <script src="family-data.js"></script>
     
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -85,40 +88,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 10px;
-            margin-left: auto;
-        }
-
-        .header-btn {
-            padding: 8px 16px;
-            background: transparent;
-            border: 2px solid var(--gold);
-            color: var(--gold);
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s;
-        }
-
-        .header-btn:hover {
-            background: var(--gold);
-            color: var(--dark-blue);
-        }
-
-        .header-btn.dashboard {
-            background: var(--green);
-            border-color: transparent;
-            color: white;
-        }
-        
-        .header-btn.tree-view {
-            background: var(--dark-blue);
-            border-color: var(--gold);
-            color: var(--gold);
         }
 
         .left-toggle-btn {
@@ -296,11 +265,11 @@
         .table-root-layout {
             transform-origin: top left;
             transition: transform 0.1s;
+            zoom: 0.5;
             min-width: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
-            zoom: 0.5;
         }
 
         .welcome-container {
@@ -409,7 +378,7 @@
 
         .toggle-icon {
             position: absolute;
-            left: 165px;
+            left: 165px; 
             font-size: 22px;
             font-weight: bold;
             background: var(--gold);
@@ -432,13 +401,13 @@
             font-size: 18px;
             font-weight: 800;
             color: var(--maroon);
-            margin: 0 0 25px 30%;
-            padding-bottom: 5px;
-            border-bottom: 2px solid var(--gold);
+            margin: 0 0 25px 30%;        
+            padding-bottom: 5px;         
+            border-bottom: 2px solid var(--gold);   
             font-family: 'Playfair Display', serif;
             cursor: pointer;
             position: relative;
-            max-width: 210px;
+            max-width: 210px; 
         }
 
         .toggle-icon:hover {
@@ -577,45 +546,10 @@
         .context-menu-item:hover {
             background: #faebcd;
         }
-
-@media screen and (max-width: 480px) {
-    .app-header {
-        padding: 8px 10px;
-    }
-    
-    .header-title {
-        font-size: 16px;
-        position: static;
-        transform: none;
-        margin-left: 10px;
-    }
-    
-    .header-actions {
-        gap: 4px;
-    }
-    
-    .header-btn {
-        padding: 6px 8px;
-        font-size: 11px;
-        white-space: nowrap;
-    }
-    
-    .left-toggle-btn {
-        width: 34px;
-        height: 34px;
-        font-size: 18px;
-    }
-}
-
-@media screen and (max-width: 360px) {
-    .header-btn {
-        padding: 4px 5px;
-        font-size: 10px;
-    }
-}
     </style>
 </head>
 <body>
+
     <div class="app-container">
         <div class="app-header">
             <div class="left-toggle-btn" onclick="toggleLeftMenu()">☰</div>
@@ -623,17 +557,16 @@
                 <span class="header-icon">🌿</span>
                 <span>Rizvi family · table view</span>
             </div>
-            <div class="header-actions">
-                <div class="header-btn" onclick="showShortcutsHelp()">⌨️ Shortcuts</div>
-                <div class="header-btn tree-view" onclick="switchToTreeView()">🌳 Tree View</div>
-                <div class="header-btn dashboard" onclick="showDashboard()">🏠 Dashboard</div>
-            </div>
         </div>
 
         <div class="toggle-menu-panel" id="toggleMenuPanel">
             <div class="toggle-menu-item active" id="toggleSiblings" onclick="handleToggleMenuClick('siblings')">👥 Siblings</div>
             <div class="toggle-menu-item active" id="toggleDescendants" onclick="handleToggleMenuClick('descendants')">👶 Descendants</div>
             <div class="toggle-menu-item active" id="toggleAncestors" onclick="handleToggleMenuClick('ancestors')">🌳 Ancestors</div>
+            <div style="border-top:1px solid var(--gold); margin:5px 0;"></div>
+            <div class="toggle-menu-item" onclick="showShortcutsHelp()">⌨️ Shortcuts</div>
+            <div class="toggle-menu-item" onclick="switchToTreeView()">🌳 Tree View</div>
+            <div class="toggle-menu-item" onclick="showDashboard()">🏠 Dashboard</div>
             <div style="border-top:1px solid var(--gold); margin:5px 0;"></div>
             <div class="toggle-menu-item" onclick="resetIndividual()">🔄 Reset</div>
             <div class="toggle-menu-item" onclick="exportTablePDF()">📑 Save PDF</div>
@@ -692,29 +625,17 @@
         let showSiblings = true;
         let showDescendants = true;
         let showAncestors = true;
+        let zoomLevel = 1;
         let siblingsCollapsed = true;
         let childrenCollapsed = true;
         let ancestorsCollapsed = true;
 
-        // ADDED: displayName function to hide numeric suffixes
         function displayName(str) {
             return str ? str.replace(/\s*-\s*\d+$/, '').trim() : '';
         }
 
-        // Load data from family-data.js or localStorage
-        if (typeof FAMILY_DATA !== 'undefined' && FAMILY_DATA.length > 0) {
-            db = FAMILY_DATA;
-            const savedInfo = localStorage.getItem('fileInfo');
-            if (savedInfo) fileInfo = JSON.parse(savedInfo);
-        } else {
-            const saved = localStorage.getItem('familyDB');
-            if (saved) db = JSON.parse(saved);
-            
-            const savedInfo = localStorage.getItem('fileInfo');
-            if (savedInfo) fileInfo = JSON.parse(savedInfo);
-        }
-
         document.addEventListener('DOMContentLoaded', function() {
+            loadData();
             setupKeyboardShortcuts();
             setupEventListeners();
             
@@ -729,6 +650,14 @@
                 resetIndividual();
             }
         });
+
+        function loadData() {
+            const saved = localStorage.getItem('familyDB');
+            if (saved) db = JSON.parse(saved);
+            
+            const savedInfo = localStorage.getItem('fileInfo');
+            if (savedInfo) fileInfo = JSON.parse(savedInfo);
+        }
 
         function formatCurrentTime() {
             const d = new Date();
@@ -795,10 +724,9 @@
             results.forEach(member => {
                 const div = document.createElement('div');
                 div.className = 'result-item';
-                // MODIFIED: Using displayName for member name and father name
                 div.innerHTML = `<div><span class="main-name">${displayName(member.name)}</span> <span class="gen">${member.gen}</span>
                     <div class="father-name">${member.gender?.startsWith('F') ? 'D/o' : 'S/o'} ${displayName(member.father) || '—'}</div></div>`;
-                div.onclick = () => { selectMember(member); dropdown.style.display = 'none'; this.value = member.name; };
+                div.onclick = () => { selectMember(member); dropdown.style.display = 'none'; this.value = displayName(member.name); };
                 dropdown.appendChild(div);
             });
             dropdown.style.display = 'block';
@@ -806,7 +734,7 @@
 
         function selectMember(member) {
             currentIndividual = member;
-            document.getElementById('searchInput').value = member.name;
+            document.getElementById('searchInput').value = displayName(member.name);
             const url = new URL(window.location);
             url.searchParams.set('member', encodeURIComponent(member.name));
             window.history.pushState({}, '', url);
@@ -952,6 +880,14 @@
             document.getElementById('tableRoot').innerHTML = html;
         }
 
+        function zoomIn() { zoomLevel = Math.min(zoomLevel+0.1,2); applyZoom(); }
+        function zoomOut() { zoomLevel = Math.max(zoomLevel-0.1,0.5); applyZoom(); }
+        function resetZoom() { zoomLevel = 1; applyZoom(); }
+        function applyZoom() {
+            document.getElementById('tableRoot').style.transform = `scale(${zoomLevel})`;
+            document.getElementById('zoomLevel').textContent = Math.round(zoomLevel*100)+'%';
+        }
+
         async function exportTablePDF() {
             if (!currentIndividual) { alert('Please select a member first'); return; }
             
@@ -959,10 +895,9 @@
             if (!tableElement) return alert('No content to export');
             
             const originalZoom = tableElement.style.zoom;
+            tableElement.style.zoom = '1';
             
             try {
-                tableElement.style.zoom = '1';
-                
                 const header = document.createElement('div');
                 header.style.marginBottom = '30px'; 
                 header.style.textAlign = 'center';
@@ -1024,7 +959,6 @@
                     useCORS: true 
                 });
                 
-                tableElement.style.zoom = originalZoom;
                 tableElement.removeChild(header);
                 tableElement.removeChild(footer);
                 document.body.removeChild(loadingMsg);
@@ -1044,17 +978,18 @@
                 pdf.save(`family_table_${safeName}_${Date.now()}.pdf`);
                 
             } catch (err) {
-                tableElement.style.zoom = originalZoom;
                 console.error('PDF Error:', err);
                 alert('❌ PDF generation failed: ' + err.message);
+            } finally {
+                tableElement.style.zoom = originalZoom;
             }
         }
 
         function switchToTreeView() {
             if (currentIndividual) {
-                window.location.href = '7-individual-tree-mobile.html?member=' + encodeURIComponent(currentIndividual.name);
+                window.location.href = '2-individual-tree-pc.html?member=' + encodeURIComponent(currentIndividual.name);
             } else {
-                window.location.href = '7-individual-tree-mobile.html';
+                window.location.href = '2-individual-tree-pc.html';
             }
         }
 
@@ -1067,12 +1002,14 @@
         
         function showShortcutsHelp() { 
             const help = document.getElementById('shortcutsHelp');
-            help.classList.toggle('show');
+            if (help.classList.contains('show')) {
+                help.classList.remove('show');
+            } else {
+                help.classList.add('show');
+            }
         }
-        
         function closeShortcutsHelp() { document.getElementById('shortcutsHelp').classList.remove('show'); }
-        
-        function showDashboard() { window.location.href = '6-dashboard-mobile.html'; }
+        function showDashboard() { window.location.href = '1-dashboard-pc.html'; }
         
         function setupEventListeners() {
             document.addEventListener('click', function(e) {
@@ -1109,14 +1046,10 @@
             });
         }
 
-        window.showShortcutsHelp = showShortcutsHelp;
-        window.closeShortcutsHelp = closeShortcutsHelp;
-        window.showDashboard = showDashboard;
-        window.resetIndividual = resetIndividual;
-        window.exportTablePDF = exportTablePDF;
-        window.switchToTreeView = switchToTreeView;
-        window.selectMember = selectMember;
-        window.db = db;
+        window.zoomIn = zoomIn; window.zoomOut = zoomOut; window.resetZoom = resetZoom;
+        window.showShortcutsHelp = showShortcutsHelp; window.closeShortcutsHelp = closeShortcutsHelp;
+        window.showDashboard = showDashboard; window.resetIndividual = resetIndividual;
+        window.exportTablePDF = exportTablePDF; window.switchToTreeView = switchToTreeView;
     </script>
 </body>
 </html>
