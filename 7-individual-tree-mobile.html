@@ -1,1321 +1,1017 @@
-<!-- ======================================== -->
-<!-- FILE NAME: 7-individual-tree-mobile.html -->
-<!-- ONLY DIFF: zoom: 0.5 for mobile          -->
-<!-- ======================================== -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- MOBILE VIEWPORT - initial-scale=0.5 exactly like file 700 -->
-    <meta name="viewport" content="width=device-width, initial-scale=0.5, maximum-scale=3.0, user-scalable=yes, viewport-fit=cover">
-    <title>Rizvi family · structured tree (mobile)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=3.0, user-scalable=yes, viewport-fit=cover">
+    <title>Rizvi family · structured tree (mobile→pc layout)</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     
-    <style>
-        /* ===== EXACTLY FROM FILE 2 - WITH ONLY ZOOM DIFFERENCE ===== */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        :root {
-            --maroon: #5a0000;
-            --dark-blue: #0f172a;
-            --gold: #d4af37;
-            --light-gold: #f1d279;
-            --green: #2e7d32;
-            --dark-green: #1b5e20;
-            --light-pink: #ffe4e9;
-            --bronze: #bc8c4f;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #1a1a1a;
-            height: 100vh;
-            overflow: hidden;
-            margin: 0;
-            padding: 10px;
-            position: relative;
-        }
-
-        /* ZOOM CONTROLS - same as file 2 */
-        .zoom-controls {
-            position: absolute;
-            top: 30px;
-            right: 0px;
-            background: white;
-            border: 2px solid var(--gold);
-            border-radius: 8px;
-            padding: 5px;
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            z-index: 2000;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
-
-        .zoom-btn {
-            width: 40px;
-            height: 40px;
-            border: 2px solid var(--gold);
-            background: white;
-            color: var(--dark-blue);
-            font-size: 20px;
-            font-weight: bold;
-            cursor: pointer;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .zoom-btn:hover {
-            background: var(--gold);
-            color: white;
-        }
-
-        .zoom-level {
-            text-align: center;
-            font-size: 12px;
-            font-weight: 600;
-            padding: 5px;
-        }
-
-        .app-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: white;
-            height: calc(100vh - 20px);
-            display: flex;
-            flex-direction: column;
-            border-radius: 20px;
-            border: 2px solid var(--gold);
-            overflow: hidden;
-            box-shadow: 0 0 50px rgba(212, 175, 55, 0.2);
-        }
-
-        .app-header {
-            background: linear-gradient(135deg, var(--dark-blue) 0%, #1e3d3d 100%);
-            color: var(--gold);
-            padding: 10px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 3px solid var(--gold);
-            position: relative;
-        }
-
-        .header-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 20px;
-            font-weight: 900;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        .header-icon {
-            background: var(--gold);
-            color: var(--dark-blue);
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 10px;
-            margin-left: auto;
-        }
-
-        .header-btn {
-            padding: 8px 16px;
-            background: transparent;
-            border: 2px solid var(--gold);
-            color: var(--gold);
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s;
-        }
-
-        .header-btn:hover {
-            background: var(--gold);
-            color: var(--dark-blue);
-        }
-
-        .header-btn.dashboard {
-            background: var(--green);
-            border-color: transparent;
-            color: white;
-        }
-
-        .left-toggle-btn {
-            background: var(--gold);
-            color: var(--dark-blue);
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            cursor: pointer;
-            border: 2px solid white;
-            z-index: 2000;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            transition: all 0.3s;
-        }
-
-        .left-toggle-btn:hover {
-            background: var(--light-gold);
-            transform: scale(1.1);
-        }
-
-        .toggle-menu-panel {
-            position: absolute;
-            left: 10px;
-            top: 60px;
-            background: white;
-            border: 3px solid var(--gold);
-            border-radius: 12px;
-            padding: 15px;
-            display: none;
-            flex-direction: column;
-            gap: 10px;
-            z-index: 1999;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            min-width: 220px;
-        }
-
-        .toggle-menu-panel.show {
-            display: flex;
-        }
-
-        .toggle-menu-item {
-            padding: 12px 18px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            border: 2px solid var(--gold);
-            background: white;
-            color: var(--dark-blue);
-            white-space: nowrap;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: all 0.2s;
-        }
-
-        .toggle-menu-item:hover {
-            background: #faebcd;
-            transform: translateX(5px);
-        }
-
-        .toggle-menu-item.active {
-            background: #d4edda !important;
-            border-color: var(--dark-green) !important;
-            color: var(--dark-blue);
-        }
-
-        .main-content {
-            flex: 1;
-            display: flex;
-            overflow: hidden;
-            background: #fffcf8;
-        }
-
-        .center-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .search-section {
-            padding: 15px;
-            background: #fffcf8;
-            border-bottom: 2px solid var(--gold);
-        }
-
-        .search-row {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .search-label {
-            font-weight: 700;
-            color: var(--maroon);
-            font-size: 13px;
-            white-space: nowrap;
-        }
-
-        .search-wrapper {
-            position: relative;
-            flex: 1;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 10px 15px;
-            border: 2px solid #cbd5e1;
-            border-radius: 4px;
-            font-size: 14px;
-            outline: none;
-        }
-
-        .search-input:focus {
-            border-color: var(--gold);
-        }
-
-        .search-dropdown {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: white;
-            border: 2px solid var(--gold);
-            border-radius: 0 0 4px 4px;
-            max-height: 300px;
-            overflow-y: auto;
-            display: none;
-            z-index: 1000;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-
-        .result-item {
-            padding: 12px 15px;
-            cursor: pointer;
-            border-bottom: 1px solid #eee;
-            transition: background 0.2s;
-        }
-
-        .result-item:hover {
-            background: #faebcd;
-        }
-
-        .result-item .main-name {
-            font-weight: 700;
-            color: var(--dark-blue);
-            font-size: 14px;
-        }
-
-        .result-item .gen {
-            color: var(--maroon);
-            font-size: 12px;
-            margin-left: 8px;
-        }
-
-        .result-item .father-name {
-            font-size: 11px;
-            color: #666;
-            margin-top: 2px;
-        }
-
-        .tree-container {
-            flex: 1;
-            overflow: auto;
-            padding: 20px;
-            position: relative;
-        }
-
-        .tree-root-layout {
-            transform-origin: top left;
-            transition: transform 0.1s;
-            zoom: 0.5;  /* ← ONLY DIFFERENCE FROM FILE 2 - for mobile */
-            min-width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .welcome-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
-            min-height: 500px;
-        }
-
-        .welcome-box {
-            text-align: center;
-            max-width: 500px;
-            padding: 40px;
-            background: white;
-            border: 3px solid var(--gold);
-            border-radius: 20px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
-        }
-
-        .welcome-icon {
-            font-size: 72px;
-            margin-bottom: 20px;
-            color: var(--gold);
-        }
-
-        .welcome-title {
-            font-size: 32px;
-            font-weight: 700;
-            color: var(--dark-blue);
-            margin-bottom: 15px;
-            font-family: 'Playfair Display', serif;
-        }
-
-        .welcome-text {
-            font-size: 16px;
-            color: #666;
-            margin-bottom: 25px;
-            line-height: 1.6;
-        }
-
-        .welcome-shortcuts {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            margin-top: 20px;
-        }
-
-        .shortcut-badge {
-            text-align: center;
-        }
-
-        .shortcut-badge .key {
-            background: #f0f0f0;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-weight: 700;
-            font-size: 18px;
-            color: var(--dark-blue);
-            border: 1px solid #ccc;
-        }
-
-        .shortcut-badge .label {
-            font-size: 12px;
-            color: var(--maroon);
-            margin-top: 5px;
-        }
-
-        .box {
-            border: 2px solid var(--gold);
-            border-radius: 12px;
-            background: white;
-            width: 280px;
-            text-align: left;
-            cursor: pointer;
-            position: relative;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-            transition: all 0.2s;
-            font-size: 12px;
-        }
-
-        .box:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
-        }
-
-        @keyframes gentleBeat {
-            0% { border-color: #2e7d32; background: #e8f5e9; transform: scale(1.02); box-shadow: 0 0 15px rgba(46,125,50,0.3); }
-            35% { border-color: #4caf50; background: #c8e6c9; transform: scale(1.04); box-shadow: 0 0 25px rgba(76,175,80,0.5); }
-            70% { border-color: #2e7d32; background: #e8f5e9; transform: scale(1.02); box-shadow: 0 0 15px rgba(46,125,50,0.3); }
-            100% { border-color: #2e7d32; background: #e8f5e9; transform: scale(1.02); box-shadow: 0 0 15px rgba(46,125,50,0.3); }
-        }
-
-        .box.selected {
-            animation: gentleBeat 2.2s infinite;
-            border-width: 4px;
-            z-index: 10;
-        }
-
-        .box.female-box {
-            background-color: var(--light-pink);
-            border-color: #fb7185;
-        }
-
-        .box-header {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 12px;
-            background: #f8fafc;
-            border-bottom: 1px solid #ddd;
-            border-radius: 10px 10px 0 0;
-            font-weight: 800;
-        }
-
-        .box-body {
-            padding: 12px;
-            position: relative;
-            min-height: 120px;
-        }
-
-        .box-row {
-            display: flex;
-            margin-bottom: 5px;
-            line-height: 1.5;
-        }
-
-        .box-label {
-            font-weight: 700;
-            color: var(--dark-blue);
-            min-width: 55px;
-        }
-
-        .box-value {
-            color: #333;
-            flex: 1;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            flex-wrap: wrap;
-        }
-
-        .member-name {
-            font-family: 'Playfair Display', serif;
-            font-weight: 700;
-            font-size: 16px;
-        }
-
-        .child-icon {
-            position: absolute;
-            bottom: 8px;
-            right: 12px;
-            font-size: 18px;
-            line-height: 1;
-            color: #555;
-        }
-
-        .v-line {
-            width: 3px;
-            height: 25px;
-            background: var(--gold);
-            margin: 10px auto;
-        }
-
-        .section-heading {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            font-size: 18px;
-            font-weight: 800;
-            color: var(--maroon);
-            margin: 20px 0 15px 0;
-            padding-bottom: 10px;
-            border-bottom: 3px solid var(--gold);
-            font-family: 'Playfair Display', serif;
-            cursor: pointer;
-            position: relative;
-        }
-
-        .section-heading span:first-child {
-            text-align: center;
-            letter-spacing: 0.5px;
-        }
-
-        .toggle-icon {
-            font-size: 22px;
-            font-weight: bold;
-            background: var(--gold);
-            color: var(--dark-blue);
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-left: 15px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            transition: all 0.2s;
-            flex-shrink: 0;
-        }
-
-        .toggle-icon:hover {
-            transform: scale(1.1);
-            background: var(--light-gold);
-        }
-
-        /* ===== BOX ALIGNMENT - WITH 10px GAP ALL AROUND ===== */
-        .children-row {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-            width: 100%;
-            margin: 0 auto 10px auto;
-        }
-
-        .children-row.four-in-row {
-            display: grid;
-            grid-template-columns: repeat(4, auto);
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-
-        .children-row.one-box,
-        .children-row.two-boxes,
-        .children-row.three-boxes {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-
-        .children-row.remaining-center {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            width: 100%;
-            margin-top: 0;
-            margin-bottom: 10px;
-        }
-
-        .family-group {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            margin-bottom: 25px;
-        }
-
-        .app-footer {
-            background: var(--dark-blue);
-            color: var(--gold);
-            text-align: center;
-            padding: 8px;
-            font-size: 11px;
-            border-top: 2px solid var(--gold);
-        }
-
-        .shortcuts-help {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            border: 3px solid var(--gold);
-            border-radius: 12px;
-            padding: 25px;
-            z-index: 4000;
-            display: none;
-            min-width: 400px;
-            max-width: 90vw;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        }
-
-        .shortcuts-help.show {
-            display: block;
-        }
-
-        .shortcuts-help h3 {
-            color: var(--maroon);
-            border-bottom: 2px solid var(--gold);
-            padding-bottom: 10px;
-            margin-bottom: 15px;
-        }
-
-        .shortcut-grid {
-            display: grid;
-            grid-template-columns: auto 1fr;
-            gap: 10px 20px;
-        }
-
-        .shortcut-key {
-            font-family: monospace;
-            font-weight: 700;
-            color: var(--dark-blue);
-            background: #f0f0f0;
-            padding: 4px 8px;
-            border-radius: 4px;
-        }
-
-        .context-menu {
-            position: fixed;
-            background: white;
-            border: 2px solid var(--gold);
-            border-radius: 8px;
-            padding: 5px;
-            z-index: 3000;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-            min-width: 150px;
-        }
-
-        .context-menu-item {
-            padding: 10px 15px;
-            cursor: pointer;
-            border-radius: 4px;
-            font-size: 13px;
-        }
-
-        .context-menu-item:hover {
-            background: #faebcd;
-        }
+    <!-- Load external family data -->
+    <script src="family-data.js"></script>
+    
+<style>
+/* ===== GLOBAL RESET & VARIABLES ===== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+    --maroon: #5a0000;
+    --dark-blue: #0f172a;
+    --gold: #d4af37;
+    --light-gold: #f1d279;
+    --green: #2e7d32;
+    --dark-green: #1b5e20;
+    --light-green: #d4edda;
+    --pink-bg: #fff0f5;
+    --light-pink: #ffe4e9;
+    --light-sage: #f4f7f2;
+    --border-sage: #c9d6c2;
+    --sisters-border: #fb7185;
+    --summary-border: #e6c87c;
+    --table-header-bg: #fdf6e3;
+    --bronze: #bc8c4f;
+    --reset-red: #5a0000;
+    --reset-red-dark: #7a1f1f;
+    --pdf-grey: #6c757d;
+    --pdf-grey-dark: #5a6268;
+    --dashboard-green: #1b5e20;
+    --sisters-box-bg: #fff0f5;
+}
+
+/* ----- BASE LAYOUT ----- */
+body {
+    font-family: 'Inter', sans-serif;
+    background: #1a1a1a;
+    height: 100vh;
+    overflow: hidden;
+    margin: 0;
+    padding: 10px;
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
+}
+
+.app-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    background: white;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    border-radius: 20px;
+    border: 2px solid var(--gold);
+    overflow: hidden;
+    box-shadow: 0 0 50px rgba(212, 175, 55, 0.2);
+}
+
+/* ----- HEADER SECTION ----- */
+.app-header {
+    background: linear-gradient(135deg, var(--dark-blue) 0%, #1e3d3d 100%);
+    color: var(--gold);
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 3px solid var(--gold);
+    position: relative;
+}
+.header-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.header-icon {
+    background: var(--gold);
+    color: var(--dark-blue);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+}
+
+.top-reset-btn {
+    background: var(--reset-red);
+    color: white;
+    border: 2px solid var(--gold);
+    border-radius: 4px;
+    padding: 6px 14px;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.2s;
+}
+.top-reset-btn:hover {
+    background: var(--reset-red-dark);
+    transform: translateY(-2px);
+}
+
+.action-buttons-row {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+    padding: 10px 20px;
+    background: var(--dark-blue);
+    border-bottom: 2px solid var(--gold);
+}
+.action-btn {
+    flex: 1;
+    padding: 8px 5px;
+    font-weight: 600;
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    white-space: nowrap;
+    border: 2px solid var(--gold);
+    border-radius: 4px;
+    transition: all 0.2s;
+    min-width: 0;
+    text-align: center;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+}
+.action-btn.table { background: var(--bronze); color: white; border-color: transparent; }
+.action-btn.pdf { background: var(--pdf-grey); color: white; border-color: transparent; }
+.action-btn.dashboard { background: var(--dashboard-green); color: white; border-color: transparent; }
+.action-btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
+
+
+
+/* ----- MAIN CONTENT ----- */
+.main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: #fffcf8; }
+#individualSection { display: block; height: 100%; overflow: auto; flex: 1; }
+
+.fixed-header-section { 
+    padding: 15px 15px 0 15px; 
+    background: #fffcf8; 
+    flex-shrink: 0;
+    position: relative;
+    z-index: 2000; 
+    overflow: visible !important; 
+}
+
+
+.border-line { border-top: 3px solid var(--gold); margin: 20px 0 0 0; }
+.scrollable-content { 
+    position: relative;
+    z-index: 1;
+}
+
+ 
+.search-row { 
+    margin-bottom: 15px; 
+    width: 100%; 
+    position: relative;
+    z-index: 2001;
+}
+.search-label { 
+    font-weight: 700; 
+    color: var(--maroon); 
+    font-size: 13px; 
+    text-transform: uppercase; 
+    margin-bottom: 6px; 
+    white-space: nowrap; 
+}
+.search-wrapper { 
+    position: relative; 
+    width: 100%; 
+    z-index: 2002;
+}
+.search-input { 
+    width: 100%; 
+    padding: 12px 15px; 
+    border: 2px solid #cbd5e1; 
+    border-radius: 8px; 
+    font-size: 14px; 
+    outline: none; 
+    transition: all 0.3s; 
+    background: white; 
+    color: var(--dark-blue); 
+    font-weight: 500;
+}
+.search-input:focus { 
+    border-color: var(--gold); 
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2); 
+}
+
+/* DROPDOWN - COPIED FROM FILE 9 */
+.dropdown { 
+    position: absolute; 
+    top: 100%; 
+    left: 0; 
+    right: 0; 
+    background: white; 
+    border: 2px solid var(--gold); 
+    border-radius: 0 0 8px 8px; 
+    max-height: 260px !important; 
+    overflow-y: auto; 
+    display: none; 
+    z-index: 99999 !important; 
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3); 
+    margin-top: 2px;
+}
+
+/* RESULT ITEMS - COPIED FROM FILE 9 */
+.result-item { 
+    padding: 12px 15px; 
+    border-bottom: 1px solid #eee; 
+    cursor: pointer; 
+    font-size: 14px; 
+    transition: background 0.2s; 
+}
+.result-item:last-child { border-bottom: none; }
+.result-item:hover { background: #faebcd; }
+.result-item .main-name { 
+    font-weight: 700; 
+    color: var(--dark-blue); 
+    font-size: 15px; 
+    display: inline-block; 
+}
+.result-item .gen { 
+    color: var(--maroon); 
+    font-size: 13px; 
+    margin-left: 8px; 
+    font-weight: 600; 
+    display: inline-block; 
+}
+.result-item .father-info { 
+    font-size: 12px; 
+    color: #64748b; 
+    margin-top: 5px; 
+}
+
+/* ----- FILTER BUTTONS (KEPT FROM FILE 7) ----- */
+.filter-buttons { 
+    display: flex; 
+    gap: 6px; 
+    flex-wrap: wrap; 
+    margin: 15px 0 5px 0;
+}
+.filter-btn { 
+    padding: 8px 14px; 
+    border-radius: 4px; 
+    font-weight: 600; 
+    font-size: 13px; 
+    cursor: pointer; 
+    border: 2px solid var(--gold); 
+    background: white; 
+    color: var(--dark-blue); 
+    white-space: nowrap; 
+    display: flex; 
+    align-items: center; 
+    gap: 4px; 
+}
+.filter-btn.active { 
+    background: #d4edda; 
+    border-color: var(--dark-green); 
+}
+
+/* ----- TREE LAYOUT ----- */
+.tree-root-layout {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    padding: 40px;
+    width: max-content;
+    min-width: 100%;
+    zoom: 0.5;
+    position: relative;
+}
 
 @media screen and (max-width: 480px) {
-    .app-header {
-        padding: 8px 10px;
-    }
-    
-    .header-title {
-        font-size: 16px;
-        position: static;
-        transform: none;
-        margin-left: 10px;
-    }
-    
-    .header-actions {
-        gap: 4px;
-    }
-    
-    .header-btn {
-        padding: 6px 8px;
-        font-size: 11px;
-        white-space: nowrap;
-    }
-    
-    .left-toggle-btn {
-        width: 34px;
-        height: 34px;
-        font-size: 18px;
-    }
+    .tree-root-layout { zoom: 0.4; }
 }
-
 @media screen and (max-width: 360px) {
-    .header-btn {
-        padding: 4px 5px;
-        font-size: 10px;
+    .tree-root-layout { zoom: 0.35; }
+}
+
+.family-group { display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; }
+
+.children-row { 
+    display: flex; 
+    gap: 20px; 
+    flex-wrap: wrap; 
+    justify-content: center; 
+    margin-top: 5px; 
+    max-width: 850px; 
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.relation-label { font-size: 11px; color: var(--gold); font-weight: bold; text-transform: uppercase; letter-spacing: 1px; background: var(--dark-blue); padding: 4px 12px; border-radius: 4px; color: white; margin: 5px 0; text-align: center; display: inline-block; width: auto; }
+.descendant-heading { font-size: 14px; color: var(--maroon); font-weight: 800; margin: 15px 0 5px 0; font-family: 'Playfair Display', serif; text-align: center; width: 100%; border-bottom: 2px solid var(--gold); padding-bottom: 5px; }
+
+/* ----- SISTERS GROUP BOX ----- */
+.sisters-group-box { 
+    border: 2px solid var(--sisters-border); 
+    border-radius: 12px; 
+    background: var(--sisters-box-bg); 
+    min-width: 300px; 
+    max-width: none; 
+    width: auto;
+    text-align: left;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05); 
+    padding: 12px; 
+    margin: 10px auto; 
+}
+
+.sisters-group-box .sisters-header { 
+    font-size: 14px; 
+    font-weight: 800; 
+    color: var(--maroon); 
+    padding-bottom: 6px; 
+    margin-bottom: 6px; 
+    text-align: left; 
+    border-bottom: 2px solid var(--sisters-border); 
+    font-family: 'Playfair Display', serif; 
+}
+
+.sisters-group-box table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 8px 0;
+    table-layout: auto;
+}
+
+.sisters-group-box th {
+    text-align: left;
+    padding: 8px 12px;
+    font-size: 11px;
+    color: var(--maroon);
+    font-weight: 700;
+    background: rgba(251, 113, 133, 0.1);
+    white-space: nowrap;
+}
+
+.sisters-group-box td {
+    padding: 8px 12px;
+    border-bottom: 1px dashed #fecaca;
+    font-weight: 600;
+    transition: background 0.2s;
+    cursor: pointer;
+}
+
+.sisters-group-box td:first-child { white-space: nowrap; }
+.sisters-group-box td:last-child { color: var(--maroon); white-space: nowrap; }
+.sisters-group-box td:hover { background: #faebcd; }
+
+.sisters-group-box .father-info {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--sisters-border);
+    font-size: 11px;
+    color: #64748b;
+    text-align: left;
+    white-space: nowrap;
+}
+
+/* ----- MEMBER BOX - FIXED FEMALE BOX ----- */
+.box { 
+    border: 2px solid var(--gold); 
+    border-radius: 12px; 
+    background: white; 
+    min-width: auto !important;
+    width: auto !important;
+    max-width: none !important;
+    text-align: center; 
+    position: relative; 
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05); 
+    transition: transform 0.2s; 
+    white-space: nowrap !important;
+    padding: 0 !important;
+    cursor: pointer;
+    display: inline-block;
+    overflow: visible !important;
+}
+
+.box:not(.female-box) {
+    width: 250px !important;
+    max-width: 250px !important;
+    min-width: 250px !important;
+    flex-shrink: 0;
+}
+
+.box:hover { transform: translateY(-3px); }
+
+.box.blinking-box { 
+    animation: blinkBoxLightGreen 1.5s infinite; 
+    border-width: 4px; 
+    z-index: 10; 
+    transform: scale(1.02); 
+}
+
+@keyframes blinkBoxLightGreen { 
+    0%,100%{ border-color:#2e7d32; background:#e8f5e9; box-shadow:0 0 15px rgba(46,125,50,0.4); } 
+    50%{ border-color:#4caf50; background:#c8e6c9; box-shadow:0 0 30px rgba(76,175,80,0.6); transform:scale(1.05); } 
+}
+
+.box-header { 
+    display: flex; 
+    justify-content: space-between; 
+    padding: 6px 10px; 
+    background: #f8fafc; 
+    font-size: 10px; 
+    font-weight: 800; 
+    border-bottom: 1px solid #ddd; 
+}
+
+.box-body { 
+    padding: 12px 15px !important;
+    text-align: center;
+}
+
+.member-name { 
+    font-family: 'Playfair Display', serif; 
+    font-weight: 700; 
+    font-size: 16px; 
+    display: block;
+    margin-bottom: 4px;
+}
+
+.father-name { 
+    font-size: 11px; 
+    color: #64748b; 
+    display: block;
+}
+
+/* FIXED FEMALE BOX */
+.female-box { 
+    background-color: var(--light-pink) !important; 
+    border-color: #fb7185 !important; 
+    width: auto !important;
+    max-width: 300px !important;
+    min-width: 200px !important;
+    white-space: normal !important;
+    padding: 0 !important;
+    display: inline-block !important;
+    height: auto !important;
+}
+
+.female-box .box-body {
+    white-space: normal !important;
+    padding: 12px 15px !important;
+    display: block !important;
+    text-align: center !important;
+    word-wrap: break-word !important;
+}
+
+.female-box .member-name {
+    white-space: normal !important;
+    word-wrap: break-word !important;
+    display: block !important;
+}
+
+.female-box .father-name {
+    display: block !important;
+    white-space: normal !important;
+    margin-top: 4px !important;
+    margin-left: 0 !important;
+    width: auto !important;
+    word-wrap: break-word !important;
+}
+
+.v-line { width: 3px; height: 25px; background: var(--gold); margin: 5px auto; }
+
+.golden-heart { 
+    position: absolute; 
+    bottom: 5px; 
+    right: 8px; 
+    color: var(--gold); 
+    font-size: 16px;
+    line-height: 1;
+}
+
+.hidden { display: none !important; }
+
+/* ----- FOOTER ----- */
+.app-footer { background: var(--dark-blue); color: var(--gold); text-align: center; padding: 8px; font-size: 11px; border-top: 2px solid var(--gold); }
+
+/* ===== MOBILE RESPONSIVE ===== */
+@media screen and (max-width: 768px) {
+    body { overflow: auto; -webkit-overflow-scrolling: touch; height: auto; min-height: 100vh; padding: 5px; }
+    .app-container { height: auto; min-height: calc(100vh - 10px); border-radius: 16px; overflow: hidden; }
+    
+    .app-header { position: relative; padding: 10px 15px; }
+    .header-title { font-size: 18px; width: calc(100% - 50px); }
+    .menu-toggle { display: flex !important; position: absolute; top: 50%; right: 15px; transform: translateY(-50%); background: var(--gold); color: black; border: none; border-radius: 50%; width: 44px; height: 44px; font-size: 26px; font-weight: bold; cursor: pointer; z-index: 2000; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+    
+    .action-buttons-row { padding: 8px 10px; gap: 5px; }
+    .action-btn { font-size: 10px; padding: 8px 2px; }
+    
+    .fixed-header-section { transition: max-height 0.3s ease; overflow: hidden; max-height: 500px; padding: 15px 15px 10px 15px; }
+    .fixed-header-section.collapsed { max-height: 0; padding-top: 0; padding-bottom: 0; margin: 0; border-bottom: none; }
+    
+    .search-input { 
+        width: 100%; 
+        font-size: 16px; 
+        padding: 14px 15px; 
+        height: 52px; 
+    }
+    
+    .dropdown { 
+        max-height: 280px; 
+        font-size: 14px;
+        z-index: 9999;
+        position: absolute;
+    }
+    
+    .filter-buttons { 
+        width: 100%; 
+        justify-content: space-between; 
+        gap: 5px; 
+        margin: 10px 0 5px 0;
+    }
+    .filter-btn { 
+        flex: 1; 
+        padding: 10px 2px; 
+        font-size: 11px; 
+        justify-content: center; 
+        height: 44px; 
     }
 }
 
-    </style>
+#individualTree { min-height: 100%; }
+</style>
 
 </head>
 <body>
- 
-
     <div class="app-container">
         <div class="app-header">
-            <div class="left-toggle-btn" onclick="toggleLeftMenu()">☰</div>
             <div class="header-title">
-                <span class="header-icon">🌿</span>
-                <span>Rizvi family · structured tree</span>
+                <span class="header-icon">🌿</span> 
+                <span>Rizvi family - Tree View</span>
             </div>
-          <div class="header-actions">
-    <div class="header-btn" onclick="showShortcutsHelp()">⌨️ Shortcuts</div>
-    <div class="header-btn" onclick="showTableView()">📊 Table View</div>
-    <div class="header-btn dashboard" onclick="showDashboard()">🏠 Dashboard</div>
-</div>
+            <div class="top-reset-btn" onclick="resetIndividual()">🔄 Reset</div>
+            
         </div>
-
-        <div class="toggle-menu-panel" id="toggleMenuPanel">
-            <div class="toggle-menu-item active" id="toggleSiblings" onclick="handleToggleMenuClick('siblings')">👥 Siblings</div>
-            <div class="toggle-menu-item active" id="toggleDescendants" onclick="handleToggleMenuClick('descendants')">👶 Descendants</div>
-            <div class="toggle-menu-item active" id="toggleAncestors" onclick="handleToggleMenuClick('ancestors')">🌳 Ancestors</div>
-            <div style="border-top:1px solid var(--gold); margin:5px 0;"></div>
-            <div class="toggle-menu-item" onclick="resetIndividual()">🔄 Reset</div>
-            <div class="toggle-menu-item" onclick="exportIndividualPDF()">📑 Save PDF</div>
+        
+        <div class="action-buttons-row">
+            <div class="action-btn table" onclick="switchToTableView()">📋 Show Table</div>
+            <div class="action-btn pdf" onclick="exportIndividualPDF()">📑 Save PDF</div>
+            <div class="action-btn dashboard" onclick="showDashboard()">🏠 Dashboard</div>
         </div>
-
-        <div class="main-content">
-            <div class="center-content">
-                <div class="search-section">
+        
+        <div class="main-content" id="mainContent">
+            <div id="individualSection">
+                <div class="fixed-header-section">
+                    <!-- SEARCH - COPIED FROM FILE 9 -->
                     <div class="search-row">
-                        <span class="search-label">SEARCH MEMBER</span>
+                        <div class="search-label">SEARCH MEMBER</div>
                         <div class="search-wrapper">
-                            <input type="text" id="searchInput" class="search-input" placeholder="Type name..." autocomplete="off">
-                            <div id="searchDropdown" class="search-dropdown"></div>
+                            <input type="text" id="individualSearch" class="search-input" placeholder="Type name..." onkeyup="searchIndividual(this.value)" autocomplete="off">
+                            <div id="individualDropdown" class="dropdown"></div>
                         </div>
                     </div>
+                    
+                    <!-- FILTER BUTTONS - KEPT FROM FILE 7 -->
+                    <div class="filter-buttons">
+                        <div id="filterSiblings" class="filter-btn active" onclick="toggleFilter('siblings')">👥 Siblings</div>
+                        <div id="filterDescendants" class="filter-btn active" onclick="toggleFilter('descendants')">👶 Descendants</div>
+                        <div id="filterAncestors" class="filter-btn" onclick="toggleFilter('ancestors')">🌳 Ancestors</div>
+                    </div>
+                    
+                    <div class="border-line"></div>
                 </div>
 
-                <div class="tree-container" id="treeContainer">
-                    <div class="tree-root-layout" id="treeRoot"></div>
+                <div class="scrollable-content">
+                    <div id="individualTree" class="tree-root-layout"></div>
                 </div>
             </div>
         </div>
-
-        <div class="app-footer" id="appFooter">
-            Developer: Imran Haider S/o Syed Risalat Hussain Rizvi | 0332-787-6010
-        </div>
+        <div class="app-footer">Developer: Imran Haider S/o Syed Risalat Hussain Rizvi | 0332-787-6010</div>
     </div>
 
-    <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" style="display:none;">
-
-    <div class="shortcuts-help" id="shortcutsHelp">
-        <h3>⌨️ Keyboard Shortcuts</h3>
-        <div class="shortcut-grid">
-            <span class="shortcut-key">Ctrl+F</span><span>Focus search</span>
-            <span class="shortcut-key">1</span><span>Toggle siblings</span>
-            <span class="shortcut-key">2</span><span>Toggle descendants</span>
-            <span class="shortcut-key">3</span><span>Toggle ancestors</span>
-            <span class="shortcut-key">Ctrl+P</span><span>Export PDF</span>
-            <span class="shortcut-key">ESC</span><span>Close menus</span>
-            <span class="shortcut-key">Ctrl++</span><span>Zoom in</span>
-            <span class="shortcut-key">Ctrl+-</span><span>Zoom out</span>
-            <span class="shortcut-key">Ctrl+0</span><span>Reset zoom</span>
-            <span class="shortcut-key">↑</span><span>Go to father</span>
-            <span class="shortcut-key">↓</span><span>Go to first child</span>
-            <span class="shortcut-key">←/→</span><span>Navigate siblings</span>
-            <span class="shortcut-key">?</span><span>Show this help</span>
-        </div>
-        <div style="text-align:center; margin-top:15px;">
-            <button class="header-btn" onclick="closeShortcutsHelp()">Close</button>
-        </div>
-    </div>
-
-    <script>
-        // ==================== JAVASCRIPT FROM FILE 2 ====================
-        let db = [];
-        let fileInfo = null;
-        let currentIndividual = null;
-        let showSiblings = true;
-        let showDescendants = true;
-        let showAncestors = true;
-        let zoomLevel = 1;
-        let siblingsCollapsed = true;
-        let childrenCollapsed = true;
-        let ancestorsCollapsed = true;
-
-        // ADDED: displayName function to hide numeric prefixes
-        function displayName(str) {
-            return str ? str.replace(/\s*-\s*\d+$/, '').trim() : '';
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            loadData();
-            setupKeyboardShortcuts();
-            setupEventListeners();
-            
-            const urlParams = new URLSearchParams(window.location.search);
-            const memberName = urlParams.get('member');
-            if (memberName) {
-                setTimeout(() => {
-                    const member = db.find(m => m.name === decodeURIComponent(memberName));
-                    if (member) selectMember(member);
-                }, 500);
-            } else {
-                resetIndividual();
-            }
-        });
-
-        function loadData() {
-            const saved = localStorage.getItem('familyDB');
-            if (saved) db = JSON.parse(saved);
-            
-            const savedInfo = localStorage.getItem('fileInfo');
-            if (savedInfo) fileInfo = JSON.parse(savedInfo);
-        }
-
-        function formatCurrentTime() {
-            const d = new Date();
-            const day = d.getDate();
-            const month = d.getMonth() + 1;
-            const year = d.getFullYear();
-            const hours = d.getHours();
-            const minutes = String(d.getMinutes()).padStart(2, '0');
-            const ampm = hours >= 12 ? 'pm' : 'am';
-            const displayHours = hours % 12 || 12;
-            return `${day}/${month}/${year} - ${displayHours}:${minutes}${ampm}`;
-        }
-
-        window.toggleLeftMenu = () => document.getElementById('toggleMenuPanel').classList.toggle('show');
-
-        window.handleToggleMenuClick = function(filter) {
-            if (!currentIndividual) return;
-            if (filter === 'siblings') {
-                showSiblings = !showSiblings;
-                document.getElementById('toggleSiblings').classList.toggle('active', showSiblings);
-            } else if (filter === 'descendants') {
-                showDescendants = !showDescendants;
-                document.getElementById('toggleDescendants').classList.toggle('active', showDescendants);
-            } else if (filter === 'ancestors') {
-                showAncestors = !showAncestors;
-                document.getElementById('toggleAncestors').classList.toggle('active', showAncestors);
-            }
-            renderTree();
-            document.getElementById('toggleMenuPanel').classList.remove('show');
-        };
-
-        function resetIndividual() {
-            document.getElementById('searchInput').value = '';
-            currentIndividual = null;
-            const url = new URL(window.location);
-            url.searchParams.delete('member');
-            window.history.pushState({}, '', url);
-            document.getElementById('treeRoot').innerHTML = `
-                <div class="welcome-container">
-                    <div class="welcome-box">
-                        <div class="welcome-icon">🌿</div>
-                        <div class="welcome-title">Rizvi Family Tree</div>
-                        <div class="welcome-text">
-                            Select a family member from the search box above<br>
-                            to view their family connections and relationships.
-                        </div>
-                        <div class="welcome-shortcuts">
-                            <div class="shortcut-badge"><div class="key">1</div><div class="label">Siblings</div></div>
-                            <div class="shortcut-badge"><div class="key">2</div><div class="label">Descendants</div></div>
-                            <div class="shortcut-badge"><div class="key">3</div><div class="label">Ancestors</div></div>
-                        </div>
-                    </div>
-                </div>
-            `;
-            closeAllMenus();
-        }
-
-        document.getElementById('searchInput')?.addEventListener('keyup', function(e) {
-            const query = this.value;
-            const dropdown = document.getElementById('searchDropdown');
-            if (query.length < 2) { dropdown.style.display = 'none'; return; }
-            const results = db.filter(m => m.name.toLowerCase().includes(query.toLowerCase())).slice(0, 8);
-            dropdown.innerHTML = '';
-            results.forEach(member => {
-                const div = document.createElement('div');
-                div.className = 'result-item';
-                // MODIFIED: Using displayName for member name and father name
-                div.innerHTML = `<div><span class="main-name">${displayName(member.name)}</span> <span class="gen">${member.gen}</span>
-                    <div class="father-name">${member.gender?.startsWith('F') ? 'D/o' : 'S/o'} ${displayName(member.father) || '—'}</div></div>`;
-               div.onclick = () => { 
-    selectMember(member); 
-    dropdown.style.display = 'none'; 
-    this.value = displayName(member.name);  // <--- ADD displayName()
-};
-                dropdown.appendChild(div);
-            });
-            dropdown.style.display = 'block';
-        });
-
- function selectMember(member) {
-    currentIndividual = member;
-    document.getElementById('searchInput').value = displayName(member.name);
-    const url = new URL(window.location);
-    url.searchParams.set('member', encodeURIComponent(member.name));
-    window.history.pushState({}, '', url);
-    renderTree();
-}
-
-        window.toggleSection = function(section) {
-            if (section === 'siblings') siblingsCollapsed = !siblingsCollapsed;
-            else if (section === 'children') childrenCollapsed = !childrenCollapsed;
-            else if (section === 'ancestors') ancestorsCollapsed = !ancestorsCollapsed;
-            renderTree();
-        };
-
-        function findParent(p) {
-            return p?.father ? db.find(x => x.name === p.father) : null;
-        }
-
-        function getAncestors(p) {
-            let arr = [], cur = p;
-            while (cur?.father) {
-                const father = db.find(x => x.name === cur.father);
-                if (!father) break;
-                arr.push(father);
-                cur = father;
-            }
-            return arr;
-        }
-
-   
-
-
-function renderBox(person, label, isSiblingOrChild = false) {
-    const isFemale = person.gender?.startsWith('F');
-    const isSelected = currentIndividual?.name === person.name;
-    const mother = (person.father) ? (db.find(f => f.name === person.father)?.spouse || '—') : '—';
-    const hasKids = db.some(c => c.father === person.name);
-    const statusIcon = (person.alive || '').toLowerCase() === 'yes' ? '🌹' : '🥀';
-    const fatherStatus = (person.father) ? (db.find(f => f.name === person.father)?.alive || '').toLowerCase() === 'yes' ? '🌹' : '🥀' : '';
-
-    let html = `<div class="box ${isFemale ? 'female-box' : ''} ${isSelected ? 'selected' : ''}" data-name="${person.name}" onclick="handleBoxClick(this)">`;
-    html += `<div class="box-header"><span>${label}</span><span>${person.gen || '—'}</span></div>`;
-    html += `<div class="box-body">`;
+<script>
+(function(){
+    let currentIndividual = null;
+    let db = [];
+    let showSiblings = true;
+    let showDescendants = true;
+    let showAncestors = false;
+    let LOAD_STAMP = '';
     
-    // Name with rose icon (ALL boxes)
-    html += `<div class="box-row"><span class="box-label">Name :</span><span class="box-value"><span class="member-name">${displayName(person.name)}</span> ${statusIcon}</span></div>`;
-    
-    if (isSiblingOrChild) {
-        // SIBLING OR CHILD BOX - only show Spouse and Status
-        html += `<div class="box-row"><span class="box-label">Spouse :</span><span class="box-value">${person.spouse || '—'}</span></div>`;
-        html += `<div class="box-row"><span class="box-label">Status :</span><span class="box-value">${person.maritalStatus || '—'}</span></div>`;
+    if (typeof FAMILY_DATA !== 'undefined' && FAMILY_DATA.length > 0) {
+        db = FAMILY_DATA;
+        LOAD_STAMP = 'Last data updated on: ' + new Date().toLocaleString();
     } else {
-        // SELECTED, FATHER, ANCESTOR BOXES - show all fields
-        html += `<div class="box-row"><span class="box-label">Father :</span><span class="box-value">${displayName(person.father) || '—'} ${fatherStatus}</span></div>`;
-        html += `<div class="box-row"><span class="box-label">Mother :</span><span class="box-value">${mother || '—'}</span></div>`;
-        html += `<div class="box-row"><span class="box-label">Spouse :</span><span class="box-value">${person.spouse || '—'}</span></div>`;
-        html += `<div class="box-row"><span class="box-label">Status :</span><span class="box-value">${person.maritalStatus || '—'}</span></div>`;
+        const saved = localStorage.getItem('familyDB');
+        if (saved) {
+            db = JSON.parse(saved);
+            LOAD_STAMP = 'Last data updated on: ' + new Date().toLocaleString();
+        }
     }
     
-    // Child icon if person has children (ALL boxes)
-    if (hasKids) html += `<div class="child-icon">👪</div>`;
-    
-    html += `</div></div>`;
-    return html;
-}
+    const fromDashboard = sessionStorage.getItem('fromDashboard') === 'true';
+    const isPageRefresh = !document.referrer || document.referrer.includes(window.location.host);
 
-        // NEW helper function to render a gender group using EXACT same layout logic
-        function renderGenderGroup(genderMembers, type) {
-            const count = genderMembers.length;
-            const getLabel = (m) => type === 'sibling' ? (m.gender?.startsWith('F') ? 'Sister' : 'Brother') : (m.gender?.startsWith('F') ? 'Daughter' : 'Son');
-            
-            if (count === 1) {
-                return `<div class="children-row one-box">${genderMembers.map(m => renderBox(m, getLabel(m), true)).join('')}</div>`;
-            }
-            else if (count === 2) {
-                return `<div class="children-row two-boxes">${genderMembers.map(m => renderBox(m, getLabel(m), true)).join('')}</div>`;
-            }
-            else if (count === 3) {
-                return `<div class="children-row three-boxes">${genderMembers.map(m => renderBox(m, getLabel(m), true)).join('')}</div>`;
-            }
-            else if (count === 4) {
-                return `<div class="children-row four-in-row">${genderMembers.map(m => renderBox(m, getLabel(m), true)).join('')}</div>`;
-            }
-            else {
-                const firstFour = genderMembers.slice(0, 4);
-                const remaining = genderMembers.slice(4);
-                const remainingCount = remaining.length;
-                
-                let remainingClass = 'remaining-center';
-                if (remainingCount === 1) remainingClass = 'one-box';
-                else if (remainingCount === 2) remainingClass = 'two-boxes';
-                else if (remainingCount === 3) remainingClass = 'three-boxes';
-                
-                return `
-                    <div class="children-row four-in-row">
-                        ${firstFour.map(m => renderBox(m, getLabel(m), true)).join('')}
-                    </div>
-                    <div class="children-row ${remainingClass}">
-                        ${remaining.map(m => renderBox(m, getLabel(m), true)).join('')}
-                    </div>
-                `;
-            }
+    if (fromDashboard) {
+        sessionStorage.removeItem('tempIndividual');
+        sessionStorage.removeItem('tempScroll');
+        sessionStorage.removeItem('fromDashboard');
+        currentIndividual = null;
+    } else if (isPageRefresh) {
+        const tempIndividual = sessionStorage.getItem('tempIndividual');
+        if (tempIndividual) {
+            try { currentIndividual = JSON.parse(tempIndividual); } catch (e) {}
         }
-
-        // MODIFIED function to split by gender when >5
-        function renderMembersWithLayout(members, type) {
-            if (members.length === 0) return '';
-            
-            // NEW: If more than 5 members, split by gender
-            if (members.length > 5) {
-                const males = members.filter(m => m.gender === 'MALE');
-                const females = members.filter(m => m.gender === 'FEMALE');
-                
-                let html = '';
-                
-                // Add males section if any
-                if (males.length > 0) {
-                    html += renderGenderGroup(males, type);
-                }
-                
-                // Add females section if any
-                if (females.length > 0) {
-                    html += renderGenderGroup(females, type);
-                }
-                
-                return html;
-            }
-            
-            // EXISTING CODE - unchanged
-            const count = members.length;
-            const getLabel = (m) => type === 'sibling' ? (m.gender?.startsWith('F') ? 'Sister' : 'Brother') : (m.gender?.startsWith('F') ? 'Daughter' : 'Son');
-            
-            if (count === 1) {
-                return `<div class="children-row one-box">${members.map(m => renderBox(m, getLabel(m), true)).join('')}</div>`;
-            }
-            else if (count === 2) {
-                return `<div class="children-row two-boxes">${members.map(m => renderBox(m, getLabel(m), true)).join('')}</div>`;
-            }
-            else if (count === 3) {
-                return `<div class="children-row three-boxes">${members.map(m => renderBox(m, getLabel(m), true)).join('')}</div>`;
-            }
-            else if (count === 4) {
-                return `<div class="children-row four-in-row">${members.map(m => renderBox(m, getLabel(m), true)).join('')}</div>`;
-            }
-            else {
-                const firstFour = members.slice(0, 4);
-                const remaining = members.slice(4);
-                const remainingCount = remaining.length;
-                
-                let remainingClass = 'remaining-center';
-                if (remainingCount === 1) remainingClass = 'one-box';
-                else if (remainingCount === 2) remainingClass = 'two-boxes';
-                else if (remainingCount === 3) remainingClass = 'three-boxes';
-                
-                return `
-                    <div class="children-row four-in-row">
-                        ${firstFour.map(m => renderBox(m, getLabel(m), true)).join('')}
-                    </div>
-                    <div class="children-row ${remainingClass}">
-                        ${remaining.map(m => renderBox(m, getLabel(m), true)).join('')}
-                    </div>
-                `;
-            }
+    } else {
+        const tempIndividual = sessionStorage.getItem('tempIndividual');
+        if (tempIndividual) {
+            try { currentIndividual = JSON.parse(tempIndividual); sessionStorage.removeItem('tempIndividual'); } catch (e) {}
         }
+    }
 
-        function renderTree() {
-            if (!currentIndividual) return;
-            let html = '<div>';
+    function displayName(str) {
+        return str ? str.replace(/\s*-\s*\d+$/, '').trim() : '';
+    }
 
-            if (showAncestors) {
-                const ancestors = getAncestors(currentIndividual);
-                if (ancestors.length) {
-                    html += `<div class="section-heading" onclick="toggleSection('ancestors')">`;
-                    html += `<span>🌳 ANCESTORS</span>`;
-                    html += `<span class="toggle-icon">${ancestorsCollapsed ? '+' : '-'}</span>`;
-                    html += `</div>`;
-                    if (!ancestorsCollapsed) {
-                        html += '<div class="family-group">';
-                        [...ancestors].reverse().forEach((a, idx) => {
-                            html += renderBox(a, idx === 0 ? 'Earliest' : 'Ancestor', false);
-                            if (idx < ancestors.length-1) html += '<div class="v-line"></div>';
-                        });
-                        html += '<div class="v-line"></div></div>';
-                    }
-                }
-            }
+    function formatCurrentTime() {
+        const d = new Date();
+        const day = d.getDate();
+        const month = d.getMonth() + 1;
+        const year = d.getFullYear();
+        const hours = d.getHours();
+        const minutes = String(d.getMinutes()).padStart(2, '0');
+        const ampm = hours >= 12 ? 'pm' : 'am';
+        const displayHours = hours % 12 || 12;
+        return `${day}/${month}/${year} - ${displayHours}:${minutes}${ampm}`;
+    }
 
-            const father = findParent(currentIndividual);
-            if (father) {
+    function switchToTableView() {
+        if (currentIndividual) {
+            localStorage.setItem('tableViewMember', JSON.stringify(currentIndividual));
+            localStorage.setItem('tableViewFilters', JSON.stringify({ showSiblings, showDescendants, showAncestors }));
+        }
+        window.location.href = '8-individual-table-mobile.html';
+    }
+
+    function showDashboard() {
+        sessionStorage.setItem('fromDashboard', 'true');
+        sessionStorage.removeItem('tempIndividual');
+        sessionStorage.removeItem('tempScroll');
+        window.location.href = '6-dashboard-mobile.html';
+    }
+
+    function resetIndividual() {
+        document.getElementById('individualSearch').value = '';
+        currentIndividual = null;
+        document.getElementById('individualTree').innerHTML = 
+            '<div style="text-align:center; color:#999; padding:60px; background: var(--light-sage); border: 2px solid var(--border-sage); border-radius: 16px; margin:20px auto; max-width:500px;">' +
+            '<div style="font-size:48px; margin-bottom:15px; opacity:0.5;">👤</div>' +
+            '<div style="font-size:18px; font-weight:600; color:var(--maroon); margin-bottom:8px;">Select a member to view</div>' +
+            '<div style="font-size:13px; color:#666;">Search and select a family member above to see their tree</div></div>';
+        sessionStorage.removeItem('tempIndividual');
+    }
+
+    window.toggleFilter = function(filter) {
+        if (!currentIndividual) return;
+        if (filter === 'siblings') { showSiblings = !showSiblings; document.getElementById('filterSiblings').classList.toggle('active', showSiblings); }
+        else if (filter === 'descendants') { showDescendants = !showDescendants; document.getElementById('filterDescendants').classList.toggle('active', showDescendants); }
+        else if (filter === 'ancestors') { showAncestors = !showAncestors; document.getElementById('filterAncestors').classList.toggle('active', showAncestors); }
+        renderIndividualTree();
+    };
+
+    function findParent(p) {
+        if (!p || !p.father) return null;
+        return db.find(x => x.name.toLowerCase() === p.father.toLowerCase());
+    }
+
+    function getAncestryChain(p) {
+        if (!p) return [];
+        let chain = [], cur = p, visited = new Set();
+        while (cur && !visited.has(cur.name.toLowerCase())) {
+            chain.push(cur);
+            visited.add(cur.name.toLowerCase());
+            cur = findParent(cur);
+        }
+        return chain;
+    }
+
+    // SEARCH FUNCTION - COPIED FROM FILE 9
+    window.searchIndividual = function(query) {
+        if (!db.length) return;
+        const drop = document.getElementById('individualDropdown');
+        if (!drop) return;
+        drop.innerHTML = '';
+        
+        if (!query || query.length < 1) { 
+            drop.style.display = 'none'; 
+            return; 
+        }
+        
+        const found = db.filter(p => p.name.toLowerCase().includes(query.toLowerCase())).slice(0, 8);
+        if (found.length === 0) { 
+            drop.style.display = 'none'; 
+            return; 
+        }
+        
+        found.forEach(p => {
+            const div = document.createElement('div');
+            div.className = 'result-item';
+            
+            const nameDisplay = displayName(p.name);
+            const fatherDisplay = displayName(p.father);
+            const relation = p.gender?.startsWith('F') ? 'D/o' : 'S/o';
+            
+            div.innerHTML = `
+                <div>
+                    <span class="main-name">${nameDisplay}</span> 
+                    <span class="gen">${p.gen}</span>
+                </div>
+                <div class="father-info">${relation} ${fatherDisplay}</div>
+            `;
+            
+            div.onclick = (e) => {
+                e.stopPropagation();
+                document.getElementById('individualSearch').value = `${nameDisplay} (${p.gen})`;
+                currentIndividual = p;
+                renderIndividualTree();
+                drop.style.display = 'none';
+            };
+            drop.appendChild(div);
+        });
+        
+        drop.style.display = 'block';
+        drop.style.zIndex = '9999';
+    };
+
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.search-wrapper')) {
+            document.querySelectorAll('.dropdown').forEach(d => d.style.display = 'none');
+        }
+    });
+
+    window.handleBoxClick = function(member) {
+        if (!member || !member.name) return;
+        currentIndividual = member;
+        document.getElementById('individualSearch').value = displayName(member.name) + ' (' + member.gen + ')';
+        renderIndividualTree();
+    };
+
+    function groupSisters(sistersArray, fatherName, type) {
+        if (!sistersArray || sistersArray.length === 0) return '';
+        let headerText = type === 'siblings' ? 'SISTERS' : 'DAUGHTERS';
+        let html = `<div class="sisters-group-box"><div class="sisters-header"># ${headerText}</div>`;
+        html += `<table><tr><th>Name</th><th>Gen</th></tr>`;
+        sistersArray.forEach(sister => {
+            const memberData = encodeURIComponent(JSON.stringify(sister));
+            html += `<tr onclick='handleBoxClick(JSON.parse(decodeURIComponent("${memberData}")))'>`;
+            html += `<td>${displayName(sister.name)}</td>`;
+            html += `<td>${sister.gen}</td>`;
+            html += `</tr>`;
+        });
+        html += `</table>`;
+        html += `<div class="father-info">${sistersArray[0]?.gender?.startsWith('F') ? 'D/o' : 'S/o'}: ${displayName(fatherName)}</div>`;
+        html += `</div>`;
+        return html;
+    }
+
+    function renderIndividualTree() {
+        if (!currentIndividual) return;
+        let html = '<div>';
+
+        if (showAncestors) {
+            const ancestors = getAncestryChain(currentIndividual).slice(1);
+            if (ancestors.length > 0) {
                 html += '<div class="family-group">';
-                html += renderBox(father, 'Father', false);
+                html += '<div class="relation-label">ANCESTORS</div>';
+                [...ancestors].reverse().forEach((a, idx) => {
+                    const hasChildren = db.some(x => x.father && x.father.toLowerCase() === a.name.toLowerCase());
+                    html += renderBox(a, idx === 0 ? 'Earliest' : 'Ancestor', false, hasChildren);
+                    if (idx < ancestors.length - 1) html += '<div class="v-line"></div>';
+                });
                 html += '<div class="v-line"></div>';
-                html += renderBox(currentIndividual, 'Selected', false);
                 html += '</div>';
-            } else {
-                html += '<div class="family-group">' + renderBox(currentIndividual, 'Selected', false) + '</div>';
             }
+        }
 
-            if (showSiblings && father) {
-                const siblings = db.filter(s => s.father === father.name && s.name !== currentIndividual.name);
-                if (siblings.length) {
-                    html += `<div class="section-heading" onclick="toggleSection('siblings')">`;
-                    // MODIFIED: Using displayName for current individual name
-                    html += `<span>👥 Siblings Of ${displayName(currentIndividual.name)} - (${siblings.length})</span>`;
-                    html += `<span class="toggle-icon">${siblingsCollapsed ? '+' : '-'}</span>`;
-                    html += `</div>`;
-                    if (!siblingsCollapsed) {
-                        html += renderMembersWithLayout(siblings, 'sibling');
-                    }
-                }
-            }
+        const father = findParent(currentIndividual);
+        const ancestors = showAncestors ? getAncestryChain(currentIndividual).slice(1) : [];
+        const fatherInAncestors = father && ancestors.some(a => a.name === father.name);
 
-            if (showDescendants) {
-                const children = db.filter(c => c.father === currentIndividual.name);
-                if (children.length) {
-                    html += `<div class="section-heading" onclick="toggleSection('children')">`;
-                    // MODIFIED: Using displayName for current individual name
-                    html += `<span>👶 Children Of ${displayName(currentIndividual.name)} - (${children.length})</span>`;
-                    html += `<span class="toggle-icon">${childrenCollapsed ? '+' : '-'}</span>`;
-                    html += `</div>`;
-                    if (!childrenCollapsed) {
-                        html += renderMembersWithLayout(children, 'child');
-                    }
-                }
-            }
-
+        if (father && !fatherInAncestors) {
+            const fatherHasChildren = db.some(x => x.father && x.father.toLowerCase() === father.name.toLowerCase());
+            html += '<div class="family-group">';
+            html += renderBox(father, 'Father', false, fatherHasChildren);
+            html += '<div class="v-line"></div>';
+            const currentHasChildren = db.some(x => x.father && x.father.toLowerCase() === currentIndividual.name.toLowerCase());
+            html += renderBox(currentIndividual, 'Selected', true, currentHasChildren);
             html += '</div>';
-            document.getElementById('treeRoot').innerHTML = html;
+        } else {
+            const currentHasChildren = db.some(x => x.father && x.father.toLowerCase() === currentIndividual.name.toLowerCase());
+            html += '<div class="family-group">';
+            html += renderBox(currentIndividual, 'Selected', true, currentHasChildren);
+            html += '</div>';
         }
 
-        window.handleBoxClick = function(el) {
-            const name = el.dataset.name;
-            const member = db.find(m => m.name === name);
-            if (member) selectMember(member);
-        };
-
-        function zoomIn() { zoomLevel = Math.min(zoomLevel+0.1,2); applyZoom(); }
-        function zoomOut() { zoomLevel = Math.max(zoomLevel-0.1,0.5); applyZoom(); }
-        function resetZoom() { zoomLevel = 1; applyZoom(); }
-        function applyZoom() {
-            document.getElementById('treeRoot').style.transform = `scale(${zoomLevel})`;
-            document.getElementById('zoomLevel').textContent = Math.round(zoomLevel*100)+'%';
-        }
-
-        
-
-
-
-
-
-async function exportIndividualPDF(memberName) {
-    const member = memberName ? db.find(m => m.name === memberName) : currentIndividual;
-    if (!member) return;
-    
-    const treeElement = document.querySelector('.tree-root-layout');
-    if (!treeElement) return alert('No content to export');
-    
-    try {
-        // SAVE original zoom (which is 0.5 on mobile)
-        const originalZoom = treeElement.style.zoom;
-        
-        // TEMPORARILY REMOVE the 0.5 zoom for PDF capture
-        treeElement.style.zoom = '1';
-        
-        // Create a clone
-        const clone = treeElement.cloneNode(true);
-        
-        // RESTORE original zoom immediately after cloning
-        treeElement.style.zoom = originalZoom;
-        
-        // Create wrapper with same styling
-        const wrapper = document.createElement('div');
-        wrapper.style.background = 'white';
-        wrapper.style.padding = '20px';
-        wrapper.style.width = 'fit-content';
-        wrapper.style.margin = '0 auto';
-        
-        // Add header
-        const header = document.createElement('div');
-        header.style.marginBottom = '30px'; 
-        header.style.textAlign = 'center';
-        header.style.width = '100%';
-        header.innerHTML = `<h1 style="color: #d4af37; font-size: 36px; font-family: 'Playfair Display', serif; margin:0;">Rizvi Family Tree</h1>
-            <h2 style="color:#5a0000; font-size:24px; font-family:'Playfair Display', serif; margin:10px 0 0 0;">${displayName(member.name)}</h2>`;
-        
-        // Add footer
-        const footer = document.createElement('div');
-        footer.style.marginTop = '30px';
-        footer.style.padding = '15px 20px';
-        footer.style.background = '#fcf9f4';
-        footer.style.width = '100%';
-        footer.style.boxSizing = 'border-box';
-        footer.style.fontFamily = "'Inter', sans-serif";
-        footer.style.fontSize = '12px';
-        footer.style.textAlign = 'center';
-
-        const timeStr = formatCurrentTime();
-        const excelSavedTime = fileInfo ? fileInfo.saved_time : '09/03/2026, 10:15:23 pm';
-
-        footer.innerHTML = `
-            <div style="padding:2px 0; font-weight:bold; color:#0f172a;">Developer : Imran Haider S/o Syed Risalat Hussain Rizvi | 0332-787-6010</div>
-            <div style="padding:2px 0; font-weight:bold; color:#5a0000;">Last Data Updated : ${excelSavedTime} | PDF Printed : ${timeStr}</div>
-        `;
-        
-        wrapper.appendChild(header);
-        wrapper.appendChild(clone);
-        wrapper.appendChild(footer);
-        
-        // Temporarily add to body for capture
-        wrapper.style.position = 'absolute';
-        wrapper.style.left = '-9999px';
-        wrapper.style.top = '0';
-        document.body.appendChild(wrapper);
-        
-        const loadingMsg = document.createElement('div');
-        loadingMsg.style.position = 'fixed';
-        loadingMsg.style.top = '50%'; 
-        loadingMsg.style.left = '50%'; 
-        loadingMsg.style.transform = 'translate(-50%, -50%)';
-        loadingMsg.style.background = '#5a0000'; 
-        loadingMsg.style.color = 'white'; 
-        loadingMsg.style.padding = '20px 40px'; 
-        loadingMsg.style.borderRadius = '8px'; 
-        loadingMsg.style.zIndex = '9999'; 
-        loadingMsg.style.boxShadow = '0 4px 20px rgba(0,0,0,0.3)';
-        loadingMsg.textContent = '📄 Preparing PDF... please wait';
-        document.body.appendChild(loadingMsg);
-        
-        await new Promise(resolve => setTimeout(resolve, 500));
-
-        const canvas = await html2canvas(wrapper, { 
-            scale: 2, 
-            backgroundColor: '#ffffff', 
-            logging: false, 
-            allowTaint: true, 
-            useCORS: true 
-        });
-        
-        // Clean up
-        document.body.removeChild(wrapper);
-        document.body.removeChild(loadingMsg);
-
-        const imgData = canvas.toDataURL('image/png');
-        const { jsPDF } = window.jspdf;
-        const w = canvas.width / 2 * 0.264583;
-        const h = canvas.height / 2 * 0.264583;
-        const pdf = new jsPDF({ 
-            orientation: w > h ? 'l' : 'p', 
-            unit: 'mm', 
-            format: [w + 40, h + 40] 
-        });
-        
-        pdf.addImage(imgData, 'PNG', 20, 20, w, h);
-        const safeName = member.name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-        pdf.save(`family_${safeName}_${Date.now()}.pdf`);
-        
-    } catch (err) {
-        console.error('PDF Error:', err);
-        alert('❌ PDF generation failed: ' + err.message);
-    }
-}
-        function closeAllMenus() {
-            document.getElementById('searchDropdown').style.display = 'none';
-            document.querySelectorAll('.context-menu').forEach(m => m.remove());
-            document.getElementById('shortcutsHelp')?.classList.remove('show');
-            document.getElementById('toggleMenuPanel')?.classList.remove('show');
-        }
-        
-        function showShortcutsHelp() { 
-            const help = document.getElementById('shortcutsHelp');
-            if (help.classList.contains('show')) {
-                help.classList.remove('show');
-            } else {
-                help.classList.add('show');
-            }
-        }
-        
-        function closeShortcutsHelp() { document.getElementById('shortcutsHelp').classList.remove('show'); }
-        
-        function showDashboard() { window.location.href = '1-dashboard-pc.html'; }
-        
-        // NEW function for Table View button
-        window.showTableView = function() {
-            if (currentIndividual) {
-                window.location.href = '3-individual-table-pc.html?member=' + encodeURIComponent(currentIndividual.name);
-            } else {
-                window.location.href = '3-individual-table-pc.html';
-            }
-        };
-        
-        function setupEventListeners() {
-            document.addEventListener('click', function(e) {
-                // Close search dropdown when clicking outside
-                if (!e.target.closest('.search-wrapper')) document.getElementById('searchDropdown').style.display = 'none';
-                
-                // Close toggle menu when clicking outside
-                if (!e.target.closest('.toggle-menu-panel') && !e.target.closest('.left-toggle-btn')) 
-                    document.getElementById('toggleMenuPanel')?.classList.remove('show');
-                
-                // Close shortcuts help when clicking anywhere on canvas
-                if (!e.target.closest('.shortcuts-help') && !e.target.closest('[onclick="showShortcutsHelp()"]')) {
-                    document.getElementById('shortcutsHelp')?.classList.remove('show');
+        if (showSiblings && father) {
+            const siblings = db.filter(s => s.father && s.father.toLowerCase() === currentIndividual.father.toLowerCase() && s.name !== currentIndividual.name);
+            if (siblings.length > 0) {
+                const maleSiblings = siblings.filter(s => !s.gender?.startsWith('F'));
+                const femaleSiblings = siblings.filter(s => s.gender?.startsWith('F'));
+                html += '<div class="family-group">';
+                html += `<div class="descendant-heading">DESCENDANTS OF ${displayName(father.name).toUpperCase()}</div>`;
+                html += '<div class="relation-label">SIBLINGS</div>';
+                if (maleSiblings.length > 0) {
+                    html += '<div class="children-row">';
+                    maleSiblings.forEach(s => {
+                        const hasChildren = db.some(x => x.father && x.father.toLowerCase() === s.name.toLowerCase());
+                        html += renderBox(s, 'Brother', false, hasChildren);
+                    });
+                    html += '</div>';
                 }
-            });
-        }
-        
-        function setupKeyboardShortcuts() {
-            document.addEventListener('keydown', (e) => {
-                if (e.target.tagName === 'INPUT' && e.key === 'Escape') { e.target.blur(); closeAllMenus(); }
-                if (e.key === '?' && !e.ctrlKey) { e.preventDefault(); showShortcutsHelp(); }
-                if (e.ctrlKey && e.key === 'f') { e.preventDefault(); document.getElementById('searchInput').focus(); }
-                if (e.ctrlKey && e.key === 'p') { e.preventDefault(); exportIndividualPDF(); }
-            });
+                if (femaleSiblings.length > 0) {
+                    html += groupSisters(femaleSiblings, father.name, 'siblings');
+                }
+                html += '</div>';
+            }
         }
 
-        window.zoomIn = zoomIn; window.zoomOut = zoomOut; window.resetZoom = resetZoom;
-        window.showShortcutsHelp = showShortcutsHelp; window.closeShortcutsHelp = closeShortcutsHelp;
-        window.showDashboard = showDashboard; window.resetIndividual = resetIndividual;
-        window.exportIndividualPDF = exportIndividualPDF;
-    </script>
+        if (showDescendants) {
+            const children = db.filter(c => c.father && c.father.toLowerCase() === currentIndividual.name.toLowerCase());
+            if (children.length > 0) {
+                const maleChildren = children.filter(c => !c.gender?.startsWith('F'));
+                const femaleChildren = children.filter(c => c.gender?.startsWith('F'));
+                html += '<div class="family-group">';
+                html += '<div class="v-line"></div>';
+                html += `<div class="descendant-heading">DESCENDANTS OF ${displayName(currentIndividual.name).toUpperCase()}</div>`;
+                html += '<div class="relation-label">CHILDREN</div>';
+                if (maleChildren.length > 0) {
+                    html += '<div class="children-row">';
+                    maleChildren.forEach(c => {
+                        const hasChildren = db.some(x => x.father && x.father.toLowerCase() === c.name.toLowerCase());
+                        html += renderBox(c, 'Son', false, hasChildren);
+                    });
+                    html += '</div>';
+                }
+                if (femaleChildren.length > 0) {
+                    html += groupSisters(femaleChildren, currentIndividual.name, 'children');
+                }
+                html += '</div>';
+            }
+        }
+
+        html += '</div>';
+        document.getElementById('individualTree').innerHTML = html;
+    }
+    
+    function renderBox(p, label, isSelected, hasChildren) {
+        const isFemale = p.gender?.startsWith('F');
+        const blinkClass = isSelected ? 'blinking-box' : '';
+        const memberData = encodeURIComponent(JSON.stringify(p));
+        
+        return `<div class="box ${isFemale ? 'female-box' : ''} ${blinkClass}" onclick='handleBoxClick(JSON.parse(decodeURIComponent("${memberData}")))'>
+            <div class="box-header">
+                <span>${label}</span>
+                <span>${p.gen}</span>
+            </div>
+            <div class="box-body">
+                <div class="member-name">${displayName(p.name)}</div>
+                <div class="father-name">${isFemale ? 'D/o' : 'S/o'}: ${displayName(p.father)}</div>
+                ${hasChildren ? '<div class="golden-heart">❤️</div>' : ''}
+            </div>
+        </div>`;
+    }
+   
+    // PDF FUNCTION - COPIED DIRECTLY FROM FILE 9
+    window.exportIndividualPDF = async function() {
+        if (!currentIndividual) {
+            alert('Please select a member first');
+            return;
+        }
+        
+        const content = document.getElementById('individualTree');
+        const treeLayout = document.querySelector('.tree-root-layout');
+        
+        const originalZoom = treeLayout.style.zoom;
+        
+        try {
+            treeLayout.style.zoom = "1";
+            
+            const header = document.createElement('div');
+            header.style.cssText = "margin-bottom:30px; text-align:center; width:100%;";
+            header.innerHTML = `
+                <h1 style="color: #d4af37; font-size: 36px; font-family: 'Playfair Display', serif; margin:0 0 10px 0;">Rizvi Family Tree</h1>
+                <h2 style="color:#5a0000; font-size:24px; font-family:'Playfair Display', serif; margin:0;">${displayName(currentIndividual.name)}</h2>
+            `;
+            
+            const footer = document.createElement('div');
+            footer.style.cssText = "margin-top:40px; padding:15px; border:2px solid #d4af37; background:#0f172a; color:#d4af37; display:flex; justify-content:space-between; font-size:12px; width:100%;";
+            footer.innerHTML = `<span>Generated: ${formatCurrentTime()}</span><span>Developer: Imran Haider S/o Syed Risalat Hussain Rizvi | 0332-787-6010</span>`;
+            
+            content.insertBefore(header, content.firstChild);
+            content.appendChild(footer);
+
+            const canvas = await html2canvas(content, {
+                scale: 2,
+                backgroundColor: '#ffffff',
+                useCORS: true,
+                logging: false,
+                width: content.scrollWidth,
+                windowWidth: content.scrollWidth
+            });
+
+            treeLayout.style.zoom = originalZoom;
+            content.removeChild(header);
+            content.removeChild(footer);
+
+            const { jsPDF } = window.jspdf;
+            const imgData = canvas.toDataURL('image/png');
+            
+            const pdfW = (canvas.width / 2) * 0.264583;
+            const pdfH = (canvas.height / 2) * 0.264583;
+
+            const pdf = new jsPDF({
+                orientation: pdfW > pdfH ? 'l' : 'p',
+                unit: 'mm',
+                format: [pdfW + 20, pdfH + 20]
+            });
+
+            pdf.addImage(imgData, 'PNG', 10, 10, pdfW, pdfH);
+            
+            const clean = (str) => str.trim().replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-]/g, '');
+            const name1 = clean(currentIndividual.name);
+            const fileName = `Family-Tree-${name1}.pdf`;
+            pdf.save(fileName);
+
+        } catch (err) {
+            treeLayout.style.zoom = originalZoom;
+            console.error('PDF Error:', err);
+            alert('❌ Error: ' + err.message);
+        }
+    };
+
+    document.addEventListener('DOMContentLoaded', function() {
+     
+        const tableMember = localStorage.getItem('tableViewMember');
+        if (tableMember) {
+            currentIndividual = JSON.parse(tableMember);
+            document.getElementById('individualSearch').value = displayName(currentIndividual.name) + ' (' + currentIndividual.gen + ')';
+            localStorage.removeItem('tableViewMember');
+            const savedFilters = localStorage.getItem('tableViewFilters');
+            if (savedFilters) {
+                const filters = JSON.parse(savedFilters);
+                showSiblings = filters.showSiblings;
+                showDescendants = filters.showDescendants;
+                showAncestors = filters.showAncestors;
+                document.getElementById('filterSiblings').classList.toggle('active', showSiblings);
+                document.getElementById('filterDescendants').classList.toggle('active', showDescendants);
+                document.getElementById('filterAncestors').classList.toggle('active', showAncestors);
+                localStorage.removeItem('tableViewFilters');
+            }
+        }
+
+        if (currentIndividual) {
+            renderIndividualTree();
+            document.getElementById('individualSearch').value = displayName(currentIndividual.name) + ' (' + currentIndividual.gen + ')';
+            sessionStorage.removeItem('tempIndividual');
+        } else {
+            resetIndividual();
+            document.getElementById('individualSearch').value = '';
+        }
+    });
+
+    let scrollTop = 0;
+    window.addEventListener('scroll', function() {
+        scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    });
+
+    window.addEventListener('beforeunload', function() {
+        if (currentIndividual && !fromDashboard) {
+            sessionStorage.setItem('tempIndividual', JSON.stringify(currentIndividual));
+            sessionStorage.setItem('tempScroll', scrollTop);
+        }
+    });
+
+    window.addEventListener('load', function() {
+        const tempScroll = sessionStorage.getItem('tempScroll');
+        if (tempScroll && !fromDashboard) {
+            setTimeout(() => {
+                window.scrollTo(0, parseInt(tempScroll));
+                sessionStorage.removeItem('tempScroll');
+            }, 100);
+        }
+    });
+
+    window.switchToTableView = switchToTableView;
+    window.showDashboard = showDashboard;
+    window.resetIndividual = resetIndividual;
+})();
+</script>
 </body>
 </html>
