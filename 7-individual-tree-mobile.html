@@ -1,6 +1,6 @@
 <!-- ======================================== -->
 <!-- FILE NAME: 7-individual-tree-mobile.html -->
-<!-- WITH FIXES: header wrap + name cleaning  -->
+<!-- ONLY DIFF: zoom: 0.5 for mobile          -->
 <!-- ======================================== -->
 
 <!DOCTYPE html>
@@ -17,7 +17,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     
     <style>
-        /* ===== EXACTLY FROM FILE 2 - WITH HEADER FIXES ===== */
+        /* ===== EXACTLY FROM FILE 2 - WITH ONLY ZOOM DIFFERENCE ===== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         :root {
@@ -41,9 +41,47 @@
             position: relative;
         }
 
-        /* ZOOM CONTROLS - hidden on mobile */
+        /* ZOOM CONTROLS - same as file 2 */
         .zoom-controls {
-            display: none;
+            position: absolute;
+            top: 30px;
+            right: 0px;
+            background: white;
+            border: 2px solid var(--gold);
+            border-radius: 8px;
+            padding: 5px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            z-index: 2000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .zoom-btn {
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--gold);
+            background: white;
+            color: var(--dark-blue);
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .zoom-btn:hover {
+            background: var(--gold);
+            color: white;
+        }
+
+        .zoom-level {
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 5px;
         }
 
         .app-container {
@@ -59,47 +97,27 @@
             box-shadow: 0 0 50px rgba(212, 175, 55, 0.2);
         }
 
-        /* FIXED HEADER - with wrap for mobile */
         .app-header {
             background: linear-gradient(135deg, var(--dark-blue) 0%, #1e3d3d 100%);
             color: var(--gold);
-            padding: 8px 12px;
+            padding: 10px 20px;
             display: flex;
-            flex-wrap: wrap;
+            justify-content: space-between;
             align-items: center;
-            gap: 8px;
             border-bottom: 3px solid var(--gold);
             position: relative;
-            min-height: 70px;
-        }
-
-        .left-toggle-btn {
-            background: var(--gold);
-            color: var(--dark-blue);
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            cursor: pointer;
-            border: 2px solid white;
-            z-index: 2000;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            transition: all 0.3s;
-            flex-shrink: 0;
         }
 
         .header-title {
             font-family: 'Playfair Display', serif;
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 900;
             display: flex;
             align-items: center;
-            gap: 6px;
-            flex: 1;
-            min-width: 200px;
+            gap: 8px;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
         }
 
         .header-icon {
@@ -111,29 +129,23 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            flex-shrink: 0;
         }
 
         .header-actions {
             display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-            justify-content: flex-end;
-            width: 100%;
-            margin-top: 5px;
+            gap: 10px;
+            margin-left: auto;
         }
 
         .header-btn {
-            padding: 6px 12px;
+            padding: 8px 16px;
             background: transparent;
             border: 2px solid var(--gold);
             color: var(--gold);
             border-radius: 4px;
             cursor: pointer;
             font-weight: 600;
-            font-size: 12px;
             transition: all 0.2s;
-            white-space: nowrap;
         }
 
         .header-btn:hover {
@@ -147,11 +159,32 @@
             color: white;
         }
 
-        /* Rest of CSS exactly same as file 2 ... */
+        .left-toggle-btn {
+            background: var(--gold);
+            color: var(--dark-blue);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: pointer;
+            border: 2px solid white;
+            z-index: 2000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+
+        .left-toggle-btn:hover {
+            background: var(--light-gold);
+            transform: scale(1.1);
+        }
+
         .toggle-menu-panel {
             position: absolute;
             left: 10px;
-            top: 70px;
+            top: 60px;
             background: white;
             border: 3px solid var(--gold);
             border-radius: 12px;
@@ -159,7 +192,7 @@
             display: none;
             flex-direction: column;
             gap: 10px;
-            z-index: 9999;
+            z-index: 1999;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             min-width: 220px;
         }
@@ -220,7 +253,6 @@
             display: flex;
             align-items: center;
             gap: 15px;
-            flex-wrap: wrap;
         }
 
         .search-label {
@@ -233,7 +265,6 @@
         .search-wrapper {
             position: relative;
             flex: 1;
-            min-width: 200px;
         }
 
         .search-input {
@@ -260,7 +291,7 @@
             max-height: 300px;
             overflow-y: auto;
             display: none;
-            z-index: 99999 !important;
+            z-index: 1000;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
@@ -293,27 +324,22 @@
             margin-top: 2px;
         }
 
-.tree-container {
-    flex: 1;
-    overflow: auto;   /* ← Changed to auto for scrolling */
-    padding: 20px;
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-}
+        .tree-container {
+            flex: 1;
+            overflow: auto;
+            padding: 20px;
+            position: relative;
+        }
 
-
-
-.tree-root-layout {
-    transform-origin: top left;
-    transition: transform 0.1s;
-     zoom: 0.5;  /* ← ADD THIS BACK for mobile */ 
-    min-width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
+        .tree-root-layout {
+            transform-origin: top left;
+            transition: transform 0.1s;
+            zoom: 0.5;  /* ← ONLY DIFFERENCE FROM FILE 2 - for mobile */
+            min-width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
         .welcome-container {
             display: flex;
@@ -321,7 +347,6 @@
             align-items: center;
             height: 100%;
             min-height: 500px;
-            width: 100%;
         }
 
         .welcome-box {
@@ -493,6 +518,11 @@
             position: relative;
         }
 
+        .section-heading span:first-child {
+            text-align: center;
+            letter-spacing: 0.5px;
+        }
+
         .toggle-icon {
             font-size: 22px;
             font-weight: bold;
@@ -510,6 +540,12 @@
             flex-shrink: 0;
         }
 
+        .toggle-icon:hover {
+            transform: scale(1.1);
+            background: var(--light-gold);
+        }
+
+        /* ===== BOX ALIGNMENT - WITH 10px GAP ALL AROUND ===== */
         .children-row {
             display: flex;
             flex-wrap: wrap;
@@ -519,36 +555,31 @@
             margin: 0 auto 10px auto;
         }
 
-.children-row.four-in-row {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(250px, auto));
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 10px;
-}
+        .children-row.four-in-row {
+            display: grid;
+            grid-template-columns: repeat(4, auto);
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
 
+        .children-row.one-box,
+        .children-row.two-boxes,
+        .children-row.three-boxes {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
 
-.children-row.one-box,
-.children-row.two-boxes,
-.children-row.three-boxes {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 10px;
-    width: 100%;
-}
-
-.children-row.remaining-center {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    width: 100%;
-    margin-top: 0;
-    margin-bottom: 10px;
-}
-
-
-
+        .children-row.remaining-center {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
 
         .family-group {
             display: flex;
@@ -587,31 +618,61 @@
             display: block;
         }
 
-        .search-dropdown {
-            z-index: 99999 !important;
+        .shortcuts-help h3 {
+            color: var(--maroon);
+            border-bottom: 2px solid var(--gold);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
         }
 
-        /* Mobile specific header fix */
-        @media screen and (max-width: 768px) {
-            .app-header {
-                padding: 8px 10px;
-            }
-            
-            .header-title {
-                font-size: 16px;
-                min-width: 150px;
-            }
-            
-            .header-actions {
-                width: 100%;
-                justify-content: flex-start;
-                margin-left: 0;
-                margin-top: 5px;
-            }
+        .shortcut-grid {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 10px 20px;
+        }
+
+        .shortcut-key {
+            font-family: monospace;
+            font-weight: 700;
+            color: var(--dark-blue);
+            background: #f0f0f0;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .context-menu {
+            position: fixed;
+            background: white;
+            border: 2px solid var(--gold);
+            border-radius: 8px;
+            padding: 5px;
+            z-index: 3000;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            min-width: 150px;
+        }
+
+        .context-menu-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .context-menu-item:hover {
+            background: #faebcd;
         }
     </style>
+
 </head>
 <body>
+    <!-- ZOOM CONTROLS - outside white container, in black area -->
+    <div class="zoom-controls">
+        <div class="zoom-btn" onclick="zoomIn()">+</div>
+        <div class="zoom-level" id="zoomLevel">100%</div>
+        <div class="zoom-btn" onclick="zoomOut()">-</div>
+        <div class="zoom-btn" onclick="resetZoom()">↺</div>
+    </div>
+
     <div class="app-container">
         <div class="app-header">
             <div class="left-toggle-btn" onclick="toggleLeftMenu()">☰</div>
@@ -619,11 +680,11 @@
                 <span class="header-icon">🌿</span>
                 <span>Rizvi family · structured tree</span>
             </div>
-            <div class="header-actions">
-                <div class="header-btn" onclick="showShortcutsHelp()">⌨️ Shortcuts</div>
-                <div class="header-btn" onclick="showTableView()">📊 Table View</div>
-                <div class="header-btn dashboard" onclick="showDashboard()">🏠 Dashboard</div>
-            </div>
+          <div class="header-actions">
+    <div class="header-btn" onclick="showShortcutsHelp()">⌨️ Shortcuts</div>
+    <div class="header-btn" onclick="showTableView()">📊 Table View</div>
+    <div class="header-btn dashboard" onclick="showDashboard()">🏠 Dashboard</div>
+</div>
         </div>
 
         <div class="toggle-menu-panel" id="toggleMenuPanel">
@@ -658,6 +719,8 @@
         </div>
     </div>
 
+    <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" style="display:none;">
+
     <div class="shortcuts-help" id="shortcutsHelp">
         <h3>⌨️ Keyboard Shortcuts</h3>
         <div class="shortcut-grid">
@@ -681,7 +744,7 @@
     </div>
 
     <script>
-        // ==================== JAVASCRIPT FROM FILE 2 WITH FIXED displayName ====================
+        // ==================== JAVASCRIPT FROM FILE 2 ====================
         let db = [];
         let fileInfo = null;
         let currentIndividual = null;
@@ -693,11 +756,9 @@
         let childrenCollapsed = true;
         let ancestorsCollapsed = true;
 
-        // FIXED displayName function - handles "Name - 01", "Name-01", "Name -01", "Name- 01"
+        // ADDED: displayName function to hide numeric prefixes
         function displayName(str) {
-            if (!str) return '';
-            // Remove any trailing " - 01", "-01", " -01", "- 01" patterns
-            return str.replace(/\s*-\s*\d+$/, '').trim();
+            return str ? str.replace(/\s*-\s*\d+$/, '').trim() : '';
         }
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -719,14 +780,7 @@
 
         function loadData() {
             const saved = localStorage.getItem('familyDB');
-            if (saved) {
-                try {
-                    db = JSON.parse(saved);
-                    console.log('Loaded data, sample name:', db[0]?.name);
-                } catch(e) {
-                    console.error('Error loading data:', e);
-                }
-            }
+            if (saved) db = JSON.parse(saved);
             
             const savedInfo = localStorage.getItem('fileInfo');
             if (savedInfo) fileInfo = JSON.parse(savedInfo);
@@ -797,22 +851,27 @@
             results.forEach(member => {
                 const div = document.createElement('div');
                 div.className = 'result-item';
+                // MODIFIED: Using displayName for member name and father name
                 div.innerHTML = `<div><span class="main-name">${displayName(member.name)}</span> <span class="gen">${member.gen}</span>
                     <div class="father-name">${member.gender?.startsWith('F') ? 'D/o' : 'S/o'} ${displayName(member.father) || '—'}</div></div>`;
-                div.onclick = () => { selectMember(member); dropdown.style.display = 'none'; this.value = member.name; };
+               div.onclick = () => { 
+    selectMember(member); 
+    dropdown.style.display = 'none'; 
+    this.value = displayName(member.name);  // <--- ADD displayName()
+};
                 dropdown.appendChild(div);
             });
             dropdown.style.display = 'block';
         });
 
-        function selectMember(member) {
-            currentIndividual = member;
-            document.getElementById('searchInput').value = member.name;
-            const url = new URL(window.location);
-            url.searchParams.set('member', encodeURIComponent(member.name));
-            window.history.pushState({}, '', url);
-            renderTree();
-        }
+ function selectMember(member) {
+    currentIndividual = member;
+    document.getElementById('searchInput').value = displayName(member.name);
+    const url = new URL(window.location);
+    url.searchParams.set('member', encodeURIComponent(member.name));
+    window.history.pushState({}, '', url);
+    renderTree();
+}
 
         window.toggleSection = function(section) {
             if (section === 'siblings') siblingsCollapsed = !siblingsCollapsed;
@@ -836,12 +895,7 @@
             return arr;
         }
 
-       
-
-
-
-
-
+   
 
 
 function renderBox(person, label, isSiblingOrChild = false) {
@@ -856,7 +910,7 @@ function renderBox(person, label, isSiblingOrChild = false) {
     html += `<div class="box-header"><span>${label}</span><span>${person.gen || '—'}</span></div>`;
     html += `<div class="box-body">`;
     
-    // Name with rose icon
+    // Name with rose icon (ALL boxes)
     html += `<div class="box-row"><span class="box-label">Name :</span><span class="box-value"><span class="member-name">${displayName(person.name)}</span> ${statusIcon}</span></div>`;
     
     if (isSiblingOrChild) {
@@ -871,117 +925,112 @@ function renderBox(person, label, isSiblingOrChild = false) {
         html += `<div class="box-row"><span class="box-label">Status :</span><span class="box-value">${person.maritalStatus || '—'}</span></div>`;
     }
     
-    // Child icon if person has children
+    // Child icon if person has children (ALL boxes)
     if (hasKids) html += `<div class="child-icon">👪</div>`;
     
     html += `</div></div>`;
     return html;
 }
 
-function renderGenderGroup(genderMembers, type) {
-    const count = genderMembers.length;
-    const getLabel = (m) => type === 'sibling' ? (m.gender?.startsWith('F') ? 'Sister' : 'Brother') : (m.gender?.startsWith('F') ? 'Daughter' : 'Son');
-    
-    if (count === 1) {
-        return `<div class="children-row one-box">${genderMembers.map(m => renderBox(m, getLabel(m), true)).join('')}</div>`;
-    }
-    else if (count === 2) {
-        return `<div class="children-row two-boxes">${genderMembers.map(m => renderBox(m, getLabel(m), true)).join('')}</div>`;
-    }
-    else if (count === 3) {
-        return `<div class="children-row three-boxes">${genderMembers.map(m => renderBox(m, getLabel(m), true)).join('')}</div>`;
-    }
-    else if (count === 4) {
-        return `<div class="children-row four-in-row">${genderMembers.map(m => renderBox(m, getLabel(m), true)).join('')}</div>`;
-    }
-    else {
-        const firstFour = genderMembers.slice(0, 4);
-        const remaining = genderMembers.slice(4);
-        const remainingCount = remaining.length;
-        
-        let remainingClass = 'remaining-center';
-        if (remainingCount === 1) remainingClass = 'one-box';
-        else if (remainingCount === 2) remainingClass = 'two-boxes';
-        else if (remainingCount === 3) remainingClass = 'three-boxes';
-        
-        return `
-            <div class="children-row four-in-row">
-                ${firstFour.map(m => renderBox(m, getLabel(m), true)).join('')}
-            </div>
-            <div class="children-row ${remainingClass}">
-                ${remaining.map(m => renderBox(m, getLabel(m), true)).join('')}
-            </div>
-        `;
-    }
-}
-
-
-function renderMembersWithLayout(members, type) {
-    if (members.length === 0) return '';
-    
-    // If more than 5 members, split by gender
-    if (members.length > 5) {
-        const males = members.filter(m => {
-            const g = (m.gender || '').toString().toUpperCase();
-            return g === 'MALE' || g === 'M' || g.startsWith('M');
-        });
-        
-        const females = members.filter(m => {
-            const g = (m.gender || '').toString().toUpperCase();
-            return g === 'FEMALE' || g === 'F' || g.startsWith('F');
-        });
-        
-        let html = '';
-        
-        // Add males section if any
-        if (males.length > 0) {
-            html += renderGenderGroup(males, type);
+        // NEW helper function to render a gender group using EXACT same layout logic
+        function renderGenderGroup(genderMembers, type) {
+            const count = genderMembers.length;
+            const getLabel = (m) => type === 'sibling' ? (m.gender?.startsWith('F') ? 'Sister' : 'Brother') : (m.gender?.startsWith('F') ? 'Daughter' : 'Son');
+            
+            if (count === 1) {
+                return `<div class="children-row one-box">${genderMembers.map(m => renderBox(m, getLabel(m), true)).join('')}</div>`;
+            }
+            else if (count === 2) {
+                return `<div class="children-row two-boxes">${genderMembers.map(m => renderBox(m, getLabel(m), true)).join('')}</div>`;
+            }
+            else if (count === 3) {
+                return `<div class="children-row three-boxes">${genderMembers.map(m => renderBox(m, getLabel(m), true)).join('')}</div>`;
+            }
+            else if (count === 4) {
+                return `<div class="children-row four-in-row">${genderMembers.map(m => renderBox(m, getLabel(m), true)).join('')}</div>`;
+            }
+            else {
+                const firstFour = genderMembers.slice(0, 4);
+                const remaining = genderMembers.slice(4);
+                const remainingCount = remaining.length;
+                
+                let remainingClass = 'remaining-center';
+                if (remainingCount === 1) remainingClass = 'one-box';
+                else if (remainingCount === 2) remainingClass = 'two-boxes';
+                else if (remainingCount === 3) remainingClass = 'three-boxes';
+                
+                return `
+                    <div class="children-row four-in-row">
+                        ${firstFour.map(m => renderBox(m, getLabel(m), true)).join('')}
+                    </div>
+                    <div class="children-row ${remainingClass}">
+                        ${remaining.map(m => renderBox(m, getLabel(m), true)).join('')}
+                    </div>
+                `;
+            }
         }
-        
-        // Add females section if any
-        if (females.length > 0) {
-            html += renderGenderGroup(females, type);
+
+        // MODIFIED function to split by gender when >5
+        function renderMembersWithLayout(members, type) {
+            if (members.length === 0) return '';
+            
+            // NEW: If more than 5 members, split by gender
+            if (members.length > 5) {
+                const males = members.filter(m => m.gender === 'MALE');
+                const females = members.filter(m => m.gender === 'FEMALE');
+                
+                let html = '';
+                
+                // Add males section if any
+                if (males.length > 0) {
+                    html += renderGenderGroup(males, type);
+                }
+                
+                // Add females section if any
+                if (females.length > 0) {
+                    html += renderGenderGroup(females, type);
+                }
+                
+                return html;
+            }
+            
+            // EXISTING CODE - unchanged
+            const count = members.length;
+            const getLabel = (m) => type === 'sibling' ? (m.gender?.startsWith('F') ? 'Sister' : 'Brother') : (m.gender?.startsWith('F') ? 'Daughter' : 'Son');
+            
+            if (count === 1) {
+                return `<div class="children-row one-box">${members.map(m => renderBox(m, getLabel(m), true)).join('')}</div>`;
+            }
+            else if (count === 2) {
+                return `<div class="children-row two-boxes">${members.map(m => renderBox(m, getLabel(m), true)).join('')}</div>`;
+            }
+            else if (count === 3) {
+                return `<div class="children-row three-boxes">${members.map(m => renderBox(m, getLabel(m), true)).join('')}</div>`;
+            }
+            else if (count === 4) {
+                return `<div class="children-row four-in-row">${members.map(m => renderBox(m, getLabel(m), true)).join('')}</div>`;
+            }
+            else {
+                const firstFour = members.slice(0, 4);
+                const remaining = members.slice(4);
+                const remainingCount = remaining.length;
+                
+                let remainingClass = 'remaining-center';
+                if (remainingCount === 1) remainingClass = 'one-box';
+                else if (remainingCount === 2) remainingClass = 'two-boxes';
+                else if (remainingCount === 3) remainingClass = 'three-boxes';
+                
+                return `
+                    <div class="children-row four-in-row">
+                        ${firstFour.map(m => renderBox(m, getLabel(m), true)).join('')}
+                    </div>
+                    <div class="children-row ${remainingClass}">
+                        ${remaining.map(m => renderBox(m, getLabel(m), true)).join('')}
+                    </div>
+                `;
+            }
         }
-        
-        return html;
-    }
-    
-    // For 5 or fewer members, use direct layout
-    const count = members.length;
-    const getLabel = (m) => type === 'sibling' ? (m.gender?.startsWith('F') ? 'Sister' : 'Brother') : (m.gender?.startsWith('F') ? 'Daughter' : 'Son');
-    
-    if (count === 1) {
-        return `<div class="children-row one-box">${members.map(m => renderBox(m, getLabel(m), true)).join('')}</div>`;
-    }
-    else if (count === 2) {
-        return `<div class="children-row two-boxes">${members.map(m => renderBox(m, getLabel(m), true)).join('')}</div>`;
-    }
-    else if (count === 3) {
-        return `<div class="children-row three-boxes">${members.map(m => renderBox(m, getLabel(m), true)).join('')}</div>`;
-    }
-    else if (count === 4) {
-        return `<div class="children-row four-in-row">${members.map(m => renderBox(m, getLabel(m), true)).join('')}</div>`;
-    }
-    else {
-        const firstFour = members.slice(0, 4);
-        const remaining = members.slice(4);
-        const remainingCount = remaining.length;
-        
-        let remainingClass = 'remaining-center';
-        if (remainingCount === 1) remainingClass = 'one-box';
-        else if (remainingCount === 2) remainingClass = 'two-boxes';
-        else if (remainingCount === 3) remainingClass = 'three-boxes';
-        
-        return `
-            <div class="children-row four-in-row">
-                ${firstFour.map(m => renderBox(m, getLabel(m), true)).join('')}
-            </div>
-            <div class="children-row ${remainingClass}">
-                ${remaining.map(m => renderBox(m, getLabel(m), true)).join('')}
-            </div>
-        `;
-    }
-}
+
         function renderTree() {
             if (!currentIndividual) return;
             let html = '<div>';
@@ -1019,6 +1068,7 @@ function renderMembersWithLayout(members, type) {
                 const siblings = db.filter(s => s.father === father.name && s.name !== currentIndividual.name);
                 if (siblings.length) {
                     html += `<div class="section-heading" onclick="toggleSection('siblings')">`;
+                    // MODIFIED: Using displayName for current individual name
                     html += `<span>👥 Siblings Of ${displayName(currentIndividual.name)} - (${siblings.length})</span>`;
                     html += `<span class="toggle-icon">${siblingsCollapsed ? '+' : '-'}</span>`;
                     html += `</div>`;
@@ -1032,6 +1082,7 @@ function renderMembersWithLayout(members, type) {
                 const children = db.filter(c => c.father === currentIndividual.name);
                 if (children.length) {
                     html += `<div class="section-heading" onclick="toggleSection('children')">`;
+                    // MODIFIED: Using displayName for current individual name
                     html += `<span>👶 Children Of ${displayName(currentIndividual.name)} - (${children.length})</span>`;
                     html += `<span class="toggle-icon">${childrenCollapsed ? '+' : '-'}</span>`;
                     html += `</div>`;
@@ -1051,99 +1102,131 @@ function renderMembersWithLayout(members, type) {
             if (member) selectMember(member);
         };
 
-        async function exportIndividualPDF(memberName) {
-            const member = memberName ? db.find(m => m.name === memberName) : currentIndividual;
-            if (!member) return;
-            
-            const treeElement = document.querySelector('.tree-root-layout');
-            if (!treeElement) return alert('No content to export');
-            
-            try {
-                const header = document.createElement('div');
-                header.style.marginBottom = '30px'; 
-                header.style.textAlign = 'center';
-                header.innerHTML = `<h1 style="color: #d4af37; font-size: 36px; font-family: 'Playfair Display', serif; margin:0;">Rizvi Family Tree</h1>
-                    <h2 style="color:#5a0000; font-size:24px; font-family:'Playfair Display', serif; margin:10px 0 0 0;">${displayName(member.name)}</h2>`;
-                
-                treeElement.insertBefore(header, treeElement.firstChild);
-
-                const footer = document.createElement('div');
-                footer.style.marginTop = '30px';
-                footer.style.padding = '15px 20px';
-                footer.style.background = '#fcf9f4';
-                footer.style.width = '100%';
-                footer.style.boxSizing = 'border-box';
-                footer.style.fontFamily = "'Inter', sans-serif";
-                footer.style.fontSize = '12px';
-                footer.style.textAlign = 'center';
-
-                const timeStr = formatCurrentTime();
-                const excelSavedTime = fileInfo ? fileInfo.saved_time : '09/03/2026, 10:15:23 pm';
-
-                const line1 = document.createElement('div');
-                line1.style.padding = '2px 0';
-                line1.style.fontWeight = 'bold';
-                line1.style.color = '#0f172a';
-                line1.textContent = `Developer : Imran Haider S/o Syed Risalat Hussain Rizvi | 0332-787-6010`;
-
-                const line2 = document.createElement('div');
-                line2.style.padding = '2px 0';
-                line2.style.fontWeight = 'bold';
-                line2.style.color = '#5a0000';
-                line2.textContent = `Last Data Updated : ${excelSavedTime} | PDF Printed : ${timeStr}`;
-
-                footer.appendChild(line1);
-                footer.appendChild(line2);
-                treeElement.appendChild(footer);
-                
-                const loadingMsg = document.createElement('div');
-                loadingMsg.style.position = 'fixed';
-                loadingMsg.style.top = '50%'; 
-                loadingMsg.style.left = '50%'; 
-                loadingMsg.style.transform = 'translate(-50%, -50%)';
-                loadingMsg.style.background = '#5a0000'; 
-                loadingMsg.style.color = 'white'; 
-                loadingMsg.style.padding = '20px 40px'; 
-                loadingMsg.style.borderRadius = '8px'; 
-                loadingMsg.style.zIndex = '9999'; 
-                loadingMsg.style.boxShadow = '0 4px 20px rgba(0,0,0,0.3)';
-                loadingMsg.textContent = '📄 Preparing PDF... please wait';
-                document.body.appendChild(loadingMsg);
-                
-                await new Promise(resolve => setTimeout(resolve, 500));
-
-                const canvas = await html2canvas(treeElement, { 
-                    scale: 2, 
-                    backgroundColor: '#ffffff', 
-                    logging: false, 
-                    allowTaint: true, 
-                    useCORS: true 
-                });
-                
-                treeElement.removeChild(header);
-                treeElement.removeChild(footer);
-                document.body.removeChild(loadingMsg);
-
-                const imgData = canvas.toDataURL('image/png');
-                const { jsPDF } = window.jspdf;
-                const w = canvas.width / 2 * 0.264583;
-                const h = canvas.height / 2 * 0.264583;
-                const pdf = new jsPDF({ 
-                    orientation: w > h ? 'l' : 'p', 
-                    unit: 'mm', 
-                    format: [w + 40, h + 40] 
-                });
-                
-                pdf.addImage(imgData, 'PNG', 20, 20, w, h);
-                const safeName = member.name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-                pdf.save(`family_${safeName}_${Date.now()}.pdf`);
-                
-            } catch (err) {
-                console.error('PDF Error:', err);
-                alert('❌ PDF generation failed: ' + err.message);
-            }
+        function zoomIn() { zoomLevel = Math.min(zoomLevel+0.1,2); applyZoom(); }
+        function zoomOut() { zoomLevel = Math.max(zoomLevel-0.1,0.5); applyZoom(); }
+        function resetZoom() { zoomLevel = 1; applyZoom(); }
+        function applyZoom() {
+            document.getElementById('treeRoot').style.transform = `scale(${zoomLevel})`;
+            document.getElementById('zoomLevel').textContent = Math.round(zoomLevel*100)+'%';
         }
 
+        
+
+
+
+
+
+async function exportIndividualPDF(memberName) {
+    const member = memberName ? db.find(m => m.name === memberName) : currentIndividual;
+    if (!member) return;
+    
+    const treeElement = document.querySelector('.tree-root-layout');
+    if (!treeElement) return alert('No content to export');
+    
+    try {
+        // SAVE original zoom (which is 0.5 on mobile)
+        const originalZoom = treeElement.style.zoom;
+        
+        // TEMPORARILY REMOVE the 0.5 zoom for PDF capture
+        treeElement.style.zoom = '1';
+        
+        // Create a clone
+        const clone = treeElement.cloneNode(true);
+        
+        // RESTORE original zoom immediately after cloning
+        treeElement.style.zoom = originalZoom;
+        
+        // Create wrapper with same styling
+        const wrapper = document.createElement('div');
+        wrapper.style.background = 'white';
+        wrapper.style.padding = '20px';
+        wrapper.style.width = 'fit-content';
+        wrapper.style.margin = '0 auto';
+        
+        // Add header
+        const header = document.createElement('div');
+        header.style.marginBottom = '30px'; 
+        header.style.textAlign = 'center';
+        header.style.width = '100%';
+        header.innerHTML = `<h1 style="color: #d4af37; font-size: 36px; font-family: 'Playfair Display', serif; margin:0;">Rizvi Family Tree</h1>
+            <h2 style="color:#5a0000; font-size:24px; font-family:'Playfair Display', serif; margin:10px 0 0 0;">${displayName(member.name)}</h2>`;
+        
+        // Add footer
+        const footer = document.createElement('div');
+        footer.style.marginTop = '30px';
+        footer.style.padding = '15px 20px';
+        footer.style.background = '#fcf9f4';
+        footer.style.width = '100%';
+        footer.style.boxSizing = 'border-box';
+        footer.style.fontFamily = "'Inter', sans-serif";
+        footer.style.fontSize = '12px';
+        footer.style.textAlign = 'center';
+
+        const timeStr = formatCurrentTime();
+        const excelSavedTime = fileInfo ? fileInfo.saved_time : '09/03/2026, 10:15:23 pm';
+
+        footer.innerHTML = `
+            <div style="padding:2px 0; font-weight:bold; color:#0f172a;">Developer : Imran Haider S/o Syed Risalat Hussain Rizvi | 0332-787-6010</div>
+            <div style="padding:2px 0; font-weight:bold; color:#5a0000;">Last Data Updated : ${excelSavedTime} | PDF Printed : ${timeStr}</div>
+        `;
+        
+        wrapper.appendChild(header);
+        wrapper.appendChild(clone);
+        wrapper.appendChild(footer);
+        
+        // Temporarily add to body for capture
+        wrapper.style.position = 'absolute';
+        wrapper.style.left = '-9999px';
+        wrapper.style.top = '0';
+        document.body.appendChild(wrapper);
+        
+        const loadingMsg = document.createElement('div');
+        loadingMsg.style.position = 'fixed';
+        loadingMsg.style.top = '50%'; 
+        loadingMsg.style.left = '50%'; 
+        loadingMsg.style.transform = 'translate(-50%, -50%)';
+        loadingMsg.style.background = '#5a0000'; 
+        loadingMsg.style.color = 'white'; 
+        loadingMsg.style.padding = '20px 40px'; 
+        loadingMsg.style.borderRadius = '8px'; 
+        loadingMsg.style.zIndex = '9999'; 
+        loadingMsg.style.boxShadow = '0 4px 20px rgba(0,0,0,0.3)';
+        loadingMsg.textContent = '📄 Preparing PDF... please wait';
+        document.body.appendChild(loadingMsg);
+        
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        const canvas = await html2canvas(wrapper, { 
+            scale: 2, 
+            backgroundColor: '#ffffff', 
+            logging: false, 
+            allowTaint: true, 
+            useCORS: true 
+        });
+        
+        // Clean up
+        document.body.removeChild(wrapper);
+        document.body.removeChild(loadingMsg);
+
+        const imgData = canvas.toDataURL('image/png');
+        const { jsPDF } = window.jspdf;
+        const w = canvas.width / 2 * 0.264583;
+        const h = canvas.height / 2 * 0.264583;
+        const pdf = new jsPDF({ 
+            orientation: w > h ? 'l' : 'p', 
+            unit: 'mm', 
+            format: [w + 40, h + 40] 
+        });
+        
+        pdf.addImage(imgData, 'PNG', 20, 20, w, h);
+        const safeName = member.name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+        pdf.save(`family_${safeName}_${Date.now()}.pdf`);
+        
+    } catch (err) {
+        console.error('PDF Error:', err);
+        alert('❌ PDF generation failed: ' + err.message);
+    }
+}
         function closeAllMenus() {
             document.getElementById('searchDropdown').style.display = 'none';
             document.querySelectorAll('.context-menu').forEach(m => m.remove());
@@ -1162,8 +1245,9 @@ function renderMembersWithLayout(members, type) {
         
         function closeShortcutsHelp() { document.getElementById('shortcutsHelp').classList.remove('show'); }
         
-        function showDashboard() { window.location.href = '6-dashboard-pc.html'; }
+        function showDashboard() { window.location.href = '1-dashboard-pc.html'; }
         
+        // NEW function for Table View button
         window.showTableView = function() {
             if (currentIndividual) {
                 window.location.href = '3-individual-table-pc.html?member=' + encodeURIComponent(currentIndividual.name);
@@ -1174,9 +1258,14 @@ function renderMembersWithLayout(members, type) {
         
         function setupEventListeners() {
             document.addEventListener('click', function(e) {
+                // Close search dropdown when clicking outside
                 if (!e.target.closest('.search-wrapper')) document.getElementById('searchDropdown').style.display = 'none';
+                
+                // Close toggle menu when clicking outside
                 if (!e.target.closest('.toggle-menu-panel') && !e.target.closest('.left-toggle-btn')) 
                     document.getElementById('toggleMenuPanel')?.classList.remove('show');
+                
+                // Close shortcuts help when clicking anywhere on canvas
                 if (!e.target.closest('.shortcuts-help') && !e.target.closest('[onclick="showShortcutsHelp()"]')) {
                     document.getElementById('shortcutsHelp')?.classList.remove('show');
                 }
@@ -1192,12 +1281,10 @@ function renderMembersWithLayout(members, type) {
             });
         }
 
+        window.zoomIn = zoomIn; window.zoomOut = zoomOut; window.resetZoom = resetZoom;
+        window.showShortcutsHelp = showShortcutsHelp; window.closeShortcutsHelp = closeShortcutsHelp;
+        window.showDashboard = showDashboard; window.resetIndividual = resetIndividual;
         window.exportIndividualPDF = exportIndividualPDF;
-        window.showShortcutsHelp = showShortcutsHelp;
-        window.closeShortcutsHelp = closeShortcutsHelp;
-        window.showDashboard = showDashboard;
-        window.resetIndividual = resetIndividual;
     </script>
 </body>
-
 </html>

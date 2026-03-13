@@ -1,18 +1,22 @@
+<!-- ===================================== -->
+<!-- FILE NAME: 3-individual-table-pc.html -->
+<!-- LAST UPDATED: 11/03/2026              -->
+<!/* Table view for Rizvi Family - PC version */-->
+<!-- ===================================== -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Rizvi Family · Table View</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rizvi family · table view</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
-    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     
     <style>
-        /* ========== CSS STYLES ========== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         :root {
@@ -22,22 +26,11 @@
             --light-gold: #f1d279;
             --green: #2e7d32;
             --dark-green: #1b5e20;
-            --light-green: #d4edda;
-            --pink-bg: #fff0f5;
             --light-pink: #ffe4e9;
-            --dark-pink: #fb7185;
-            --light-sage: #f4f7f2;
-            --border-sage: #c9d6c2;
-            --sisters-border: #fb7185;
-            --summary-border: #e6c87c;
-            --table-header-bg: #fdf6e3;
             --bronze: #bc8c4f;
-            --reset-red: #5a0000;
-            --reset-red-dark: #7a1f1f;
-            --pdf-grey: #6c757d;
-            --pdf-grey-dark: #5a6268;
-            --dashboard-green: #1b5e20;
-            --sisters-box-bg: #fff0f5;
+            --table-header-bg: #fdf6e3;
+            --table-border: #e2d5b3;
+            --selected-row-bg: #e8f5e9;
         }
 
         body {
@@ -47,6 +40,50 @@
             overflow: hidden;
             margin: 0;
             padding: 10px;
+            position: relative;
+        }
+
+        /* ZOOM CONTROLS - outside white container */
+        .zoom-controls {
+            position: absolute;
+            top: 30px;
+            right: 0px;
+            background: white;
+            border: 2px solid var(--gold);
+            border-radius: 8px;
+            padding: 5px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            z-index: 2000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .zoom-btn {
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--gold);
+            background: white;
+            color: var(--dark-blue);
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .zoom-btn:hover {
+            background: var(--gold);
+            color: white;
+        }
+
+        .zoom-level {
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 5px;
         }
 
         .app-container {
@@ -80,6 +117,9 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
         }
 
         .header-icon {
@@ -91,157 +131,164 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 16px;
         }
 
         .header-actions {
             display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
+            gap: 10px;
+            margin-left: auto;
         }
 
         .header-btn {
-            padding: 6px 14px;
-            font-weight: 600;
-            font-size: 13px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            white-space: nowrap;
-            border: 2px solid var(--gold);
+            padding: 8px 16px;
             background: transparent;
+            border: 2px solid var(--gold);
             color: var(--gold);
-            transition: all 0.2s;
             border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
         }
 
         .header-btn:hover {
             background: var(--gold);
             color: var(--dark-blue);
-            transform: translateY(-2px);
         }
 
         .header-btn.dashboard {
-            background: var(--dashboard-green);
-            color: white;
-            border-color: transparent;
-            border-radius: 4px;
-        }
-
-        .header-btn.dashboard:hover {
-            background: #2e7d32;
-        }
-
-        .header-btn.reset {
-            background: var(--reset-red);
-            color: white;
-            border-color: transparent;
-            border-radius: 4px;
-        }
-
-        .header-btn.reset:hover {
-            background: var(--reset-red-dark);
-        }
-
-        .header-btn.pdf {
-            background: var(--pdf-grey);
-            color: white;
-            border-color: transparent;
-            border-radius: 4px;
-        }
-
-        .header-btn.pdf:hover {
-            background: var(--pdf-grey-dark);
-        }
-
-        .header-btn.tree {
             background: var(--green);
-            color: white;
             border-color: transparent;
-            border-radius: 4px;
+            color: white;
+        }
+        
+        .header-btn.tree-view {
+            background: var(--dark-blue);
+            border-color: var(--gold);
+            color: var(--gold);
         }
 
-        .header-btn.tree:hover {
-            background: #2e7d32;
+        .left-toggle-btn {
+            background: var(--gold);
+            color: var(--dark-blue);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: pointer;
+            border: 2px solid white;
+            z-index: 2000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            transition: all 0.3s;
         }
 
-        .menu-toggle {
+        .left-toggle-btn:hover {
+            background: var(--light-gold);
+            transform: scale(1.1);
+        }
+
+        .toggle-menu-panel {
+            position: absolute;
+            left: 10px;
+            top: 60px;
+            background: white;
+            border: 3px solid var(--gold);
+            border-radius: 12px;
+            padding: 15px;
             display: none;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 1999;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            min-width: 220px;
+        }
+
+        .toggle-menu-panel.show {
+            display: flex;
+        }
+
+        .toggle-menu-item {
+            padding: 12px 18px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            border: 2px solid var(--gold);
+            background: white;
+            color: var(--dark-blue);
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s;
+        }
+
+        .toggle-menu-item:hover {
+            background: #faebcd;
+            transform: translateX(5px);
+        }
+
+        .toggle-menu-item.active {
+            background: #d4edda !important;
+            border-color: var(--dark-green) !important;
+            color: var(--dark-blue);
         }
 
         .main-content {
             flex: 1;
             display: flex;
-            flex-direction: column;
             overflow: hidden;
             background: #fffcf8;
         }
 
-        #individualSection {
+        .center-content {
+            flex: 1;
             display: flex;
             flex-direction: column;
-            height: 100%;
             overflow: hidden;
-            flex: 1;
+            position: relative;
         }
 
-        .fixed-header-section {
-            padding: 15px 15px 0 15px;
+        .search-section {
+            padding: 15px;
             background: #fffcf8;
-            flex-shrink: 0;
-        }
-
-        .border-line {
-            border-top: 3px solid var(--gold);
-            margin: 20px 0 0 0;
-        }
-
-        .scrollable-content {
-            flex: 1;
-            overflow-y: auto;
-            overflow-x: auto;
-            padding: 0 15px 15px 15px;
+            border-bottom: 2px solid var(--gold);
         }
 
         .search-row {
             display: flex;
             align-items: center;
             gap: 15px;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
         }
 
         .search-label {
             font-weight: 700;
             color: var(--maroon);
             font-size: 13px;
-            text-transform: uppercase;
             white-space: nowrap;
         }
 
         .search-wrapper {
             position: relative;
-            flex: 2;
-            min-width: 300px;
+            flex: 1;
         }
 
         .search-input {
             width: 100%;
-            padding: 8px 15px;
+            padding: 10px 15px;
             border: 2px solid #cbd5e1;
             border-radius: 4px;
-            font-size: 13px;
+            font-size: 14px;
             outline: none;
-            transition: all 0.3s;
         }
 
         .search-input:focus {
             border-color: var(--gold);
-            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
         }
 
-        .dropdown {
+        .search-dropdown {
             position: absolute;
             top: 100%;
             left: 0;
@@ -249,18 +296,18 @@
             background: white;
             border: 2px solid var(--gold);
             border-radius: 0 0 4px 4px;
-            max-height: 200px;
+            max-height: 300px;
             overflow-y: auto;
             display: none;
             z-index: 1000;
-            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
         .result-item {
-            padding: 8px 12px;
-            border-bottom: 1px solid #eee;
+            padding: 12px 15px;
             cursor: pointer;
-            font-size: 13px;
+            border-bottom: 1px solid #eee;
+            transition: background 0.2s;
         }
 
         .result-item:hover {
@@ -270,124 +317,260 @@
         .result-item .main-name {
             font-weight: 700;
             color: var(--dark-blue);
+            font-size: 14px;
         }
 
         .result-item .gen {
             color: var(--maroon);
+            font-size: 12px;
+            margin-left: 8px;
+        }
+
+        .result-item .father-name {
             font-size: 11px;
-            margin-left: 6px;
+            color: #666;
+            margin-top: 2px;
         }
 
-        .filter-buttons {
+    .table-container {
+    flex: 1;
+    overflow: auto;
+    padding: 20px;
+    position: relative;
+}
+
+        .table-root-layout {
+     transform-origin: top left;
+    transition: transform 0.1s;
+    min-width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+        .welcome-container {
             display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            min-height: 500px;
         }
 
-        .filter-btn {
-            padding: 6px 14px;
-            border-radius: 4px;
-            font-weight: 600;
-            font-size: 13px;
-            cursor: pointer;
-            border: 2px solid var(--gold);
+        .welcome-box {
+            text-align: center;
+            max-width: 500px;
+            padding: 40px;
             background: white;
+            border: 3px solid var(--gold);
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        }
+
+        .welcome-icon {
+            font-size: 72px;
+            margin-bottom: 20px;
+            color: var(--gold);
+        }
+
+        .welcome-title {
+            font-size: 32px;
+            font-weight: 700;
             color: var(--dark-blue);
-            white-space: nowrap;
+            margin-bottom: 15px;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .welcome-text {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .welcome-shortcuts {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .shortcut-badge {
+            text-align: center;
+        }
+
+        .shortcut-badge .key {
+            background: #f0f0f0;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--dark-blue);
+            border: 1px solid #ccc;
+        }
+
+        .shortcut-badge .label {
+            font-size: 12px;
+            color: var(--maroon);
+            margin-top: 5px;
+        }
+
+        /* Selected Member Info Card */
+        .member-info-card {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto 20px auto;
+            border: 3px solid var(--gold);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .member-info-row {
+            display: flex;
+            border-bottom: 1px solid #eee;
+        }
+
+        .member-info-row:last-child {
+            border-bottom: none;
+        }
+
+        .member-info-label {
+            width: 120px;
+            background: var(--table-header-bg);
+            padding: 12px 15px;
+            font-weight: 700;
+            color: var(--dark-blue);
+            border-right: 2px solid var(--gold);
+        }
+
+        .member-info-value {
+            flex: 1;
+            padding: 12px 15px;
+            background: white;
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 8px;
         }
 
-        .filter-btn.active {
-            background: #d4edda;
-            border-color: var(--dark-green);
+.toggle-icon {
+    position: absolute;
+    /* 165px ensures a ~10px gap from the longest word and vertical alignment */
+    left: 165px; 
+    font-size: 22px;
+    font-weight: bold;
+    background: var(--gold);
+    color: var(--dark-blue);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+       
+
+.section-heading {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--maroon);
+    /* margin: [Top] [Right] [Bottom/Row Gap] [Left/Middle Start] */
+    margin: 0 0 25px 30%;        
+    padding-bottom: 5px;         
+    border-bottom: 2px solid var(--gold);   
+    font-family: 'Playfair Display', serif;
+    cursor: pointer;
+    position: relative;
+    max-width: 210px; 
+}
+
+.toggle-icon {
+    position: absolute;
+    /* This 'left' value ensures all buttons align in a straight vertical column */
+    left: 165px; 
+    font-size: 22px;
+    font-weight: bold;
+    background: var(--gold);
+    color: var(--dark-blue);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+
+        .toggle-icon:hover {
+            transform: scale(1.1);
+            background: var(--light-gold);
         }
 
-        .table-container {
-            overflow-x: auto;
-            background: white;
-            border: 2px solid var(--gold);
-            border-radius: 16px;
-            padding: 15px;
-            margin: 0 auto;
-            width: fit-content;
-            max-width: 100%;
-        }
-
-        .lineage-table {
+        /* Table Styles */
+        .family-table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 400px;
-            font-size: 13px;
-            margin: 0 auto;
+            margin-bottom: 20px;
+            border: 2px solid var(--gold);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
 
-        .lineage-table th {
-            background: #fdf6e3;
-            padding: 10px;
-            border-bottom: 2px solid var(--gold);
-            text-align: center;
+        .family-table th {
+            background: var(--table-header-bg);
+            color: var(--dark-blue);
             font-weight: 700;
-            color: var(--maroon);
-        }
-
-        .lineage-table td {
-            padding: 8px 10px;
-            border-bottom: 1px solid #f0e5ce;
+            font-size: 13px;
+            padding: 12px 8px;
             text-align: left;
+            border-bottom: 2px solid var(--gold);
+            border-right: 1px solid var(--table-border);
         }
 
-        .lineage-table td:first-child {
-            text-align: center;
-            width: 60px;
+        .family-table th:last-child {
+            border-right: none;
         }
 
-        .lineage-table td:nth-child(2) {
-            text-align: left;
+        .family-table td {
+            padding: 10px 8px;
+            font-size: 12px;
+            border-bottom: 1px solid #eee;
+            border-right: 1px solid #f0f0f0;
         }
 
-        .lineage-table td:last-child {
-            text-align: center;
-            width: 100px;
+        .family-table td:last-child {
+            border-right: none;
         }
 
-        .lineage-table tr:hover td {
-            background: #faebcd !important;
+        .family-table tbody tr:hover {
+            background: #faebcd;
             cursor: pointer;
         }
 
-        .lineage-table .section-header {
-            background: var(--light-sage);
-            font-weight: 700;
+        .family-table tbody tr.selected-row {
+            background: var(--selected-row-bg) !important;
+            border-left: 4px solid var(--green);
+        }
+
+        .vital-status {
+            font-weight: 600;
+        }
+
+        .vital-status.yes {
+            color: var(--green);
+        }
+
+        .vital-status.no {
             color: var(--maroon);
-            border-top: 2px solid var(--gold);
-            border-bottom: 1px solid var(--gold);
-        }
-
-        .lineage-table .section-header td {
-            background: var(--light-sage);
-            padding: 8px 15px;
-            text-align: left;
-            font-weight: 700;
-        }
-
-        .lineage-table .current-member td {
-            background: #e8f5e9;
-            font-weight: 700;
-            border: 2px solid var(--dark-green);
-        }
-
-        .lineage-table .female-row td {
-            background-color: var(--light-pink) !important;
-        }
-
-        .lineage-table .female-row:hover td {
-            background-color: #ffd6dc !important;
-        }
-
-        .hidden {
-            display: none !important;
         }
 
         .app-footer {
@@ -399,220 +582,189 @@
             border-top: 2px solid var(--gold);
         }
 
-        .toggle-view-btn {
-            position: fixed; bottom: 20px; left: 20px; z-index: 9999;
-            background: #5a0000; color: white; border: 2px solid #d4af37;
-            border-radius: 50px; padding: 10px 20px; font-size: 14px;
-            font-weight: bold; cursor: pointer; display: flex; align-items: center;
-            gap: 8px; opacity: 0.8;
-        }
-        .toggle-view-btn:hover {
-            opacity: 1;
-        }
-        body.canvas-only .app-header,
-        body.canvas-only .app-footer,
-        body.canvas-only .fixed-header-section,
-        body.canvas-only .filter-buttons,
-        body.canvas-only .search-row,
-        body.canvas-only .border-line,
-        body.canvas-only .toggle-view-btn {
-            display: none !important;
-        }
-        body.canvas-only .main-content {
-            height: 100vh;
+        .shortcuts-help {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border: 3px solid var(--gold);
+            border-radius: 12px;
+            padding: 25px;
+            z-index: 4000;
+            display: none;
+            min-width: 400px;
+            max-width: 90vw;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         }
 
-        /* Mobile styles */
-        @media screen and (max-width: 768px) {
-            body {
-                overflow: auto;
-                -webkit-overflow-scrolling: touch;
-                height: auto;
-                min-height: 100vh;
-                padding: 5px;
-            }
-            
-            .app-container {
-                height: auto;
-                min-height: calc(100vh - 10px);
-                border-radius: 16px;
-            }
-            
-            .app-header {
-                position: relative;
-                padding: 10px 15px;
-            }
-            
-            .header-title {
-                font-size: 18px;
-                width: calc(100% - 50px);
-            }
-            
-            .menu-toggle {
-                display: flex !important;
-                position: absolute;
-                top: 50%;
-                right: 15px;
-                transform: translateY(-50%);
-                background: var(--gold);
-                color: black;
-                border: none;
-                border-radius: 50%;
-                width: 44px;
-                height: 44px;
-                font-size: 26px;
-                font-weight: bold;
-                cursor: pointer;
-                z-index: 2000;
-                align-items: center;
-                justify-content: center;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-            }
-            
-            .fixed-header-section {
-                transition: max-height 0.3s ease;
-                overflow: hidden;
-                max-height: 500px;
-                padding: 15px 15px 10px 15px;
-            }
-            
-            .fixed-header-section.collapsed {
-                max-height: 0;
-                padding-top: 0;
-                padding-bottom: 0;
-                margin: 0;
-            }
-            
-            .search-row {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 12px;
-            }
-            
-            .search-wrapper {
-                min-width: 100%;
-            }
-            
-            .search-input {
-                font-size: 16px;
-                padding: 12px 15px;
-                height: 48px;
-            }
-            
-            .filter-buttons {
-                width: 100%;
-                justify-content: space-between;
-                gap: 8px;
-            }
-            
-            .filter-btn {
-                flex: 1;
-                padding: 10px 5px;
-                font-size: 12px;
-                justify-content: center;
-                height: 44px;
-            }
-            
-            .header-actions {
-                width: 100%;
-                justify-content: space-between;
-                gap: 5px;
-            }
-            
-            .header-btn {
-                flex: 1;
-                padding: 10px 5px;
-                font-size: 11px;
-                justify-content: center;
-                height: 44px;
-            }
-            
-            .toggle-view-btn {
-                bottom: 15px;
-                left: 15px;
-                padding: 10px 18px;
-                font-size: 14px;
-                height: 48px;
-            }
-            
-            .table-container {
-                width: 100%;
-                padding: 10px;
-            }
-            
-            .lineage-table {
-                min-width: 300px;
-            }
-            
-            .lineage-table th,
-            .lineage-table td {
-                padding: 6px 8px;
-                font-size: 12px;
-            }
+        .shortcuts-help.show {
+            display: block;
+        }
+
+        .shortcuts-help h3 {
+            color: var(--maroon);
+            border-bottom: 2px solid var(--gold);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .shortcut-grid {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 10px 20px;
+        }
+
+        .shortcut-key {
+            font-family: monospace;
+            font-weight: 700;
+            color: var(--dark-blue);
+            background: #f0f0f0;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .context-menu {
+            position: fixed;
+            background: white;
+            border: 2px solid var(--gold);
+            border-radius: 8px;
+            padding: 5px;
+            z-index: 3000;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            min-width: 150px;
+        }
+
+        .context-menu-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .context-menu-item:hover {
+            background: #faebcd;
         }
     </style>
 </head>
 <body>
+    <!-- ZOOM CONTROLS - outside white container -->
+    <div class="zoom-controls">
+        <div class="zoom-btn" onclick="zoomIn()">+</div>
+        <div class="zoom-level" id="zoomLevel">100%</div>
+        <div class="zoom-btn" onclick="zoomOut()">-</div>
+        <div class="zoom-btn" onclick="resetZoom()">↺</div>
+    </div>
+
     <div class="app-container">
         <div class="app-header">
+            <div class="left-toggle-btn" onclick="toggleLeftMenu()">☰</div>
             <div class="header-title">
                 <span class="header-icon">🌿</span>
-                <span id="mainTitle">Rizvi Family - Table View</span>
+                <span>Rizvi family · table view</span>
             </div>
-            <button class="menu-toggle" id="mobileMenuToggle">☰</button>
-            <div class="header-actions" id="headerActions"></div>
+            <div class="header-actions">
+    <div class="header-btn" onclick="showShortcutsHelp()">⌨️ Shortcuts</div>
+    <div class="header-btn tree-view" onclick="switchToTreeView()">🌳 Tree View</div>
+    <div class="header-btn dashboard" onclick="showDashboard()">🏠 Dashboard</div>
+</div>
         </div>
 
-        <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" style="display:none;">
+        <div class="toggle-menu-panel" id="toggleMenuPanel">
+            <div class="toggle-menu-item active" id="toggleSiblings" onclick="handleToggleMenuClick('siblings')">👥 Siblings</div>
+            <div class="toggle-menu-item active" id="toggleDescendants" onclick="handleToggleMenuClick('descendants')">👶 Descendants</div>
+            <div class="toggle-menu-item active" id="toggleAncestors" onclick="handleToggleMenuClick('ancestors')">🌳 Ancestors</div>
+            <div style="border-top:1px solid var(--gold); margin:5px 0;"></div>
+            <div class="toggle-menu-item" onclick="resetIndividual()">🔄 Reset</div>
+            <div class="toggle-menu-item" onclick="exportTablePDF()">📑 Save PDF</div>
+        </div>
 
-        <div class="main-content" id="mainContent">
-            <div id="individualSection">
-                <div class="fixed-header-section">
+        <div class="main-content">
+            <div class="center-content">
+                <div class="search-section">
                     <div class="search-row">
                         <span class="search-label">SEARCH MEMBER</span>
                         <div class="search-wrapper">
-                            <input type="text" id="individualSearch" class="search-input" placeholder="Type name..." onkeyup="searchMember(this.value)" autocomplete="off">
-                            <div id="individualDropdown" class="dropdown"></div>
-                        </div>
-                        <div class="filter-buttons">
-                            <div id="filterSiblings" class="filter-btn active" onclick="toggleFilter('siblings')">👥 Siblings</div>
-                            <div id="filterDescendants" class="filter-btn active" onclick="toggleFilter('descendants')">👶 Descendants</div>
-                            <div id="filterAncestors" class="filter-btn" onclick="toggleFilter('ancestors')">🌳 Ancestors</div>
+                            <input type="text" id="searchInput" class="search-input" placeholder="Type name..." autocomplete="off">
+                            <div id="searchDropdown" class="search-dropdown"></div>
                         </div>
                     </div>
-                    <div class="border-line"></div>
                 </div>
-                <div class="scrollable-content">
-                    <div id="individualTable" class="table-container"></div>
+
+                <div class="table-container" id="tableContainer">
+                    <div class="table-root-layout" id="tableRoot"></div>
                 </div>
             </div>
         </div>
 
-        <div class="app-footer">
+        <div class="app-footer" id="appFooter">
             Developer: Imran Haider S/o Syed Risalat Hussain Rizvi | 0332-787-6010
         </div>
     </div>
 
-    <div class="toggle-view-btn" id="toggleViewBtn" onclick="toggleCanvasView()">
-        <span>👁️</span> <span>Full Screen</span>
+    <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" style="display:none;">
+
+    <div class="shortcuts-help" id="shortcutsHelp">
+        <h3>⌨️ Keyboard Shortcuts</h3>
+        <div class="shortcut-grid">
+            <span class="shortcut-key">Ctrl+F</span><span>Focus search</span>
+            <span class="shortcut-key">1</span><span>Toggle siblings</span>
+            <span class="shortcut-key">2</span><span>Toggle descendants</span>
+            <span class="shortcut-key">3</span><span>Toggle ancestors</span>
+            <span class="shortcut-key">Ctrl+P</span><span>Export PDF</span>
+            <span class="shortcut-key">ESC</span><span>Close menus</span>
+            <span class="shortcut-key">Ctrl++</span><span>Zoom in</span>
+            <span class="shortcut-key">Ctrl+-</span><span>Zoom out</span>
+            <span class="shortcut-key">Ctrl+0</span><span>Reset zoom</span>
+            <span class="shortcut-key">↑/↓</span><span>Navigate table</span>
+            <span class="shortcut-key">Enter</span><span>Select member</span>
+            <span class="shortcut-key">?</span><span>Show this help</span>
+        </div>
+        <div style="text-align:center; margin-top:15px;">
+            <button class="header-btn" onclick="closeShortcutsHelp()">Close</button>
+        </div>
     </div>
 
     <script>
-        // ======================================================================
-        // ========================== GLOBAL VARIABLES ==========================
-        // ======================================================================
         let db = [];
-        let currentMember = null;
+        let fileInfo = null;
+        let currentIndividual = null;
         let showSiblings = true;
         let showDescendants = true;
-        let showAncestors = false;
-        let LOAD_STAMP = '';
+        let showAncestors = true;
+        let zoomLevel = 1;
+        let siblingsCollapsed = true;
+        let childrenCollapsed = true;
+        let ancestorsCollapsed = true;
 
-        // ======================================================================
-        // ========================== HELPER FUNCTIONS ==========================
-        // ======================================================================
+        // ADDED: displayName function to hide numeric suffixes
         function displayName(str) {
             return str ? str.replace(/\s*-\s*\d+$/, '').trim() : '';
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+            setupKeyboardShortcuts();
+            setupEventListeners();
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const memberName = urlParams.get('member');
+            if (memberName) {
+                setTimeout(() => {
+                    const member = db.find(m => m.name === decodeURIComponent(memberName));
+                    if (member) selectMember(member);
+                }, 500);
+            } else {
+                resetIndividual();
+            }
+        });
+
+        function loadData() {
+            const saved = localStorage.getItem('familyDB');
+            if (saved) db = JSON.parse(saved);
+            
+            const savedInfo = localStorage.getItem('fileInfo');
+            if (savedInfo) fileInfo = JSON.parse(savedInfo);
         }
 
         function formatCurrentTime() {
@@ -627,380 +779,323 @@
             return `${day}/${month}/${year} - ${displayHours}:${minutes}${ampm}`;
         }
 
-        function getGenNum(gen) {
-            const match = String(gen).match(/\d+/);
-            return match ? parseInt(match[0]) : 0;
-        }
 
-        // ======================================================================
-        // ========================== VIEW TOGGLE ===============================
-        // ======================================================================
-        function switchToTreeView() {
-            // Save current member to localStorage for the tree view to load
-            if (currentMember) {
-                localStorage.setItem('tableViewMember', JSON.stringify(currentMember));
-                localStorage.setItem('tableViewFilters', JSON.stringify({
-                    showSiblings: showSiblings,
-                    showDescendants: showDescendants,
-                    showAncestors: showAncestors
-                }));
-            }
-            // Navigate to tree view file
-            window.location.href = '2-individual-tree-pc.html';
-        }
 
-        function updateHeaderButtons() {
-            const headerActions = document.getElementById('headerActions');
-            headerActions.innerHTML = `
-                <div class="header-btn tree" onclick="switchToTreeView()">🌲 Switch to Tree</div>
-                <div class="header-btn reset" onclick="resetSearch()">🔄 Reset</div>
-                <div class="header-btn pdf" onclick="exportTablePDF()">📑 Save PDF</div>
-                <div class="header-btn dashboard" onclick="showDashboard()">🏠 Dashboard</div>
-            `;
-        }
+        window.toggleLeftMenu = () => document.getElementById('toggleMenuPanel').classList.toggle('show');
 
-        function showDashboard() {
-            window.location.href = '1-dashboard-pc.html';
-        }
-
-        // ======================================================================
-        // ========================== FILTER TOGGLE =============================
-        // ======================================================================
-        function toggleFilter(filter) {
-            if (!currentMember) return;
-            
+        window.handleToggleMenuClick = function(filter) {
+            if (!currentIndividual) return;
             if (filter === 'siblings') {
                 showSiblings = !showSiblings;
-                document.getElementById('filterSiblings').classList.toggle('active', showSiblings);
+                document.getElementById('toggleSiblings').classList.toggle('active', showSiblings);
             } else if (filter === 'descendants') {
                 showDescendants = !showDescendants;
-                document.getElementById('filterDescendants').classList.toggle('active', showDescendants);
+                document.getElementById('toggleDescendants').classList.toggle('active', showDescendants);
             } else if (filter === 'ancestors') {
                 showAncestors = !showAncestors;
-                document.getElementById('filterAncestors').classList.toggle('active', showAncestors);
+                document.getElementById('toggleAncestors').classList.toggle('active', showAncestors);
             }
-            
             renderTable();
-        }
-
-        // ======================================================================
-        // ========================== DATA LOADING ==============================
-        // ======================================================================
-        // Load from localStorage automatically
-        const saved = localStorage.getItem('familyDB');
-        if (saved) {
-            db = JSON.parse(saved);
-            LOAD_STAMP = 'Last data updated on: ' + new Date().toLocaleString();
-        }
-
-        // Hidden file input for updates
-        document.getElementById('fileInput').onchange = function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = new Uint8Array(e.target.result);
-                    const wb = XLSX.read(data, { type: 'array' });
-                    const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
-                    
-                    db = rows.map(r => ({
-                        name: String(r.Name || r.name || '').trim(),
-                        father: String(r.Father || r.father || '').trim(),
-                        gen: String(r.Gen || r.gen || '').trim(),
-                        gender: String(r.Gender || r.gender || 'M').trim().toUpperCase()
-                    })).filter(p => p.name);
-
-                    LOAD_STAMP = 'Last data updated on: ' + new Date().toLocaleString();
-                    localStorage.setItem('familyDB', JSON.stringify(db));
-                    
-                    alert(`✅ Loaded ${db.length} members`);
-                    
-                    // Re-render if a member is selected
-                    if (currentMember) {
-                        // Find updated member data
-                        const updated = db.find(m => m.name === currentMember.name);
-                        if (updated) {
-                            currentMember = updated;
-                            renderTable();
-                        }
-                    }
-                } catch (err) {
-                    alert('❌ Error: ' + err.message);
-                }
-            };
-            reader.readAsArrayBuffer(file);
+            document.getElementById('toggleMenuPanel').classList.remove('show');
         };
 
-        // ======================================================================
-        // ========================== SEARCH FUNCTIONS ==========================
-        // ======================================================================
-        function findParent(member) {
-            if (!member || !member.father) return null;
-            return db.find(x => x.name.toLowerCase() === member.father.toLowerCase());
+        function resetIndividual() {
+            document.getElementById('searchInput').value = '';
+            currentIndividual = null;
+            const url = new URL(window.location);
+            url.searchParams.delete('member');
+            window.history.pushState({}, '', url);
+            document.getElementById('tableRoot').innerHTML = `
+                <div class="welcome-container">
+                    <div class="welcome-box">
+                        <div class="welcome-icon">🌿</div>
+                        <div class="welcome-title">Rizvi Family Table</div>
+                        <div class="welcome-text">
+                            Select a family member from the search box above<br>
+                            to view their family connections in table format.
+                        </div>
+                        <div class="welcome-shortcuts">
+                            <div class="shortcut-badge"><div class="key">1</div><div class="label">Siblings</div></div>
+                            <div class="shortcut-badge"><div class="key">2</div><div class="label">Descendants</div></div>
+                            <div class="shortcut-badge"><div class="key">3</div><div class="label">Ancestors</div></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            closeAllMenus();
         }
 
-        function getAncestryChain(member) {
-            if (!member) return [];
-            let chain = [], cur = member, visited = new Set();
-            while (cur && !visited.has(cur.name.toLowerCase())) {
-                chain.push(cur);
-                visited.add(cur.name.toLowerCase());
-                cur = findParent(cur);
-            }
-            return chain;
-        }
-
-        function getDescendants(member) {
-            if (!member) return [];
-            return db.filter(x => x.father && x.father.toLowerCase() === member.name.toLowerCase());
-        }
-
-        function getSiblings(member) {
-            if (!member || !member.father) return [];
-            return db.filter(x => x.father && x.father.toLowerCase() === member.father.toLowerCase() && x.name !== member.name);
-        }
-
-        function searchMember(query) {
-            const drop = document.getElementById('individualDropdown');
-            drop.innerHTML = '';
-            
-            if (!query || query.length < 1) {
-                drop.style.display = 'none';
-                return;
-            }
-            
-            const found = db.filter(p => p.name.toLowerCase().includes(query.toLowerCase())).slice(0, 8);
-            if (found.length === 0) {
-                drop.style.display = 'none';
-                return;
-            }
-            
-            found.forEach(p => {
+        document.getElementById('searchInput')?.addEventListener('keyup', function(e) {
+            const query = this.value;
+            const dropdown = document.getElementById('searchDropdown');
+            if (query.length < 2) { dropdown.style.display = 'none'; return; }
+            const results = db.filter(m => m.name.toLowerCase().includes(query.toLowerCase())).slice(0, 8);
+            dropdown.innerHTML = '';
+            results.forEach(member => {
                 const div = document.createElement('div');
                 div.className = 'result-item';
-                div.innerHTML = `<div><span class="main-name">${displayName(p.name)}</span> <span class="gen">(${p.gen})</span></div>
-                    <div style="font-size:11px;">${p.gender?.startsWith('F') ? 'D/o' : 'S/o'} ${displayName(p.father)}</div>`;
-                div.onclick = (e) => {
-                    e.stopPropagation();
-                    document.getElementById('individualSearch').value = displayName(p.name) + ' (' + p.gen + ')';
-                    currentMember = p;
-                    renderTable();
-                    drop.style.display = 'none';
-                };
-                drop.appendChild(div);
+                // MODIFIED: Using displayName for member name and father name
+                div.innerHTML = `<div><span class="main-name">${displayName(member.name)}</span> <span class="gen">${member.gen}</span>
+                    <div class="father-name">${member.gender?.startsWith('F') ? 'D/o' : 'S/o'} ${displayName(member.father) || '—'}</div></div>`;
+                div.onclick = () => { selectMember(member); dropdown.style.display = 'none'; this.value = displayName(member.name); };
+                dropdown.appendChild(div);
             });
-            
-            drop.style.display = 'block';
-        }
-
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('.search-wrapper')) {
-                document.querySelectorAll('.dropdown').forEach(d => d.style.display = 'none');
-            }
+            dropdown.style.display = 'block';
         });
 
-        function handleRowClick(member) {
-            currentMember = member;
-            document.getElementById('individualSearch').value = displayName(member.name) + ' (' + member.gen + ')';
+        function selectMember(member) {
+            currentIndividual = member;
+            document.getElementById('searchInput').value = displayName(member.name);
+            const url = new URL(window.location);
+            url.searchParams.set('member', encodeURIComponent(member.name));
+            window.history.pushState({}, '', url);
             renderTable();
         }
 
-        // ======================================================================
-        // ========================== TABLE RENDERING ===========================
-        // ======================================================================
+        window.toggleSection = function(section) {
+            if (section === 'siblings') siblingsCollapsed = !siblingsCollapsed;
+            else if (section === 'children') childrenCollapsed = !childrenCollapsed;
+            else if (section === 'ancestors') ancestorsCollapsed = !ancestorsCollapsed;
+            renderTable();
+        };
+
+        function findParent(p) {
+            return p?.father ? db.find(x => x.name === p.father) : null;
+        }
+
+        function getMother(person) {
+            if (!person || !person.father) return '—';
+            const father = db.find(f => f.name === person.father);
+            return father?.spouse || '—';
+        }
+
+        function getAncestors(p) {
+            let arr = [], cur = p;
+            while (cur?.father) {
+                const father = db.find(x => x.name === cur.father);
+                if (!father) break;
+                arr.push(father);
+                cur = father;
+            }
+            return arr;
+        }
+
+   function renderMemberInfoCard(member) {
+    const statusIcon = (member.alive || '').toLowerCase() === 'yes' ? '🌹' : '🥀';
+    const mother = getMother(member);
+    
+    return `
+        <table class="family-table" style="margin-bottom: 30px;">
+            <thead>
+                <tr>
+                    <th>NAME</th>
+                    <th>VITAL STATUS</th>
+                    <th>GEN</th>
+                    <th>FATHER</th>
+                    <th>MOTHER</th>
+                    <th>SPOUSE</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="selected-row">
+                    <!-- MODIFIED: Using displayName for member name -->
+                    <td><strong>${displayName(member.name)}</strong></td>
+                    <td class="vital-status ${(member.alive || '').toLowerCase() === 'yes' ? 'yes' : 'no'}">${statusIcon} ${(member.alive || '').toLowerCase() === 'yes' ? 'Yes' : 'No'}</td>
+                    <td>${member.gen || '—'}</td>
+                    <!-- MODIFIED: Using displayName for father name -->
+                    <td>${displayName(member.father) || '—'}</td>
+                    <td>${mother}</td>
+                    <td>${member.spouse || '—'}</td>
+                </tr>
+            </tbody>
+        </table>
+    `;
+}    
+
+
+        function renderTableForMembers(members, title, includeSelected = false) {
+            if (!members || members.length === 0) return '';
+            
+            let html = `<table class="family-table">`;
+            html += `<thead><tr>
+                <th>NAME</th><th>VITAL STATUS</th><th>GEN</th><th>FATHER</th><th>MOTHER</th><th>SPOUSE</th>
+            </tr></thead><tbody>`;
+            
+            
+            members.forEach(m => {
+                // Skip if this is the selected member and we already included them
+                if (includeSelected && currentIndividual?.name === m.name) return;
+                
+                const statusIcon = (m.alive || '').toLowerCase() === 'yes' ? '🌹' : '🥀';
+                const mother = getMother(m);
+                const isSelected = currentIndividual?.name === m.name ? 'selected-row' : '';
+                
+                html += `<tr class="${isSelected}" onclick="selectMember(db.find(x => x.name === '${m.name.replace(/'/g, "\\'")}'))">`;
+                // MODIFIED: Using displayName for member name
+                html += `<td><strong>${displayName(m.name)}</strong></td>`;
+                html += `<td class="vital-status ${(m.alive || '').toLowerCase() === 'yes' ? 'yes' : 'no'}">${statusIcon} ${(m.alive || '').toLowerCase() === 'yes' ? 'Yes' : 'No'}</td>`;
+                html += `<td>${m.gen || '—'}</td>`;
+                // MODIFIED: Using displayName for father name
+                html += `<td>${displayName(m.father) || '—'}</td>`;
+                html += `<td>${mother}</td>`;
+                html += `<td>${m.spouse || '—'}</td>`;
+                html += `</tr>`;
+            });
+            
+            html += `</tbody></table>`;
+            return html;
+        }
+
         function renderTable() {
-            if (!currentMember) {
-                document.getElementById('individualTable').innerHTML = '<div style="text-align:center; color:#999; padding:60px;">Select a member to view</div>';
-                return;
-            }
-            
-            let html = '<table class="lineage-table">';
-            
-            // Header - only Sno, Name, Generation
-            html += '<tr><th>Sno</th><th>Name</th><th>Generation</th></tr>';
-            
-            // Current member (highlighted)
-            const isCurrentFemale = currentMember.gender?.startsWith('F');
-            const currentRowClass = isCurrentFemale ? 'current-member female-row' : 'current-member';
-            
-            html += `<tr class="${currentRowClass}" onclick='handleRowClick(${JSON.stringify(currentMember).replace(/'/g, "\\'")})' style="cursor: pointer;">`;
-            html += `<td>1</td>`;
-            html += `<td><strong>${displayName(currentMember.name)}</strong> (Selected)</td>`;
-            html += `<td><strong>${currentMember.gen}</strong></td>`;
-            html += `</tr>`;
-            
-            // Ancestors if enabled
+            if (!currentIndividual) return;
+            let html = '<div>';
+
+            // Member info card
+            html += renderMemberInfoCard(currentIndividual);
+
+            // Ancestors section
             if (showAncestors) {
-                const ancestors = getAncestryChain(currentMember).slice(1);
-                if (ancestors.length > 0) {
-                    html += `<tr class="section-header"><td colspan="3">🔺 ANCESTORS (${ancestors.length})</td></tr>`;
-                    let sno = 1;
-                    ancestors.forEach(a => {
-                        const isFemale = a.gender?.startsWith('F');
-                        const rowClass = isFemale ? 'female-row' : '';
-                        html += `<tr class="${rowClass}" onclick='handleRowClick(${JSON.stringify(a).replace(/'/g, "\\'")})' style="cursor: pointer;">`;
-                        html += `<td>${sno++}</td>`;
-                        html += `<td>${displayName(a.name)}</td>`;
-                        html += `<td>${a.gen}</td>`;
-                        html += `</tr>`;
-                    });
+                const ancestors = getAncestors(currentIndividual);
+                if (ancestors.length) {
+                    html += `<div class="section-heading" onclick="toggleSection('ancestors')">`;
+                    html += `<span>🌳 ANCESTORS</span>`;
+                    html += `<span class="toggle-icon">${ancestorsCollapsed ? '+' : '-'}</span>`;
+                    html += `</div>`;
+                    if (!ancestorsCollapsed) {
+                        html += renderTableForMembers(ancestors, 'Ancestors', false);
+                    }
                 }
             }
-            
-            // Siblings if enabled
+
+            // Siblings section - include selected member at top
             if (showSiblings) {
-                const siblings = getSiblings(currentMember);
-                if (siblings.length > 0) {
-                    const father = findParent(currentMember);
-                    const fatherName = father ? displayName(father.name) : 'Unknown';
-                    html += `<tr class="section-header"><td colspan="3">👥 SIBLINGS (${siblings.length}) - Children of ${fatherName}</td></tr>`;
-                    let sno = 1;
-                    siblings.forEach(s => {
-                        const isFemale = s.gender?.startsWith('F');
-                        const rowClass = isFemale ? 'female-row' : '';
-                        html += `<tr class="${rowClass}" onclick='handleRowClick(${JSON.stringify(s).replace(/'/g, "\\'")})' style="cursor: pointer;">`;
-                        html += `<td>${sno++}</td>`;
-                        html += `<td>${displayName(s.name)}</td>`;
-                        html += `<td>${s.gen}</td>`;
-                        html += `</tr>`;
-                    });
+                const father = findParent(currentIndividual);
+                if (father) {
+                    const siblings = db.filter(s => s.father === father.name);
+                    if (siblings.length) {
+                        html += `<div class="section-heading" onclick="toggleSection('siblings')">`;
+                        html += `<span>👥 SIBLINGS</span>`;
+                        html += `<span class="toggle-icon">${siblingsCollapsed ? '+' : '-'}</span>`;
+                        html += `</div>`;
+                        if (!siblingsCollapsed) {
+                            html += renderTableForMembers(siblings, 'Siblings', true);
+                        }
+                    }
                 }
             }
-            
-            // Descendants if enabled
+
+            // Descendants section
             if (showDescendants) {
-                const descendants = getDescendants(currentMember);
-                if (descendants.length > 0) {
-                    html += `<tr class="section-header"><td colspan="3">👶 DESCENDANTS (${descendants.length}) - Children of ${displayName(currentMember.name)}</td></tr>`;
-                    let sno = 1;
-                    descendants.forEach(d => {
-                        const isFemale = d.gender?.startsWith('F');
-                        const rowClass = isFemale ? 'female-row' : '';
-                        html += `<tr class="${rowClass}" onclick='handleRowClick(${JSON.stringify(d).replace(/'/g, "\\'")})' style="cursor: pointer;">`;
-                        html += `<td>${sno++}</td>`;
-                        html += `<td>${displayName(d.name)}</td>`;
-                        html += `<td>${d.gen}</td>`;
-                        html += `</tr>`;
-                    });
+                const children = db.filter(c => c.father === currentIndividual.name);
+                if (children.length) {
+                    html += `<div class="section-heading" onclick="toggleSection('children')">`;
+                    html += `<span>👶 CHILDREN</span>`;
+                    html += `<span class="toggle-icon">${childrenCollapsed ? '+' : '-'}</span>`;
+                    html += `</div>`;
+                    if (!childrenCollapsed) {
+                        html += renderTableForMembers(children, 'Children', false);
+                    }
                 }
             }
-            
-            html += '</table>';
-            document.getElementById('individualTable').innerHTML = html;
+
+            html += '</div>';
+            document.getElementById('tableRoot').innerHTML = html;
         }
 
-        // ======================================================================
-        // ========================== RESET FUNCTION ============================
-        // ======================================================================
-        function resetSearch() {
-            document.getElementById('individualSearch').value = '';
-            currentMember = null;
-            document.getElementById('individualTable').innerHTML = '<div style="text-align:center; color:#999; padding:60px;">Select a member to view</div>';
-            document.getElementById('individualDropdown').style.display = 'none';
+        function zoomIn() { zoomLevel = Math.min(zoomLevel+0.1,2); applyZoom(); }
+        function zoomOut() { zoomLevel = Math.max(zoomLevel-0.1,0.5); applyZoom(); }
+        function resetZoom() { zoomLevel = 1; applyZoom(); }
+        function applyZoom() {
+            document.getElementById('tableRoot').style.transform = `scale(${zoomLevel})`;
+            document.getElementById('zoomLevel').textContent = Math.round(zoomLevel*100)+'%';
         }
 
-        // ======================================================================
-        // ========================== PDF EXPORT ================================
-        // ======================================================================
         async function exportTablePDF() {
-            if (!currentMember) {
-                alert('Please select a member first');
-                return;
-            }
+            if (!currentIndividual) { alert('Please select a member first'); return; }
             
-            const content = document.getElementById('individualTable');
-            if (!content || content.innerHTML.trim() === '' || content.innerHTML.includes('Select a member')) {
-                return alert('No content to export');
-            }
+            const tableElement = document.querySelector('.table-root-layout');
+            if (!tableElement) return alert('No content to export');
             
             try {
                 const header = document.createElement('div');
-                header.style.marginBottom = '30px';
+                header.style.marginBottom = '30px'; 
                 header.style.textAlign = 'center';
-                header.innerHTML = `
-                    <h1 style="color: #d4af37; font-size: 36px; font-family: 'Playfair Display', serif; margin: 0 0 10px 0;">Rizvi Family - Table View</h1>
-                    <h2 style="color: #5a0000; font-size: 24px; font-family: 'Playfair Display', serif; margin: 0;">${displayName(currentMember.name)}</h2>
-                `;
+                // MODIFIED: Using displayName for current individual name in PDF header
+                header.innerHTML = `<h1 style="color: #d4af37; font-size: 36px; font-family: 'Playfair Display', serif; margin:0;">Rizvi Family Table</h1>
+                    <h2 style="color:#5a0000; font-size:24px; font-family:'Playfair Display', serif; margin:10px 0 0 0;">${displayName(currentIndividual.name)}</h2>`;
                 
+                tableElement.insertBefore(header, tableElement.firstChild);
+
                 const footer = document.createElement('div');
-                footer.style.marginTop = '40px';
+                footer.style.marginTop = '30px';
                 footer.style.padding = '15px 20px';
-                footer.style.border = '2px solid #d4af37';
-                footer.style.borderRadius = '4px';
-                footer.style.background = '#0f172a';
-                footer.style.color = '#d4af37';
-                footer.style.display = 'flex';
-                footer.style.justifyContent = 'space-between';
-                footer.style.alignItems = 'center';
-                footer.style.fontSize = '11px';
-                
+                footer.style.background = '#fcf9f4';
+                footer.style.width = '100%';
+                footer.style.boxSizing = 'border-box';
+                footer.style.fontFamily = "'Inter', sans-serif";
+                footer.style.fontSize = '12px';
+                footer.style.textAlign = 'center';
+
                 const timeStr = formatCurrentTime();
-                footer.innerHTML = `
-                    <span>${LOAD_STAMP || 'Last data updated on: Unknown'}</span>
-                    <span style="font-weight: 500;">PDF generated: ${timeStr}</span>
-                `;
-                
-                const signature = document.createElement('div');
-                signature.style.marginTop = '20px';
-                signature.style.paddingTop = '15px';
-                signature.style.borderTop = '1px solid #ddd';
-                signature.style.textAlign = 'center';
-                signature.style.color = '#000';
-                signature.style.fontSize = '12px';
-                signature.style.fontWeight = '500';
-                signature.textContent = 'Developer: Imran Haider S/o Syed Risalat Hussain Rizvi | 0332-787-6010';
-                
-                content.insertBefore(header, content.firstChild);
-                content.appendChild(footer);
-                content.appendChild(signature);
+                const excelSavedTime = fileInfo ? fileInfo.saved_time : '06/03/2026, 3:57:46 pm';
+
+                const line1 = document.createElement('div');
+                line1.style.padding = '2px 0';
+                line1.style.fontWeight = 'bold';
+                line1.style.color = '#0f172a';
+                line1.textContent = `Developer : Imran Haider S/o Syed Risalat Hussain Rizvi | 0332-787-6010`;
+
+                const line2 = document.createElement('div');
+                line2.style.padding = '2px 0';
+                line2.style.fontWeight = 'bold';
+                line2.style.color = '#5a0000';
+                line2.textContent = `Last Data Updated : ${excelSavedTime} | PDF Printed : ${timeStr}`;
+
+                footer.appendChild(line1);
+                footer.appendChild(line2);
+                tableElement.appendChild(footer);
                 
                 const loadingMsg = document.createElement('div');
                 loadingMsg.style.position = 'fixed';
-                loadingMsg.style.top = '50%';
-                loadingMsg.style.left = '50%';
+                loadingMsg.style.top = '50%'; 
+                loadingMsg.style.left = '50%'; 
                 loadingMsg.style.transform = 'translate(-50%, -50%)';
-                loadingMsg.style.background = '#5a0000';
-                loadingMsg.style.color = 'white';
-                loadingMsg.style.padding = '20px 40px';
-                loadingMsg.style.borderRadius = '8px';
-                loadingMsg.style.zIndex = '9999';
+                loadingMsg.style.background = '#5a0000'; 
+                loadingMsg.style.color = 'white'; 
+                loadingMsg.style.padding = '20px 40px'; 
+                loadingMsg.style.borderRadius = '8px'; 
+                loadingMsg.style.zIndex = '9999'; 
                 loadingMsg.style.boxShadow = '0 4px 20px rgba(0,0,0,0.3)';
                 loadingMsg.textContent = '📄 Preparing PDF... please wait';
                 document.body.appendChild(loadingMsg);
                 
                 await new Promise(resolve => setTimeout(resolve, 500));
-                
-                const canvas = await html2canvas(content, {
-                    scale: 2,
-                    backgroundColor: '#ffffff',
-                    logging: false,
-                    allowTaint: true,
-                    useCORS: true
+
+                const canvas = await html2canvas(tableElement, { 
+                    scale: 2, 
+                    backgroundColor: '#ffffff', 
+                    logging: false, 
+                    allowTaint: true, 
+                    useCORS: true 
                 });
                 
-                content.removeChild(header);
-                content.removeChild(footer);
-                content.removeChild(signature);
+                tableElement.removeChild(header);
+                tableElement.removeChild(footer);
                 document.body.removeChild(loadingMsg);
-                
+
                 const imgData = canvas.toDataURL('image/png');
                 const { jsPDF } = window.jspdf;
-                
                 const w = canvas.width / 2 * 0.264583;
                 const h = canvas.height / 2 * 0.264583;
-                
-                const pdf = new jsPDF({
-                    orientation: w > h ? 'l' : 'p',
-                    unit: 'mm',
-                    format: [w + 40, h + 40]
+                const pdf = new jsPDF({ 
+                    orientation: w > h ? 'l' : 'p', 
+                    unit: 'mm', 
+                    format: [w + 40, h + 40] 
                 });
                 
                 pdf.addImage(imgData, 'PNG', 20, 20, w, h);
-                
-                const safeName = displayName(currentMember.name).replace(/[^a-z0-9]/gi, '_').toLowerCase();
-                pdf.save(`table_${safeName}_${new Date().getTime()}.pdf`);
+                const safeName = currentIndividual.name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+                pdf.save(`family_table_${safeName}_${Date.now()}.pdf`);
                 
             } catch (err) {
                 console.error('PDF Error:', err);
@@ -1008,72 +1103,71 @@
             }
         }
 
-        // ======================================================================
-        // ========================== TOGGLE CANVAS VIEW ========================
-        // ======================================================================
-        function toggleCanvasView() {
-            document.body.classList.toggle('canvas-only');
-            const btn = document.getElementById('toggleViewBtn');
-            if (document.body.classList.contains('canvas-only')) {
-                btn.innerHTML = '<span>🔍</span> <span>Exit</span>';
+        function switchToTreeView() {
+            if (currentIndividual) {
+                window.location.href = '2-individual-tree-pc.html?member=' + encodeURIComponent(currentIndividual.name);
             } else {
-                btn.innerHTML = '<span>👁️</span> <span>Full Screen</span>';
+                window.location.href = '2-individual-tree-pc.html';
             }
         }
 
-        // ======================================================================
-        // ========================== INITIALIZATION ============================
-        // ======================================================================
-        document.addEventListener('DOMContentLoaded', function() {
-            // Mobile menu toggle
-            const menuToggle = document.getElementById('mobileMenuToggle');
-            const topSection = document.querySelector('.fixed-header-section');
-            
-            if (menuToggle && topSection) {
-                menuToggle.addEventListener('click', function() {
-                    topSection.classList.toggle('collapsed');
-                });
-            }
-            
-            // Set initial filter states
-            document.getElementById('filterSiblings').classList.add('active');
-            document.getElementById('filterDescendants').classList.add('active');
-            document.getElementById('filterAncestors').classList.remove('active');
-            
-            // Check if coming from tree view with a member
-            const treeMember = localStorage.getItem('tableViewMember');
-            if (treeMember) {
-                currentMember = JSON.parse(treeMember);
-                document.getElementById('individualSearch').value = displayName(currentMember.name) + ' (' + currentMember.gen + ')';
-                localStorage.removeItem('tableViewMember'); // Clear it
-                
-                // Also restore filters if available
-                const savedFilters = localStorage.getItem('tableViewFilters');
-                if (savedFilters) {
-                    const filters = JSON.parse(savedFilters);
-                    showSiblings = filters.showSiblings;
-                    showDescendants = filters.showDescendants;
-                    showAncestors = filters.showAncestors;
-                    
-                    // Update UI to match
-                    document.getElementById('filterSiblings').classList.toggle('active', showSiblings);
-                    document.getElementById('filterDescendants').classList.toggle('active', showDescendants);
-                    document.getElementById('filterAncestors').classList.toggle('active', showAncestors);
-                    
-                    localStorage.removeItem('tableViewFilters');
-                }
-            }
-            
-            // Set up header buttons
-            updateHeaderButtons();
-            
-            // Render table if member exists
-            if (currentMember) {
-                renderTable();
+        function closeAllMenus() {
+            document.getElementById('searchDropdown').style.display = 'none';
+            document.querySelectorAll('.context-menu').forEach(m => m.remove());
+            document.getElementById('shortcutsHelp')?.classList.remove('show');
+            document.getElementById('toggleMenuPanel')?.classList.remove('show');
+        }
+        
+        function showShortcutsHelp() { 
+            const help = document.getElementById('shortcutsHelp');
+            if (help.classList.contains('show')) {
+                help.classList.remove('show');
             } else {
-                document.getElementById('individualTable').innerHTML = '<div style="text-align:center; color:#999; padding:60px;">Select a member to view</div>';
+                help.classList.add('show');
             }
-        });
+        }
+        function closeShortcutsHelp() { document.getElementById('shortcutsHelp').classList.remove('show'); }
+        function showDashboard() { window.location.href = '1-dashboard-pc.html'; }
+        
+        function setupEventListeners() {
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.search-wrapper')) document.getElementById('searchDropdown').style.display = 'none';
+                if (!e.target.closest('.toggle-menu-panel') && !e.target.closest('.left-toggle-btn')) 
+                    document.getElementById('toggleMenuPanel')?.classList.remove('show');
+                if (!e.target.closest('.shortcuts-help') && !e.target.closest('[onclick="showShortcutsHelp()"]')) {
+                    document.getElementById('shortcutsHelp')?.classList.remove('show');
+                }
+            });
+        }
+        
+        function setupKeyboardShortcuts() {
+            document.addEventListener('keydown', (e) => {
+                if (e.target.tagName === 'INPUT' && e.key === 'Escape') { e.target.blur(); closeAllMenus(); }
+                if (e.key === '?' && !e.ctrlKey) { e.preventDefault(); showShortcutsHelp(); }
+                if (e.ctrlKey && e.key === 'f') { e.preventDefault(); document.getElementById('searchInput').focus(); }
+                if (e.ctrlKey && e.key === 'p') { e.preventDefault(); exportTablePDF(); }
+                if (e.key === '1' && !e.ctrlKey && currentIndividual) {
+                    showSiblings = !showSiblings; 
+                    document.getElementById('toggleSiblings').classList.toggle('active', showSiblings);
+                    renderTable();
+                }
+                if (e.key === '2' && !e.ctrlKey && currentIndividual) {
+                    showDescendants = !showDescendants; 
+                    document.getElementById('toggleDescendants').classList.toggle('active', showDescendants);
+                    renderTable();
+                }
+                if (e.key === '3' && !e.ctrlKey && currentIndividual) {
+                    showAncestors = !showAncestors; 
+                    document.getElementById('toggleAncestors').classList.toggle('active', showAncestors);
+                    renderTable();
+                }
+            });
+        }
+
+        window.zoomIn = zoomIn; window.zoomOut = zoomOut; window.resetZoom = resetZoom;
+        window.showShortcutsHelp = showShortcutsHelp; window.closeShortcutsHelp = closeShortcutsHelp;
+        window.showDashboard = showDashboard; window.resetIndividual = resetIndividual;
+        window.exportTablePDF = exportTablePDF; window.switchToTreeView = switchToTreeView;
     </script>
 </body>
 </html>

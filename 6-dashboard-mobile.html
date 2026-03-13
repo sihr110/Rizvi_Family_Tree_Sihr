@@ -6,9 +6,7 @@
     <title>Rizvi Family · Mobile Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <!-- Load external family data - updated to 13-family-data.js -->
-    <script src="13-family-data.js"></script>
-    
+    <script src="13-family-data.js"></script>  <!-- Moved here, before any other scripts -->
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -233,11 +231,8 @@
                     db = rows.map(r => ({
                         name: String(r.Name || r.name || '').trim(),
                         father: String(r.Father || r.father || '').trim(),
-                        spouse: String(r.Spouse || r.spouse || '').trim(),
                         gen: String(r.Gen || r.gen || '').trim(),
-                        gender: String(r.Gender || r.gender || 'Male').trim().toUpperCase(),
-                        maritalStatus: String(r['Marital Status'] || r.maritalStatus || r.marital_status || 'Married').trim(),
-                        alive: String(r.Alive || r.alive || 'Yes').trim()
+                        gender: String(r.Gender || r.gender || 'M').trim().toUpperCase()
                     })).filter(p => p.name);
 
                     localStorage.setItem('familyDB', JSON.stringify(db));
@@ -277,8 +272,11 @@
         }
 
         function initializeData() {
-            // First check if FAMILY_DATA exists (from 13-family-data.js)
+            console.log('initializeData called');
+            
+            // Check if FAMILY_DATA exists (from the external file)
             if (typeof FAMILY_DATA !== 'undefined' && FAMILY_DATA.length > 0) {
+                console.log('FAMILY_DATA found with', FAMILY_DATA.length, 'members');
                 db = FAMILY_DATA;
                 localStorage.setItem('familyDB', JSON.stringify(db));
                 document.getElementById('dataStatus').innerHTML = `✅ ${db.length} members`;
@@ -289,10 +287,12 @@
             // Fallback to localStorage if no external data
             const saved = localStorage.getItem('familyDB');
             if (saved) {
+                console.log('Loading from localStorage');
                 db = JSON.parse(saved);
                 document.getElementById('dataStatus').innerHTML = `✅ ${db.length} members`;
                 document.getElementById('dataStatus').style.color = '#2e7d32';
             } else {
+                console.log('No data found, auto-loading from file');
                 autoLoadData();
             }
         }
@@ -352,8 +352,11 @@
             tryNextPath();
         }
 
-        // Initialize data when page loads
-        initializeData();
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, initializing...');
+            initializeData();
+        });
     </script>
 </body>
 </html>
