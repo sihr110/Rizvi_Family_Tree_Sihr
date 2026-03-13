@@ -6,6 +6,8 @@
     <title>Rizvi Family · Mobile Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <!-- CHANGED: Using 13-family-data.js for auto-loading -->
+    <script src="13-family-data.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -34,51 +36,38 @@
             overflow: hidden;
         }
 
+        /* CHANGED: Header with centered title */
         .app-header {
             background: linear-gradient(135deg, var(--dark-blue) 0%, #1e3d3d 100%);
             color: var(--gold);
             padding: 8px 12px;
             border-bottom: 3px solid var(--gold);
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
             min-height: 60px;
         }
 
         .header-title {
             font-family: 'Playfair Display', serif;
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 900;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 8px;
             white-space: nowrap;
         }
 
         .header-icon {
             background: var(--gold);
             color: var(--dark-blue);
-            width: 24px;
-            height: 24px;
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 12px;
-        }
-
-        .header-status {
-            background: var(--gold);
-            color: var(--dark-blue);
-            padding: 6px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
-            white-space: nowrap;
-            max-width: 220px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            cursor: pointer;
+            font-size: 14px;
         }
 
         .main-content {
@@ -130,6 +119,13 @@
             font-size: 11px;
         }
 
+        .data-status {
+            margin-top: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #2e7d32;
+        }
+
         .exit-btn-container {
             background: var(--maroon);
             color: white;
@@ -169,11 +165,7 @@
             border-top: 2px solid var(--gold);
             line-height: 1.2;
         }
-
-        .hidden { display: none; }
     </style>
-
-    <script src="family-data.js"></script>
 </head>
 
 <body>
@@ -181,9 +173,8 @@
         <div class="app-header">
             <div class="header-title">
                 <span class="header-icon">🌿</span>
-                <span>Rizvi Family</span>
+                <span>Rizvi Family - Dashboard</span>
             </div>
-            <div class="header-status" id="headerStatus" onclick="loadDataWithPassword()">📂 Load Data - Upload Excel file - ⏳</div>
         </div>
 
         <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" style="display:none;">
@@ -200,6 +191,14 @@
                     <div class="card-icon">👥</div>
                     <div class="card-title">Root Relative</div>
                     <div class="card-desc">Two member search</div>
+                </div>
+                
+                <!-- MOVED: Load Data box above Hard Reset -->
+                <div class="dashboard-card" onclick="loadDataWithPassword()">
+                    <div class="card-icon">📂</div>
+                    <div class="card-title">Load Data</div>
+                    <div class="card-desc">Upload Excel file</div>
+                    <div class="data-status" id="dataStatus">⏳ Loading...</div>
                 </div>
                 
                 <div class="exit-btn-container hard-reset" onclick="hardReset()">
@@ -232,20 +231,20 @@
             if (confirmation) {
                 localStorage.removeItem('familyDB');
                 db = [];
-                updateStatusDisplay();
+                updateDataStatus();
                 alert("✅ All data has been cleared from browser storage.");
+                // Try to auto-load from 13-family-data.js
                 if (typeof FAMILY_DATA !== 'undefined' && FAMILY_DATA.length > 0) {
                     db = FAMILY_DATA;
                     localStorage.setItem('familyDB', JSON.stringify(db));
-                    updateStatusDisplay();
+                    updateDataStatus();
                 }
             }
         }
 
-        function updateStatusDisplay() {
+        function updateDataStatus() {
             const count = db.length;
-            const statusText = `📂 Load Data - Upload Excel file - ✅ ${count} members`;
-            document.getElementById('headerStatus').innerHTML = statusText;
+            document.getElementById('dataStatus').innerHTML = `✅ ${count} members`;
         }
 
         function loadDataWithPassword() {
@@ -276,7 +275,7 @@
                     })).filter(p => p.name);
 
                     localStorage.setItem('familyDB', JSON.stringify(db));
-                    updateStatusDisplay();
+                    updateDataStatus();
                 } catch (err) {
                     alert('❌ Error: ' + err.message);
                 }
@@ -311,22 +310,25 @@
         }
 
         function initializeData() {
+            // Auto-load from 13-family-data.js
             if (typeof FAMILY_DATA !== 'undefined' && FAMILY_DATA.length > 0) {
                 db = FAMILY_DATA;
                 localStorage.setItem('familyDB', JSON.stringify(db));
-                updateStatusDisplay();
+                updateDataStatus();
                 return;
             }
             
+            // Fallback to localStorage
             const saved = localStorage.getItem('familyDB');
             if (saved) {
                 db = JSON.parse(saved);
-                updateStatusDisplay();
+                updateDataStatus();
             } else {
-                document.getElementById('headerStatus').innerHTML = '📂 Load Data - Upload Excel file - ⏳ Tap to load';
+                document.getElementById('dataStatus').innerHTML = '⏳ Tap to load';
             }
         }
 
+        // Initialize on page load
         initializeData();
     </script>
 </body>
