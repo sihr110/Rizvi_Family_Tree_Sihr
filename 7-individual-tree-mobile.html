@@ -1224,14 +1224,14 @@ async function exportIndividualPDF(memberName) {
         
         function closeShortcutsHelp() { document.getElementById('shortcutsHelp').classList.remove('show'); }
         
-        function showDashboard() { window.location.href = '1-dashboard-pc.html'; }
+        function showDashboard() { window.location.href = '6-dashboard-pc.html'; }
         
         // NEW function for Table View button
         window.showTableView = function() {
             if (currentIndividual) {
-                window.location.href = '3-individual-table-pc.html?member=' + encodeURIComponent(currentIndividual.name);
+                window.location.href = '8-individual-table-pc.html?member=' + encodeURIComponent(currentIndividual.name);
             } else {
-                window.location.href = '3-individual-table-pc.html';
+                window.location.href = '8-individual-table-pc.html';
             }
         };
         
