@@ -6,7 +6,6 @@
     <title>Rizvi Family · Mobile Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="13-family-data.js"></script>  <!-- Moved here, before any other scripts -->
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -20,58 +19,65 @@
         body {
             font-family: 'Inter', sans-serif;
             background: #1a1a1a;
-            min-height: 100vh;
+            height: 100vh;
             padding: 5px;
+            overflow: hidden;
         }
 
         .app-container {
             background: white;
-            min-height: calc(100vh - 10px);
+            height: calc(100vh - 10px);
             border-radius: 16px;
             border: 2px solid var(--gold);
             display: flex;
             flex-direction: column;
+            overflow: hidden;
         }
 
         .app-header {
             background: linear-gradient(135deg, var(--dark-blue) 0%, #1e3d3d 100%);
             color: var(--gold);
-            padding: 12px 15px;
+            padding: 8px 12px;
             border-bottom: 3px solid var(--gold);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            min-height: 60px;
         }
 
         .header-title {
             font-family: 'Playfair Display', serif;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 900;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
+            white-space: nowrap;
         }
 
         .header-icon {
             background: var(--gold);
             color: var(--dark-blue);
-            width: 28px;
-            height: 28px;
+            width: 24px;
+            height: 24px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
+            font-size: 12px;
         }
 
-        .logout-btn {
-            padding: 6px 12px;
-            background: var(--maroon);
-            color: white;
-            border: none;
-            border-radius: 4px;
+        .header-status {
+            background: var(--gold);
+            color: var(--dark-blue);
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 11px;
             font-weight: 600;
-            font-size: 12px;
+            white-space: nowrap;
+            max-width: 220px;
+            overflow: hidden;
+            text-overflow: ellipsis;
             cursor: pointer;
         }
 
@@ -81,22 +87,22 @@
             align-items: center;
             justify-content: center;
             background: #fffcf8;
-            padding: 15px;
+            padding: 10px;
         }
 
         .dashboard-grid {
             width: 100%;
-            max-width: 400px;
+            max-width: 350px;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 12px;
         }
 
         .dashboard-card {
             background: white;
             border: 2px solid var(--gold);
             border-radius: 16px;
-            padding: 20px 15px;
+            padding: 16px 12px;
             text-align: center;
             cursor: pointer;
             transition: all 0.2s;
@@ -108,56 +114,68 @@
         }
 
         .card-icon {
-            font-size: 36px;
-            margin-bottom: 8px;
+            font-size: 32px;
+            margin-bottom: 4px;
         }
 
         .card-title {
             font-size: 16px;
             font-weight: 700;
             color: var(--dark-blue);
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
 
         .card-desc {
             color: #666;
-            font-size: 12px;
-        }
-
-        .data-status {
-            margin-top: 8px;
-            color: var(--maroon);
             font-size: 11px;
-            font-weight: 600;
         }
 
-        .exit-btn {
+        .exit-btn-container {
             background: var(--maroon);
             color: white;
-            padding: 15px;
+            padding: 14px 12px;
             border-radius: 8px;
             text-align: center;
             font-weight: 600;
             cursor: pointer;
-            margin-top: 5px;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
+            border: 2px solid var(--maroon);
+            font-size: 14px;
+        }
+
+        .exit-btn-container.hard-reset {
+            background: #4169E1;
+            border-color: #4169E1;
+        }
+
+        .exit-btn-container:hover {
+            opacity: 0.9;
+        }
+
+        .exit-btn-container span:last-child {
+            font-size: 11px;
+            opacity: 0.8;
         }
 
         .app-footer {
             background: var(--dark-blue);
             color: var(--gold);
             text-align: center;
-            padding: 10px;
-            font-size: 10px;
+            padding: 8px;
+            font-size: 9px;
             border-top: 2px solid var(--gold);
+            line-height: 1.2;
         }
 
         .hidden { display: none; }
     </style>
+
+    <script src="family-data.js"></script>
 </head>
+
 <body>
     <div class="app-container">
         <div class="app-header">
@@ -165,31 +183,31 @@
                 <span class="header-icon">🌿</span>
                 <span>Rizvi Family</span>
             </div>
-            <button class="logout-btn" onclick="logout()">Exit</button>
+            <div class="header-status" id="headerStatus" onclick="loadDataWithPassword()">📂 Load Data - Upload Excel file - ⏳</div>
         </div>
 
         <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" style="display:none;">
 
         <div class="main-content">
             <div class="dashboard-grid">
-                <div class="dashboard-card" onclick="loadDataWithPassword()">
-                    <div class="card-icon">📂</div>
-                    <div class="card-title">Load Data</div>
-                    <div class="card-desc">Upload Excel file</div>
-                    <div class="data-status" id="dataStatus">🔍 Searching...</div>
-                </div>
                 <div class="dashboard-card" onclick="goToIndividual()">
                     <div class="card-icon">👤</div>
                     <div class="card-title">Individual</div>
                     <div class="card-desc">Single member search</div>
                 </div>
+                
                 <div class="dashboard-card" onclick="goToRoot()">
                     <div class="card-icon">👥</div>
                     <div class="card-title">Root Relative</div>
                     <div class="card-desc">Two member search</div>
                 </div>
-                <div class="exit-btn" onclick="logout()">
-                    <span>🚪</span> Lock Screen
+                
+                <div class="exit-btn-container hard-reset" onclick="hardReset()">
+                    <span>⚠️</span> Hard Reset <span>- (Delete all data)</span>
+                </div>
+                
+                <div class="exit-btn-container" onclick="logout()">
+                    <span>🚪</span> Exit <span>- (Back to login)</span>
                 </div>
             </div>
         </div>
@@ -206,6 +224,28 @@
             localStorage.removeItem('familyDB');
             db = [];
             window.location.href = 'index.html';
+        }
+
+        function hardReset() {
+            const confirmation = confirm("🚨 WARNING: This will permanently delete ALL family data from this browser. Are you sure?");
+            
+            if (confirmation) {
+                localStorage.removeItem('familyDB');
+                db = [];
+                updateStatusDisplay();
+                alert("✅ All data has been cleared from browser storage.");
+                if (typeof FAMILY_DATA !== 'undefined' && FAMILY_DATA.length > 0) {
+                    db = FAMILY_DATA;
+                    localStorage.setItem('familyDB', JSON.stringify(db));
+                    updateStatusDisplay();
+                }
+            }
+        }
+
+        function updateStatusDisplay() {
+            const count = db.length;
+            const statusText = `📂 Load Data - Upload Excel file - ✅ ${count} members`;
+            document.getElementById('headerStatus').innerHTML = statusText;
         }
 
         function loadDataWithPassword() {
@@ -236,8 +276,7 @@
                     })).filter(p => p.name);
 
                     localStorage.setItem('familyDB', JSON.stringify(db));
-                    document.getElementById('dataStatus').innerHTML = `✅ ${db.length} members`;
-                    document.getElementById('dataStatus').style.color = '#2e7d32';
+                    updateStatusDisplay();
                 } catch (err) {
                     alert('❌ Error: ' + err.message);
                 }
@@ -272,91 +311,23 @@
         }
 
         function initializeData() {
-            console.log('initializeData called');
-            
-            // Check if FAMILY_DATA exists (from the external file)
             if (typeof FAMILY_DATA !== 'undefined' && FAMILY_DATA.length > 0) {
-                console.log('FAMILY_DATA found with', FAMILY_DATA.length, 'members');
                 db = FAMILY_DATA;
                 localStorage.setItem('familyDB', JSON.stringify(db));
-                document.getElementById('dataStatus').innerHTML = `✅ ${db.length} members`;
-                document.getElementById('dataStatus').style.color = '#2e7d32';
+                updateStatusDisplay();
                 return;
             }
             
-            // Fallback to localStorage if no external data
             const saved = localStorage.getItem('familyDB');
             if (saved) {
-                console.log('Loading from localStorage');
                 db = JSON.parse(saved);
-                document.getElementById('dataStatus').innerHTML = `✅ ${db.length} members`;
-                document.getElementById('dataStatus').style.color = '#2e7d32';
+                updateStatusDisplay();
             } else {
-                console.log('No data found, auto-loading from file');
-                autoLoadData();
+                document.getElementById('headerStatus').innerHTML = '📂 Load Data - Upload Excel file - ⏳ Tap to load';
             }
         }
 
-        function autoLoadData() {
-            const possiblePaths = [
-                'data.xlsx',
-                './data.xlsx',
-                'Rizvi Family Tree.xlsx',
-                './Rizvi Family Tree.xlsx'
-            ];
-            
-            let attempted = 0;
-            let loadingIndicator = document.getElementById('dataStatus');
-            
-            function tryNextPath() {
-                if (attempted >= possiblePaths.length) {
-                    loadingIndicator.innerHTML = '⚠️ Tap to load manually';
-                    loadingIndicator.style.color = '#f59e0b';
-                    return;
-                }
-                
-                const path = possiblePaths[attempted];
-                attempted++;
-                
-                fetch(path)
-                    .then(response => {
-                        if (!response.ok) throw new Error('Not found');
-                        return response.arrayBuffer();
-                    })
-                    .then(data => {
-                        try {
-                            const wb = XLSX.read(new Uint8Array(data), { type: 'array' });
-                            const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
-                            
-                            db = rows.map(r => ({
-                                name: String(r.Name || r.name || '').trim(),
-                                father: String(r.Father || r.father || '').trim(),
-                                gen: String(r.Gen || r.gen || '').trim(),
-                                gender: String(r.Gender || r.gender || 'M').trim().toUpperCase()
-                            })).filter(p => p.name);
-
-                            if (db.length > 0) {
-                                localStorage.setItem('familyDB', JSON.stringify(db));
-                                loadingIndicator.innerHTML = `✅ ${db.length} members`;
-                                loadingIndicator.style.color = '#2e7d32';
-                            } else {
-                                tryNextPath();
-                            }
-                        } catch (err) {
-                            tryNextPath();
-                        }
-                    })
-                    .catch(() => tryNextPath());
-            }
-            
-            tryNextPath();
-        }
-
-        // Initialize when page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOM loaded, initializing...');
-            initializeData();
-        });
+        initializeData();
     </script>
 </body>
 </html>
