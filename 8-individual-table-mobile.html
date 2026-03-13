@@ -300,7 +300,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            zoom: 0.5; /* Default zoom for mobile */
+            zoom: 0.5;
         }
 
         .welcome-container {
@@ -660,21 +660,25 @@
         let childrenCollapsed = true;
         let ancestorsCollapsed = true;
 
-        // Load data from family-data.js or localStorage
-        if (typeof FAMILY_DATA !== 'undefined' && FAMILY_DATA.length > 0) {
-            db = FAMILY_DATA;
-        } else {
-            const saved = localStorage.getItem('familyDB');
-            if (saved) db = JSON.parse(saved);
-        }
-
-        // Helper function to display names without numeric suffixes
+        // ADDED: displayName function to hide numeric suffixes
         function displayName(str) {
             return str ? str.replace(/\s*-\s*\d+$/, '').trim() : '';
         }
 
+        // Load data from family-data.js or localStorage
+        if (typeof FAMILY_DATA !== 'undefined' && FAMILY_DATA.length > 0) {
+            db = FAMILY_DATA;
+            const savedInfo = localStorage.getItem('fileInfo');
+            if (savedInfo) fileInfo = JSON.parse(savedInfo);
+        } else {
+            const saved = localStorage.getItem('familyDB');
+            if (saved) db = JSON.parse(saved);
+            
+            const savedInfo = localStorage.getItem('fileInfo');
+            if (savedInfo) fileInfo = JSON.parse(savedInfo);
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
-            loadData();
             setupKeyboardShortcuts();
             setupEventListeners();
             
@@ -689,14 +693,6 @@
                 resetIndividual();
             }
         });
-
-        function loadData() {
-            const saved = localStorage.getItem('familyDB');
-            if (saved) db = JSON.parse(saved);
-            
-            const savedInfo = localStorage.getItem('fileInfo');
-            if (savedInfo) fileInfo = JSON.parse(savedInfo);
-        }
 
         function formatCurrentTime() {
             const d = new Date();
@@ -763,6 +759,7 @@
             results.forEach(member => {
                 const div = document.createElement('div');
                 div.className = 'result-item';
+                // MODIFIED: Using displayName for member name and father name
                 div.innerHTML = `<div><span class="main-name">${displayName(member.name)}</span> <span class="gen">${member.gen}</span>
                     <div class="father-name">${member.gender?.startsWith('F') ? 'D/o' : 'S/o'} ${displayName(member.father) || '—'}</div></div>`;
                 div.onclick = () => { selectMember(member); dropdown.style.display = 'none'; this.value = member.name; };
