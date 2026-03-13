@@ -661,6 +661,43 @@
         .context-menu-item:hover {
             background: #faebcd;
         }
+
+@media screen and (max-width: 480px) {
+    .app-header {
+        padding: 8px 10px;
+    }
+    
+    .header-title {
+        font-size: 16px;
+        position: static;
+        transform: none;
+        margin-left: 10px;
+    }
+    
+    .header-actions {
+        gap: 4px;
+    }
+    
+    .header-btn {
+        padding: 6px 8px;
+        font-size: 11px;
+        white-space: nowrap;
+    }
+    
+    .left-toggle-btn {
+        width: 34px;
+        height: 34px;
+        font-size: 18px;
+    }
+}
+
+@media screen and (max-width: 360px) {
+    .header-btn {
+        padding: 4px 5px;
+        font-size: 10px;
+    }
+}
+
     </style>
 
 </head>
@@ -1245,7 +1282,7 @@ async function exportIndividualPDF(memberName) {
         
         function closeShortcutsHelp() { document.getElementById('shortcutsHelp').classList.remove('show'); }
         
-        function showDashboard() { window.location.href = '6-dashboard-pc.html'; }
+        function showDashboard() { window.location.href = '1-dashboard-pc.html'; }
         
         // NEW function for Table View button
         window.showTableView = function() {
@@ -1287,6 +1324,4 @@ async function exportIndividualPDF(memberName) {
         window.exportIndividualPDF = exportIndividualPDF;
     </script>
 </body>
-
 </html>
-
