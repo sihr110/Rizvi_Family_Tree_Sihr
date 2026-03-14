@@ -987,9 +987,9 @@
 
         function switchToTreeView() {
             if (currentIndividual) {
-                window.location.href = '7-individual-tree-pc.html?member=' + encodeURIComponent(currentIndividual.name);
+                window.location.href = '7-individual-tree-mobile.html?member=' + encodeURIComponent(currentIndividual.name);
             } else {
-                window.location.href = '7-individual-tree-pc.html';
+                window.location.href = '7-individual-tree-mobile.html';
             }
         }
 
@@ -1009,7 +1009,7 @@
             }
         }
         function closeShortcutsHelp() { document.getElementById('shortcutsHelp').classList.remove('show'); }
-        function showDashboard() { window.location.href = '6-dashboard-pc.html'; }
+        function showDashboard() { window.location.href = '6-dashboard-mobile.html'; }
         
         function setupEventListeners() {
             document.addEventListener('click', function(e) {
