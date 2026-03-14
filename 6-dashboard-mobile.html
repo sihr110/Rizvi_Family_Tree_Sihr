@@ -329,7 +329,7 @@
                 window.location.href = 'index.html';
             }
 
-            // Navigate to individual tree (2-individual-tree-pc.html)
+            // Navigate to individual tree (7-individual-tree-pc.html)
             function goToIndividualMobile() {
                 // Ensure data is available
                 if (db.length === 0) {
@@ -342,10 +342,10 @@
                     }
                 }
                 // same file name as PC version – we assume mobile uses same html
-                window.location.href = '2-individual-tree-pc.html';
+                window.location.href = '7-individual-tree-pc.html';
             }
 
-            // Navigate to root tree (4-root-tree-pc.html)
+            // Navigate to root tree (9-root-tree-pc.html)
             function goToRootMobile() {
                 if (db.length === 0) {
                     const saved = localStorage.getItem('familyDB');
@@ -356,7 +356,7 @@
                         return;
                     }
                 }
-                window.location.href = '4-root-tree-pc.html';
+                window.location.href = '9-root-tree-pc.html';
             }
 
             // Render the mobile dashboard (no admin card, just individual & root + exit/hard reset)
