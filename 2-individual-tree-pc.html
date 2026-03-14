@@ -16,7 +16,18 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     
     <style>
-       
+  
+/* Gentle pulsing/blinking effect with gold and light green - Header Toggle */
+.left-toggle-btn {
+    animation: gentle-blink 1.5s infinite;
+}
+
+@keyframes gentle-blink {
+    0% { opacity: 1; background: var(--gold); }
+    50% { opacity: 0.7; background: #90EE90; transform: scale(1.1); }
+    100% { opacity: 1; background: var(--gold); }
+}
+     
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         :root {
