@@ -1,1076 +1,470 @@
 <!-- ======================================== -->
-<!-- FILE NAME: 8-individual-table-mobile.html -->
-<!-- BASE: 3-individual-table-pc.html         -->
-<!-- MODIFICATIONS: zoom:0.5, header buttons moved to toggle, removed zoom controls, PDF zoom fix -->
+<!-- FILE NAME: 6-dashboard-mobile.html       -->
+<!-- Dashboard for Mobile                     -->
 <!-- ======================================== -->
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- MOBILE VIEWPORT - initial-scale=0.5 for mobile -->
-    <meta name="viewport" content="width=device-width, initial-scale=0.5, maximum-scale=3.0, user-scalable=yes, viewport-fit=cover">
-    <title>Rizvi family · table view (mobile)</title>
+    <!-- Important: mobile viewport with zoom allowed, but fits any screen -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
+    <title>Rizvi Family · Mobile dashboard</title>
     
+    <!-- Same fonts, minimal, fast -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+    <!-- xlsx for possible future extension, but we keep it because original uses it (even if not strictly needed for mobile, keeping consistency) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- Auto‑load data from 13-family-data.js exactly like PC version -->
+    <script src="13-family-data.js"></script>
     
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
+        /* RESET / GLOBAL */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         :root {
             --maroon: #5a0000;
             --dark-blue: #0f172a;
             --gold: #d4af37;
-            --light-gold: #f1d279;
-            --green: #2e7d32;
-            --dark-green: #1b5e20;
-            --light-pink: #ffe4e9;
             --bronze: #bc8c4f;
-            --table-header-bg: #fdf6e3;
-            --table-border: #e2d5b3;
-            --selected-row-bg: #e8f5e9;
+            --dashboard-green: #1b5e20;
+            /* no admin purple needed, but kept unused */
         }
 
         body {
             font-family: 'Inter', sans-serif;
-            background: #1a1a1a;
-            height: 100vh;
-            overflow: hidden;
+            background: #1a1a1a;   /* same dark outer background */
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             margin: 0;
-            padding: 10px;
-            position: relative;
+            padding: 8px;          /* smaller outer padding for mobile */
         }
 
-        /* ZOOM CONTROLS - REMOVED for mobile version */
-
+        /* main card – fits nearly full screen, gold border */
         .app-container {
-            max-width: 1400px;
-            margin: 0 auto;
+            width: 100%;
+            max-width: 480px;        /* comfortable mobile width, but fluid */
             background: white;
-            height: calc(100vh - 20px);
-            display: flex;
-            flex-direction: column;
-            border-radius: 20px;
+            border-radius: 24px;
             border: 2px solid var(--gold);
             overflow: hidden;
-            box-shadow: 0 0 50px rgba(212, 175, 55, 0.2);
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.25);
+            display: flex;
+            flex-direction: column;
+            margin: 0 auto;
         }
 
+        /* header exactly like PC but slightly compact */
         .app-header {
             background: linear-gradient(135deg, var(--dark-blue) 0%, #1e3d3d 100%);
             color: var(--gold);
-            padding: 10px 20px;
+            padding: 12px 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 3px solid var(--gold);
-            position: relative;
+            border-bottom: 2px solid var(--gold);
         }
 
         .header-title {
             font-family: 'Playfair Display', serif;
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 900;
             display: flex;
             align-items: center;
             gap: 8px;
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
         }
 
         .header-icon {
             background: var(--gold);
             color: var(--dark-blue);
-            width: 32px;
-            height: 32px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 15px;
         }
 
-        /* HEADER ACTIONS REMOVED - buttons moved to toggle menu */
+        .header-actions {
+            display: flex;
+        }
 
-        .left-toggle-btn {
+        .status-badge {
             background: var(--gold);
             color: var(--dark-blue);
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            cursor: pointer;
-            border: 2px solid white;
-            z-index: 2000;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            transition: all 0.3s;
-        }
-
-        .left-toggle-btn:hover {
-            background: var(--light-gold);
-            transform: scale(1.1);
-        }
-
-        .toggle-menu-panel {
-            position: absolute;
-            left: 10px;
-            top: 60px;
-            background: white;
-            border: 3px solid var(--gold);
-            border-radius: 12px;
-            padding: 15px;
-            display: none;
-            flex-direction: column;
-            gap: 10px;
-            z-index: 1999;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            min-width: 220px;
-        }
-
-        .toggle-menu-panel.show {
-            display: flex;
-        }
-
-        .toggle-menu-item {
-            padding: 12px 18px;
-            border-radius: 8px;
+            padding: 5px 12px;
+            border-radius: 30px;
+            font-size: 12px;
             font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            border: 2px solid var(--gold);
-            background: white;
-            color: var(--dark-blue);
             white-space: nowrap;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: all 0.2s;
         }
 
-        .toggle-menu-item:hover {
-            background: #faebcd;
-            transform: translateX(5px);
-        }
-
-        .toggle-menu-item.active {
-            background: #d4edda !important;
-            border-color: var(--dark-green) !important;
-            color: var(--dark-blue);
-        }
-
+        /* main content area: use vertical column for cards (no grid complexity) */
         .main-content {
-            flex: 1;
-            display: flex;
-            overflow: hidden;
             background: #fffcf8;
-        }
-
-        .center-content {
+            padding: 24px 16px;
             flex: 1;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
-            position: relative;
         }
 
-        .search-section {
-            padding: 15px;
-            background: #fffcf8;
-            border-bottom: 2px solid var(--gold);
-        }
-
-        .search-row {
+        /* mobile dashboard – simple stack, no admin card */
+        .mobile-dashboard {
             display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .search-label {
-            font-weight: 700;
-            color: var(--maroon);
-            font-size: 13px;
-            white-space: nowrap;
-        }
-
-        .search-wrapper {
-            position: relative;
-            flex: 1;
-        }
-
-        .search-input {
+            flex-direction: column;
+            gap: 24px;
             width: 100%;
-            padding: 10px 15px;
-            border: 2px solid #cbd5e1;
-            border-radius: 4px;
-            font-size: 14px;
-            outline: none;
         }
 
-        .search-input:focus {
-            border-color: var(--gold);
-        }
-
-        .search-dropdown {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
+        /* two main cards: individual & root relative – exactly like PC style but full width */
+        .dashboard-card {
             background: white;
             border: 2px solid var(--gold);
-            border-radius: 0 0 4px 4px;
-            max-height: 300px;
-            overflow-y: auto;
-            display: none;
-            z-index: 1000;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-
-        .result-item {
-            padding: 12px 15px;
-            cursor: pointer;
-            border-bottom: 1px solid #eee;
-            transition: background 0.2s;
-        }
-
-        .result-item:hover {
-            background: #faebcd;
-        }
-
-        .result-item .main-name {
-            font-weight: 700;
-            color: var(--dark-blue);
-            font-size: 14px;
-        }
-
-        .result-item .gen {
-            color: var(--maroon);
-            font-size: 12px;
-            margin-left: 8px;
-        }
-
-        .result-item .father-name {
-            font-size: 11px;
-            color: #666;
-            margin-top: 2px;
-        }
-
-        .table-container {
-            flex: 1;
-            overflow: auto;
-            padding: 20px;
-            position: relative;
-        }
-
-        .table-root-layout {
-            transform-origin: top left;
-            transition: transform 0.1s;
-            zoom: 0.5;  /* MOBILE ZOOM ADDED */
-            min-width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .welcome-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
-            min-height: 500px;
-        }
-
-        .welcome-box {
-            text-align: center;
-            max-width: 500px;
-            padding: 40px;
-            background: white;
-            border: 3px solid var(--gold);
             border-radius: 20px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
-        }
-
-        .welcome-icon {
-            font-size: 72px;
-            margin-bottom: 20px;
-            color: var(--gold);
-        }
-
-        .welcome-title {
-            font-size: 32px;
-            font-weight: 700;
-            color: var(--dark-blue);
-            margin-bottom: 15px;
-            font-family: 'Playfair Display', serif;
-        }
-
-        .welcome-text {
-            font-size: 16px;
-            color: #666;
-            margin-bottom: 25px;
-            line-height: 1.6;
-        }
-
-        .welcome-shortcuts {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            margin-top: 20px;
-        }
-
-        .shortcut-badge {
+            padding: 30px 20px;
             text-align: center;
-        }
-
-        .shortcut-badge .key {
-            background: #f0f0f0;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-weight: 700;
-            font-size: 18px;
-            color: var(--dark-blue);
-            border: 1px solid #ccc;
-        }
-
-        .shortcut-badge .label {
-            font-size: 12px;
-            color: var(--maroon);
-            margin-top: 5px;
-        }
-
-        /* Selected Member Info Card */
-        .member-info-card {
-            width: 100%;
-            max-width: 800px;
-            margin: 0 auto 20px auto;
-            border: 3px solid var(--gold);
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-        }
-
-        .member-info-row {
+            cursor: pointer;
+            transition: all 0.15s;
             display: flex;
-            border-bottom: 1px solid #eee;
-        }
-
-        .member-info-row:last-child {
-            border-bottom: none;
-        }
-
-        .member-info-label {
-            width: 120px;
-            background: var(--table-header-bg);
-            padding: 12px 15px;
-            font-weight: 700;
-            color: var(--dark-blue);
-            border-right: 2px solid var(--gold);
-        }
-
-        .member-info-value {
-            flex: 1;
-            padding: 12px 15px;
-            background: white;
-            display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 8px;
+            justify-content: center;
+            width: 100%;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.02);
         }
 
-        .toggle-icon {
-            position: absolute;
-            left: 165px; 
+        .dashboard-card:active {
+            transform: scale(0.98);
+            border-color: var(--bronze);
+        }
+
+        .card-icon {
+            font-size: 48px;
+            margin-bottom: 14px;
+        }
+
+        .card-title {
             font-size: 22px;
-            font-weight: bold;
-            background: var(--gold);
+            font-weight: 700;
             color: var(--dark-blue);
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
+            margin-bottom: 8px;
+        }
+
+        .card-desc {
+            color: #666;
+            font-size: 15px;
+        }
+
+        /* Two bottom buttons: EXIT and HARD RESET – same style as PC container but stacked on mobile */
+        .action-row {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-top: 10px;
+        }
+
+        .exit-btn-container {
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            transition: all 0.2s;
-            flex-shrink: 0;
-        }
-
-        .section-heading {
-            display: flex;
-            align-items: center;
-            width: 100%;
-            font-size: 18px;
-            font-weight: 800;
-            color: var(--maroon);
-            margin: 0 0 25px 30%;        
-            padding-bottom: 5px;         
-            border-bottom: 2px solid var(--gold);   
-            font-family: 'Playfair Display', serif;
+            gap: 8px;
+            background: #991b1b;
+            color: white;
+            padding: 14px 16px;
+            border-radius: 14px;
             cursor: pointer;
-            position: relative;
-            max-width: 210px; 
-        }
-
-        .toggle-icon:hover {
-            transform: scale(1.1);
-            background: var(--light-gold);
-        }
-
-        /* Table Styles */
-        .family-table {
+            border: 2px solid #991b1b;
             width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-            border: 2px solid var(--gold);
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        }
-
-        .family-table th {
-            background: var(--table-header-bg);
-            color: var(--dark-blue);
-            font-weight: 700;
-            font-size: 13px;
-            padding: 12px 8px;
-            text-align: left;
-            border-bottom: 2px solid var(--gold);
-            border-right: 1px solid var(--table-border);
-        }
-
-        .family-table th:last-child {
-            border-right: none;
-        }
-
-        .family-table td {
-            padding: 10px 8px;
-            font-size: 12px;
-            border-bottom: 1px solid #eee;
-            border-right: 1px solid #f0f0f0;
-        }
-
-        .family-table td:last-child {
-            border-right: none;
-        }
-
-        .family-table tbody tr:hover {
-            background: #faebcd;
-            cursor: pointer;
-        }
-
-        .family-table tbody tr.selected-row {
-            background: var(--selected-row-bg) !important;
-            border-left: 4px solid var(--green);
-        }
-
-        .vital-status {
+            font-size: 16px;
             font-weight: 600;
+            transition: background 0.15s;
         }
 
-        .vital-status.yes {
-            color: var(--green);
+        .exit-btn-container:active {
+            background: #b91c1c;
         }
 
-        .vital-status.no {
-            color: var(--maroon);
+        .exit-btn-container.hardreset {
+            background: #1e4b8b;    /* different blue for hard reset, like PC used #4169E1 but softer */
+            border-color: #1e4b8b;
         }
 
+        .exit-btn-container.hardreset:active {
+            background: #2569b3;
+        }
+
+        .exit-btn-icon {
+            font-size: 20px;
+        }
+
+        .exit-btn-subtext {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        /* footer exactly same */
         .app-footer {
             background: var(--dark-blue);
             color: var(--gold);
             text-align: center;
-            padding: 8px;
+            padding: 10px;
             font-size: 11px;
             border-top: 2px solid var(--gold);
+            line-height: 1.3;
         }
 
-        .shortcuts-help {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            border: 3px solid var(--gold);
-            border-radius: 12px;
-            padding: 25px;
-            z-index: 4000;
+        /* hidden file input (kept for load consistency but not directly used, because mobile user has no admin. However we may still need it if some future logic uses load, but we keep it hidden) */
+        #fileInput {
             display: none;
-            min-width: 400px;
-            max-width: 90vw;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        }
-
-        .shortcuts-help.show {
-            display: block;
-        }
-
-        .shortcuts-help h3 {
-            color: var(--maroon);
-            border-bottom: 2px solid var(--gold);
-            padding-bottom: 10px;
-            margin-bottom: 15px;
-        }
-
-        .shortcut-grid {
-            display: grid;
-            grid-template-columns: auto 1fr;
-            gap: 10px 20px;
-        }
-
-        .shortcut-key {
-            font-family: monospace;
-            font-weight: 700;
-            color: var(--dark-blue);
-            background: #f0f0f0;
-            padding: 4px 8px;
-            border-radius: 4px;
-        }
-
-        .context-menu {
-            position: fixed;
-            background: white;
-            border: 2px solid var(--gold);
-            border-radius: 8px;
-            padding: 5px;
-            z-index: 3000;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-            min-width: 150px;
-        }
-
-        .context-menu-item {
-            padding: 10px 15px;
-            cursor: pointer;
-            border-radius: 4px;
-            font-size: 13px;
-        }
-
-        .context-menu-item:hover {
-            background: #faebcd;
         }
     </style>
 </head>
 <body>
-    <!-- ZOOM CONTROLS - REMOVED for mobile version -->
-
-    <div class="app-container">
+    <div class="app-container" id="appContainer">
+        <!-- header same structure, dynamic -->
         <div class="app-header">
-            <div class="left-toggle-btn" onclick="toggleLeftMenu()">☰</div>
             <div class="header-title">
                 <span class="header-icon">🌿</span>
-                <span>Rizvi family · table view</span>
+                <span id="headerTitle">Rizvi Family (Mobile)</span>
             </div>
-            <!-- HEADER ACTIONS REMOVED - buttons moved to toggle menu below -->
-        </div>
-
-        <div class="toggle-menu-panel" id="toggleMenuPanel">
-            <div class="toggle-menu-item active" id="toggleSiblings" onclick="handleToggleMenuClick('siblings')">👥 Siblings</div>
-            <div class="toggle-menu-item active" id="toggleDescendants" onclick="handleToggleMenuClick('descendants')">👶 Descendants</div>
-            <div class="toggle-menu-item active" id="toggleAncestors" onclick="handleToggleMenuClick('ancestors')">🌳 Ancestors</div>
-            <div style="border-top:1px solid var(--gold); margin:5px 0;"></div>
-            <div class="toggle-menu-item" onclick="showShortcutsHelp()">⌨️ Shortcuts</div>
-            <div class="toggle-menu-item" onclick="switchToTreeView()">🌳 Tree View</div>
-            <div class="toggle-menu-item" onclick="showDashboard()">🏠 Dashboard</div>
-            <div style="border-top:1px solid var(--gold); margin:5px 0;"></div>
-            <div class="toggle-menu-item" onclick="resetIndividual()">🔄 Reset</div>
-            <div class="toggle-menu-item" onclick="exportTablePDF()">📑 Save PDF</div>
-        </div>
-
-        <div class="main-content">
-            <div class="center-content">
-                <div class="search-section">
-                    <div class="search-row">
-                        <span class="search-label">SEARCH MEMBER</span>
-                        <div class="search-wrapper">
-                            <input type="text" id="searchInput" class="search-input" placeholder="Type name..." autocomplete="off">
-                            <div id="searchDropdown" class="search-dropdown"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="table-container" id="tableContainer">
-                    <div class="table-root-layout" id="tableRoot"></div>
-                </div>
+            <div class="header-actions">
+                <span class="status-badge" id="headerStatus">📊 members: 0</span>
             </div>
         </div>
 
-        <div class="app-footer" id="appFooter">
+        <!-- Hidden file input (copied from PC version) -->
+        <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" style="display:none;">
+
+        <!-- Main content area will be filled by JS -->
+        <div class="main-content" id="mainContent">
+            <!-- JS will render mobile dashboard -->
+        </div>
+
+        <!-- footer exactly as original -->
+        <div class="app-footer">
             Developer: Imran Haider S/o Syed Risalat Hussain Rizvi | 0332-787-6010
         </div>
     </div>
 
-    <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" style="display:none;">
-
-    <div class="shortcuts-help" id="shortcutsHelp">
-        <h3>⌨️ Keyboard Shortcuts</h3>
-        <div class="shortcut-grid">
-            <span class="shortcut-key">Ctrl+F</span><span>Focus search</span>
-            <span class="shortcut-key">1</span><span>Toggle siblings</span>
-            <span class="shortcut-key">2</span><span>Toggle descendants</span>
-            <span class="shortcut-key">3</span><span>Toggle ancestors</span>
-            <span class="shortcut-key">Ctrl+P</span><span>Export PDF</span>
-            <span class="shortcut-key">ESC</span><span>Close menus</span>
-            <span class="shortcut-key">Ctrl++</span><span>Zoom in</span>
-            <span class="shortcut-key">Ctrl+-</span><span>Zoom out</span>
-            <span class="shortcut-key">Ctrl+0</span><span>Reset zoom</span>
-            <span class="shortcut-key">↑/↓</span><span>Navigate table</span>
-            <span class="shortcut-key">Enter</span><span>Select member</span>
-            <span class="shortcut-key">?</span><span>Show this help</span>
-        </div>
-        <div style="text-align:center; margin-top:15px;">
-            <button class="header-btn" onclick="closeShortcutsHelp()">Close</button>
-        </div>
-    </div>
-
     <script>
-        let db = [];
-        let fileInfo = null;
-        let currentIndividual = null;
-        let showSiblings = true;
-        let showDescendants = true;
-        let showAncestors = true;
-        let zoomLevel = 1;
-        let siblingsCollapsed = true;
-        let childrenCollapsed = true;
-        let ancestorsCollapsed = true;
+        (function() {
+            // ---------- GLOBAL VARIABLES (same as PC version but no admin state needed) ----------
+            let db = [];
+            // currentView will always be 'dashboard' – we removed admin entirely, so no toggling.
+            // But we keep isAdminAuthenticated = false and never used.
 
-        // ADDED: displayName function to hide numeric suffixes
-        function displayName(str) {
-            return str ? str.replace(/\s*-\s*\d+$/, '').trim() : '';
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            loadData();
-            setupKeyboardShortcuts();
-            setupEventListeners();
-            
-            const urlParams = new URLSearchParams(window.location.search);
-            const memberName = urlParams.get('member');
-            if (memberName) {
-                setTimeout(() => {
-                    const member = db.find(m => m.name === decodeURIComponent(memberName));
-                    if (member) selectMember(member);
-                }, 500);
-            } else {
-                resetIndividual();
-            }
-        });
-
-        function loadData() {
-            const saved = localStorage.getItem('familyDB');
-            if (saved) db = JSON.parse(saved);
-            
-            const savedInfo = localStorage.getItem('fileInfo');
-            if (savedInfo) fileInfo = JSON.parse(savedInfo);
-        }
-
-        function formatCurrentTime() {
-            const d = new Date();
-            const day = d.getDate();
-            const month = d.getMonth() + 1;
-            const year = d.getFullYear();
-            const hours = d.getHours();
-            const minutes = String(d.getMinutes()).padStart(2, '0');
-            const ampm = hours >= 12 ? 'pm' : 'am';
-            const displayHours = hours % 12 || 12;
-            return `${day}/${month}/${year} - ${displayHours}:${minutes}${ampm}`;
-        }
-
-        window.toggleLeftMenu = () => document.getElementById('toggleMenuPanel').classList.toggle('show');
-
-        window.handleToggleMenuClick = function(filter) {
-            if (!currentIndividual) return;
-            if (filter === 'siblings') {
-                showSiblings = !showSiblings;
-                document.getElementById('toggleSiblings').classList.toggle('active', showSiblings);
-            } else if (filter === 'descendants') {
-                showDescendants = !showDescendants;
-                document.getElementById('toggleDescendants').classList.toggle('active', showDescendants);
-            } else if (filter === 'ancestors') {
-                showAncestors = !showAncestors;
-                document.getElementById('toggleAncestors').classList.toggle('active', showAncestors);
-            }
-            renderTable();
-            document.getElementById('toggleMenuPanel').classList.remove('show');
-        };
-
-        function resetIndividual() {
-            document.getElementById('searchInput').value = '';
-            currentIndividual = null;
-            const url = new URL(window.location);
-            url.searchParams.delete('member');
-            window.history.pushState({}, '', url);
-            document.getElementById('tableRoot').innerHTML = `
-                <div class="welcome-container">
-                    <div class="welcome-box">
-                        <div class="welcome-icon">🌿</div>
-                        <div class="welcome-title">Rizvi Family Table</div>
-                        <div class="welcome-text">
-                            Select a family member from the search box above<br>
-                            to view their family connections in table format.
-                        </div>
-                        <div class="welcome-shortcuts">
-                            <div class="shortcut-badge"><div class="key">1</div><div class="label">Siblings</div></div>
-                            <div class="shortcut-badge"><div class="key">2</div><div class="label">Descendants</div></div>
-                            <div class="shortcut-badge"><div class="key">3</div><div class="label">Ancestors</div></div>
-                        </div>
-                    </div>
-                </div>
-            `;
-            closeAllMenus();
-        }
-
-        document.getElementById('searchInput')?.addEventListener('keyup', function(e) {
-            const query = this.value;
-            const dropdown = document.getElementById('searchDropdown');
-            if (query.length < 2) { dropdown.style.display = 'none'; return; }
-            const results = db.filter(m => m.name.toLowerCase().includes(query.toLowerCase())).slice(0, 8);
-            dropdown.innerHTML = '';
-            results.forEach(member => {
-                const div = document.createElement('div');
-                div.className = 'result-item';
-                // MODIFIED: Using displayName for member name and father name
-                div.innerHTML = `<div><span class="main-name">${displayName(member.name)}</span> <span class="gen">${member.gen}</span>
-                    <div class="father-name">${member.gender?.startsWith('F') ? 'D/o' : 'S/o'} ${displayName(member.father) || '—'}</div></div>`;
-                div.onclick = () => { selectMember(member); dropdown.style.display = 'none'; this.value = displayName(member.name); };
-                dropdown.appendChild(div);
-            });
-            dropdown.style.display = 'block';
-        });
-
-        function selectMember(member) {
-            currentIndividual = member;
-            document.getElementById('searchInput').value = displayName(member.name);
-            const url = new URL(window.location);
-            url.searchParams.set('member', encodeURIComponent(member.name));
-            window.history.pushState({}, '', url);
-            renderTable();
-        }
-
-        window.toggleSection = function(section) {
-            if (section === 'siblings') siblingsCollapsed = !siblingsCollapsed;
-            else if (section === 'children') childrenCollapsed = !childrenCollapsed;
-            else if (section === 'ancestors') ancestorsCollapsed = !ancestorsCollapsed;
-            renderTable();
-        };
-
-        function findParent(p) {
-            return p?.father ? db.find(x => x.name === p.father) : null;
-        }
-
-        function getMother(person) {
-            if (!person || !person.father) return '—';
-            const father = db.find(f => f.name === person.father);
-            return father?.spouse || '—';
-        }
-
-        function getAncestors(p) {
-            let arr = [], cur = p;
-            while (cur?.father) {
-                const father = db.find(x => x.name === cur.father);
-                if (!father) break;
-                arr.push(father);
-                cur = father;
-            }
-            return arr;
-        }
-
-        function renderMemberInfoCard(member) {
-            const statusIcon = (member.alive || '').toLowerCase() === 'yes' ? '🌹' : '🥀';
-            const mother = getMother(member);
-            
-            return `
-                <table class="family-table" style="margin-bottom: 30px;">
-                    <thead>
-                        <tr>
-                            <th>NAME</th>
-                            <th>VITAL STATUS</th>
-                            <th>GEN</th>
-                            <th>FATHER</th>
-                            <th>MOTHER</th>
-                            <th>SPOUSE</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="selected-row">
-                            <!-- MODIFIED: Using displayName for member name -->
-                            <td><strong>${displayName(member.name)}</strong></td>
-                            <td class="vital-status ${(member.alive || '').toLowerCase() === 'yes' ? 'yes' : 'no'}">${statusIcon} ${(member.alive || '').toLowerCase() === 'yes' ? 'Yes' : 'No'}</td>
-                            <td>${member.gen || '—'}</td>
-                            <!-- MODIFIED: Using displayName for father name -->
-                            <td>${displayName(member.father) || '—'}</td>
-                            <td>${mother}</td>
-                            <td>${member.spouse || '—'}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            `;
-        }
-
-        function renderTableForMembers(members, title, includeSelected = false) {
-            if (!members || members.length === 0) return '';
-            
-            let html = `<table class="family-table">`;
-            html += `<thead><tr>
-                <th>NAME</th><th>VITAL STATUS</th><th>GEN</th><th>FATHER</th><th>MOTHER</th><th>SPOUSE</th>
-            </tr></thead><tbody>`;
-            
-            members.forEach(m => {
-                // Skip if this is the selected member and we already included them
-                if (includeSelected && currentIndividual?.name === m.name) return;
-                
-                const statusIcon = (m.alive || '').toLowerCase() === 'yes' ? '🌹' : '🥀';
-                const mother = getMother(m);
-                const isSelected = currentIndividual?.name === m.name ? 'selected-row' : '';
-                
-                html += `<tr class="${isSelected}" onclick="selectMember(db.find(x => x.name === '${m.name.replace(/'/g, "\\'")}'))">`;
-                // MODIFIED: Using displayName for member name
-                html += `<td><strong>${displayName(m.name)}</strong></td>`;
-                html += `<td class="vital-status ${(m.alive || '').toLowerCase() === 'yes' ? 'yes' : 'no'}">${statusIcon} ${(m.alive || '').toLowerCase() === 'yes' ? 'Yes' : 'No'}</td>`;
-                html += `<td>${m.gen || '—'}</td>`;
-                // MODIFIED: Using displayName for father name
-                html += `<td>${displayName(m.father) || '—'}</td>`;
-                html += `<td>${mother}</td>`;
-                html += `<td>${m.spouse || '—'}</td>`;
-                html += `</tr>`;
-            });
-            
-            html += `</tbody></table>`;
-            return html;
-        }
-
-        function renderTable() {
-            if (!currentIndividual) return;
-            let html = '<div>';
-
-            // Member info card
-            html += renderMemberInfoCard(currentIndividual);
-
-            // Ancestors section
-            if (showAncestors) {
-                const ancestors = getAncestors(currentIndividual);
-                if (ancestors.length) {
-                    html += `<div class="section-heading" onclick="toggleSection('ancestors')">`;
-                    html += `<span>🌳 ANCESTORS</span>`;
-                    html += `<span class="toggle-icon">${ancestorsCollapsed ? '+' : '-'}</span>`;
-                    html += `</div>`;
-                    if (!ancestorsCollapsed) {
-                        html += renderTableForMembers(ancestors, 'Ancestors', false);
+            // Helper: load data from localStorage or from 13-family-data.js
+            function loadFromStorageOrFallback() {
+                const saved = localStorage.getItem('familyDB');
+                if (saved) {
+                    try {
+                        db = JSON.parse(saved);
+                    } catch (e) {
+                        db = [];
+                    }
+                } else {
+                    // auto-load from global FAMILY_DATA (from 13-family-data.js)
+                    if (typeof FAMILY_DATA !== 'undefined' && Array.isArray(FAMILY_DATA) && FAMILY_DATA.length > 0) {
+                        db = FAMILY_DATA;
+                        // also store to localStorage (like PC does)
+                        localStorage.setItem('familyDB', JSON.stringify(db));
+                        // optional fileInfo
+                        if (typeof FILE_INFO !== 'undefined') {
+                            localStorage.setItem('fileInfo', JSON.stringify(FILE_INFO));
+                        }
+                    } else {
+                        db = [];
                     }
                 }
+                updateHeaderCounter();
             }
 
-            // Siblings section - include selected member at top
-            if (showSiblings) {
-                const father = findParent(currentIndividual);
-                if (father) {
-                    const siblings = db.filter(s => s.father === father.name);
-                    if (siblings.length) {
-                        html += `<div class="section-heading" onclick="toggleSection('siblings')">`;
-                        html += `<span>👥 SIBLINGS</span>`;
-                        html += `<span class="toggle-icon">${siblingsCollapsed ? '+' : '-'}</span>`;
-                        html += `</div>`;
-                        if (!siblingsCollapsed) {
-                            html += renderTableForMembers(siblings, 'Siblings', true);
+            // update the header badge with member count
+            function updateHeaderCounter() {
+                const count = db.length;
+                const statusEl = document.getElementById('headerStatus');
+                if (statusEl) {
+                    statusEl.innerHTML = `📊 members: ${count}`;
+                }
+                // Also optionally set in headerTitle? not needed.
+            }
+
+            // Hard reset (identical to PC version but without admin re-render)
+            function hardResetMobile() {
+                const confirmation = confirm("🚨 WARNING: This will permanently delete ALL family data from this browser. Are you sure?");
+                if (confirmation) {
+                    localStorage.removeItem('familyDB');
+                    localStorage.removeItem('fileInfo');
+                    localStorage.removeItem('tableViewMember');
+                    localStorage.removeItem('tableViewFilters');
+                    db = [];
+                    updateHeaderCounter();
+                    // try to auto-load again from 13-family-data.js (like PC autoLoadFromJS)
+                    if (typeof FAMILY_DATA !== 'undefined' && FAMILY_DATA.length > 0) {
+                        db = FAMILY_DATA;
+                        localStorage.setItem('familyDB', JSON.stringify(db));
+                        if (typeof FILE_INFO !== 'undefined') {
+                            localStorage.setItem('fileInfo', JSON.stringify(FILE_INFO));
                         }
                     }
+                    updateHeaderCounter();
+                    alert("✅ All data cleared and reloaded from built‑in source (if available).");
                 }
             }
 
-            // Descendants section
-            if (showDescendants) {
-                const children = db.filter(c => c.father === currentIndividual.name);
-                if (children.length) {
-                    html += `<div class="section-heading" onclick="toggleSection('children')">`;
-                    html += `<span>👶 CHILDREN</span>`;
-                    html += `<span class="toggle-icon">${childrenCollapsed ? '+' : '-'}</span>`;
-                    html += `</div>`;
-                    if (!childrenCollapsed) {
-                        html += renderTableForMembers(children, 'Children', false);
+            // logout / exit: go back to password screen (index.html)
+            function logoutMobile() {
+                localStorage.removeItem('familyDB');      // optional: consistent with PC version logout?
+                localStorage.removeItem('fileInfo');
+                localStorage.removeItem('tableViewMember');
+                localStorage.removeItem('tableViewFilters');
+                db = [];
+                window.location.href = 'index.html';
+            }
+
+            // Navigate to individual tree (2-individual-tree-pc.html)
+            function goToIndividualMobile() {
+                // Ensure data is available
+                if (db.length === 0) {
+                    const saved = localStorage.getItem('familyDB');
+                    if (saved) {
+                        db = JSON.parse(saved);
+                    } else {
+                        alert('No family data found. Please load data via admin on desktop.');
+                        return;
                     }
                 }
+                // same file name as PC version – we assume mobile uses same html
+                window.location.href = '2-individual-tree-pc.html';
             }
 
-            html += '</div>';
-            document.getElementById('tableRoot').innerHTML = html;
-        }
-
-        // Zoom functions disabled for mobile (controls removed)
-        function zoomIn() { /* disabled */ }
-        function zoomOut() { /* disabled */ }
-        function resetZoom() { /* disabled */ }
-        function applyZoom() { /* disabled */ }
-
-        async function exportTablePDF() {
-            if (!currentIndividual) { alert('Please select a member first'); return; }
-            
-            const tableElement = document.querySelector('.table-root-layout');
-            if (!tableElement) return alert('No content to export');
-            
-            // Save original zoom
-            const originalZoom = tableElement.style.zoom;
-            
-            // Temporarily set zoom to 1 for capture
-            tableElement.style.zoom = '1';
-            
-            try {
-                const header = document.createElement('div');
-                header.style.marginBottom = '30px'; 
-                header.style.textAlign = 'center';
-                // MODIFIED: Using displayName for current individual name in PDF header
-                header.innerHTML = `<h1 style="color: #d4af37; font-size: 36px; font-family: 'Playfair Display', serif; margin:0;">Rizvi Family Table</h1>
-                    <h2 style="color:#5a0000; font-size:24px; font-family:'Playfair Display', serif; margin:10px 0 0 0;">${displayName(currentIndividual.name)}</h2>`;
-                
-                tableElement.insertBefore(header, tableElement.firstChild);
-
-                const footer = document.createElement('div');
-                footer.style.marginTop = '30px';
-                footer.style.padding = '15px 20px';
-                footer.style.background = '#fcf9f4';
-                footer.style.width = '100%';
-                footer.style.boxSizing = 'border-box';
-                footer.style.fontFamily = "'Inter', sans-serif";
-                footer.style.fontSize = '12px';
-                footer.style.textAlign = 'center';
-
-                const timeStr = formatCurrentTime();
-                const excelSavedTime = fileInfo ? fileInfo.saved_time : '06/03/2026, 3:57:46 pm';
-
-                const line1 = document.createElement('div');
-                line1.style.padding = '2px 0';
-                line1.style.fontWeight = 'bold';
-                line1.style.color = '#0f172a';
-                line1.textContent = `Developer : Imran Haider S/o Syed Risalat Hussain Rizvi | 0332-787-6010`;
-
-                const line2 = document.createElement('div');
-                line2.style.padding = '2px 0';
-                line2.style.fontWeight = 'bold';
-                line2.style.color = '#5a0000';
-                line2.textContent = `Last Data Updated : ${excelSavedTime} | PDF Printed : ${timeStr}`;
-
-                footer.appendChild(line1);
-                footer.appendChild(line2);
-                tableElement.appendChild(footer);
-                
-                const loadingMsg = document.createElement('div');
-                loadingMsg.style.position = 'fixed';
-                loadingMsg.style.top = '50%'; 
-                loadingMsg.style.left = '50%'; 
-                loadingMsg.style.transform = 'translate(-50%, -50%)';
-                loadingMsg.style.background = '#5a0000'; 
-                loadingMsg.style.color = 'white'; 
-                loadingMsg.style.padding = '20px 40px'; 
-                loadingMsg.style.borderRadius = '8px'; 
-                loadingMsg.style.zIndex = '9999'; 
-                loadingMsg.style.boxShadow = '0 4px 20px rgba(0,0,0,0.3)';
-                loadingMsg.textContent = '📄 Preparing PDF... please wait';
-                document.body.appendChild(loadingMsg);
-                
-                await new Promise(resolve => setTimeout(resolve, 500));
-
-                const canvas = await html2canvas(tableElement, { 
-                    scale: 2, 
-                    backgroundColor: '#ffffff', 
-                    logging: false, 
-                    allowTaint: true, 
-                    useCORS: true 
-                });
-                
-                tableElement.removeChild(header);
-                tableElement.removeChild(footer);
-                document.body.removeChild(loadingMsg);
-
-                const imgData = canvas.toDataURL('image/png');
-                const { jsPDF } = window.jspdf;
-                const w = canvas.width / 2 * 0.264583;
-                const h = canvas.height / 2 * 0.264583;
-                const pdf = new jsPDF({ 
-                    orientation: w > h ? 'l' : 'p', 
-                    unit: 'mm', 
-                    format: [w + 40, h + 40] 
-                });
-                
-                pdf.addImage(imgData, 'PNG', 20, 20, w, h);
-                const safeName = currentIndividual.name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-                pdf.save(`family_table_${safeName}_${Date.now()}.pdf`);
-                
-            } catch (err) {
-                console.error('PDF Error:', err);
-                alert('❌ PDF generation failed: ' + err.message);
-            } finally {
-                // Restore original zoom
-                tableElement.style.zoom = originalZoom;
+            // Navigate to root tree (4-root-tree-pc.html)
+            function goToRootMobile() {
+                if (db.length === 0) {
+                    const saved = localStorage.getItem('familyDB');
+                    if (saved) {
+                        db = JSON.parse(saved);
+                    } else {
+                        alert('No family data found. Please load data via admin on desktop.');
+                        return;
+                    }
+                }
+                window.location.href = '4-root-tree-pc.html';
             }
-        }
 
-        function switchToTreeView() {
-            if (currentIndividual) {
-                window.location.href = '7-individual-tree-pc.html?member=' + encodeURIComponent(currentIndividual.name);
-            } else {
-                window.location.href = '7-individual-tree-pc.html';
-            }
-        }
+            // Render the mobile dashboard (no admin card, just individual & root + exit/hard reset)
+            function renderMobileDashboard() {
+                const mainContent = document.getElementById('mainContent');
+                if (!mainContent) return;
 
-        function closeAllMenus() {
-            document.getElementById('searchDropdown').style.display = 'none';
-            document.querySelectorAll('.context-menu').forEach(m => m.remove());
-            document.getElementById('shortcutsHelp')?.classList.remove('show');
-            document.getElementById('toggleMenuPanel')?.classList.remove('show');
-        }
-        
-        function showShortcutsHelp() { 
-            const help = document.getElementById('shortcutsHelp');
-            if (help.classList.contains('show')) {
-                help.classList.remove('show');
-            } else {
-                help.classList.add('show');
+                // header title might be updated, but we set it static
+                document.getElementById('headerTitle').innerText = 'Rizvi Family (Mobile)';
+
+                mainContent.innerHTML = `
+                    <div class="mobile-dashboard">
+                        <!-- INDIVIDUAL CARD -->
+                        <div class="dashboard-card" id="cardIndividual">
+                            <div class="card-icon">👤</div>
+                            <div class="card-title">Individual</div>
+                            <div class="card-desc">Single member search</div>
+                        </div>
+
+                        <!-- ROOT RELATIVE CARD -->
+                        <div class="dashboard-card" id="cardRoot">
+                            <div class="card-icon">👥</div>
+                            <div class="card-title">Root Relative</div>
+                            <div class="card-desc">Two member connection</div>
+                        </div>
+
+                        <!-- Action buttons: exit and hard reset -->
+                        <div class="action-row">
+                            <div class="exit-btn-container" id="exitBtn">
+                                <span class="exit-btn-icon">🚪</span>
+                                <span class="exit-btn-text">Exit</span>
+                                <span class="exit-btn-subtext">(to login)</span>
+                            </div>
+                            <div class="exit-btn-container hardreset" id="resetBtn">
+                                <span class="exit-btn-icon">⚠️</span>
+                                <span class="exit-btn-text">Hard Reset</span>
+                                <span class="exit-btn-subtext">(delete all)</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // attach listeners
+                document.getElementById('cardIndividual').addEventListener('click', goToIndividualMobile);
+                document.getElementById('cardRoot').addEventListener('click', goToRootMobile);
+                document.getElementById('exitBtn').addEventListener('click', logoutMobile);
+                document.getElementById('resetBtn').addEventListener('click', hardResetMobile);
             }
-        }
-        function closeShortcutsHelp() { document.getElementById('shortcutsHelp').classList.remove('show'); }
-        function showDashboard() { window.location.href = '6-dashboard-pc.html'; }
-        
-        function setupEventListeners() {
-            document.addEventListener('click', function(e) {
-                if (!e.target.closest('.search-wrapper')) document.getElementById('searchDropdown').style.display = 'none';
-                if (!e.target.closest('.toggle-menu-panel') && !e.target.closest('.left-toggle-btn')) 
-                    document.getElementById('toggleMenuPanel')?.classList.remove('show');
-                if (!e.target.closest('.shortcuts-help') && !e.target.closest('[onclick="showShortcutsHelp()"]')) {
-                    document.getElementById('shortcutsHelp')?.classList.remove('show');
+
+            // File input change handler (copied from PC version but simplified, only to update db if user somehow loads via file)
+            // Actually mobile doesn't have admin/load, but we keep same logic to allow manual load if triggered via some dev.
+            document.addEventListener('DOMContentLoaded', function() {
+                const fileInput = document.getElementById('fileInput');
+                if (fileInput) {
+                    fileInput.onchange = function(e) {
+                        const file = e.target.files[0];
+                        if (!file) return;
+                        const reader = new FileReader();
+                        reader.onload = function(ev) {
+                            try {
+                                const data = new Uint8Array(ev.target.result);
+                                const wb = XLSX.read(data, { type: 'array' });
+                                const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+                                db = rows.map(r => ({
+                                    name: String(r.Name || r.name || '').trim(),
+                                    father: String(r.Father || r.father || '').trim(),
+                                    gen: String(r.Gen || r.gen || '').trim(),
+                                    gender: String(r.Gender || r.gender || 'Male').trim().toUpperCase()
+                                })).filter(p => p.name);
+                                localStorage.setItem('familyDB', JSON.stringify(db));
+                                updateHeaderCounter();
+                                // No admin view, just update dashboard (stay on same view)
+                            } catch (err) {
+                                alert('❌ Error: ' + err.message);
+                            }
+                        };
+                        reader.readAsArrayBuffer(file);
+                    };
                 }
             });
-        }
-        
-        function setupKeyboardShortcuts() {
-            document.addEventListener('keydown', (e) => {
-                if (e.target.tagName === 'INPUT' && e.key === 'Escape') { e.target.blur(); closeAllMenus(); }
-                if (e.key === '?' && !e.ctrlKey) { e.preventDefault(); showShortcutsHelp(); }
-                if (e.ctrlKey && e.key === 'f') { e.preventDefault(); document.getElementById('searchInput').focus(); }
-                if (e.ctrlKey && e.key === 'p') { e.preventDefault(); exportTablePDF(); }
-                if (e.key === '1' && !e.ctrlKey && currentIndividual) {
-                    showSiblings = !showSiblings; 
-                    document.getElementById('toggleSiblings').classList.toggle('active', showSiblings);
-                    renderTable();
-                }
-                if (e.key === '2' && !e.ctrlKey && currentIndividual) {
-                    showDescendants = !showDescendants; 
-                    document.getElementById('toggleDescendants').classList.toggle('active', showDescendants);
-                    renderTable();
-                }
-                if (e.key === '3' && !e.ctrlKey && currentIndividual) {
-                    showAncestors = !showAncestors; 
-                    document.getElementById('toggleAncestors').classList.toggle('active', showAncestors);
-                    renderTable();
+
+            // initialization: load data from localStorage or 13-family-data.js, then render
+            loadFromStorageOrFallback();
+            renderMobileDashboard();
+
+            // Check for ?view=admin? no – but we ignore completely (no admin)
+            // However we might still want to respect auto-load from 13-family-data if not present.
+            // already done in loadFromStorageOrFallback.
+
+            // Ensure that if new data arrives via localStorage event (if multiple tabs), we could update, but not needed.
+            // just keep header updated.
+            window.addEventListener('storage', function(e) {
+                if (e.key === 'familyDB') {
+                    if (e.newValue) {
+                        try {
+                            db = JSON.parse(e.newValue);
+                        } catch (err) {
+                            db = [];
+                        }
+                    } else {
+                        db = [];
+                    }
+                    updateHeaderCounter();
                 }
             });
-        }
 
-        window.zoomIn = zoomIn; window.zoomOut = zoomOut; window.resetZoom = resetZoom;
-        window.showShortcutsHelp = showShortcutsHelp; window.closeShortcutsHelp = closeShortcutsHelp;
-        window.showDashboard = showDashboard; window.resetIndividual = resetIndividual;
-        window.exportTablePDF = exportTablePDF; window.switchToTreeView = switchToTreeView;
+            // optional: override any console noise, but fine.
+        })();
     </script>
 </body>
 </html>
