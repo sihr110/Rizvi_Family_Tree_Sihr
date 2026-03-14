@@ -875,11 +875,10 @@
             return p?.father ? db.find(x => x.name === p.father) : null;
         }
 
-        function getMother(person) {
-            if (!person || !person.father) return '—';
-            const father = db.find(f => f.name === person.father);
-            return father?.spouse || '—';
-        }
+   
+function getMother(person) {
+    return person?.mother || '—';
+}
 
         function getAncestors(p) {
             let arr = [], cur = p;

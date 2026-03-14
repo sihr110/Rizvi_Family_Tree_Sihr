@@ -1,3 +1,10 @@
+<!-- ======================================== -->
+<!-- FILE NAME: 1-dashboard-pc.html           -->
+<!--                                          -->
+<!-- ======================================== -->
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -393,6 +400,7 @@ function loadData() {
     document.getElementById('fileInput').click();
 }
 
+// UPDATED: File input handler to include all fields (mother, spouse, maritalStatus, alive)
 document.getElementById('fileInput').onchange = function(e) {
     const file = e.target.files[0];
     if (!file) return;
@@ -404,12 +412,39 @@ document.getElementById('fileInput').onchange = function(e) {
             const wb = XLSX.read(data, { type: 'array' });
             const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
             
+            // UPDATED: Map all fields including mother, spouse, maritalStatus, alive
             db = rows.map(r => ({
                 name: String(r.Name || r.name || '').trim(),
                 father: String(r.Father || r.father || '').trim(),
+                mother: String(r.Mother || r.mother || '').trim(),           // ADDED
+                spouse: String(r.Spouse || r.spouse || '').trim(),           // ADDED
                 gen: String(r.Gen || r.gen || '').trim(),
-                gender: String(r.Gender || r.gender || 'Male').trim().toUpperCase()
+                gender: String(r.Gender || r.gender || 'Male').trim().toUpperCase(),
+                maritalStatus: String(r.MaritalStatus || r.maritalStatus || r.Maritalstatus || r.maritalstatus || '').trim(), // ADDED
+                alive: String(r.Alive || r.alive || '').trim()               // ADDED
             })).filter(p => p.name);
+
+            // ADDED: Extract timestamp from J1/J2 if present
+            try {
+                const firstSheet = wb.Sheets[wb.SheetNames[0]];
+                const j1Cell = firstSheet['J1'];
+                const j2Cell = firstSheet['J2'];
+                
+                const fileInfo = {
+                    saved_time_header: j1Cell ? String(j1Cell.v || j1Cell.w || '') : 'Date & time file saved',
+                    saved_time: j2Cell ? (typeof j2Cell.v === 'number' ? 
+                        new Date((j2Cell.v - 25569) * 86400 * 1000).toLocaleString() : 
+                        String(j2Cell.v).trim()) : new Date().toLocaleString(),
+                    exported_time: new Date().toLocaleString(),
+                    total_members: db.length,
+                    source_file: file.name
+                };
+                
+                localStorage.setItem('fileInfo', JSON.stringify(fileInfo));
+                console.log('✅ Timestamp extracted from Excel:', fileInfo.saved_time);
+            } catch (tsErr) {
+                console.warn('Could not extract timestamp:', tsErr);
+            }
 
             // Save to localStorage for other pages
             localStorage.setItem('familyDB', JSON.stringify(db));
@@ -419,6 +454,10 @@ document.getElementById('fileInput').onchange = function(e) {
             if (currentView === 'admin') {
                 renderAdminView();
             }
+            
+            // Optional success message
+            console.log(`✅ Successfully loaded ${db.length} members from Excel file with all fields.`);
+            
         } catch (err) {
             alert('❌ Error: ' + err.message);
         }
@@ -562,7 +601,7 @@ function autoLoadFromJS() {
     // Check if FAMILY_DATA is available (from 13-family-data.js)
     if (typeof FAMILY_DATA !== 'undefined' && FAMILY_DATA.length > 0) {
         try {
-            // Save the family members data
+            // Save the family members data (already includes all fields)
             db = FAMILY_DATA;
             localStorage.setItem('familyDB', JSON.stringify(db));
             
@@ -570,9 +609,11 @@ function autoLoadFromJS() {
             if (typeof FILE_INFO !== 'undefined') {
                 localStorage.setItem('fileInfo', JSON.stringify(FILE_INFO));
                 console.log('✅ Timestamp saved:', FILE_INFO.saved_time);
+                console.log('✅ Total members:', FILE_INFO.total_members);
             }
             
             updateHeaderStatus();
+            console.log(`✅ Auto-loaded ${db.length} members with all fields`);
             
         } catch (err) {
             console.error('Error:', err);
@@ -638,4 +679,6 @@ checkHash();
 </script>
 
 </body>
-</html>    
+</html>
+
+

@@ -1,7 +1,8 @@
 <!-- ===================================== -->
 <!-- FILE NAME: 2-individual-tree-pc.html -->
-<!-- LAST UPDATED: 11/03/2026              -->
+<!-- LAST UPDATED: 14/03/2026              -->
 <!-- ===================================== -->
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -670,6 +671,11 @@
         .context-menu-item:hover {
             background: #faebcd;
         }
+
+
+
+
+
     </style>
 
 </head>
@@ -786,7 +792,6 @@
             }
         });
 
-        
 
 
 
@@ -911,10 +916,12 @@ function loadData() {
    
 
 
+// UPDATED: renderBox function to use direct mother field
 function renderBox(person, label, isSiblingOrChild = false) {
     const isFemale = person.gender?.startsWith('F');
     const isSelected = currentIndividual?.name === person.name;
-    const mother = (person.father) ? (db.find(f => f.name === person.father)?.spouse || '—') : '—';
+    // UPDATED: Use direct mother field instead of looking up from father's spouse
+    const mother = person.mother || '—';
     const hasKids = db.some(c => c.father === person.name);
     const statusIcon = (person.alive || '').toLowerCase() === 'yes' ? '🌹' : '🥀';
     const fatherStatus = (person.father) ? (db.find(f => f.name === person.father)?.alive || '').toLowerCase() === 'yes' ? '🌹' : '🥀' : '';
@@ -933,7 +940,7 @@ function renderBox(person, label, isSiblingOrChild = false) {
     } else {
         // SELECTED, FATHER, ANCESTOR BOXES - show all fields
         html += `<div class="box-row"><span class="box-label">Father :</span><span class="box-value">${displayName(person.father) || '—'} ${fatherStatus}</span></div>`;
-        html += `<div class="box-row"><span class="box-label">Mother :</span><span class="box-value">${mother || '—'}</span></div>`;
+        html += `<div class="box-row"><span class="box-label">Mother :</span><span class="box-value">${mother}</span></div>`;
         html += `<div class="box-row"><span class="box-label">Spouse :</span><span class="box-value">${person.spouse || '—'}</span></div>`;
         html += `<div class="box-row"><span class="box-label">Status :</span><span class="box-value">${person.maritalStatus || '—'}</span></div>`;
     }
@@ -1274,6 +1281,9 @@ function renderBox(person, label, isSiblingOrChild = false) {
         window.showShortcutsHelp = showShortcutsHelp; window.closeShortcutsHelp = closeShortcutsHelp;
         window.showDashboard = showDashboard; window.resetIndividual = resetIndividual;
         window.exportIndividualPDF = exportIndividualPDF;
+
+
+
     </script>
 </body>
 </html>

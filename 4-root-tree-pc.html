@@ -14,6 +14,20 @@
     <script src="13-family-data.js"></script>
     
     <style>
+
+/* Gentle pulsing/blinking effect with gold and light green - Header Toggle */
+.left-toggle-btn {
+    animation: gentle-blink 1.5s infinite;
+}
+
+@keyframes gentle-blink {
+    0% { opacity: 1; background: var(--gold); }
+    50% { opacity: 0.7; background: #90EE90; transform: scale(1.1); }
+    100% { opacity: 1; background: var(--gold); }
+}
+
+
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         :root {
@@ -794,14 +808,22 @@
             drop.style.display = 'block';
         };
 
-        function renderBox(m, label, isRoot = false, isSelected = false) {
-            if (!m) return '';
-            const isF = m.gender && m.gender.startsWith('F');
-            return `<div class="box ${isF ? 'female-box' : ''} ${isSelected ? 'blinking-box' : ''} ${isRoot ? 'root-box' : ''}">
-                <div class="box-header"><span>${label}</span><span>${m.gen || ''}</span></div>
-                <div class="box-body"><span class="member-name">${displayName(m.name)}</span>
-                <span class="father-name">${isF ? 'D/o' : 'S/o'}: ${displayName(m.father)}</span></div></div>`;
-        }
+
+function renderBox(m, label, isRoot = false, isSelected = false) {
+    if (!m) return '';
+    const isF = m.gender && m.gender.startsWith('F');
+    const motherName = m.mother ? displayName(m.mother) : '—';
+    
+    return `<div class="box ${isF ? 'female-box' : ''} ${isSelected ? 'blinking-box' : ''} ${isRoot ? 'root-box' : ''}">
+        <div class="box-header"><span>${label}</span><span>${m.gen || ''}</span></div>
+        <div class="box-body">
+            <span class="member-name">${displayName(m.name)}</span>
+            <div class="father-name">${isF ? 'D/o' : 'S/o'}: ${displayName(m.father)} | Mother: ${motherName}</div>
+        </div></div>`;
+}
+
+
+
 
         function renderTree() {
             if (!member1 || !member2) return;
