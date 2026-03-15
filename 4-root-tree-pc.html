@@ -1,3 +1,9 @@
+<!-- ======================================== -->
+<!-- FILE NAME: 4-root-tree-pc.html           -->
+<!-- LAST UPDATED: 15/03/2026                 -->
+<!-- Root view for Rizvi Family - PC version  -->
+<!-- ======================================== -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,8 +31,6 @@
     50% { opacity: 0.7; background: #90EE90; transform: scale(1.1); }
     100% { opacity: 1; background: var(--gold); }
 }
-
-
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -252,10 +256,11 @@
             transform: translateY(-2px);
         }
 
-        .header-btn.dashboard { background: var(--dashboard-green); color: white; border-color: transparent; }
-        .header-btn.reset { background: var(--reset-red); color: white; border-color: transparent; }
-        .header-btn.pdf { background: var(--pdf-grey); color: white; border-color: transparent; }
-        .header-btn.table { background: var(--bronze); color: white; border-color: transparent; }
+        .header-btn.dashboard { 
+            background: var(--dashboard-green); 
+            color: white; 
+            border-color: transparent; 
+        }
 
         .menu-toggle { display: none; }
 
@@ -291,8 +296,37 @@
             overflow-y: auto;
             overflow-x: auto;
             padding: 0 15px 15px 15px;
+            position: relative;
+        }
+
+        #rootTree {
             transform-origin: top left;
             transition: transform 0.1s;
+            width: 100%;
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Scrollbar styling */
+        .scrollable-content::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+
+        .scrollable-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 6px;
+        }
+
+        .scrollable-content::-webkit-scrollbar-thumb {
+            background: var(--gold);
+            border-radius: 6px;
+        }
+
+        .scrollable-content::-webkit-scrollbar-thumb:hover {
+            background: var(--dark-blue);
         }
 
         .search-row {
@@ -451,7 +485,8 @@
             border-top: 2px solid var(--gold);
         }
 
-        .shortcuts-help {
+        /* Save Options Modal */
+        .save-options-modal {
             position: fixed;
             top: 50%;
             left: 50%;
@@ -461,36 +496,19 @@
             border-radius: 12px;
             padding: 25px;
             z-index: 4000;
-            display: none;
-            min-width: 400px;
-            max-width: 90vw;
+            min-width: 350px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         }
 
-        .shortcuts-help.show {
-            display: block;
-        }
-
-        .shortcuts-help h3 {
-            color: var(--maroon);
-            border-bottom: 2px solid var(--gold);
-            padding-bottom: 10px;
-            margin-bottom: 15px;
-        }
-
-        .shortcut-grid {
-            display: grid;
-            grid-template-columns: auto 1fr;
-            gap: 10px 20px;
-        }
-
-        .shortcut-key {
-            font-family: monospace;
-            font-weight: 700;
-            color: var(--dark-blue);
-            background: #f0f0f0;
-            padding: 4px 8px;
-            border-radius: 4px;
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 3999;
+            display: none;
         }
     </style>
 </head>
@@ -510,15 +528,14 @@
                 <span class="header-icon">👥</span>
                 <span>Rizvi Family - Root Tree View</span>
             </div>
-            
+         
         </div>
 
         <div class="toggle-menu-panel" id="toggleMenuPanel">
-            <div class="toggle-menu-item" onclick="showShortcutsHelp()">⌨️ Keyboard Shortcuts</div>
             <div style="border-top:1px solid var(--gold); margin:5px 0;"></div>
             <div class="toggle-menu-item" onclick="switchToTableView()">📋 Switch to Table</div>
             <div class="toggle-menu-item" onclick="resetSearch()">🔄 Reset</div>
-            <div class="toggle-menu-item" onclick="exportPDF()">📑 Save PDF</div>
+            <div class="toggle-menu-item" onclick="showSaveOptions()">💾 Save File</div>
             <div class="toggle-menu-item" onclick="showDashboard()">🏠 Dashboard</div>
         </div>
 
@@ -541,8 +558,10 @@
                     </div>
                     <div class="border-line"></div>
                 </div>
-                <div class="scrollable-content" id="rootTree">
-                    <div style="text-align:center; padding:60px;">Select two members</div>
+                <div class="scrollable-content">
+                    <div id="rootTree">
+                        <div style="text-align:center; padding:60px;">Select two members to analyze their common root</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -550,25 +569,40 @@
         <div class="app-footer" id="appFooter"></div>
     </div>
 
-    <div class="shortcuts-help" id="shortcutsHelp">
-        <h3>⌨️ Keyboard Shortcuts</h3>
-        <div class="shortcut-grid">
-            <span class="shortcut-key">Ctrl+F</span><span>Focus Member 1 search</span>
-            <span class="shortcut-key">Ctrl+G</span><span>Focus Member 2 search</span>
-            <span class="shortcut-key">Ctrl+R</span><span>Reset both selections</span>
-            <span class="shortcut-key">Ctrl+P</span><span>Export PDF</span>
-            <span class="shortcut-key">Ctrl+T</span><span>Switch to Table View</span>
-            <span class="shortcut-key">Ctrl+D</span><span>Go to Dashboard</span>
-            <span class="shortcut-key">Ctrl++</span><span>Zoom in</span>
-            <span class="shortcut-key">Ctrl+-</span><span>Zoom out</span>
-            <span class="shortcut-key">Ctrl+0</span><span>Reset zoom</span>
-            <span class="shortcut-key">ESC</span><span>Close dropdowns / menus</span>
-            <span class="shortcut-key">?</span><span>Show this help</span>
+    <!-- Save Options Modal -->
+    <div class="save-options-modal" id="saveOptionsModal" style="display:none;">
+        <h3 style="color:var(--maroon); margin-bottom:20px; text-align:center;">💾 Save Family Tree</h3>
+        
+        <div style="margin-bottom:20px;">
+            <div style="font-weight:600; margin-bottom:10px; color:var(--dark-blue);">Select Format:</div>
+            
+            <label style="display:block; margin-bottom:15px; padding:10px; border:2px solid #e0e0e0; border-radius:8px; cursor:pointer;">
+                <input type="radio" name="saveFormat" value="pdf-high" checked style="margin-right:10px;"> 
+                <span style="font-weight:600;">📑 PDF - High Resolution</span>
+                <span style="display:block; font-size:12px; color:#666; margin-left:25px;">Best for printing, larger file (3-8 MB)</span>
+            </label>
+            
+            <label style="display:block; margin-bottom:15px; padding:10px; border:2px solid #e0e0e0; border-radius:8px; cursor:pointer;">
+                <input type="radio" name="saveFormat" value="pdf-low" style="margin-right:10px;"> 
+                <span style="font-weight:600;">📑 PDF - Low Resolution</span>
+                <span style="display:block; font-size:12px; color:#666; margin-left:25px;">Good for sharing, smaller file (0.5-2 MB)</span>
+            </label>
+            
+            <label style="display:block; margin-bottom:15px; padding:10px; border:2px solid #e0e0e0; border-radius:8px; cursor:pointer;">
+                <input type="radio" name="saveFormat" value="jpeg" style="margin-right:10px;"> 
+                <span style="font-weight:600;">📸 JPEG Image</span>
+                <span style="display:block; font-size:12px; color:#666; margin-left:25px;">Universal format, very small file (200-500 KB)</span>
+            </label>
         </div>
-        <div style="text-align:center; margin-top:15px;">
-            <button class="header-btn" onclick="closeShortcutsHelp()">Close</button>
+        
+        <div style="display:flex; gap:10px; justify-content:center;">
+            <button onclick="processSave()" style="flex:2; padding:12px; background:var(--green); color:white; border:none; border-radius:6px; font-weight:600; cursor:pointer;">Save</button>
+            <button onclick="closeSaveModal()" style="flex:1; padding:12px; background:#f0f0f0; border:1px solid #ccc; border-radius:6px; cursor:pointer;">Cancel</button>
         </div>
     </div>
+
+    <!-- Overlay -->
+    <div class="modal-overlay" id="saveModalOverlay" onclick="closeSaveModal()"></div>
 
     <script>
         // --- GLOBAL DATA ---
@@ -600,10 +634,9 @@
             return `${day}/${month}/${year} - ${displayHours}:${minutes}${ampm}`;
         }
 
-        // --- DATA LOADING WITH ERROR HANDLING ---
+        // --- DATA LOADING ---
         function initializeData() {
             try {
-                // Try to load from localStorage first
                 const saved = localStorage.getItem('familyDB');
                 if (saved) {
                     try {
@@ -614,15 +647,12 @@
                         db = [];
                     }
                 } else {
-                    // Fallback to global FAMILY_DATA
                     db = (typeof FAMILY_DATA !== 'undefined' && Array.isArray(FAMILY_DATA)) ? FAMILY_DATA : [];
-                    // Save to localStorage for other pages
                     if (db.length > 0) {
                         localStorage.setItem('familyDB', JSON.stringify(db));
                     }
                 }
                 
-                // Load file info
                 const savedInfo = localStorage.getItem('fileInfo');
                 if (savedInfo) {
                     try {
@@ -653,17 +683,6 @@
             }
         }
 
-        function updateHeaderButtons() {
-            const ha = document.getElementById('headerActions');
-            if (!ha) return;
-            ha.innerHTML = `
-                <div class="header-btn table" onclick="switchToTableView()">📋 Table View</div>
-                <div class="header-btn reset" onclick="resetSearch()">🔄 Reset</div>
-                <div class="header-btn pdf" onclick="exportPDF()">📑 Save PDF</div>
-                <div class="header-btn dashboard" onclick="showDashboard()">🏠 Dashboard</div>
-            `;
-        }
-
         function updateFooter() {
             const footer = document.getElementById('appFooter');
             if (!footer) return;
@@ -683,7 +702,8 @@
 
         function closeAllMenus() {
             document.getElementById('toggleMenuPanel')?.classList.remove('show');
-            document.getElementById('shortcutsHelp')?.classList.remove('show');
+            document.getElementById('saveOptionsModal').style.display = 'none';
+            document.getElementById('saveModalOverlay').style.display = 'none';
         }
 
         // --- ZOOM FUNCTIONS ---
@@ -703,24 +723,56 @@
         };
         
         function applyZoom() {
-            const scrollable = document.querySelector('.scrollable-content');
-            if (scrollable) {
-                scrollable.style.transform = `scale(${zoomLevel})`;
+            const content = document.getElementById('rootTree');
+            
+            if (content) {
+                // Scale only the content, not the container
+                content.style.transform = `scale(${zoomLevel})`;
+                
+                // Adjust dimensions to maintain scroll area
+                content.style.width = `${100 / zoomLevel}%`;
+                content.style.height = `${100 / zoomLevel}%`;
+                
                 document.getElementById('zoomLevel').textContent = Math.round(zoomLevel * 100) + '%';
             }
         }
 
-        // --- SHORTCUTS HELP ---
-        window.showShortcutsHelp = function() { 
-            const help = document.getElementById('shortcutsHelp');
-            if (help) {
-                help.classList.add('show');
+        // --- SAVE OPTIONS ---
+        window.showSaveOptions = function() {
+            if (!member1 || !member2) {
+                alert('Please select both members first');
+                return;
             }
+            document.getElementById('saveOptionsModal').style.display = 'block';
+            document.getElementById('saveModalOverlay').style.display = 'block';
             document.getElementById('toggleMenuPanel')?.classList.remove('show');
         };
-        
-        window.closeShortcutsHelp = function() { 
-            document.getElementById('shortcutsHelp')?.classList.remove('show'); 
+
+        window.closeSaveModal = function() {
+            document.getElementById('saveOptionsModal').style.display = 'none';
+            document.getElementById('saveModalOverlay').style.display = 'none';
+        };
+
+        window.processSave = function() {
+            const selected = document.querySelector('input[name="saveFormat"]:checked');
+            if (!selected) {
+                alert('Please select a format');
+                return;
+            }
+            
+            closeSaveModal();
+            
+            switch(selected.value) {
+                case 'pdf-high':
+                    exportPDF('high');
+                    break;
+                case 'pdf-low':
+                    exportPDF('low');
+                    break;
+                case 'jpeg':
+                    exportAsJPEG();
+                    break;
+            }
         };
 
         // --- NAVIGATION ---
@@ -808,36 +860,31 @@
             drop.style.display = 'block';
         };
 
-
-function renderBox(m, label, isRoot = false, isSelected = false) {
-    if (!m) return '';
-    const isF = m.gender && m.gender.startsWith('F');
-    const motherName = m.mother ? displayName(m.mother) : '—';
-    
-    return `<div class="box ${isF ? 'female-box' : ''} ${isSelected ? 'blinking-box' : ''} ${isRoot ? 'root-box' : ''}">
-        <div class="box-header"><span>${label}</span><span>${m.gen || ''}</span></div>
-        <div class="box-body">
-            <span class="member-name">${displayName(m.name)}</span>
-            <div class="father-name">${isF ? 'D/o' : 'S/o'}: ${displayName(m.father)} | Mother: ${motherName}</div>
-        </div></div>`;
-}
-
-
-
+        function renderBox(m, label, isRoot = false, isSelected = false) {
+            if (!m) return '';
+            const isF = m.gender && m.gender.startsWith('F');
+            const motherName = m.mother ? displayName(m.mother) : '—';
+            
+            return `<div class="box ${isF ? 'female-box' : ''} ${isSelected ? 'blinking-box' : ''} ${isRoot ? 'root-box' : ''}">
+                <div class="box-header"><span>${label}</span><span>${m.gen || ''}</span></div>
+                <div class="box-body">
+                    <span class="member-name">${displayName(m.name)}</span>
+                    <div class="father-name">${isF ? 'D/o' : 'S/o'}: ${displayName(m.father)} | Mother: ${motherName}</div>
+                </div></div>`;
+        }
 
         function renderTree() {
             if (!member1 || !member2) return;
             
             const root = findCommonRoot(member1, member2);
-         if (!root) {  
-    document.getElementById('rootTree').innerHTML = '<div class="root-announce">No Common Ancestor Found</div>'; 
-    return; 
-}
+            if (!root) {  
+                document.getElementById('rootTree').innerHTML = '<div class="root-announce">No Common Ancestor Found</div>'; 
+                return; 
+            }
             const c1 = getAncestryChain(member1), c2 = getAncestryChain(member2);
             const p1 = c1.slice(0, c1.findIndex(x => x.name.toLowerCase() === root.name.toLowerCase()) + 1).reverse();
             const p2 = c2.slice(0, c2.findIndex(x => x.name.toLowerCase() === root.name.toLowerCase()) + 1).reverse();
 
-            // Calculate generation gaps
             const gen1 = getGenNum(member1.gen);
             const gen2 = getGenNum(member2.gen);
             const genRoot = getGenNum(root.gen);
@@ -882,239 +929,215 @@ function renderBox(m, label, isRoot = false, isSelected = false) {
         function resetSearch() {
             member1 = null; member2 = null;
             
-
-
-document.getElementById('rootTree').innerHTML = `
-    <div class="welcome-container" style="display: flex; justify-content: center; align-items: center; height: 100%; min-height: 500px;">
-        <div class="welcome-box" style="text-align: center; max-width: 500px; padding: 40px; background: white; border: 3px solid var(--gold); border-radius: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.1);">
-            <div class="welcome-icon" style="font-size: 72px; margin-bottom: 20px; color: var(--gold);">👥</div>
-            <div class="welcome-title" style="font-size: 32px; font-weight: 700; color: var(--dark-blue); margin-bottom: 15px; font-family: 'Playfair Display', serif;">Root Tree View</div>
-            <div class="welcome-text" style="font-size: 16px; color: #666; margin-bottom: 25px; line-height: 1.6;">
-                Select two family members from the search boxes above<br>
-                to find their common ancestor and relationship path.
-            </div>
-            <div class="welcome-shortcuts" style="display: flex; gap: 20px; justify-content: center; margin-top: 20px;">
-                <div class="shortcut-badge" style="text-align: center;">
-                    <div class="key" style="background: #f0f0f0; padding: 8px 16px; border-radius: 6px; font-weight: 700; font-size: 18px; color: var(--dark-blue); border: 1px solid #ccc;">Ctrl+F</div>
-                    <div class="label" style="font-size: 12px; color: var(--maroon); margin-top: 5px;">Member 1</div>
+            document.getElementById('rootTree').innerHTML = `
+                <div class="welcome-container" style="display: flex; justify-content: center; align-items: center; height: 100%; min-height: 500px;">
+                    <div class="welcome-box" style="text-align: center; max-width: 500px; padding: 40px; background: white; border: 3px solid var(--gold); border-radius: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.1);">
+                        <div class="welcome-icon" style="font-size: 72px; margin-bottom: 20px; color: var(--gold);">👥</div>
+                        <div class="welcome-title" style="font-size: 32px; font-weight: 700; color: var(--dark-blue); margin-bottom: 15px; font-family: 'Playfair Display', serif;">Root Tree View</div>
+                        <div class="welcome-text" style="font-size: 16px; color: #666; margin-bottom: 25px; line-height: 1.6;">
+                            Select two family members from the search boxes above<br>
+                            to find their common ancestor and relationship path.
+                        </div>
+                    </div>
                 </div>
-                <div class="shortcut-badge" style="text-align: center;">
-                    <div class="key" style="background: #f0f0f0; padding: 8px 16px; border-radius: 6px; font-weight: 700; font-size: 18px; color: var(--dark-blue); border: 1px solid #ccc;">Ctrl+G</div>
-                    <div class="label" style="font-size: 12px; color: var(--maroon); margin-top: 5px;">Member 2</div>
-                </div>
-                <div class="shortcut-badge" style="text-align: center;">
-                    <div class="key" style="background: #f0f0f0; padding: 8px 16px; border-radius: 6px; font-weight: 700; font-size: 18px; color: var(--dark-blue); border: 1px solid #ccc;">?</div>
-                    <div class="label" style="font-size: 12px; color: var(--maroon); margin-top: 5px;">Shortcuts</div>
-                </div>
-            </div>
-        </div>
-    </div>
-`;
-
+            `;
 
             const d1 = document.getElementById('dropdown1');
             const d2 = document.getElementById('dropdown2');
             if (d1) d1.style.display = 'none';
             if (d2) d2.style.display = 'none';
+            
+            document.getElementById('search1').value = '';
+            document.getElementById('search2').value = '';
         }
 
-        // --- PDF EXPORT (Copied from file 2) ---
-       // --- PDF EXPORT (Copied from file 2) ---
-async function exportPDF() {
-    if (!member1 || !member2) {
-        alert('Please select both members first');
-        return;
-    }
-    
-    const treeElement = document.querySelector('.scrollable-content');
-    if (!treeElement) return alert('No content to export');
-    
-    try {
-        // Create header
-        const header = document.createElement('div');
-        header.style.marginBottom = '30px'; 
-        header.style.textAlign = 'center';
-        header.innerHTML = `
-            <h1 style="color: #d4af37; font-size: 36px; font-family: 'Playfair Display', serif; margin:0;">Rizvi Family Tree</h1>
-            <h2 style="color:#5a0000; font-size:24px; font-family:'Playfair Display', serif; margin:10px 0 0 0;">Root Relationship</h2>
-            <h3 style="color:#0f172a; font-size:18px; margin:5px 0;">${displayName(member1.name)} ↔ ${displayName(member2.name)}</h3>
-        `;
-        
-        treeElement.insertBefore(header, treeElement.firstChild);
+        // --- PDF EXPORT ---
+        async function exportPDF(quality = 'high') {
+            if (!member1 || !member2) {
+                alert('Please select both members first');
+                return;
+            }
+            
+            const scale = quality === 'high' ? 2.0 : 1.0;
+            const jpegQuality = quality === 'high' ? 0.95 : 0.6;
+            const qualityText = quality === 'high' ? 'High Resolution' : 'Low Resolution';
+            
+            const treeElement = document.querySelector('.scrollable-content');
+            if (!treeElement) return alert('No content to export');
+            
+            try {
+                const header = document.createElement('div');
+                header.style.marginBottom = '30px'; 
+                header.style.textAlign = 'center';
+                header.innerHTML = `
+                    <h1 style="color: #d4af37; font-size: 36px; font-family: 'Playfair Display', serif; margin:0;">Rizvi Family Tree</h1>
+                    <h2 style="color:#5a0000; font-size:24px; font-family:'Playfair Display', serif; margin:10px 0 0 0;">Root Relationship</h2>
+                    <h3 style="color:#0f172a; font-size:18px; margin:5px 0;">${displayName(member1.name)} ↔ ${displayName(member2.name)}</h3>
+                `;
+                
+                treeElement.insertBefore(header, treeElement.firstChild);
 
-        // Create footer
-        const footer = document.createElement('div');
-        footer.style.marginTop = '30px';
-        footer.style.padding = '15px 20px';
-        footer.style.background = '#fcf9f4';
-        footer.style.width = '100%';
-        footer.style.boxSizing = 'border-box';
-        footer.style.fontFamily = "'Inter', sans-serif";
-        footer.style.fontSize = '12px';
-        footer.style.textAlign = 'center';
+                const footer = document.createElement('div');
+                footer.style.marginTop = '30px';
+                footer.style.padding = '15px 20px';
+                footer.style.background = '#fcf9f4';
+                footer.style.width = '100%';
+                footer.style.boxSizing = 'border-box';
+                footer.style.fontFamily = "'Inter', sans-serif";
+                footer.style.fontSize = '12px';
+                footer.style.textAlign = 'center';
 
-        const timeStr = formatCurrentTime();
-        const excelSavedTime = fileInfo ? fileInfo.saved_time : 'No timestamp';
+                const timeStr = formatCurrentTime();
+                const excelSavedTime = fileInfo ? fileInfo.saved_time : 'No timestamp';
 
-        const line1 = document.createElement('div');
-        line1.style.padding = '2px 0';
-        line1.style.fontWeight = 'bold';
-        line1.style.color = '#0f172a';
-        line1.textContent = `Developer : Imran Haider S/o Syed Risalat Hussain Rizvi | 0332-787-6010`;
+                footer.innerHTML = `
+                    <div style="padding:2px 0; font-weight:bold; color:#0f172a;">Developer : Imran Haider S/o Syed Risalat Hussain Rizvi | 0332-787-6010</div>
+                    <div style="padding:2px 0; font-weight:bold; color:#5a0000;">Last Data Updated : ${excelSavedTime} | PDF Generated : ${timeStr}</div>
+                `;
+                treeElement.appendChild(footer);
+                
+                const loadingMsg = document.createElement('div');
+                loadingMsg.style.position = 'fixed';
+                loadingMsg.style.top = '50%'; 
+                loadingMsg.style.left = '50%'; 
+                loadingMsg.style.transform = 'translate(-50%, -50%)';
+                loadingMsg.style.background = '#5a0000'; 
+                loadingMsg.style.color = 'white'; 
+                loadingMsg.style.padding = '20px 40px'; 
+                loadingMsg.style.borderRadius = '8px'; 
+                loadingMsg.style.zIndex = '9999'; 
+                loadingMsg.style.boxShadow = '0 4px 20px rgba(0,0,0,0.3)';
+                loadingMsg.textContent = `📄 Creating ${qualityText} PDF...`;
+                document.body.appendChild(loadingMsg);
+                
+                await new Promise(resolve => setTimeout(resolve, 500));
 
-        const line2 = document.createElement('div');
-        line2.style.padding = '2px 0';
-        line2.style.fontWeight = 'bold';
-        line2.style.color = '#5a0000';
-        line2.textContent = `Last Data Updated : ${excelSavedTime} | PDF Printed : ${timeStr}`;
+                const canvas = await html2canvas(treeElement, { 
+                    scale: scale, 
+                    backgroundColor: '#ffffff', 
+                    logging: false, 
+                    allowTaint: true, 
+                    useCORS: true 
+                });
+                
+                treeElement.removeChild(header);
+                treeElement.removeChild(footer);
+                document.body.removeChild(loadingMsg);
 
-        footer.appendChild(line1);
-        footer.appendChild(line2);
-        treeElement.appendChild(footer);
-        
-        // Show loading message
-        const loadingMsg = document.createElement('div');
-        loadingMsg.style.position = 'fixed';
-        loadingMsg.style.top = '50%'; 
-        loadingMsg.style.left = '50%'; 
-        loadingMsg.style.transform = 'translate(-50%, -50%)';
-        loadingMsg.style.background = '#5a0000'; 
-        loadingMsg.style.color = 'white'; 
-        loadingMsg.style.padding = '20px 40px'; 
-        loadingMsg.style.borderRadius = '8px'; 
-        loadingMsg.style.zIndex = '9999'; 
-        loadingMsg.style.boxShadow = '0 4px 20px rgba(0,0,0,0.3)';
-        loadingMsg.textContent = '📄 Preparing PDF... please wait';
-        document.body.appendChild(loadingMsg);
-        
-        await new Promise(resolve => setTimeout(resolve, 500));
-
-        // Capture the tree
-        const canvas = await html2canvas(treeElement, { 
-            scale: 2, 
-            backgroundColor: '#ffffff', 
-            logging: false, 
-            allowTaint: true, 
-            useCORS: true 
-        });
-        
-        // Remove added elements
-        treeElement.removeChild(header);
-        treeElement.removeChild(footer);
-        document.body.removeChild(loadingMsg);
-
-        // Generate PDF
-        const imgData = canvas.toDataURL('image/png');
-        const { jsPDF } = window.jspdf;
-        const w = canvas.width / 2 * 0.264583;
-        const h = canvas.height / 2 * 0.264583;
-        const pdf = new jsPDF({ 
-            orientation: w > h ? 'l' : 'p', 
-            unit: 'mm', 
-            format: [w + 40, h + 40] 
-        });
-        
-        pdf.addImage(imgData, 'PNG', 20, 20, w, h);
-        const safeName1 = member1.name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-        const safeName2 = member2.name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-        pdf.save(`family_root_${safeName1}_${safeName2}_${Date.now()}.pdf`);
-        
-    } catch (err) {
-        console.error('PDF Error:', err);
-        alert('❌ PDF generation failed: ' + err.message);
-    }
-}
-
-        // --- KEYBOARD SHORTCUTS ---
-        function setupKeyboardShortcuts() {
-            document.addEventListener('keydown', (e) => {
-                // Don't trigger shortcuts when typing in input fields
-                if (e.target.tagName === 'INPUT') {
-                    if (e.key === 'Escape') {
-                        e.target.blur();
-                        closeAllMenus();
-                    }
-                    return;
-                }
+                const imgData = canvas.toDataURL('image/jpeg', jpegQuality);
+                const { jsPDF } = window.jspdf;
+                const w = canvas.width / 2 * 0.264583;
+                const h = canvas.height / 2 * 0.264583;
+                const pdf = new jsPDF({ 
+                    orientation: w > h ? 'l' : 'p', 
+                    unit: 'mm', 
+                    format: [w + 40, h + 40] 
+                });
                 
-                // Ctrl+F: Focus Member 1 search
-                if (e.ctrlKey && e.key === 'f') {
-                    e.preventDefault();
-                    document.getElementById('search1').focus();
-                }
+                pdf.addImage(imgData, 'JPEG', 20, 20, w, h, undefined, 'FAST');
+                const safeName1 = member1.name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+                const safeName2 = member2.name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+                pdf.save(`family_root_${safeName1}_${safeName2}_${quality}_${Date.now()}.pdf`);
                 
-                // Ctrl+G: Focus Member 2 search
-                if (e.ctrlKey && e.key === 'g') {
-                    e.preventDefault();
-                    document.getElementById('search2').focus();
-                }
+                const base64Length = imgData.length - 'data:image/jpeg;base64,'.length;
+                const fileSizeKB = Math.ceil((base64Length * 0.75) / 1024);
+                alert(`✅ ${qualityText} PDF saved!\nFile size: ~${fileSizeKB} KB`);
                 
-                // Ctrl+R: Reset
-                if (e.ctrlKey && e.key === 'r') {
-                    e.preventDefault();
-                    resetSearch();
-                }
-                
-                // Ctrl+P: Export PDF
-                if (e.ctrlKey && e.key === 'p') {
-                    e.preventDefault();
-                    exportPDF();
-                }
-                
-                // Ctrl+T: Switch to Table View
-                if (e.ctrlKey && e.key === 't') {
-                    e.preventDefault();
-                    switchToTableView();
-                }
-                
-                // Ctrl+D: Go to Dashboard
-                if (e.ctrlKey && e.key === 'd') {
-                    e.preventDefault();
-                    showDashboard();
-                }
-                
-                // Ctrl++: Zoom in
-                if (e.ctrlKey && (e.key === '+' || e.key === '=')) {
-                    e.preventDefault();
-                    zoomIn();
-                }
-                
-                // Ctrl+-: Zoom out
-                if (e.ctrlKey && e.key === '-') {
-                    e.preventDefault();
-                    zoomOut();
-                }
-                
-                // Ctrl+0: Reset zoom
-                if (e.ctrlKey && e.key === '0') {
-                    e.preventDefault();
-                    resetZoom();
-                }
-                
-                // ?: Show shortcuts help
-                if (e.key === '?' && !e.ctrlKey) {
-                    e.preventDefault();
-                    showShortcutsHelp();
-                }
-                
-                // Escape: Close menus
-                if (e.key === 'Escape') {
-                    closeAllMenus();
-                    const d1 = document.getElementById('dropdown1');
-                    const d2 = document.getElementById('dropdown2');
-                    if (d1) d1.style.display = 'none';
-                    if (d2) d2.style.display = 'none';
-                }
-            });
+            } catch (err) {
+                console.error('PDF Error:', err);
+                alert('❌ PDF generation failed: ' + err.message);
+            }
         }
+
+        // --- JPEG EXPORT ---
+        window.exportAsJPEG = async function() {
+            if (!member1 || !member2) {
+                alert('Please select both members first');
+                return;
+            }
+            
+            const treeElement = document.querySelector('.scrollable-content');
+            if (!treeElement) return alert('No content to export');
+            
+            try {
+                const header = document.createElement('div');
+                header.style.marginBottom = '30px'; 
+                header.style.textAlign = 'center';
+                header.innerHTML = `
+                    <h1 style="color: #d4af37; font-size: 36px; font-family: 'Playfair Display', serif; margin:0;">Rizvi Family Tree</h1>
+                    <h2 style="color:#5a0000; font-size:24px; font-family:'Playfair Display', serif; margin:10px 0 0 0;">Root Relationship</h2>
+                    <h3 style="color:#0f172a; font-size:18px; margin:5px 0;">${displayName(member1.name)} ↔ ${displayName(member2.name)}</h3>
+                `;
+                treeElement.insertBefore(header, treeElement.firstChild);
+
+                const footer = document.createElement('div');
+                footer.style.marginTop = '30px';
+                footer.style.padding = '15px 20px';
+                footer.style.background = '#fcf9f4';
+                footer.style.width = '100%';
+                footer.style.boxSizing = 'border-box';
+                footer.style.fontFamily = "'Inter', sans-serif";
+                footer.style.fontSize = '12px';
+                footer.style.textAlign = 'center';
+
+                const timeStr = formatCurrentTime();
+                const excelSavedTime = fileInfo ? fileInfo.saved_time : 'No timestamp';
+                
+                footer.innerHTML = `
+                    <div style="padding:2px 0; font-weight:bold; color:#0f172a;">Developer : Imran Haider S/o Syed Risalat Hussain Rizvi | 0332-787-6010</div>
+                    <div style="padding:2px 0; font-weight:bold; color:#5a0000;">Last Data Updated : ${excelSavedTime} | JPEG Generated : ${timeStr}</div>
+                `;
+                treeElement.appendChild(footer);
+                
+                const loadingMsg = document.createElement('div');
+                loadingMsg.style.position = 'fixed';
+                loadingMsg.style.top = '50%'; 
+                loadingMsg.style.left = '50%'; 
+                loadingMsg.style.transform = 'translate(-50%, -50%)';
+                loadingMsg.style.background = '#5a0000'; 
+                loadingMsg.style.color = 'white'; 
+                loadingMsg.style.padding = '20px 40px'; 
+                loadingMsg.style.borderRadius = '8px'; 
+                loadingMsg.style.zIndex = '9999'; 
+                loadingMsg.style.boxShadow = '0 4px 20px rgba(0,0,0,0.3)';
+                loadingMsg.textContent = '📸 Creating JPEG...';
+                document.body.appendChild(loadingMsg);
+                
+                await new Promise(resolve => setTimeout(resolve, 500));
+
+                const canvas = await html2canvas(treeElement, { 
+                    scale: 1.2,
+                    backgroundColor: '#ffffff', 
+                    logging: false
+                });
+                
+                treeElement.removeChild(header);
+                treeElement.removeChild(footer);
+                document.body.removeChild(loadingMsg);
+
+                const imgData = canvas.toDataURL('image/jpeg', 0.85);
+                
+                const link = document.createElement('a');
+                const safeName1 = member1.name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+                const safeName2 = member2.name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+                link.download = `family_root_${safeName1}_${safeName2}_${Date.now()}.jpg`;
+                link.href = imgData;
+                link.click();
+                
+                const base64Length = imgData.length - 'data:image/jpeg;base64,'.length;
+                const fileSizeKB = Math.ceil((base64Length * 0.75) / 1024);
+                setTimeout(() => alert(`✅ JPEG saved!\nFile size: ~${fileSizeKB} KB`), 100);
+                
+            } catch (err) {
+                console.error('Export Error:', err);
+                alert('❌ Failed: ' + err.message);
+            }
+        };
 
         // --- INITIALIZATION ---
         document.addEventListener('DOMContentLoaded', function() {
             initializeData();
             
-            setupKeyboardShortcuts();
-            
-            // Setup search handlers
             const search1 = document.getElementById('search1');
             const search2 = document.getElementById('search2');
             
@@ -1130,7 +1153,6 @@ async function exportPDF() {
                 });
             }
             
-            // Global click listener to close dropdowns
             document.addEventListener('click', function(e) {
                 if (!e.target.closest('.search-wrapper')) {
                     const d1 = document.getElementById('dropdown1');
@@ -1139,18 +1161,16 @@ async function exportPDF() {
                     if (d2) d2.style.display = 'none';
                 }
                 
-                // Close toggle menu when clicking outside
                 if (!e.target.closest('.toggle-menu-panel') && !e.target.closest('.left-toggle-btn')) {
                     document.getElementById('toggleMenuPanel')?.classList.remove('show');
                 }
                 
-                // Close shortcuts help when clicking outside
-                if (!e.target.closest('.shortcuts-help') && !e.target.closest('[onclick="showShortcutsHelp()"]') && !e.target.closest('.toggle-menu-item')) {
-                    document.getElementById('shortcutsHelp')?.classList.remove('show');
+                if (!e.target.closest('.save-options-modal') && !e.target.closest('[onclick="showSaveOptions()"]')) {
+                    document.getElementById('saveOptionsModal').style.display = 'none';
+                    document.getElementById('saveModalOverlay').style.display = 'none';
                 }
             });
             
-            // Check for stored members from table view
             try {
                 const m1 = localStorage.getItem('rootMember1');
                 const m2 = localStorage.getItem('rootMember2');
@@ -1169,14 +1189,11 @@ async function exportPDF() {
             }
         });
 
-        // Make functions globally available
         window.switchToTableView = switchToTableView;
         window.resetSearch = resetSearch;
         window.exportPDF = exportPDF;
         window.showDashboard = showDashboard;
         window.toggleLeftMenu = toggleLeftMenu;
-        window.showShortcutsHelp = showShortcutsHelp;
-        window.closeShortcutsHelp = closeShortcutsHelp;
     </script>
 </body>
 </html>

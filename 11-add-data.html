@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Family Tree Data Entry</title>
+    <style>
+        body {
+            background: #1e2b3a;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .window {
+            width: 1300px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            padding: 25px 30px;
+        }
+        
+        .title-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            font-size: 22px;
+            font-weight: bold;
+            color: #103c4c;
+        }
+        
+        .record-badge {
+            background: #103c4c;
+            color: #ffd966;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 16px;
+        }
+        
+        .form-row {
+            display: flex;
+            margin-bottom: 15px;
+            align-items: center;
+            gap: 150px; /* Increased gap between columns */
+}
+
+      .left-part {
+    width: 600px;  /* Increased from 350px to accommodate 600px input + label + gap */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+        
+        .left-label {
+            width: 100px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .left-input {
+            width: 400px;
+        }
+        
+        .right-part {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .right-label {
+            width: 100px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .right-input {
+            width: 200px;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 15px; /* Increased height */
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: Arial, sans-serif;
+            height: 45px; /* Fixed height 60px? Actually 45px is reasonable */
+        }
+        
+        /* Make all input boxes exactly 50px height as requested */
+        .field-input, .left-input input, .right-input input {
+            height: 20px !important;
+            padding: 15px 18px !important;
+            font-size: 16px;
+        }
+        
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #103c4c;
+        }
+        
+        input[readonly] {
+            background: #f5f5f5;
+            border-color: #ccc;
+        }
+        
+        .hint {
+            font-size: 12px;
+            color: #777;
+            margin-left: 8px;
+            font-style: italic;
+            display: none; /* REMOVED - no more "only data" */
+        }
+        
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 15px;
+        }
+        
+        .gender-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 50px;
+        }
+        
+        .gender-label {
+            width: 100px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .gender-options {
+            display: flex;
+            gap: 20px;
+            width: 240px;
+        }
+        
+        .button-row {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 30px 0 20px;
+        }
+        
+        .action-btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 15px;
+            cursor: pointer;
+            min-width: 100px;
+            height: 50px;
+        }
+        
+        .btn-add { background: #103c4c; color: white; }
+        .btn-update { background: #2b6c8f; color: white; }
+        .btn-clear { background: #64748b; color: white; }
+        .btn-delete { background: #b91c1c; color: white; }
+        .btn-hardreset { background: #4169E1; color: white; } /* From file 1 */
+        
+        .upload-area {
+            text-align: center;
+            padding: 15px;
+            background: #f0f0f0;
+            border: 2px dashed #103c4c;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #103c4c;
+            height: 55px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .suggestions-box {
+            position: absolute;
+            background: white;
+            border: 1px solid #103c4c;
+            border-radius: 5px;
+            max-height: 200px;
+            overflow-y: auto;
+            width: 100%;
+            display: none;
+            z-index: 1000;
+        }
+        
+        .suggestion-item {
+            padding: 10px 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .suggestion-item:hover {
+            background: #103c4c;
+            color: white;
+        }
+        
+        .field-wrapper {
+            position: relative;
+        }
+    </style>.form-row {
+</head>
+<body>
+    <div class="window">
+        <!-- Title Bar -->
+        <div class="title-bar">
+            <span>Family Tree Data Entry</span>
+            <span class="record-badge" id="totalDisplay">0 records</span>
+        </div>
+        
+        <!-- Row 1: Father Name | Father gen -->
+        <div class="form-row">
+            <div class="left-part">
+                <span class="left-label">Father Name</span>
+                <div class="left-input">
+                    <div class="field-wrapper">
+                        <input type="text" id="fatherName" placeholder="Type name..." class="field-input">
+                        <div id="fatherSuggestions" class="suggestions-box"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="right-part">
+                <span class="right-label">Father gen</span>
+                <div class="right-input">
+                    <input type="text" id="fatherGeneration" readonly placeholder="Auto" class="field-input">
+                </div>
+            </div>
+        </div>
+        
+        <!-- Row 2: Mother Name | (empty) -->
+        <div class="form-row">
+            <div class="left-part">
+                <span class="left-label">Mother Name</span>
+                <div class="left-input">
+                    <div class="field-wrapper">
+                        <input type="text" id="motherName" placeholder="Type name..." class="field-input">
+                        <div id="motherSuggestions" class="suggestions-box"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="right-part">
+                <span class="right-label"></span>
+                <div class="right-input"></div>
+            </div>
+        </div>
+        
+        <!-- Row 3: New Entry | Gen auto -->
+        <div class="form-row">
+            <div class="left-part">
+                <span class="left-label">New Entry</span>
+                <div class="left-input">
+                    <div class="field-wrapper">
+                        <input type="text" id="childName" placeholder="Enter name..." class="field-input">
+                        <div id="childSuggestions" class="suggestions-box"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="right-part">
+                <span class="right-label">Gen auto</span>
+                <div class="right-input">
+                    <input type="text" id="generation" readonly placeholder="Auto" class="field-input">
+                </div>
+            </div>
+        </div>
+        
+        <!-- Row 4: Spouse | Marital status -->
+        <div class="form-row">
+            <div class="left-part">
+                <span class="left-label">Spouse</span>
+                <div class="left-input">
+                    <div class="field-wrapper">
+                        <input type="text" id="spouseName" placeholder="Enter name..." class="field-input">
+                        <div id="spouseSuggestions" class="suggestions-box"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="right-part">
+                <span class="right-label">Marital status :</span>
+                <div class="right-input">
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="marital" value="Married" checked> Married
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="marital" value="Unmarried"> Unmarried
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Row 5: Gender | Vital Status -->
+        <div class="form-row">
+            <div class="left-part">
+                <span class="left-label">Gender</span>
+                <div class="left-input">
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="gender" value="MALE" checked> Male
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="gender" value="FEMALE"> Female
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="right-part">
+                <span class="right-label">Vital Status :</span>
+                <div class="right-input">
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="alive" value="Yes" checked> Yes
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="alive" value="No"> No
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Action Buttons - ADDED HARD RESET next to DELETE -->
+        <div class="button-row">
+            <button class="action-btn btn-add" id="addBtn">ADD</button>
+            <button class="action-btn btn-update" id="updateBtn">UPDATE</button>
+            <button class="action-btn btn-clear" id="clearBtn">CLEAR</button>
+            <button class="action-btn btn-delete" id="deleteBtn">DELETE</button>
+            <button class="action-btn btn-hardreset" id="hardResetBtn">HARD RESET</button>
+        </div>
+        
+        <!-- Data Upload Excel -->
+        <div class="upload-area" id="uploadArea">
+            📂 Data Upload Excel
+        </div>
+        <input type="file" id="fileInput" class="file-input" accept=".xlsx, .xls">
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
+        // NO EMBEDDED DATA
+        let db = [];
+        let editingIndex = -1;
+        
+        const fatherInput = document.getElementById('fatherName');
+        const fatherGenInput = document.getElementById('fatherGeneration');
+        const motherInput = document.getElementById('motherName');
+        const childInput = document.getElementById('childName');
+        const spouseInput = document.getElementById('spouseName');
+        const genInput = document.getElementById('generation');
+        const totalDisplay = document.getElementById('totalDisplay');
+        
+        function updateTotal() {
+            totalDisplay.textContent = db.length + ' records';
+        }
+        
+        // Capitalize
+        function capitalize(e) {
+            let val = e.target.value;
+            e.target.value = val.replace(/\b\w/g, l => l.toUpperCase());
+        }
+        
+        fatherInput.addEventListener('input', capitalize);
+        motherInput.addEventListener('input', capitalize);
+        childInput.addEventListener('input', capitalize);
+        spouseInput.addEventListener('input', capitalize);
+        
+        // Suggestions
+        function showSuggestions(input, boxId, gender = null) {
+            const box = document.getElementById(boxId);
+            const val = input.value.toLowerCase();
+            
+            if (val.length < 1 || db.length === 0) {
+                box.style.display = 'none';
+                return;
+            }
+            
+            let matches = db.filter(r => r.name && r.name.toLowerCase().includes(val));
+            
+            if (gender === 'MALE') matches = matches.filter(r => r.gender === 'MALE');
+            if (gender === 'FEMALE') matches = matches.filter(r => r.gender === 'FEMALE');
+            
+            if (matches.length > 0) {
+                box.innerHTML = matches.slice(0, 8).map(r => `
+                    <div class="suggestion-item" onclick="selectSuggestion('${boxId}', '${r.name.replace(/'/g, "\\'")}', '${r.gender || ''}', '${r.gen || ''}')">
+                        ${r.name} <small>${r.gender} | ${r.gen}</small>
+                    </div>
+                `).join('');
+                box.style.display = 'block';
+            } else {
+                box.style.display = 'none';
+            }
+        }
+        
+        window.selectSuggestion = (boxId, name, gender, gen) => {
+            if (boxId === 'fatherSuggestions') {
+                fatherInput.value = name;
+                fatherGenInput.value = gen || '';
+                calcGen(name, gen);
+            } else if (boxId === 'motherSuggestions') {
+                motherInput.value = name;
+            } else if (boxId === 'childSuggestions') {
+                loadRecord(name);
+            } else if (boxId === 'spouseSuggestions') {
+                spouseInput.value = name;
+            }
+            document.querySelectorAll('.suggestions-box').forEach(b => b.style.display = 'none');
+        };
+        
+        function loadRecord(name) {
+            const r = db.find(r => r.name === name);
+            if (!r) return;
+            
+            childInput.value = r.name || '';
+            fatherInput.value = r.father || '';
+            motherInput.value = r.mother || '';
+            spouseInput.value = r.spouse || '';
+            genInput.value = r.gen || '';
+            
+            if (r.father) {
+                const f = db.find(f => f.name === r.father);
+                fatherGenInput.value = f ? f.gen : '';
+            }
+            
+            if (r.gender) document.querySelector(`input[name="gender"][value="${r.gender}"]`).checked = true;
+            if (r.maritalStatus) document.querySelector(`input[name="marital"][value="${r.maritalStatus}"]`).checked = true;
+            if (r.alive) document.querySelector(`input[name="alive"][value="${r.alive}"]`).checked = true;
+            
+            editingIndex = db.findIndex(x => x.name === name);
+        }
+        
+        function calcGen(fatherName, fatherGen) {
+            if (!fatherGen) {
+                const f = db.find(f => f.name === fatherName);
+                if (f) fatherGen = f.gen;
+            }
+            
+            if (fatherGen && fatherGen !== '(Pre-Root)') {
+                const match = fatherGen.match(/G-(\d+)/);
+                if (match) {
+                    const gender = document.querySelector('input[name="gender"]:checked').value;
+                    const nextNum = (parseInt(match[1]) + 1).toString().padStart(3, '0');
+                    const type = gender === 'MALE' ? 'S' : 'D';
+                    const prefix = `G-${nextNum}-${type}`;
+                    
+                    let maxNum = 0;
+                    db.filter(r => r.father === fatherName && r.gen?.startsWith(prefix))
+                      .forEach(s => {
+                          let num = parseInt(s.gen?.replace(prefix, '') || '0');
+                          if (num > maxNum) maxNum = num;
+                      });
+                    
+                    genInput.value = `${prefix}${maxNum + 1}`;
+                }
+            } else if (fatherGen === '(Pre-Root)') {
+                genInput.value = 'G-001-S1';
+            }
+        }
+        
+        // Event listeners
+        fatherInput.addEventListener('input', () => showSuggestions(fatherInput, 'fatherSuggestions', 'MALE'));
+        fatherInput.addEventListener('blur', () => {
+            if (fatherInput.value) {
+                const f = db.find(f => f.name === fatherInput.value);
+                if (f) {
+                    fatherGenInput.value = f.gen || '';
+                    calcGen(fatherInput.value, f.gen);
+                }
+            }
+        });
+        
+        motherInput.addEventListener('input', () => showSuggestions(motherInput, 'motherSuggestions', 'FEMALE'));
+        childInput.addEventListener('input', () => showSuggestions(childInput, 'childSuggestions'));
+        spouseInput.addEventListener('input', () => showSuggestions(spouseInput, 'spouseSuggestions'));
+        
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.field-wrapper')) {
+                document.querySelectorAll('.suggestions-box').forEach(b => b.style.display = 'none');
+            }
+        });
+        
+        // Load from external JS
+        function loadFromJS() {
+            const script = document.createElement('script');
+            script.src = '13-family-data.js';
+            script.onload = () => {
+                if (typeof FAMILY_DATA !== 'undefined') {
+                    db = FAMILY_DATA;
+                    localStorage.setItem('familyTreeDB', JSON.stringify(db));
+                    updateTotal();
+                }
+            };
+            document.head.appendChild(script);
+        }
+        
+        // Check storage
+        const stored = localStorage.getItem('familyTreeDB');
+        if (stored) {
+            db = JSON.parse(stored);
+            updateTotal();
+        } else {
+            loadFromJS();
+        }
+        
+        // Excel Upload
+        document.getElementById('uploadArea').onclick = () => {
+            document.getElementById('fileInput').click();
+        };
+        
+        document.getElementById('fileInput').onchange = (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
+                    db = jsonData;
+                    localStorage.setItem('familyTreeDB', JSON.stringify(db));
+                    updateTotal();
+                } catch (err) {
+                    alert('Error: ' + err.message);
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        };
+        
+        // ADD
+        document.getElementById('addBtn').onclick = () => {
+            if (!childInput.value || !fatherInput.value) {
+                alert('Child and Father required');
+                return;
+            }
+            
+            db.push({
+                name: childInput.value,
+                father: fatherInput.value,
+                mother: motherInput.value || '',
+                spouse: spouseInput.value || '---',
+                gen: genInput.value || 'G-000-S1',
+                gender: document.querySelector('input[name="gender"]:checked').value,
+                maritalStatus: document.querySelector('input[name="marital"]:checked').value,
+                alive: document.querySelector('input[name="alive"]:checked').value
+            });
+            
+            localStorage.setItem('familyTreeDB', JSON.stringify(db));
+            updateTotal();
+            clearForm();
+        };
+        
+        // UPDATE
+        document.getElementById('updateBtn').onclick = () => {
+            if (editingIndex === -1) return alert('Select a record');
+            
+            db[editingIndex] = {
+                name: childInput.value,
+                father: fatherInput.value,
+                mother: motherInput.value || '',
+                spouse: spouseInput.value || '---',
+                gen: genInput.value,
+                gender: document.querySelector('input[name="gender"]:checked').value,
+                maritalStatus: document.querySelector('input[name="marital"]:checked').value,
+                alive: document.querySelector('input[name="alive"]:checked').value
+            };
+            
+            localStorage.setItem('familyTreeDB', JSON.stringify(db));
+            updateTotal();
+            clearForm();
+        };
+        
+        // CLEAR
+        document.getElementById('clearBtn').onclick = clearForm;
+        
+        function clearForm() {
+            fatherInput.value = '';
+            fatherGenInput.value = '';
+            motherInput.value = '';
+            childInput.value = '';
+            spouseInput.value = '';
+            genInput.value = '';
+            document.querySelector('input[name="gender"][value="MALE"]').checked = true;
+            document.querySelector('input[name="marital"][value="Married"]').checked = true;
+            document.querySelector('input[name="alive"][value="Yes"]').checked = true;
+            editingIndex = -1;
+        }
+        
+        // DELETE
+        document.getElementById('deleteBtn').onclick = () => {
+            if (editingIndex === -1) return alert('Select a record');
+            if (confirm('Delete?')) {
+                db.splice(editingIndex, 1);
+                localStorage.setItem('familyTreeDB', JSON.stringify(db));
+                updateTotal();
+                clearForm();
+            }
+        };
+        
+        // HARD RESET - From file 1-dashboard-pc.html
+        document.getElementById('hardResetBtn').onclick = () => {
+            const confirmation = confirm("🚨 WARNING: This will permanently delete ALL family data from this browser. Are you sure?");
+            
+            if (confirmation) {
+                // Clear all localStorage items
+                localStorage.removeItem('familyTreeDB');
+                localStorage.removeItem('familyDB');
+                localStorage.removeItem('fileInfo');
+                
+                // Reset the database variable
+                db = [];
+                editingIndex = -1;
+                
+                // Update display
+                updateTotal();
+                clearForm();
+                
+                alert("✅ All data has been cleared from browser storage.");
+                
+                // Try to auto-load again from JS file
+                loadFromJS();
+            }
+        };
+    </script>
+</body>
+</html>

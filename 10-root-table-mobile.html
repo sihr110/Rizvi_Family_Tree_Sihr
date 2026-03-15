@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=3.0, user-scalable=yes, viewport-fit=cover">
-    <title>Rizvi family · root table (mobile→pc layout)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=0.5, maximum-scale=3.0, user-scalable=yes, viewport-fit=cover">
+    <title>Rizvi family · root table (mobile)</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
     
@@ -42,6 +42,17 @@
             --sisters-box-bg: #fff0f5;
         }
 
+        /* Gentle pulsing/blinking effect for toggle button */
+        .left-toggle-btn {
+            animation: gentle-blink 1.5s infinite;
+        }
+
+        @keyframes gentle-blink {
+            0% { opacity: 1; background: var(--gold); }
+            50% { opacity: 0.7; background: #90EE90; transform: scale(1.1); }
+            100% { opacity: 1; background: var(--gold); }
+        }
+
         /* ----- BASE LAYOUT ----- */
         body {
             font-family: 'Inter', sans-serif;
@@ -50,6 +61,8 @@
             overflow: hidden;
             margin: 0;
             padding: 10px;
+            overscroll-behavior-y: contain;
+            -webkit-overflow-scrolling: touch;
         }
         .app-container {
             max-width: 1400px;
@@ -75,6 +88,29 @@
             border-bottom: 3px solid var(--gold);
             position: relative;
         }
+
+        .left-toggle-btn {
+            background: var(--gold);
+            color: var(--dark-blue);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: pointer;
+            border: 2px solid white;
+            z-index: 2000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+
+        .left-toggle-btn:hover {
+            background: var(--light-gold);
+            transform: scale(1.1);
+        }
+
         .header-title {
             font-family: 'Playfair Display', serif;
             font-size: 20px;
@@ -82,7 +118,11 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
         }
+
         .header-icon {
             background: var(--gold);
             color: var(--dark-blue);
@@ -95,80 +135,79 @@
             font-size: 16px;
         }
         
-        /* Top row - Reset button */
-        .top-reset-btn {
-            background: var(--reset-red);
-            color: white;
+        /* Toggle Menu Panel */
+        .toggle-menu-panel {
+            position: absolute;
+            left: 10px;
+            top: 60px;
+            background: white;
+            border: 3px solid var(--gold);
+            border-radius: 12px;
+            padding: 15px;
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 1999;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            min-width: 220px;
+        }
+
+        .toggle-menu-panel.show {
+            display: flex;
+        }
+
+        .toggle-menu-item {
+            padding: 12px 18px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
             border: 2px solid var(--gold);
-            border-radius: 4px;
-            padding: 6px 14px;
-            font-weight: 600;
-            font-size: 13px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            transition: all 0.2s;
-        }
-        .top-reset-btn:hover {
-            background: var(--reset-red-dark);
-            transform: translateY(-2px);
-        }
-        
-        /* Bottom row - Three equal buttons */
-        .action-buttons-row {
-            display: flex;
-            gap: 8px;
-            width: 100%;
-            padding: 10px 20px;
-            background: var(--dark-blue);
-            border-bottom: 2px solid var(--gold);
-        }
-        .action-btn {
-            flex: 1;
-            padding: 8px 5px;
-            font-weight: 600;
-            font-size: 12px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
+            background: white;
+            color: var(--dark-blue);
             white-space: nowrap;
-            border: 2px solid var(--gold);
-            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
             transition: all 0.2s;
-            min-width: 0;
-            text-align: center;
         }
-        .action-btn.tree {
-            background: var(--bronze);
-            color: white;
-            border-color: transparent;
+
+        .toggle-menu-item:hover {
+            background: #faebcd;
+            transform: translateX(5px);
         }
-        .action-btn.pdf {
-            background: var(--pdf-grey);
-            color: white;
-            border-color: transparent;
-        }
-        .action-btn.dashboard {
-            background: var(--dashboard-green);
-            color: white;
-            border-color: transparent;
-        }
-        .action-btn:hover {
-            transform: translateY(-2px);
-            filter: brightness(1.1);
-        }
-        
-        .menu-toggle { display: none; }
         
         /* ----- MAIN CONTENT ----- */
         .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: #fffcf8; }
         #rootSection { display: flex; flex-direction: column; height: 100%; overflow: hidden; flex: 1; }
         .fixed-header-section { padding: 15px 15px 0 15px; background: #fffcf8; flex-shrink: 0; }
         .border-line { border-top: 3px solid var(--gold); margin: 20px 0 0 0; }
-        .scrollable-content { flex: 1; overflow-y: auto; overflow-x: auto; padding: 0 15px 15px 15px; }
+        
+        /* Scrollable content with zoom for mobile */
+        .scrollable-content { 
+            flex: 1; 
+            overflow-y: auto; 
+            overflow-x: auto; 
+            padding: 0 15px 15px 15px;
+            zoom: 0.5;  /* Mobile zoom */
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Scrollbar styling for mobile */
+        .scrollable-content::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        .scrollable-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        .scrollable-content::-webkit-scrollbar-thumb {
+            background: var(--gold);
+            border-radius: 3px;
+        }
         
         /* ----- SEARCH SECTION (TWO ROWS) ----- */
         .search-row {
@@ -385,6 +424,33 @@
             margin: 20px auto;
             max-width: 500px;
         }
+
+        /* Save Options Modal for mobile */
+        .save-options-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border: 3px solid var(--gold);
+            border-radius: 12px;
+            padding: 20px;
+            z-index: 4000;
+            min-width: 300px;
+            max-width: 90vw;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 3999;
+            display: none;
+        }
         
         /* ----- FOOTER ----- */
         .app-footer { background: var(--dark-blue); color: var(--gold); text-align: center; padding: 8px; font-size: 11px; border-top: 2px solid var(--gold); }
@@ -394,20 +460,10 @@
             body { overflow: auto; -webkit-overflow-scrolling: touch; height: auto; min-height: 100vh; padding: 5px; }
             .app-container { height: auto; min-height: calc(100vh - 10px); border-radius: 16px; overflow: hidden; }
             .app-header { position: relative; padding: 10px 15px; }
-            .header-title { font-size: 18px; width: calc(100% - 50px); }
-            .menu-toggle { display: flex !important; position: absolute; top: 50%; right: 15px; transform: translateY(-50%); background: var(--gold); color: black; border: none; border-radius: 50%; width: 44px; height: 44px; font-size: 26px; font-weight: bold; cursor: pointer; z-index: 2000; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
-            
-            .action-buttons-row {
-                padding: 8px 10px;
-                gap: 5px;
-            }
-            .action-btn {
-                font-size: 10px;
-                padding: 8px 2px;
-            }
+            .header-title { font-size: 18px; }
+            .left-toggle-btn { width: 34px; height: 34px; font-size: 18px; }
             
             .fixed-header-section { transition: max-height 0.3s ease, padding 0.3s ease, margin 0.3s ease; overflow: hidden; max-height: 500px; padding: 15px 15px 10px 15px; background: #fffcf8; }
-            .fixed-header-section.collapsed { max-height: 0; padding-top: 0; padding-bottom: 0; margin: 0; border-bottom: none; }
             
             .search-wrapper { width: 100%; }
             .search-input { width: 100%; font-size: 16px; padding: 12px 15px; height: 48px; }
@@ -427,13 +483,7 @@
             .app-footer { padding: 10px; font-size: 10px; }
         }
         @media screen and (max-width: 380px) {
-            .action-btn { font-size: 9px; }
-        }
-
-        /* Prevent pull-to-refresh */
-        body {
-            overscroll-behavior-y: contain;
-            -webkit-overflow-scrolling: touch;
+            .header-title { font-size: 16px; }
         }
     </style>
 
@@ -443,23 +493,23 @@
 
 </head>
 <body>
-    <!-- ⑩ ROOT TABLE – MOBILE WIDE -->
+    <!-- ⑩ ROOT TABLE – MOBILE -->
     <div class="app-container">
-        <!-- HEADER - TOP ROW with Reset on right -->
+        <!-- HEADER - with toggle button only -->
         <div class="app-header">
+            <div class="left-toggle-btn" onclick="toggleLeftMenu()">☰</div>
             <div class="header-title">
                 <span class="header-icon">👥</span> 
                 <span>Rizvi family - Root Table</span>
             </div>
-            <div class="top-reset-btn" onclick="resetSearch()">🔄 Reset</div>
-            
         </div>
-        
-        <!-- SECOND ROW - Three equal buttons -->
-        <div class="action-buttons-row">
-            <div class="action-btn tree" onclick="switchToTree()">🌲 Show Tree</div>
-            <div class="action-btn pdf" onclick="exportPDF()">📑 Save PDF</div>
-            <div class="action-btn dashboard" onclick="goToDashboard()">🏠 Dashboard</div>
+
+        <!-- Toggle Menu Panel -->
+        <div class="toggle-menu-panel" id="toggleMenuPanel">
+            <div class="toggle-menu-item" onclick="resetSearch()">🔄 Reset</div>
+            <div class="toggle-menu-item" onclick="switchToTree()">🌲 Show Tree</div>
+            <div class="toggle-menu-item" onclick="showSaveOptions()">💾 Save File</div>
+            <div class="toggle-menu-item" onclick="goToDashboard()">🏠 Dashboard</div>
         </div>
         
         <!-- main area -->
@@ -470,20 +520,20 @@
                     <div class="search-row">
                         <div class="search-label">MEMBER 1</div>
                         <div class="search-wrapper">
-                            <input type="text" id="search1" class="search-input" placeholder="Type name..." onkeyup="searchMember(this.value, 1)" autocomplete="off">
+                            <input type="text" id="search1" class="search-input" placeholder="Type name..." autocomplete="off">
                             <div id="dropdown1" class="dropdown"></div>
                         </div>
                     </div>
                     <div class="search-row">
                         <div class="search-label">MEMBER 2</div>
                         <div class="search-wrapper">
-                            <input type="text" id="search2" class="search-input" placeholder="Type name..." onkeyup="searchMember(this.value, 2)" autocomplete="off">
+                            <input type="text" id="search2" class="search-input" placeholder="Type name..." autocomplete="off">
                             <div id="dropdown2" class="dropdown"></div>
                         </div>
                     </div>
                     <div class="border-line"></div>
                 </div>
-                <!-- scrollable table area -->
+                <!-- scrollable table area with zoom -->
                 <div class="scrollable-content">
                     <div id="rootTable"></div>
                 </div>
@@ -493,12 +543,40 @@
         <div class="app-footer">Developer: Imran Haider S/o Syed Risalat Hussain Rizvi | 0332-787-6010</div>
     </div>
 
-    <!-- hidden markers for html editing -->
-    <div class="section-marker" data-section="1-header"></div>
-    <div class="section-marker" data-section="2-main"></div>
-    <div class="section-marker" data-section="3-search-filters"></div>
-    <div class="section-marker" data-section="4-table-container"></div>
-    <div class="section-marker" data-section="5-footer"></div>
+    <!-- Save Options Modal -->
+    <div class="save-options-modal" id="saveOptionsModal" style="display:none;">
+        <h3 style="color:var(--maroon); margin-bottom:20px; text-align:center;">💾 Save Family Tree</h3>
+        
+        <div style="margin-bottom:20px;">
+            <div style="font-weight:600; margin-bottom:10px; color:var(--dark-blue);">Select Format:</div>
+            
+            <label style="display:block; margin-bottom:15px; padding:10px; border:2px solid #e0e0e0; border-radius:8px; cursor:pointer;">
+                <input type="radio" name="saveFormat" value="pdf-high" checked style="margin-right:10px;"> 
+                <span style="font-weight:600;">📑 PDF - High Resolution</span>
+                <span style="display:block; font-size:12px; color:#666; margin-left:25px;">Best for printing, larger file (3-8 MB)</span>
+            </label>
+            
+            <label style="display:block; margin-bottom:15px; padding:10px; border:2px solid #e0e0e0; border-radius:8px; cursor:pointer;">
+                <input type="radio" name="saveFormat" value="pdf-low" style="margin-right:10px;"> 
+                <span style="font-weight:600;">📑 PDF - Low Resolution</span>
+                <span style="display:block; font-size:12px; color:#666; margin-left:25px;">Good for sharing, smaller file (0.5-2 MB)</span>
+            </label>
+            
+            <label style="display:block; margin-bottom:15px; padding:10px; border:2px solid #e0e0e0; border-radius:8px; cursor:pointer;">
+                <input type="radio" name="saveFormat" value="jpeg" style="margin-right:10px;"> 
+                <span style="font-weight:600;">📸 JPEG Image</span>
+                <span style="display:block; font-size:12px; color:#666; margin-left:25px;">Universal format, very small file (200-500 KB)</span>
+            </label>
+        </div>
+        
+        <div style="display:flex; gap:10px; justify-content:center;">
+            <button onclick="processSave()" style="flex:2; padding:12px; background:var(--green); color:white; border:none; border-radius:6px; font-weight:600; cursor:pointer;">Save</button>
+            <button onclick="closeSaveModal()" style="flex:1; padding:12px; background:#f0f0f0; border:1px solid #ccc; border-radius:6px; cursor:pointer;">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Overlay -->
+    <div class="modal-overlay" id="saveModalOverlay" onclick="closeSaveModal()"></div>
 
 <!-- ========================================= -->
 <!-- JAVASCRIPT Start                          -->
@@ -510,6 +588,7 @@
         // GLOBAL VARIABLES
         // =========================================================================
         let db = [];
+        let fileInfo = { saved_time: "No timestamp" };
         let member1 = null;
         let member2 = null;
         let LOAD_STAMP = '';
@@ -564,6 +643,13 @@
         }
 
         // =========================================================================
+        // TOGGLE MENU
+        // =========================================================================
+        window.toggleLeftMenu = function() {
+            document.getElementById('toggleMenuPanel').classList.toggle('show');
+        };
+
+        // =========================================================================
         // NAVIGATION
         // =========================================================================
         function switchToTree() {
@@ -592,7 +678,48 @@
             `;
             document.getElementById('dropdown1').style.display = 'none';
             document.getElementById('dropdown2').style.display = 'none';
+            document.getElementById('toggleMenuPanel').classList.remove('show');
         }
+
+        // =========================================================================
+        // SAVE OPTIONS
+        // =========================================================================
+        window.showSaveOptions = function() {
+            if (!member1 || !member2) {
+                alert('Please select both members first');
+                return;
+            }
+            document.getElementById('saveOptionsModal').style.display = 'block';
+            document.getElementById('saveModalOverlay').style.display = 'block';
+            document.getElementById('toggleMenuPanel').classList.remove('show');
+        };
+
+        window.closeSaveModal = function() {
+            document.getElementById('saveOptionsModal').style.display = 'none';
+            document.getElementById('saveModalOverlay').style.display = 'none';
+        };
+
+        window.processSave = function() {
+            const selected = document.querySelector('input[name="saveFormat"]:checked');
+            if (!selected) {
+                alert('Please select a format');
+                return;
+            }
+            
+            closeSaveModal();
+            
+            switch(selected.value) {
+                case 'pdf-high':
+                    exportPDF('high');
+                    break;
+                case 'pdf-low':
+                    exportPDF('low');
+                    break;
+                case 'jpeg':
+                    exportAsJPEG();
+                    break;
+            }
+        };
 
         // =========================================================================
         // SEARCH DROPDOWN
@@ -638,6 +765,15 @@
             if (!e.target.closest('.search-wrapper')) {
                 document.getElementById('dropdown1').style.display = 'none';
                 document.getElementById('dropdown2').style.display = 'none';
+            }
+            
+            if (!e.target.closest('.toggle-menu-panel') && !e.target.closest('.left-toggle-btn')) {
+                document.getElementById('toggleMenuPanel')?.classList.remove('show');
+            }
+            
+            if (!e.target.closest('.save-options-modal') && !e.target.closest('[onclick="showSaveOptions()"]')) {
+                document.getElementById('saveOptionsModal').style.display = 'none';
+                document.getElementById('saveModalOverlay').style.display = 'none';
             }
         });
 
@@ -727,17 +863,26 @@
         }
 
         // =========================================================================
-        // PDF EXPORT
+        // PDF EXPORT WITH QUALITY PARAMETER
         // =========================================================================
-        window.exportPDF = async function() {
+        window.exportPDF = async function(quality = 'high') {
             if (!member1 || !member2) {
                 alert('Please select both members first');
                 return;
             }
             
+            const scale = quality === 'high' ? 2.0 : 1.0;
+            const jpegQuality = quality === 'high' ? 0.95 : 0.6;
+            const qualityText = quality === 'high' ? 'High Resolution' : 'Low Resolution';
+            
             const content = document.getElementById('rootTable');
+            const scrollable = document.querySelector('.scrollable-content');
             
             try {
+                // Save original zoom
+                const originalZoom = scrollable ? scrollable.style.zoom : '0.5';
+                if (scrollable) scrollable.style.zoom = '1';
+                
                 const header = document.createElement('div');
                 header.style.marginBottom = '30px';
                 header.style.textAlign = 'center';
@@ -749,31 +894,23 @@
                 const footer = document.createElement('div');
                 footer.style.marginTop = '40px';
                 footer.style.padding = '15px 20px';
-                footer.style.border = '2px solid #d4af37';
-                footer.style.borderRadius = '4px';
-                footer.style.background = '#0f172a';
-                footer.style.color = '#d4af37';
-                footer.style.display = 'flex';
-                footer.style.justifyContent = 'space-between';
-                footer.style.alignItems = 'center';
-                footer.style.fontSize = '11px';
-                
+                footer.style.background = '#fcf9f4';
+                footer.style.width = '100%';
+                footer.style.boxSizing = 'border-box';
+                footer.style.fontFamily = "'Inter', sans-serif";
+                footer.style.fontSize = '12px';
+                footer.style.textAlign = 'center';
+
                 const timeStr = formatCurrentTime();
-                footer.innerHTML = `<span>${LOAD_STAMP || 'Last data updated on: Unknown'}</span><span style="font-weight: 500;">PDF generated: ${timeStr}</span>`;
-                
-                const signature = document.createElement('div');
-                signature.style.marginTop = '20px';
-                signature.style.paddingTop = '15px';
-                signature.style.borderTop = '1px solid #ddd';
-                signature.style.textAlign = 'center';
-                signature.style.color = '#000';
-                signature.style.fontSize = '12px';
-                signature.style.fontWeight = '500';
-                signature.textContent = 'Developer: Imran Haider S/o Syed Risalat Hussain Rizvi | 0332-787-6010';
+                const excelSavedTime = fileInfo ? fileInfo.saved_time : 'No timestamp';
+
+                footer.innerHTML = `
+                    <div style="padding:2px 0; font-weight:bold; color:#0f172a;">Developer : Imran Haider S/o Syed Risalat Hussain Rizvi | 0332-787-6010</div>
+                    <div style="padding:2px 0; font-weight:bold; color:#5a0000;">Last Data Updated : ${excelSavedTime} | PDF Generated : ${timeStr}</div>
+                `;
                 
                 content.insertBefore(header, content.firstChild);
                 content.appendChild(footer);
-                content.appendChild(signature);
                 
                 const loadingMsg = document.createElement('div');
                 loadingMsg.style.position = 'fixed';
@@ -786,13 +923,13 @@
                 loadingMsg.style.borderRadius = '8px';
                 loadingMsg.style.zIndex = '9999';
                 loadingMsg.style.boxShadow = '0 4px 20px rgba(0,0,0,0.3)';
-                loadingMsg.textContent = '📄 Preparing PDF... please wait';
+                loadingMsg.textContent = `📄 Creating ${qualityText} PDF...`;
                 document.body.appendChild(loadingMsg);
                 
                 await new Promise(resolve => setTimeout(resolve, 500));
                 
                 const canvas = await html2canvas(content, {
-                    scale: 2,
+                    scale: scale,
                     backgroundColor: '#ffffff',
                     logging: false,
                     allowTaint: true,
@@ -801,10 +938,10 @@
                 
                 content.removeChild(header);
                 content.removeChild(footer);
-                content.removeChild(signature);
+                if (scrollable) scrollable.style.zoom = originalZoom;
                 document.body.removeChild(loadingMsg);
                 
-                const imgData = canvas.toDataURL('image/png');
+                const imgData = canvas.toDataURL('image/jpeg', jpegQuality);
                 const { jsPDF } = window.jspdf;
                 
                 const w = canvas.width / 2 * 0.264583;
@@ -816,15 +953,111 @@
                     format: [w + 40, h + 40]
                 });
                 
-                pdf.addImage(imgData, 'PNG', 20, 20, w, h);
+                pdf.addImage(imgData, 'JPEG', 20, 20, w, h, undefined, 'FAST');
                 
                 const safeName1 = displayName(member1.name).replace(/[^a-z0-9]/gi, '_').toLowerCase();
                 const safeName2 = displayName(member2.name).replace(/[^a-z0-9]/gi, '_').toLowerCase();
-                pdf.save(`root_table_${safeName1}_${safeName2}_${Date.now()}.pdf`);
+                pdf.save(`root_table_${safeName1}_${safeName2}_${quality}_${Date.now()}.pdf`);
+                
+                // Show file size
+                const base64Length = imgData.length - 'data:image/jpeg;base64,'.length;
+                const fileSizeKB = Math.ceil((base64Length * 0.75) / 1024);
+                alert(`✅ ${qualityText} PDF saved!\nFile size: ~${fileSizeKB} KB`);
                 
             } catch (err) {
                 console.error('PDF Error:', err);
                 alert('❌ PDF generation failed: ' + err.message);
+            }
+        };
+
+        // =========================================================================
+        // JPEG EXPORT
+        // =========================================================================
+        window.exportAsJPEG = async function() {
+            if (!member1 || !member2) {
+                alert('Please select both members first');
+                return;
+            }
+            
+            const content = document.getElementById('rootTable');
+            const scrollable = document.querySelector('.scrollable-content');
+            
+            try {
+                const originalZoom = scrollable ? scrollable.style.zoom : '0.5';
+                if (scrollable) scrollable.style.zoom = '1';
+                
+                const header = document.createElement('div');
+                header.style.marginBottom = '30px';
+                header.style.textAlign = 'center';
+                header.innerHTML = `
+                    <h1 style="color: #d4af37; font-size: 36px; font-family: 'Playfair Display', serif; margin:0 0 10px 0;">Rizvi Family - Root Analysis</h1>
+                    <h2 style="color:#5a0000; font-size:24px; font-family:'Playfair Display', serif; margin:0;">${displayName(member1.name)} & ${displayName(member2.name)}</h2>
+                `;
+                
+                const footer = document.createElement('div');
+                footer.style.marginTop = '30px';
+                footer.style.padding = '15px 20px';
+                footer.style.background = '#fcf9f4';
+                footer.style.width = '100%';
+                footer.style.boxSizing = 'border-box';
+                footer.style.fontFamily = "'Inter', sans-serif";
+                footer.style.fontSize = '12px';
+                footer.style.textAlign = 'center';
+
+                const timeStr = formatCurrentTime();
+                const excelSavedTime = fileInfo ? fileInfo.saved_time : 'No timestamp';
+                
+                footer.innerHTML = `
+                    <div style="padding:2px 0; font-weight:bold; color:#0f172a;">Developer : Imran Haider S/o Syed Risalat Hussain Rizvi | 0332-787-6010</div>
+                    <div style="padding:2px 0; font-weight:bold; color:#5a0000;">Last Data Updated : ${excelSavedTime} | JPEG Generated : ${timeStr}</div>
+                `;
+                
+                content.insertBefore(header, content.firstChild);
+                content.appendChild(footer);
+                
+                const loadingMsg = document.createElement('div');
+                loadingMsg.style.position = 'fixed';
+                loadingMsg.style.top = '50%';
+                loadingMsg.style.left = '50%';
+                loadingMsg.style.transform = 'translate(-50%, -50%)';
+                loadingMsg.style.background = '#5a0000';
+                loadingMsg.style.color = 'white';
+                loadingMsg.style.padding = '20px 40px';
+                loadingMsg.style.borderRadius = '8px';
+                loadingMsg.style.zIndex = '9999';
+                loadingMsg.style.boxShadow = '0 4px 20px rgba(0,0,0,0.3)';
+                loadingMsg.textContent = '📸 Creating JPEG...';
+                document.body.appendChild(loadingMsg);
+                
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                const canvas = await html2canvas(content, {
+                    scale: 1.2,
+                    backgroundColor: '#ffffff',
+                    logging: false
+                });
+                
+                content.removeChild(header);
+                content.removeChild(footer);
+                if (scrollable) scrollable.style.zoom = originalZoom;
+                document.body.removeChild(loadingMsg);
+                
+                const imgData = canvas.toDataURL('image/jpeg', 0.85);
+                
+                const link = document.createElement('a');
+                const safeName1 = displayName(member1.name).replace(/[^a-z0-9]/gi, '_').toLowerCase();
+                const safeName2 = displayName(member2.name).replace(/[^a-z0-9]/gi, '_').toLowerCase();
+                link.download = `root_table_${safeName1}_${safeName2}_${Date.now()}.jpg`;
+                link.href = imgData;
+                link.click();
+                
+                const base64Length = imgData.length - 'data:image/jpeg;base64,'.length;
+                const fileSizeKB = Math.ceil((base64Length * 0.75) / 1024);
+                setTimeout(() => alert(`✅ JPEG saved!\nFile size: ~${fileSizeKB} KB`), 100);
+                
+            } catch (err) {
+                console.error('Export Error:', err);
+                alert('❌ Failed: ' + err.message);
             }
         };
 
@@ -834,13 +1067,43 @@
         const saved = localStorage.getItem('familyDB');
         if (saved) {
             db = JSON.parse(saved);
-            LOAD_STAMP = 'Last data updated on: ' + new Date().toLocaleString();
+        } else if (typeof FAMILY_DATA !== 'undefined') {
+            db = FAMILY_DATA;
+            localStorage.setItem('familyDB', JSON.stringify(db));
+        }
+        
+        const savedInfo = localStorage.getItem('fileInfo');
+        if (savedInfo) {
+            fileInfo = JSON.parse(savedInfo);
+        } else if (typeof FILE_INFO !== 'undefined') {
+            fileInfo = FILE_INFO;
+            localStorage.setItem('fileInfo', JSON.stringify(fileInfo));
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            // mobile menu toggle
-          
+        // Update footer
+        function updateFooter() {
+            const footer = document.getElementById('appFooter');
+            if (!footer) return;
+            
+            let timeStr = 'No timestamp';
+            if (fileInfo && fileInfo.saved_time) {
+                timeStr = fileInfo.saved_time;
+            }
+            
+            footer.innerHTML = `📅 Last Data saved: ${timeStr} | Developer: Imran Haider S/o Syed Risalat Hussain Rizvi | 0332-787-6010`;
+        }
+        updateFooter();
 
+        // Setup search input listeners
+        document.getElementById('search1')?.addEventListener('keyup', function(e) {
+            window.searchMember(this.value, 1);
+        });
+
+        document.getElementById('search2')?.addEventListener('keyup', function(e) {
+            window.searchMember(this.value, 2);
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
             const saved1 = localStorage.getItem('rootMember1');
             const saved2 = localStorage.getItem('rootMember2');
             if (saved1 && saved2) {

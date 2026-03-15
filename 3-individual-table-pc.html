@@ -1,7 +1,7 @@
 <!-- ===================================== -->
 <!-- FILE NAME: 3-individual-table-pc.html -->
-<!-- LAST UPDATED: 11/03/2026              -->
-<!/* Table view for Rizvi Family - PC version */-->
+<!-- LAST UPDATED: 15/03/2026              -->
+<!-- Table view for Rizvi Family -->
 <!-- ===================================== -->
 
 <!DOCTYPE html>
@@ -344,21 +344,42 @@
             margin-top: 2px;
         }
 
-    .table-container {
-    flex: 1;
-    overflow: auto;
-    padding: 20px;
-    position: relative;
-}
+        .table-container {
+            flex: 1;
+            overflow: auto !important;
+            padding: 20px;
+            position: relative;
+        }
+
+        /* Scrollbar styling */
+        .table-container::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+
+        .table-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 6px;
+        }
+
+        .table-container::-webkit-scrollbar-thumb {
+            background: var(--gold);
+            border-radius: 6px;
+        }
+
+        .table-container::-webkit-scrollbar-thumb:hover {
+            background: var(--dark-blue);
+        }
 
         .table-root-layout {
-     transform-origin: top left;
-    transition: transform 0.1s;
-    min-width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
+            transform-origin: top left;
+            transition: transform 0.1s;
+            min-width: 100%;
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
         .welcome-container {
             display: flex;
@@ -399,33 +420,6 @@
             line-height: 1.6;
         }
 
-        .welcome-shortcuts {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            margin-top: 20px;
-        }
-
-        .shortcut-badge {
-            text-align: center;
-        }
-
-        .shortcut-badge .key {
-            background: #f0f0f0;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-weight: 700;
-            font-size: 18px;
-            color: var(--dark-blue);
-            border: 1px solid #ccc;
-        }
-
-        .shortcut-badge .label {
-            font-size: 12px;
-            color: var(--maroon);
-            margin-top: 5px;
-        }
-
         /* Selected Member Info Card */
         .member-info-card {
             width: 100%;
@@ -464,62 +458,39 @@
             gap: 8px;
         }
 
-.toggle-icon {
-    position: absolute;
-    /* 165px ensures a ~10px gap from the longest word and vertical alignment */
-    left: 165px; 
-    font-size: 22px;
-    font-weight: bold;
-    background: var(--gold);
-    color: var(--dark-blue);
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    transition: all 0.2s;
-    flex-shrink: 0;
-}
-       
+        .toggle-icon {
+            position: absolute;
+            left: 165px; 
+            font-size: 22px;
+            font-weight: bold;
+            background: var(--gold);
+            color: var(--dark-blue);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
 
-.section-heading {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    font-size: 18px;
-    font-weight: 800;
-    color: var(--maroon);
-    /* margin: [Top] [Right] [Bottom/Row Gap] [Left/Middle Start] */
-    margin: 0 0 25px 30%;        
-    padding-bottom: 5px;         
-    border-bottom: 2px solid var(--gold);   
-    font-family: 'Playfair Display', serif;
-    cursor: pointer;
-    position: relative;
-    max-width: 210px; 
-}
-
-.toggle-icon {
-    position: absolute;
-    /* This 'left' value ensures all buttons align in a straight vertical column */
-    left: 165px; 
-    font-size: 22px;
-    font-weight: bold;
-    background: var(--gold);
-    color: var(--dark-blue);
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    transition: all 0.2s;
-    flex-shrink: 0;
-}
-
+        .section-heading {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--maroon);
+            margin: 0 0 25px 30%;        
+            padding-bottom: 5px;         
+            border-bottom: 2px solid var(--gold);   
+            font-family: 'Playfair Display', serif;
+            cursor: pointer;
+            position: relative;
+            max-width: 210px; 
+        }
 
         .toggle-icon:hover {
             transform: scale(1.1);
@@ -594,48 +565,6 @@
             border-top: 2px solid var(--gold);
         }
 
-        .shortcuts-help {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            border: 3px solid var(--gold);
-            border-radius: 12px;
-            padding: 25px;
-            z-index: 4000;
-            display: none;
-            min-width: 400px;
-            max-width: 90vw;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        }
-
-        .shortcuts-help.show {
-            display: block;
-        }
-
-        .shortcuts-help h3 {
-            color: var(--maroon);
-            border-bottom: 2px solid var(--gold);
-            padding-bottom: 10px;
-            margin-bottom: 15px;
-        }
-
-        .shortcut-grid {
-            display: grid;
-            grid-template-columns: auto 1fr;
-            gap: 10px 20px;
-        }
-
-        .shortcut-key {
-            font-family: monospace;
-            font-weight: 700;
-            color: var(--dark-blue);
-            background: #f0f0f0;
-            padding: 4px 8px;
-            border-radius: 4px;
-        }
-
         .context-menu {
             position: fixed;
             background: white;
@@ -657,6 +586,32 @@
         .context-menu-item:hover {
             background: #faebcd;
         }
+
+        /* Save Options Modal */
+        .save-options-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border: 3px solid var(--gold);
+            border-radius: 12px;
+            padding: 25px;
+            z-index: 4000;
+            min-width: 350px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 3999;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -676,10 +631,9 @@
                 <span>Rizvi family · table view</span>
             </div>
             <div class="header-actions">
-    <div class="header-btn" onclick="showShortcutsHelp()">⌨️ Shortcuts</div>
-    <div class="header-btn tree-view" onclick="switchToTreeView()">🌳 Tree View</div>
-    <div class="header-btn dashboard" onclick="showDashboard()">🏠 Dashboard</div>
-</div>
+                <div class="header-btn tree-view" onclick="switchToTreeView()">🌳 Tree View</div>
+                <div class="header-btn dashboard" onclick="showDashboard()">🏠 Dashboard</div>
+            </div>
         </div>
 
         <div class="toggle-menu-panel" id="toggleMenuPanel">
@@ -688,7 +642,7 @@
             <div class="toggle-menu-item active" id="toggleAncestors" onclick="handleToggleMenuClick('ancestors')">🌳 Ancestors</div>
             <div style="border-top:1px solid var(--gold); margin:5px 0;"></div>
             <div class="toggle-menu-item" onclick="resetIndividual()">🔄 Reset</div>
-            <div class="toggle-menu-item" onclick="exportTablePDF()">📑 Save PDF</div>
+            <div class="toggle-menu-item" onclick="showSaveOptions()">💾 Save File</div>
         </div>
 
         <div class="main-content">
@@ -716,26 +670,40 @@
 
     <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" style="display:none;">
 
-    <div class="shortcuts-help" id="shortcutsHelp">
-        <h3>⌨️ Keyboard Shortcuts</h3>
-        <div class="shortcut-grid">
-            <span class="shortcut-key">Ctrl+F</span><span>Focus search</span>
-            <span class="shortcut-key">1</span><span>Toggle siblings</span>
-            <span class="shortcut-key">2</span><span>Toggle descendants</span>
-            <span class="shortcut-key">3</span><span>Toggle ancestors</span>
-            <span class="shortcut-key">Ctrl+P</span><span>Export PDF</span>
-            <span class="shortcut-key">ESC</span><span>Close menus</span>
-            <span class="shortcut-key">Ctrl++</span><span>Zoom in</span>
-            <span class="shortcut-key">Ctrl+-</span><span>Zoom out</span>
-            <span class="shortcut-key">Ctrl+0</span><span>Reset zoom</span>
-            <span class="shortcut-key">↑/↓</span><span>Navigate table</span>
-            <span class="shortcut-key">Enter</span><span>Select member</span>
-            <span class="shortcut-key">?</span><span>Show this help</span>
+    <!-- Save Options Modal -->
+    <div class="save-options-modal" id="saveOptionsModal" style="display:none;">
+        <h3 style="color:var(--maroon); margin-bottom:20px; text-align:center;">💾 Save Family Tree</h3>
+        
+        <div style="margin-bottom:20px;">
+            <div style="font-weight:600; margin-bottom:10px; color:var(--dark-blue);">Select Format:</div>
+            
+            <label style="display:block; margin-bottom:15px; padding:10px; border:2px solid #e0e0e0; border-radius:8px; cursor:pointer;">
+                <input type="radio" name="saveFormat" value="pdf-high" checked style="margin-right:10px;"> 
+                <span style="font-weight:600;">📑 PDF - High Resolution</span>
+                <span style="display:block; font-size:12px; color:#666; margin-left:25px;">Best for printing, larger file (3-8 MB)</span>
+            </label>
+            
+            <label style="display:block; margin-bottom:15px; padding:10px; border:2px solid #e0e0e0; border-radius:8px; cursor:pointer;">
+                <input type="radio" name="saveFormat" value="pdf-low" style="margin-right:10px;"> 
+                <span style="font-weight:600;">📑 PDF - Low Resolution</span>
+                <span style="display:block; font-size:12px; color:#666; margin-left:25px;">Good for sharing, smaller file (0.5-2 MB)</span>
+            </label>
+            
+            <label style="display:block; margin-bottom:15px; padding:10px; border:2px solid #e0e0e0; border-radius:8px; cursor:pointer;">
+                <input type="radio" name="saveFormat" value="jpeg" style="margin-right:10px;"> 
+                <span style="font-weight:600;">📸 JPEG Image</span>
+                <span style="display:block; font-size:12px; color:#666; margin-left:25px;">Universal format, very small file (200-500 KB)</span>
+            </label>
         </div>
-        <div style="text-align:center; margin-top:15px;">
-            <button class="header-btn" onclick="closeShortcutsHelp()">Close</button>
+        
+        <div style="display:flex; gap:10px; justify-content:center;">
+            <button onclick="processSave()" style="flex:2; padding:12px; background:var(--green); color:white; border:none; border-radius:6px; font-weight:600; cursor:pointer;">Save</button>
+            <button onclick="closeSaveModal()" style="flex:1; padding:12px; background:#f0f0f0; border:1px solid #ccc; border-radius:6px; cursor:pointer;">Cancel</button>
         </div>
     </div>
+
+    <!-- Overlay -->
+    <div class="modal-overlay" id="saveModalOverlay" onclick="closeSaveModal()"></div>
 
     <script>
         let db = [];
@@ -749,15 +717,13 @@
         let childrenCollapsed = true;
         let ancestorsCollapsed = true;
 
-        // ADDED: displayName function to hide numeric suffixes
+        // displayName function to hide numeric suffixes
         function displayName(str) {
             return str ? str.replace(/\s*-\s*\d+$/, '').trim() : '';
         }
 
         document.addEventListener('DOMContentLoaded', function() {
             loadData();
-            setupKeyboardShortcuts();
-            setupEventListeners();
             
             const urlParams = new URLSearchParams(window.location.search);
             const memberName = urlParams.get('member');
@@ -790,8 +756,6 @@
             const displayHours = hours % 12 || 12;
             return `${day}/${month}/${year} - ${displayHours}:${minutes}${ampm}`;
         }
-
-
 
         window.toggleLeftMenu = () => document.getElementById('toggleMenuPanel').classList.toggle('show');
 
@@ -826,11 +790,6 @@
                             Select a family member from the search box above<br>
                             to view their family connections in table format.
                         </div>
-                        <div class="welcome-shortcuts">
-                            <div class="shortcut-badge"><div class="key">1</div><div class="label">Siblings</div></div>
-                            <div class="shortcut-badge"><div class="key">2</div><div class="label">Descendants</div></div>
-                            <div class="shortcut-badge"><div class="key">3</div><div class="label">Ancestors</div></div>
-                        </div>
                     </div>
                 </div>
             `;
@@ -846,7 +805,6 @@
             results.forEach(member => {
                 const div = document.createElement('div');
                 div.className = 'result-item';
-                // MODIFIED: Using displayName for member name and father name
                 div.innerHTML = `<div><span class="main-name">${displayName(member.name)}</span> <span class="gen">${member.gen}</span>
                     <div class="father-name">${member.gender?.startsWith('F') ? 'D/o' : 'S/o'} ${displayName(member.father) || '—'}</div></div>`;
                 div.onclick = () => { selectMember(member); dropdown.style.display = 'none'; this.value = displayName(member.name); };
@@ -875,10 +833,9 @@
             return p?.father ? db.find(x => x.name === p.father) : null;
         }
 
-   
-function getMother(person) {
-    return person?.mother || '—';
-}
+        function getMother(person) {
+            return person?.mother || '—';
+        }
 
         function getAncestors(p) {
             let arr = [], cur = p;
@@ -891,38 +848,35 @@ function getMother(person) {
             return arr;
         }
 
-   function renderMemberInfoCard(member) {
-    const statusIcon = (member.alive || '').toLowerCase() === 'yes' ? '🌹' : '🥀';
-    const mother = getMother(member);
-    
-    return `
-        <table class="family-table" style="margin-bottom: 30px;">
-            <thead>
-                <tr>
-                    <th>NAME</th>
-                    <th>VITAL STATUS</th>
-                    <th>GEN</th>
-                    <th>FATHER</th>
-                    <th>MOTHER</th>
-                    <th>SPOUSE</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr class="selected-row">
-                    <!-- MODIFIED: Using displayName for member name -->
-                    <td><strong>${displayName(member.name)}</strong></td>
-                    <td class="vital-status ${(member.alive || '').toLowerCase() === 'yes' ? 'yes' : 'no'}">${statusIcon} ${(member.alive || '').toLowerCase() === 'yes' ? 'Yes' : 'No'}</td>
-                    <td>${member.gen || '—'}</td>
-                    <!-- MODIFIED: Using displayName for father name -->
-                    <td>${displayName(member.father) || '—'}</td>
-                    <td>${mother}</td>
-                    <td>${member.spouse || '—'}</td>
-                </tr>
-            </tbody>
-        </table>
-    `;
-}    
-
+        function renderMemberInfoCard(member) {
+            const statusIcon = (member.alive || '').toLowerCase() === 'yes' ? '🌹' : '🥀';
+            const mother = getMother(member);
+            
+            return `
+                <table class="family-table" style="margin-bottom: 30px;">
+                    <thead>
+                        <tr>
+                            <th>NAME</th>
+                            <th>VITAL STATUS</th>
+                            <th>GEN</th>
+                            <th>FATHER</th>
+                            <th>MOTHER</th>
+                            <th>SPOUSE</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="selected-row">
+                            <td><strong>${displayName(member.name)}</strong></td>
+                            <td class="vital-status ${(member.alive || '').toLowerCase() === 'yes' ? 'yes' : 'no'}">${statusIcon} ${(member.alive || '').toLowerCase() === 'yes' ? 'Yes' : 'No'}</td>
+                            <td>${member.gen || '—'}</td>
+                            <td>${displayName(member.father) || '—'}</td>
+                            <td>${mother}</td>
+                            <td>${member.spouse || '—'}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            `;
+        }
 
         function renderTableForMembers(members, title, includeSelected = false) {
             if (!members || members.length === 0) return '';
@@ -932,9 +886,7 @@ function getMother(person) {
                 <th>NAME</th><th>VITAL STATUS</th><th>GEN</th><th>FATHER</th><th>MOTHER</th><th>SPOUSE</th>
             </tr></thead><tbody>`;
             
-            
             members.forEach(m => {
-                // Skip if this is the selected member and we already included them
                 if (includeSelected && currentIndividual?.name === m.name) return;
                 
                 const statusIcon = (m.alive || '').toLowerCase() === 'yes' ? '🌹' : '🥀';
@@ -942,11 +894,9 @@ function getMother(person) {
                 const isSelected = currentIndividual?.name === m.name ? 'selected-row' : '';
                 
                 html += `<tr class="${isSelected}" onclick="selectMember(db.find(x => x.name === '${m.name.replace(/'/g, "\\'")}'))">`;
-                // MODIFIED: Using displayName for member name
                 html += `<td><strong>${displayName(m.name)}</strong></td>`;
                 html += `<td class="vital-status ${(m.alive || '').toLowerCase() === 'yes' ? 'yes' : 'no'}">${statusIcon} ${(m.alive || '').toLowerCase() === 'yes' ? 'Yes' : 'No'}</td>`;
                 html += `<td>${m.gen || '—'}</td>`;
-                // MODIFIED: Using displayName for father name
                 html += `<td>${displayName(m.father) || '—'}</td>`;
                 html += `<td>${mother}</td>`;
                 html += `<td>${m.spouse || '—'}</td>`;
@@ -978,7 +928,7 @@ function getMother(person) {
                 }
             }
 
-            // Siblings section - include selected member at top
+            // Siblings section
             if (showSiblings) {
                 const father = findParent(currentIndividual);
                 if (father) {
@@ -1013,16 +963,84 @@ function getMother(person) {
             document.getElementById('tableRoot').innerHTML = html;
         }
 
-        function zoomIn() { zoomLevel = Math.min(zoomLevel+0.1,2); applyZoom(); }
-        function zoomOut() { zoomLevel = Math.max(zoomLevel-0.1,0.5); applyZoom(); }
-        function resetZoom() { zoomLevel = 1; applyZoom(); }
-        function applyZoom() {
-            document.getElementById('tableRoot').style.transform = `scale(${zoomLevel})`;
-            document.getElementById('zoomLevel').textContent = Math.round(zoomLevel*100)+'%';
+        // Updated zoom functions with proper scrolling
+        function zoomIn() { 
+            zoomLevel = Math.min(zoomLevel + 0.1, 2); 
+            applyZoom(); 
         }
 
-        async function exportTablePDF() {
+        function zoomOut() { 
+            zoomLevel = Math.max(zoomLevel - 0.1, 0.5); 
+            applyZoom(); 
+        }
+
+        function resetZoom() { 
+            zoomLevel = 1; 
+            applyZoom(); 
+        }
+
+        function applyZoom() {
+            const container = document.querySelector('.table-container');
+            const content = document.getElementById('tableRoot');
+            
+            if (container && content) {
+                // Apply scale transform
+                content.style.transform = `scale(${zoomLevel})`;
+                
+                // Set width/height to maintain scrollable area
+                content.style.width = `${100 / zoomLevel}%`;
+                content.style.height = `${100 / zoomLevel}%`;
+                
+                // Update zoom level display
+                document.getElementById('zoomLevel').textContent = Math.round(zoomLevel * 100) + '%';
+            }
+        }
+
+        // Save Options Functions
+        window.showSaveOptions = function() {
+            if (!currentIndividual) {
+                alert('Please select a family member first');
+                return;
+            }
+            document.getElementById('saveOptionsModal').style.display = 'block';
+            document.getElementById('saveModalOverlay').style.display = 'block';
+            document.getElementById('toggleMenuPanel').classList.remove('show');
+        };
+
+        window.closeSaveModal = function() {
+            document.getElementById('saveOptionsModal').style.display = 'none';
+            document.getElementById('saveModalOverlay').style.display = 'none';
+        };
+
+        window.processSave = function() {
+            const selected = document.querySelector('input[name="saveFormat"]:checked');
+            if (!selected) {
+                alert('Please select a format');
+                return;
+            }
+            
+            closeSaveModal();
+            
+            switch(selected.value) {
+                case 'pdf-high':
+                    exportTablePDF('high');
+                    break;
+                case 'pdf-low':
+                    exportTablePDF('low');
+                    break;
+                case 'jpeg':
+                    exportAsJPEG();
+                    break;
+            }
+        };
+
+        // Updated PDF function with quality parameter
+        async function exportTablePDF(quality = 'high') {
             if (!currentIndividual) { alert('Please select a member first'); return; }
+            
+            const scale = quality === 'high' ? 2.0 : 1.0;
+            const jpegQuality = quality === 'high' ? 0.95 : 0.6;
+            const qualityText = quality === 'high' ? 'High Resolution' : 'Low Resolution';
             
             const tableElement = document.querySelector('.table-root-layout');
             if (!tableElement) return alert('No content to export');
@@ -1031,7 +1049,6 @@ function getMother(person) {
                 const header = document.createElement('div');
                 header.style.marginBottom = '30px'; 
                 header.style.textAlign = 'center';
-                // MODIFIED: Using displayName for current individual name in PDF header
                 header.innerHTML = `<h1 style="color: #d4af37; font-size: 36px; font-family: 'Playfair Display', serif; margin:0;">Rizvi Family Table</h1>
                     <h2 style="color:#5a0000; font-size:24px; font-family:'Playfair Display', serif; margin:10px 0 0 0;">${displayName(currentIndividual.name)}</h2>`;
                 
@@ -1050,20 +1067,10 @@ function getMother(person) {
                 const timeStr = formatCurrentTime();
                 const excelSavedTime = fileInfo ? fileInfo.saved_time : '06/03/2026, 3:57:46 pm';
 
-                const line1 = document.createElement('div');
-                line1.style.padding = '2px 0';
-                line1.style.fontWeight = 'bold';
-                line1.style.color = '#0f172a';
-                line1.textContent = `Developer : Imran Haider S/o Syed Risalat Hussain Rizvi | 0332-787-6010`;
-
-                const line2 = document.createElement('div');
-                line2.style.padding = '2px 0';
-                line2.style.fontWeight = 'bold';
-                line2.style.color = '#5a0000';
-                line2.textContent = `Last Data Updated : ${excelSavedTime} | PDF Printed : ${timeStr}`;
-
-                footer.appendChild(line1);
-                footer.appendChild(line2);
+                footer.innerHTML = `
+                    <div style="padding:2px 0; font-weight:bold; color:#0f172a;">Developer : Imran Haider S/o Syed Risalat Hussain Rizvi | 0332-787-6010</div>
+                    <div style="padding:2px 0; font-weight:bold; color:#5a0000;">Last Data Updated : ${excelSavedTime} | PDF Generated : ${timeStr}</div>
+                `;
                 tableElement.appendChild(footer);
                 
                 const loadingMsg = document.createElement('div');
@@ -1077,13 +1084,13 @@ function getMother(person) {
                 loadingMsg.style.borderRadius = '8px'; 
                 loadingMsg.style.zIndex = '9999'; 
                 loadingMsg.style.boxShadow = '0 4px 20px rgba(0,0,0,0.3)';
-                loadingMsg.textContent = '📄 Preparing PDF... please wait';
+                loadingMsg.textContent = `📄 Creating ${qualityText} PDF...`;
                 document.body.appendChild(loadingMsg);
                 
                 await new Promise(resolve => setTimeout(resolve, 500));
 
                 const canvas = await html2canvas(tableElement, { 
-                    scale: 2, 
+                    scale: scale, 
                     backgroundColor: '#ffffff', 
                     logging: false, 
                     allowTaint: true, 
@@ -1094,7 +1101,7 @@ function getMother(person) {
                 tableElement.removeChild(footer);
                 document.body.removeChild(loadingMsg);
 
-                const imgData = canvas.toDataURL('image/png');
+                const imgData = canvas.toDataURL('image/jpeg', jpegQuality);
                 const { jsPDF } = window.jspdf;
                 const w = canvas.width / 2 * 0.264583;
                 const h = canvas.height / 2 * 0.264583;
@@ -1104,15 +1111,98 @@ function getMother(person) {
                     format: [w + 40, h + 40] 
                 });
                 
-                pdf.addImage(imgData, 'PNG', 20, 20, w, h);
+                pdf.addImage(imgData, 'JPEG', 20, 20, w, h, undefined, 'FAST');
                 const safeName = currentIndividual.name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-                pdf.save(`family_table_${safeName}_${Date.now()}.pdf`);
+                pdf.save(`family_table_${safeName}_${quality}_${Date.now()}.pdf`);
+                
+                // Show file size
+                const base64Length = imgData.length - 'data:image/jpeg;base64,'.length;
+                const fileSizeKB = Math.ceil((base64Length * 0.75) / 1024);
+                alert(`✅ ${qualityText} PDF saved!\nFile size: ~${fileSizeKB} KB`);
                 
             } catch (err) {
                 console.error('PDF Error:', err);
                 alert('❌ PDF generation failed: ' + err.message);
             }
         }
+
+        // JPEG function
+        window.exportAsJPEG = async function() {
+            if (!currentIndividual) return;
+            
+            const tableElement = document.querySelector('.table-root-layout');
+            if (!tableElement) return alert('No content to export');
+            
+            try {
+                const header = document.createElement('div');
+                header.style.marginBottom = '30px'; 
+                header.style.textAlign = 'center';
+                header.innerHTML = `<h1 style="color: #d4af37; font-size: 36px; font-family: 'Playfair Display', serif; margin:0;">Rizvi Family Table</h1>
+                    <h2 style="color:#5a0000; font-size:24px; font-family:'Playfair Display', serif; margin:10px 0 0 0;">${displayName(currentIndividual.name)}</h2>`;
+                tableElement.insertBefore(header, tableElement.firstChild);
+
+                const footer = document.createElement('div');
+                footer.style.marginTop = '30px';
+                footer.style.padding = '15px 20px';
+                footer.style.background = '#fcf9f4';
+                footer.style.width = '100%';
+                footer.style.boxSizing = 'border-box';
+                footer.style.fontFamily = "'Inter', sans-serif";
+                footer.style.fontSize = '12px';
+                footer.style.textAlign = 'center';
+
+                const timeStr = formatCurrentTime();
+                const excelSavedTime = fileInfo ? fileInfo.saved_time : '06/03/2026, 3:57:46 pm';
+                
+                footer.innerHTML = `
+                    <div style="padding:2px 0; font-weight:bold; color:#0f172a;">Developer : Imran Haider S/o Syed Risalat Hussain Rizvi | 0332-787-6010</div>
+                    <div style="padding:2px 0; font-weight:bold; color:#5a0000;">Last Data Updated : ${excelSavedTime} | JPEG Generated : ${timeStr}</div>
+                `;
+                tableElement.appendChild(footer);
+                
+                const loadingMsg = document.createElement('div');
+                loadingMsg.style.position = 'fixed';
+                loadingMsg.style.top = '50%'; 
+                loadingMsg.style.left = '50%'; 
+                loadingMsg.style.transform = 'translate(-50%, -50%)';
+                loadingMsg.style.background = '#5a0000'; 
+                loadingMsg.style.color = 'white'; 
+                loadingMsg.style.padding = '20px 40px'; 
+                loadingMsg.style.borderRadius = '8px'; 
+                loadingMsg.style.zIndex = '9999'; 
+                loadingMsg.style.boxShadow = '0 4px 20px rgba(0,0,0,0.3)';
+                loadingMsg.textContent = '📸 Creating JPEG...';
+                document.body.appendChild(loadingMsg);
+                
+                await new Promise(resolve => setTimeout(resolve, 500));
+
+                const canvas = await html2canvas(tableElement, { 
+                    scale: 1.2,
+                    backgroundColor: '#ffffff', 
+                    logging: false
+                });
+                
+                tableElement.removeChild(header);
+                tableElement.removeChild(footer);
+                document.body.removeChild(loadingMsg);
+
+                const imgData = canvas.toDataURL('image/jpeg', 0.85);
+                
+                const link = document.createElement('a');
+                const safeName = currentIndividual.name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+                link.download = `family_table_${safeName}_${Date.now()}.jpg`;
+                link.href = imgData;
+                link.click();
+                
+                const base64Length = imgData.length - 'data:image/jpeg;base64,'.length;
+                const fileSizeKB = Math.ceil((base64Length * 0.75) / 1024);
+                setTimeout(() => alert(`✅ JPEG saved!\nFile size: ~${fileSizeKB} KB`), 100);
+                
+            } catch (err) {
+                console.error('Export Error:', err);
+                alert('❌ Failed: ' + err.message);
+            }
+        };
 
         function switchToTreeView() {
             if (currentIndividual) {
@@ -1125,60 +1215,33 @@ function getMother(person) {
         function closeAllMenus() {
             document.getElementById('searchDropdown').style.display = 'none';
             document.querySelectorAll('.context-menu').forEach(m => m.remove());
-            document.getElementById('shortcutsHelp')?.classList.remove('show');
             document.getElementById('toggleMenuPanel')?.classList.remove('show');
+            document.getElementById('saveOptionsModal').style.display = 'none';
+            document.getElementById('saveModalOverlay').style.display = 'none';
         }
         
-        function showShortcutsHelp() { 
-            const help = document.getElementById('shortcutsHelp');
-            if (help.classList.contains('show')) {
-                help.classList.remove('show');
-            } else {
-                help.classList.add('show');
-            }
-        }
-        function closeShortcutsHelp() { document.getElementById('shortcutsHelp').classList.remove('show'); }
         function showDashboard() { window.location.href = '1-dashboard-pc.html'; }
         
-        function setupEventListeners() {
-            document.addEventListener('click', function(e) {
-                if (!e.target.closest('.search-wrapper')) document.getElementById('searchDropdown').style.display = 'none';
-                if (!e.target.closest('.toggle-menu-panel') && !e.target.closest('.left-toggle-btn')) 
-                    document.getElementById('toggleMenuPanel')?.classList.remove('show');
-                if (!e.target.closest('.shortcuts-help') && !e.target.closest('[onclick="showShortcutsHelp()"]')) {
-                    document.getElementById('shortcutsHelp')?.classList.remove('show');
-                }
-            });
-        }
-        
-        function setupKeyboardShortcuts() {
-            document.addEventListener('keydown', (e) => {
-                if (e.target.tagName === 'INPUT' && e.key === 'Escape') { e.target.blur(); closeAllMenus(); }
-                if (e.key === '?' && !e.ctrlKey) { e.preventDefault(); showShortcutsHelp(); }
-                if (e.ctrlKey && e.key === 'f') { e.preventDefault(); document.getElementById('searchInput').focus(); }
-                if (e.ctrlKey && e.key === 'p') { e.preventDefault(); exportTablePDF(); }
-                if (e.key === '1' && !e.ctrlKey && currentIndividual) {
-                    showSiblings = !showSiblings; 
-                    document.getElementById('toggleSiblings').classList.toggle('active', showSiblings);
-                    renderTable();
-                }
-                if (e.key === '2' && !e.ctrlKey && currentIndividual) {
-                    showDescendants = !showDescendants; 
-                    document.getElementById('toggleDescendants').classList.toggle('active', showDescendants);
-                    renderTable();
-                }
-                if (e.key === '3' && !e.ctrlKey && currentIndividual) {
-                    showAncestors = !showAncestors; 
-                    document.getElementById('toggleAncestors').classList.toggle('active', showAncestors);
-                    renderTable();
-                }
-            });
-        }
+        // Global click listener
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.search-wrapper')) document.getElementById('searchDropdown').style.display = 'none';
+            
+            if (!e.target.closest('.toggle-menu-panel') && !e.target.closest('.left-toggle-btn')) 
+                document.getElementById('toggleMenuPanel')?.classList.remove('show');
+            
+            if (!e.target.closest('.save-options-modal') && !e.target.closest('[onclick="showSaveOptions()"]')) {
+                document.getElementById('saveOptionsModal').style.display = 'none';
+                document.getElementById('saveModalOverlay').style.display = 'none';
+            }
+        });
 
-        window.zoomIn = zoomIn; window.zoomOut = zoomOut; window.resetZoom = resetZoom;
-        window.showShortcutsHelp = showShortcutsHelp; window.closeShortcutsHelp = closeShortcutsHelp;
-        window.showDashboard = showDashboard; window.resetIndividual = resetIndividual;
-        window.exportTablePDF = exportTablePDF; window.switchToTreeView = switchToTreeView;
+        // Make functions globally available
+        window.zoomIn = zoomIn; 
+        window.zoomOut = zoomOut; 
+        window.resetZoom = resetZoom;
+        window.showDashboard = showDashboard; 
+        window.resetIndividual = resetIndividual;
+        window.switchToTreeView = switchToTreeView;
     </script>
 </body>
 </html>

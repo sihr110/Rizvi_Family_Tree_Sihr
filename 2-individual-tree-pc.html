@@ -1,8 +1,9 @@
+
+
 <!-- ===================================== -->
 <!-- FILE NAME: 2-individual-tree-pc.html -->
-<!-- LAST UPDATED: 14/03/2026              -->
+<!-- LAST UPDATED: 15/03/2026              -->
 <!-- ===================================== -->
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -337,15 +338,36 @@
 
         .tree-container {
             flex: 1;
-            overflow: auto;
+            overflow: auto !important;
             padding: 20px;
             position: relative;
+        }
+
+        /* Scrollbar styling */
+        .tree-container::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+
+        .tree-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 6px;
+        }
+
+        .tree-container::-webkit-scrollbar-thumb {
+            background: var(--gold);
+            border-radius: 6px;
+        }
+
+        .tree-container::-webkit-scrollbar-thumb:hover {
+            background: var(--dark-blue);
         }
 
         .tree-root-layout {
             transform-origin: top left;
             transition: transform 0.1s;
             min-width: 100%;
+            min-height: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -388,33 +410,6 @@
             color: #666;
             margin-bottom: 25px;
             line-height: 1.6;
-        }
-
-        .welcome-shortcuts {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            margin-top: 20px;
-        }
-
-        .shortcut-badge {
-            text-align: center;
-        }
-
-        .shortcut-badge .key {
-            background: #f0f0f0;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-weight: 700;
-            font-size: 18px;
-            color: var(--dark-blue);
-            border: 1px solid #ccc;
-        }
-
-        .shortcut-badge .label {
-            font-size: 12px;
-            color: var(--maroon);
-            margin-top: 5px;
         }
 
         .box {
@@ -608,48 +603,6 @@
             border-top: 2px solid var(--gold);
         }
 
-        .shortcuts-help {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            border: 3px solid var(--gold);
-            border-radius: 12px;
-            padding: 25px;
-            z-index: 4000;
-            display: none;
-            min-width: 400px;
-            max-width: 90vw;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        }
-
-        .shortcuts-help.show {
-            display: block;
-        }
-
-        .shortcuts-help h3 {
-            color: var(--maroon);
-            border-bottom: 2px solid var(--gold);
-            padding-bottom: 10px;
-            margin-bottom: 15px;
-        }
-
-        .shortcut-grid {
-            display: grid;
-            grid-template-columns: auto 1fr;
-            gap: 10px 20px;
-        }
-
-        .shortcut-key {
-            font-family: monospace;
-            font-weight: 700;
-            color: var(--dark-blue);
-            background: #f0f0f0;
-            padding: 4px 8px;
-            border-radius: 4px;
-        }
-
         .context-menu {
             position: fixed;
             background: white;
@@ -672,10 +625,31 @@
             background: #faebcd;
         }
 
+        /* Save Options Modal */
+        .save-options-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border: 3px solid var(--gold);
+            border-radius: 12px;
+            padding: 25px;
+            z-index: 4000;
+            min-width: 350px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
 
-
-
-
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 3999;
+            display: none;
+        }
     </style>
 
 </head>
@@ -695,11 +669,10 @@
                 <span class="header-icon">🌿</span>
                 <span>Rizvi family · structured tree</span>
             </div>
-          <div class="header-actions">
-    <div class="header-btn" onclick="showShortcutsHelp()">⌨️ Shortcuts</div>
-    <div class="header-btn" onclick="showTableView()">📊 Table View</div>
-    <div class="header-btn dashboard" onclick="showDashboard()">🏠 Dashboard</div>
-</div>
+            <div class="header-actions">
+                <div class="header-btn" onclick="showTableView()">📊 Table View</div>
+                <div class="header-btn dashboard" onclick="showDashboard()">🏠 Dashboard</div>
+            </div>
         </div>
 
         <div class="toggle-menu-panel" id="toggleMenuPanel">
@@ -708,7 +681,7 @@
             <div class="toggle-menu-item active" id="toggleAncestors" onclick="handleToggleMenuClick('ancestors')">🌳 Ancestors</div>
             <div style="border-top:1px solid var(--gold); margin:5px 0;"></div>
             <div class="toggle-menu-item" onclick="resetIndividual()">🔄 Reset</div>
-            <div class="toggle-menu-item" onclick="exportIndividualPDF()">📑 Save PDF</div>
+            <div class="toggle-menu-item" onclick="showSaveOptions()">💾 Save File</div>
         </div>
 
         <div class="main-content">
@@ -736,27 +709,40 @@
 
     <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" style="display:none;">
 
-    <div class="shortcuts-help" id="shortcutsHelp">
-        <h3>⌨️ Keyboard Shortcuts</h3>
-        <div class="shortcut-grid">
-            <span class="shortcut-key">Ctrl+F</span><span>Focus search</span>
-            <span class="shortcut-key">1</span><span>Toggle siblings</span>
-            <span class="shortcut-key">2</span><span>Toggle descendants</span>
-            <span class="shortcut-key">3</span><span>Toggle ancestors</span>
-            <span class="shortcut-key">Ctrl+P</span><span>Export PDF</span>
-            <span class="shortcut-key">ESC</span><span>Close menus</span>
-            <span class="shortcut-key">Ctrl++</span><span>Zoom in</span>
-            <span class="shortcut-key">Ctrl+-</span><span>Zoom out</span>
-            <span class="shortcut-key">Ctrl+0</span><span>Reset zoom</span>
-            <span class="shortcut-key">↑</span><span>Go to father</span>
-            <span class="shortcut-key">↓</span><span>Go to first child</span>
-            <span class="shortcut-key">←/→</span><span>Navigate siblings</span>
-            <span class="shortcut-key">?</span><span>Show this help</span>
+    <!-- Save Options Modal -->
+    <div class="save-options-modal" id="saveOptionsModal" style="display:none;">
+        <h3 style="color:var(--maroon); margin-bottom:20px; text-align:center;">💾 Save Family Tree</h3>
+        
+        <div style="margin-bottom:20px;">
+            <div style="font-weight:600; margin-bottom:10px; color:var(--dark-blue);">Select Format:</div>
+            
+            <label style="display:block; margin-bottom:15px; padding:10px; border:2px solid #e0e0e0; border-radius:8px; cursor:pointer;">
+                <input type="radio" name="saveFormat" value="pdf-high" checked style="margin-right:10px;"> 
+                <span style="font-weight:600;">📑 PDF - High Resolution</span>
+                <span style="display:block; font-size:12px; color:#666; margin-left:25px;">Best for printing, larger file (3-8 MB)</span>
+            </label>
+            
+            <label style="display:block; margin-bottom:15px; padding:10px; border:2px solid #e0e0e0; border-radius:8px; cursor:pointer;">
+                <input type="radio" name="saveFormat" value="pdf-low" style="margin-right:10px;"> 
+                <span style="font-weight:600;">📑 PDF - Low Resolution</span>
+                <span style="display:block; font-size:12px; color:#666; margin-left:25px;">Good for sharing, smaller file (0.5-2 MB)</span>
+            </label>
+            
+            <label style="display:block; margin-bottom:15px; padding:10px; border:2px solid #e0e0e0; border-radius:8px; cursor:pointer;">
+                <input type="radio" name="saveFormat" value="jpeg" style="margin-right:10px;"> 
+                <span style="font-weight:600;">📸 JPEG Image</span>
+                <span style="display:block; font-size:12px; color:#666; margin-left:25px;">Universal format, very small file (200-500 KB)</span>
+            </label>
         </div>
-        <div style="text-align:center; margin-top:15px;">
-            <button class="header-btn" onclick="closeShortcutsHelp()">Close</button>
+        
+        <div style="display:flex; gap:10px; justify-content:center;">
+            <button onclick="processSave()" style="flex:2; padding:12px; background:var(--green); color:white; border:none; border-radius:6px; font-weight:600; cursor:pointer;">Save</button>
+            <button onclick="closeSaveModal()" style="flex:1; padding:12px; background:#f0f0f0; border:1px solid #ccc; border-radius:6px; cursor:pointer;">Cancel</button>
         </div>
     </div>
+
+    <!-- Overlay -->
+    <div class="modal-overlay" id="saveModalOverlay" onclick="closeSaveModal()"></div>
 
     <script>
         let db = [];
@@ -770,15 +756,13 @@
         let childrenCollapsed = true;
         let ancestorsCollapsed = true;
 
-        // ADDED: displayName function to hide numeric prefixes
+        // displayName function to hide numeric prefixes
         function displayName(str) {
             return str ? str.replace(/\s*-\s*\d+$/, '').trim() : '';
         }
 
         document.addEventListener('DOMContentLoaded', function() {
             loadData();
-            setupKeyboardShortcuts();
-            setupEventListeners();
             
             const urlParams = new URLSearchParams(window.location.search);
             const memberName = urlParams.get('member');
@@ -792,11 +776,7 @@
             }
         });
 
-
-
-
-
-function loadData() {
+        function loadData() {
             const saved = localStorage.getItem('familyDB');
             if (saved) db = JSON.parse(saved);
             
@@ -849,11 +829,6 @@ function loadData() {
                             Select a family member from the search box above<br>
                             to view their family connections and relationships.
                         </div>
-                        <div class="welcome-shortcuts">
-                            <div class="shortcut-badge"><div class="key">1</div><div class="label">Siblings</div></div>
-                            <div class="shortcut-badge"><div class="key">2</div><div class="label">Descendants</div></div>
-                            <div class="shortcut-badge"><div class="key">3</div><div class="label">Ancestors</div></div>
-                        </div>
                     </div>
                 </div>
             `;
@@ -869,27 +844,26 @@ function loadData() {
             results.forEach(member => {
                 const div = document.createElement('div');
                 div.className = 'result-item';
-                // MODIFIED: Using displayName for member name and father name
                 div.innerHTML = `<div><span class="main-name">${displayName(member.name)}</span> <span class="gen">${member.gen}</span>
                     <div class="father-name">${member.gender?.startsWith('F') ? 'D/o' : 'S/o'} ${displayName(member.father) || '—'}</div></div>`;
-               div.onclick = () => { 
-    selectMember(member); 
-    dropdown.style.display = 'none'; 
-    this.value = displayName(member.name);  // <--- ADD displayName()
-};
+                div.onclick = () => { 
+                    selectMember(member); 
+                    dropdown.style.display = 'none'; 
+                    this.value = displayName(member.name);
+                };
                 dropdown.appendChild(div);
             });
             dropdown.style.display = 'block';
         });
 
- function selectMember(member) {
-    currentIndividual = member;
-    document.getElementById('searchInput').value = displayName(member.name);
-    const url = new URL(window.location);
-    url.searchParams.set('member', encodeURIComponent(member.name));
-    window.history.pushState({}, '', url);
-    renderTree();
-}
+        function selectMember(member) {
+            currentIndividual = member;
+            document.getElementById('searchInput').value = displayName(member.name);
+            const url = new URL(window.location);
+            url.searchParams.set('member', encodeURIComponent(member.name));
+            window.history.pushState({}, '', url);
+            renderTree();
+        }
 
         window.toggleSection = function(section) {
             if (section === 'siblings') siblingsCollapsed = !siblingsCollapsed;
@@ -913,46 +887,40 @@ function loadData() {
             return arr;
         }
 
-   
+        function renderBox(person, label, isSiblingOrChild = false) {
+            const isFemale = person.gender?.startsWith('F');
+            const isSelected = currentIndividual?.name === person.name;
+            const mother = person.mother || '—';
+            const hasKids = db.some(c => c.father === person.name);
+            const statusIcon = (person.alive || '').toLowerCase() === 'yes' ? '🌹' : '🥀';
+            const fatherStatus = (person.father) ? (db.find(f => f.name === person.father)?.alive || '').toLowerCase() === 'yes' ? '🌹' : '🥀' : '';
 
+            let html = `<div class="box ${isFemale ? 'female-box' : ''} ${isSelected ? 'selected' : ''}" data-name="${person.name}" onclick="handleBoxClick(this)">`;
+            html += `<div class="box-header"><span>${label}</span><span>${person.gen || '—'}</span></div>`;
+            html += `<div class="box-body">`;
+            
+            // Name with rose icon
+            html += `<div class="box-row"><span class="box-label">Name :</span><span class="box-value"><span class="member-name">${displayName(person.name)}</span> ${statusIcon}</span></div>`;
+            
+            if (isSiblingOrChild) {
+                // SIBLING OR CHILD BOX - only show Spouse and Status
+                html += `<div class="box-row"><span class="box-label">Spouse :</span><span class="box-value">${person.spouse || '—'}</span></div>`;
+                html += `<div class="box-row"><span class="box-label">Status :</span><span class="box-value">${person.maritalStatus || '—'}</span></div>`;
+            } else {
+                // SELECTED, FATHER, ANCESTOR BOXES - show all fields
+                html += `<div class="box-row"><span class="box-label">Father :</span><span class="box-value">${displayName(person.father) || '—'} ${fatherStatus}</span></div>`;
+                html += `<div class="box-row"><span class="box-label">Mother :</span><span class="box-value">${mother}</span></div>`;
+                html += `<div class="box-row"><span class="box-label">Spouse :</span><span class="box-value">${person.spouse || '—'}</span></div>`;
+                html += `<div class="box-row"><span class="box-label">Status :</span><span class="box-value">${person.maritalStatus || '—'}</span></div>`;
+            }
+            
+            // Child icon if person has children
+            if (hasKids) html += `<div class="child-icon">👪</div>`;
+            
+            html += `</div></div>`;
+            return html;
+        }
 
-// UPDATED: renderBox function to use direct mother field
-function renderBox(person, label, isSiblingOrChild = false) {
-    const isFemale = person.gender?.startsWith('F');
-    const isSelected = currentIndividual?.name === person.name;
-    // UPDATED: Use direct mother field instead of looking up from father's spouse
-    const mother = person.mother || '—';
-    const hasKids = db.some(c => c.father === person.name);
-    const statusIcon = (person.alive || '').toLowerCase() === 'yes' ? '🌹' : '🥀';
-    const fatherStatus = (person.father) ? (db.find(f => f.name === person.father)?.alive || '').toLowerCase() === 'yes' ? '🌹' : '🥀' : '';
-
-    let html = `<div class="box ${isFemale ? 'female-box' : ''} ${isSelected ? 'selected' : ''}" data-name="${person.name}" onclick="handleBoxClick(this)">`;
-    html += `<div class="box-header"><span>${label}</span><span>${person.gen || '—'}</span></div>`;
-    html += `<div class="box-body">`;
-    
-    // Name with rose icon (ALL boxes)
-    html += `<div class="box-row"><span class="box-label">Name :</span><span class="box-value"><span class="member-name">${displayName(person.name)}</span> ${statusIcon}</span></div>`;
-    
-    if (isSiblingOrChild) {
-        // SIBLING OR CHILD BOX - only show Spouse and Status
-        html += `<div class="box-row"><span class="box-label">Spouse :</span><span class="box-value">${person.spouse || '—'}</span></div>`;
-        html += `<div class="box-row"><span class="box-label">Status :</span><span class="box-value">${person.maritalStatus || '—'}</span></div>`;
-    } else {
-        // SELECTED, FATHER, ANCESTOR BOXES - show all fields
-        html += `<div class="box-row"><span class="box-label">Father :</span><span class="box-value">${displayName(person.father) || '—'} ${fatherStatus}</span></div>`;
-        html += `<div class="box-row"><span class="box-label">Mother :</span><span class="box-value">${mother}</span></div>`;
-        html += `<div class="box-row"><span class="box-label">Spouse :</span><span class="box-value">${person.spouse || '—'}</span></div>`;
-        html += `<div class="box-row"><span class="box-label">Status :</span><span class="box-value">${person.maritalStatus || '—'}</span></div>`;
-    }
-    
-    // Child icon if person has children (ALL boxes)
-    if (hasKids) html += `<div class="child-icon">👪</div>`;
-    
-    html += `</div></div>`;
-    return html;
-}
-
-        // NEW helper function to render a gender group using EXACT same layout logic
         function renderGenderGroup(genderMembers, type) {
             const count = genderMembers.length;
             const getLabel = (m) => type === 'sibling' ? (m.gender?.startsWith('F') ? 'Sister' : 'Brother') : (m.gender?.startsWith('F') ? 'Daughter' : 'Son');
@@ -990,23 +958,20 @@ function renderBox(person, label, isSiblingOrChild = false) {
             }
         }
 
-        // MODIFIED function to split by gender when >5
         function renderMembersWithLayout(members, type) {
             if (members.length === 0) return '';
             
-            // NEW: If more than 5 members, split by gender
+            // If more than 5 members, split by gender
             if (members.length > 5) {
                 const males = members.filter(m => m.gender === 'MALE');
                 const females = members.filter(m => m.gender === 'FEMALE');
                 
                 let html = '';
                 
-                // Add males section if any
                 if (males.length > 0) {
                     html += renderGenderGroup(males, type);
                 }
                 
-                // Add females section if any
                 if (females.length > 0) {
                     html += renderGenderGroup(females, type);
                 }
@@ -1014,7 +979,6 @@ function renderBox(person, label, isSiblingOrChild = false) {
                 return html;
             }
             
-            // EXISTING CODE - unchanged
             const count = members.length;
             const getLabel = (m) => type === 'sibling' ? (m.gender?.startsWith('F') ? 'Sister' : 'Brother') : (m.gender?.startsWith('F') ? 'Daughter' : 'Son');
             
@@ -1088,7 +1052,6 @@ function renderBox(person, label, isSiblingOrChild = false) {
                 const siblings = db.filter(s => s.father === father.name && s.name !== currentIndividual.name);
                 if (siblings.length) {
                     html += `<div class="section-heading" onclick="toggleSection('siblings')">`;
-                    // MODIFIED: Using displayName for current individual name
                     html += `<span>👥 Siblings Of ${displayName(currentIndividual.name)} - (${siblings.length})</span>`;
                     html += `<span class="toggle-icon">${siblingsCollapsed ? '+' : '-'}</span>`;
                     html += `</div>`;
@@ -1102,7 +1065,6 @@ function renderBox(person, label, isSiblingOrChild = false) {
                 const children = db.filter(c => c.father === currentIndividual.name);
                 if (children.length) {
                     html += `<div class="section-heading" onclick="toggleSection('children')">`;
-                    // MODIFIED: Using displayName for current individual name
                     html += `<span>👶 Children Of ${displayName(currentIndividual.name)} - (${children.length})</span>`;
                     html += `<span class="toggle-icon">${childrenCollapsed ? '+' : '-'}</span>`;
                     html += `</div>`;
@@ -1122,30 +1084,99 @@ function renderBox(person, label, isSiblingOrChild = false) {
             if (member) selectMember(member);
         };
 
-        function zoomIn() { zoomLevel = Math.min(zoomLevel+0.1,2); applyZoom(); }
-        function zoomOut() { zoomLevel = Math.max(zoomLevel-0.1,0.5); applyZoom(); }
-        function resetZoom() { zoomLevel = 1; applyZoom(); }
-        function applyZoom() {
-            document.getElementById('treeRoot').style.transform = `scale(${zoomLevel})`;
-            document.getElementById('zoomLevel').textContent = Math.round(zoomLevel*100)+'%';
+        // Updated zoom functions with proper scrolling
+        function zoomIn() { 
+            zoomLevel = Math.min(zoomLevel + 0.1, 2); 
+            applyZoom(); 
         }
 
-        async function exportIndividualPDF(memberName) {
-            const member = memberName ? db.find(m => m.name === memberName) : currentIndividual;
+        function zoomOut() { 
+            zoomLevel = Math.max(zoomLevel - 0.1, 0.5); 
+            applyZoom(); 
+        }
+
+        function resetZoom() { 
+            zoomLevel = 1; 
+            applyZoom(); 
+        }
+
+        function applyZoom() {
+            const container = document.querySelector('.tree-container');
+            const content = document.getElementById('treeRoot');
+            
+            if (container && content) {
+                // Apply scale transform
+                content.style.transform = `scale(${zoomLevel})`;
+                
+                // Set width/height to maintain scrollable area
+                content.style.width = `${100 / zoomLevel}%`;
+                content.style.height = `${100 / zoomLevel}%`;
+                
+                // Update zoom level display
+                document.getElementById('zoomLevel').textContent = Math.round(zoomLevel * 100) + '%';
+            }
+        }
+
+        // Save Options Functions
+        window.showSaveOptions = function() {
+            if (!currentIndividual) {
+                alert('Please select a family member first');
+                return;
+            }
+            document.getElementById('saveOptionsModal').style.display = 'block';
+            document.getElementById('saveModalOverlay').style.display = 'block';
+            document.getElementById('toggleMenuPanel').classList.remove('show');
+        };
+
+        window.closeSaveModal = function() {
+            document.getElementById('saveOptionsModal').style.display = 'none';
+            document.getElementById('saveModalOverlay').style.display = 'none';
+        };
+
+        window.processSave = function() {
+            const selected = document.querySelector('input[name="saveFormat"]:checked');
+            if (!selected) {
+                alert('Please select a format');
+                return;
+            }
+            
+            closeSaveModal();
+            
+            switch(selected.value) {
+                case 'pdf-high':
+                    exportIndividualPDF('high');
+                    break;
+                case 'pdf-low':
+                    exportIndividualPDF('low');
+                    break;
+                case 'jpeg':
+                    exportAsJPEG();
+                    break;
+            }
+        };
+
+        // Updated PDF function with quality parameter
+        async function exportIndividualPDF(quality = 'high') {
+            const member = currentIndividual;
             if (!member) return;
+            
+            const scale = quality === 'high' ? 2.0 : 1.0;
+            const jpegQuality = quality === 'high' ? 0.95 : 0.6;
+            const qualityText = quality === 'high' ? 'High Resolution' : 'Low Resolution';
             
             const treeElement = document.querySelector('.tree-root-layout');
             if (!treeElement) return alert('No content to export');
             
             try {
+                // Add header
                 const header = document.createElement('div');
                 header.style.marginBottom = '30px'; 
                 header.style.textAlign = 'center';
                 header.innerHTML = `<h1 style="color: #d4af37; font-size: 36px; font-family: 'Playfair Display', serif; margin:0;">Rizvi Family Tree</h1>
                     <h2 style="color:#5a0000; font-size:24px; font-family:'Playfair Display', serif; margin:10px 0 0 0;">${displayName(member.name)}</h2>`;
-                
                 treeElement.insertBefore(header, treeElement.firstChild);
 
+                // Add footer
                 const footer = document.createElement('div');
                 footer.style.marginTop = '30px';
                 footer.style.padding = '15px 20px';
@@ -1157,24 +1188,15 @@ function renderBox(person, label, isSiblingOrChild = false) {
                 footer.style.textAlign = 'center';
 
                 const timeStr = formatCurrentTime();
-                const excelSavedTime = fileInfo ? fileInfo.saved_time : '06/03/2026, 3:57:46 pm';
+                const excelSavedTime = fileInfo ? fileInfo.saved_time : '14/03/2026, 1:31:16 pm';
 
-                const line1 = document.createElement('div');
-                line1.style.padding = '2px 0';
-                line1.style.fontWeight = 'bold';
-                line1.style.color = '#0f172a';
-                line1.textContent = `Developer : Imran Haider S/o Syed Risalat Hussain Rizvi | 0332-787-6010`;
-
-                const line2 = document.createElement('div');
-                line2.style.padding = '2px 0';
-                line2.style.fontWeight = 'bold';
-                line2.style.color = '#5a0000';
-                line2.textContent = `Last Data Updated : ${excelSavedTime} | PDF Printed : ${timeStr}`;
-
-                footer.appendChild(line1);
-                footer.appendChild(line2);
+                footer.innerHTML = `
+                    <div style="padding:2px 0; font-weight:bold; color:#0f172a;">Developer : Imran Haider S/o Syed Risalat Hussain Rizvi | 0332-787-6010</div>
+                    <div style="padding:2px 0; font-weight:bold; color:#5a0000;">Last Data Updated : ${excelSavedTime} | PDF Generated : ${timeStr}</div>
+                `;
                 treeElement.appendChild(footer);
                 
+                // Show loading
                 const loadingMsg = document.createElement('div');
                 loadingMsg.style.position = 'fixed';
                 loadingMsg.style.top = '50%'; 
@@ -1186,36 +1208,43 @@ function renderBox(person, label, isSiblingOrChild = false) {
                 loadingMsg.style.borderRadius = '8px'; 
                 loadingMsg.style.zIndex = '9999'; 
                 loadingMsg.style.boxShadow = '0 4px 20px rgba(0,0,0,0.3)';
-                loadingMsg.textContent = '📄 Preparing PDF... please wait';
+                loadingMsg.textContent = `📄 Creating ${qualityText} PDF...`;
                 document.body.appendChild(loadingMsg);
                 
                 await new Promise(resolve => setTimeout(resolve, 500));
 
+                // Capture with selected scale
                 const canvas = await html2canvas(treeElement, { 
-                    scale: 2, 
+                    scale: scale,
                     backgroundColor: '#ffffff', 
-                    logging: false, 
-                    allowTaint: true, 
-                    useCORS: true 
+                    logging: false
                 });
                 
+                // Remove header and footer
                 treeElement.removeChild(header);
                 treeElement.removeChild(footer);
                 document.body.removeChild(loadingMsg);
 
-                const imgData = canvas.toDataURL('image/png');
+                // Create PDF
+                const imgData = canvas.toDataURL('image/jpeg', jpegQuality);
                 const { jsPDF } = window.jspdf;
                 const w = canvas.width / 2 * 0.264583;
                 const h = canvas.height / 2 * 0.264583;
+                
                 const pdf = new jsPDF({ 
                     orientation: w > h ? 'l' : 'p', 
                     unit: 'mm', 
                     format: [w + 40, h + 40] 
                 });
                 
-                pdf.addImage(imgData, 'PNG', 20, 20, w, h);
+                pdf.addImage(imgData, 'JPEG', 20, 20, w, h, undefined, 'FAST');
                 const safeName = member.name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-                pdf.save(`family_${safeName}_${Date.now()}.pdf`);
+                pdf.save(`family_${safeName}_${quality}_${Date.now()}.pdf`);
+                
+                // Show file size
+                const base64Length = imgData.length - 'data:image/jpeg;base64,'.length;
+                const fileSizeKB = Math.ceil((base64Length * 0.75) / 1024);
+                alert(`✅ ${qualityText} PDF saved!\nFile size: ~${fileSizeKB} KB`);
                 
             } catch (err) {
                 console.error('PDF Error:', err);
@@ -1223,27 +1252,103 @@ function renderBox(person, label, isSiblingOrChild = false) {
             }
         }
 
+        // JPEG export function
+        window.exportAsJPEG = async function() {
+            const member = currentIndividual;
+            if (!member) return;
+            
+            const treeElement = document.querySelector('.tree-root-layout');
+            if (!treeElement) return alert('No content to export');
+            
+            try {
+                // Add header
+                const header = document.createElement('div');
+                header.style.marginBottom = '30px'; 
+                header.style.textAlign = 'center';
+                header.innerHTML = `<h1 style="color: #d4af37; font-size: 36px; font-family: 'Playfair Display', serif; margin:0;">Rizvi Family Tree</h1>
+                    <h2 style="color:#5a0000; font-size:24px; font-family:'Playfair Display', serif; margin:10px 0 0 0;">${displayName(member.name)}</h2>`;
+                treeElement.insertBefore(header, treeElement.firstChild);
+
+                // Add footer
+                const footer = document.createElement('div');
+                footer.style.marginTop = '30px';
+                footer.style.padding = '15px 20px';
+                footer.style.background = '#fcf9f4';
+                footer.style.width = '100%';
+                footer.style.boxSizing = 'border-box';
+                footer.style.fontFamily = "'Inter', sans-serif";
+                footer.style.fontSize = '12px';
+                footer.style.textAlign = 'center';
+
+                const timeStr = formatCurrentTime();
+                const excelSavedTime = fileInfo ? fileInfo.saved_time : '14/03/2026, 1:31:16 pm';
+                
+                footer.innerHTML = `
+                    <div style="padding:2px 0; font-weight:bold; color:#0f172a;">Developer : Imran Haider S/o Syed Risalat Hussain Rizvi | 0332-787-6010</div>
+                    <div style="padding:2px 0; font-weight:bold; color:#5a0000;">Last Data Updated : ${excelSavedTime} | JPEG Generated : ${timeStr}</div>
+                `;
+                treeElement.appendChild(footer);
+                
+                // Show loading
+                const loadingMsg = document.createElement('div');
+                loadingMsg.style.position = 'fixed';
+                loadingMsg.style.top = '50%'; 
+                loadingMsg.style.left = '50%'; 
+                loadingMsg.style.transform = 'translate(-50%, -50%)';
+                loadingMsg.style.background = '#5a0000'; 
+                loadingMsg.style.color = 'white'; 
+                loadingMsg.style.padding = '20px 40px'; 
+                loadingMsg.style.borderRadius = '8px'; 
+                loadingMsg.style.zIndex = '9999'; 
+                loadingMsg.style.boxShadow = '0 4px 20px rgba(0,0,0,0.3)';
+                loadingMsg.textContent = '📸 Creating JPEG...';
+                document.body.appendChild(loadingMsg);
+                
+                await new Promise(resolve => setTimeout(resolve, 500));
+
+                // Capture with good balance
+                const canvas = await html2canvas(treeElement, { 
+                    scale: 1.2,
+                    backgroundColor: '#ffffff', 
+                    logging: false
+                });
+                
+                // Remove header and footer
+                treeElement.removeChild(header);
+                treeElement.removeChild(footer);
+                document.body.removeChild(loadingMsg);
+
+                // Export as JPEG
+                const imgData = canvas.toDataURL('image/jpeg', 0.85);
+                
+                // Download
+                const link = document.createElement('a');
+                const safeName = member.name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+                link.download = `family_${safeName}_${Date.now()}.jpg`;
+                link.href = imgData;
+                link.click();
+                
+                // Show file size
+                const base64Length = imgData.length - 'data:image/jpeg;base64,'.length;
+                const fileSizeKB = Math.ceil((base64Length * 0.75) / 1024);
+                setTimeout(() => alert(`✅ JPEG saved!\nFile size: ~${fileSizeKB} KB`), 100);
+                
+            } catch (err) {
+                console.error('Export Error:', err);
+                alert('❌ Failed: ' + err.message);
+            }
+        };
+
         function closeAllMenus() {
             document.getElementById('searchDropdown').style.display = 'none';
             document.querySelectorAll('.context-menu').forEach(m => m.remove());
-            document.getElementById('shortcutsHelp')?.classList.remove('show');
             document.getElementById('toggleMenuPanel')?.classList.remove('show');
+            document.getElementById('saveOptionsModal').style.display = 'none';
+            document.getElementById('saveModalOverlay').style.display = 'none';
         }
-        
-        function showShortcutsHelp() { 
-            const help = document.getElementById('shortcutsHelp');
-            if (help.classList.contains('show')) {
-                help.classList.remove('show');
-            } else {
-                help.classList.add('show');
-            }
-        }
-        
-        function closeShortcutsHelp() { document.getElementById('shortcutsHelp').classList.remove('show'); }
         
         function showDashboard() { window.location.href = '1-dashboard-pc.html'; }
         
-        // NEW function for Table View button
         window.showTableView = function() {
             if (currentIndividual) {
                 window.location.href = '3-individual-table-pc.html?member=' + encodeURIComponent(currentIndividual.name);
@@ -1252,38 +1357,28 @@ function renderBox(person, label, isSiblingOrChild = false) {
             }
         };
         
-        function setupEventListeners() {
-            document.addEventListener('click', function(e) {
-                // Close search dropdown when clicking outside
-                if (!e.target.closest('.search-wrapper')) document.getElementById('searchDropdown').style.display = 'none';
-                
-                // Close toggle menu when clicking outside
-                if (!e.target.closest('.toggle-menu-panel') && !e.target.closest('.left-toggle-btn')) 
-                    document.getElementById('toggleMenuPanel')?.classList.remove('show');
-                
-                // Close shortcuts help when clicking anywhere on canvas
-                if (!e.target.closest('.shortcuts-help') && !e.target.closest('[onclick="showShortcutsHelp()"]')) {
-                    document.getElementById('shortcutsHelp')?.classList.remove('show');
-                }
-            });
-        }
-        
-        function setupKeyboardShortcuts() {
-            document.addEventListener('keydown', (e) => {
-                if (e.target.tagName === 'INPUT' && e.key === 'Escape') { e.target.blur(); closeAllMenus(); }
-                if (e.key === '?' && !e.ctrlKey) { e.preventDefault(); showShortcutsHelp(); }
-                if (e.ctrlKey && e.key === 'f') { e.preventDefault(); document.getElementById('searchInput').focus(); }
-                if (e.ctrlKey && e.key === 'p') { e.preventDefault(); exportIndividualPDF(); }
-            });
-        }
+        // Global click listener to close dropdowns and menus
+        document.addEventListener('click', function(e) {
+            // Close search dropdown when clicking outside
+            if (!e.target.closest('.search-wrapper')) document.getElementById('searchDropdown').style.display = 'none';
+            
+            // Close toggle menu when clicking outside
+            if (!e.target.closest('.toggle-menu-panel') && !e.target.closest('.left-toggle-btn')) 
+                document.getElementById('toggleMenuPanel')?.classList.remove('show');
+            
+            // Close save modal when clicking outside
+            if (!e.target.closest('.save-options-modal') && !e.target.closest('[onclick="showSaveOptions()"]')) {
+                document.getElementById('saveOptionsModal').style.display = 'none';
+                document.getElementById('saveModalOverlay').style.display = 'none';
+            }
+        });
 
-        window.zoomIn = zoomIn; window.zoomOut = zoomOut; window.resetZoom = resetZoom;
-        window.showShortcutsHelp = showShortcutsHelp; window.closeShortcutsHelp = closeShortcutsHelp;
-        window.showDashboard = showDashboard; window.resetIndividual = resetIndividual;
-        window.exportIndividualPDF = exportIndividualPDF;
-
-
-
+        // Make functions globally available
+        window.zoomIn = zoomIn; 
+        window.zoomOut = zoomOut; 
+        window.resetZoom = resetZoom;
+        window.showDashboard = showDashboard; 
+        window.resetIndividual = resetIndividual;
     </script>
 </body>
 </html>

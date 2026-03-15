@@ -48,6 +48,50 @@
             overflow: hidden;
             margin: 0;
             padding: 10px;
+            position: relative;
+        }
+
+        /* ZOOM CONTROLS - outside white container */
+        .zoom-controls {
+            position: absolute;
+            top: 30px;
+            right: 0px;
+            background: white;
+            border: 2px solid var(--gold);
+            border-radius: 8px;
+            padding: 5px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            z-index: 2000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .zoom-btn {
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--gold);
+            background: white;
+            color: var(--dark-blue);
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .zoom-btn:hover {
+            background: var(--gold);
+            color: white;
+        }
+
+        .zoom-level {
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 5px;
         }
 
         /* Gentle pulsing/blinking effect with gold and light green - Header Toggle */
@@ -215,6 +259,34 @@
             overflow-y: auto;
             overflow-x: auto;
             padding: 0 15px 15px 15px;
+            position: relative;
+        }
+
+        /* Scrollbar styling */
+        .scrollable-content::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+
+        .scrollable-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 6px;
+        }
+
+        .scrollable-content::-webkit-scrollbar-thumb {
+            background: var(--gold);
+            border-radius: 6px;
+        }
+
+        .scrollable-content::-webkit-scrollbar-thumb:hover {
+            background: var(--dark-blue);
+        }
+
+        #rootTables {
+            transform-origin: top left;
+            transition: transform 0.1s;
+            width: 100%;
+            min-height: 100%;
         }
 
         .search-row {
@@ -380,7 +452,7 @@
             width: 100%;
             border-collapse: collapse;
             font-size: 13px;
-            table-layout: fixed; /* Added for better column control */
+            table-layout: fixed;
         }
 
         .lineage-table th {
@@ -396,36 +468,33 @@
             padding: 8px 10px;
             border-bottom: 1px solid #f0e5ce;
             text-align: left;
-            white-space: nowrap; /* Prevent text wrapping */
+            white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
-     /* SERIAL NUMBER COLUMN - max 3 digits (001-999) */
-.lineage-table td:first-child,
-.lineage-table th:first-child {
-    text-align: center;
-    width: 50px; /* Compact for 3-digit numbers */
-    min-width: 40px;
-    max-width: 60px;
-}
+        .lineage-table td:first-child,
+        .lineage-table th:first-child {
+            text-align: center;
+            width: 50px;
+            min-width: 40px;
+            max-width: 60px;
+        }
 
-/* NAME COLUMN - gets maximum space */
-.lineage-table td:nth-child(2),
-.lineage-table th:nth-child(2) {
-    text-align: left;
-    width: auto; /* Takes remaining space */
-}
+        .lineage-table td:nth-child(2),
+        .lineage-table th:nth-child(2) {
+            text-align: left;
+            width: auto;
+        }
 
-/* GENERATION COLUMN - max 9 characters (e.g., G-042-S1) */
-.lineage-table td:last-child,
-.lineage-table th:last-child {
-    text-align: center;
-    width: 90px; /* Perfect for G-042-S1 (9 chars) */
-    min-width: 80px;
-    max-width: 100px;
-    white-space: nowrap;
-}
+        .lineage-table td:last-child,
+        .lineage-table th:last-child {
+            text-align: center;
+            width: 90px;
+            min-width: 80px;
+            max-width: 100px;
+            white-space: nowrap;
+        }
 
         .lineage-table tr:hover td {
             background: #faebcd !important;
@@ -457,6 +526,32 @@
 
         .hidden {
             display: none !important;
+        }
+
+        /* Save Options Modal */
+        .save-options-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border: 3px solid var(--gold);
+            border-radius: 12px;
+            padding: 25px;
+            z-index: 4000;
+            min-width: 350px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 3999;
+            display: none;
         }
 
         /* Mobile styles */
@@ -551,12 +646,20 @@
             }
             
             .lineage-table td:last-child {
-                width: 100px; /* Slightly smaller on mobile but still adequate */
+                width: 100px;
             }
         }
     </style>
 </head>
 <body>
+    <!-- ZOOM CONTROLS - outside white container -->
+    <div class="zoom-controls">
+        <div class="zoom-btn" onclick="zoomIn()">+</div>
+        <div class="zoom-level" id="zoomLevel">100%</div>
+        <div class="zoom-btn" onclick="zoomOut()">-</div>
+        <div class="zoom-btn" onclick="resetZoom()">↺</div>
+    </div>
+
     <div class="app-container">
         <div class="app-header">
             <div class="left-toggle-btn" onclick="toggleLeftMenu()">☰</div>
@@ -570,7 +673,7 @@
         <div class="toggle-menu-panel" id="toggleMenuPanel">
             <div class="toggle-menu-item" onclick="switchToTreeView()">🌲 Switch to Tree View</div>
             <div class="toggle-menu-item" onclick="resetSearch()">🔄 Reset</div>
-            <div class="toggle-menu-item" onclick="exportPDF()">📑 Save PDF</div>
+            <div class="toggle-menu-item" onclick="showSaveOptions()">💾 Save File</div>
             <div class="toggle-menu-item" onclick="showDashboard()">🏠 Dashboard</div>
         </div>
 
@@ -582,25 +685,62 @@
                     <div class="search-row">
                         <span class="search-label">MEMBER 1</span>
                         <div class="search-wrapper">
-                            <input type="text" id="search1" class="search-input" placeholder="Type name..." onkeyup="searchMember(this.value, 1)" autocomplete="off">
+                            <input type="text" id="search1" class="search-input" placeholder="Type name..." autocomplete="off">
                             <div id="dropdown1" class="dropdown"></div>
                         </div>
                     </div>
                     <div class="search-row">
                         <span class="search-label">MEMBER 2</span>
                         <div class="search-wrapper">
-                            <input type="text" id="search2" class="search-input" placeholder="Type name..." onkeyup="searchMember(this.value, 2)" autocomplete="off">
+                            <input type="text" id="search2" class="search-input" placeholder="Type name..." autocomplete="off">
                             <div id="dropdown2" class="dropdown"></div>
                         </div>
                     </div>
                     <div class="border-line"></div>
                 </div>
-                <div class="scrollable-content" id="rootTables"></div>
+                <div class="scrollable-content">
+                    <div id="rootTables"></div>
+                </div>
             </div>
         </div>
 
         <div class="app-footer" id="appFooter">Developer: Imran Haider S/o Syed Risalat Hussain Rizvi | 0332-787-6010</div>
     </div>
+
+    <!-- Save Options Modal -->
+    <div class="save-options-modal" id="saveOptionsModal" style="display:none;">
+        <h3 style="color:var(--maroon); margin-bottom:20px; text-align:center;">💾 Save Family Tree</h3>
+        
+        <div style="margin-bottom:20px;">
+            <div style="font-weight:600; margin-bottom:10px; color:var(--dark-blue);">Select Format:</div>
+            
+            <label style="display:block; margin-bottom:15px; padding:10px; border:2px solid #e0e0e0; border-radius:8px; cursor:pointer;">
+                <input type="radio" name="saveFormat" value="pdf-high" checked style="margin-right:10px;"> 
+                <span style="font-weight:600;">📑 PDF - High Resolution</span>
+                <span style="display:block; font-size:12px; color:#666; margin-left:25px;">Best for printing, larger file (3-8 MB)</span>
+            </label>
+            
+            <label style="display:block; margin-bottom:15px; padding:10px; border:2px solid #e0e0e0; border-radius:8px; cursor:pointer;">
+                <input type="radio" name="saveFormat" value="pdf-low" style="margin-right:10px;"> 
+                <span style="font-weight:600;">📑 PDF - Low Resolution</span>
+                <span style="display:block; font-size:12px; color:#666; margin-left:25px;">Good for sharing, smaller file (0.5-2 MB)</span>
+            </label>
+            
+            <label style="display:block; margin-bottom:15px; padding:10px; border:2px solid #e0e0e0; border-radius:8px; cursor:pointer;">
+                <input type="radio" name="saveFormat" value="jpeg" style="margin-right:10px;"> 
+                <span style="font-weight:600;">📸 JPEG Image</span>
+                <span style="display:block; font-size:12px; color:#666; margin-left:25px;">Universal format, very small file (200-500 KB)</span>
+            </label>
+        </div>
+        
+        <div style="display:flex; gap:10px; justify-content:center;">
+            <button onclick="processSave()" style="flex:2; padding:12px; background:var(--green); color:white; border:none; border-radius:6px; font-weight:600; cursor:pointer;">Save</button>
+            <button onclick="closeSaveModal()" style="flex:1; padding:12px; background:#f0f0f0; border:1px solid #ccc; border-radius:6px; cursor:pointer;">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Overlay -->
+    <div class="modal-overlay" id="saveModalOverlay" onclick="closeSaveModal()"></div>
 
     <script>
         // ======================================================================
@@ -616,6 +756,7 @@
         let member1 = null;
         let member2 = null;
         let LOAD_STAMP = '';
+        let zoomLevel = 1;
 
         // ======================================================================
         // ========================== HELPER FUNCTIONS ==========================
@@ -642,10 +783,80 @@
         }
 
         // ======================================================================
+        // ========================== ZOOM FUNCTIONS ============================
+        // ======================================================================
+        window.zoomIn = function() { 
+            zoomLevel = Math.min(zoomLevel + 0.1, 2); 
+            applyZoom(); 
+        };
+        
+        window.zoomOut = function() { 
+            zoomLevel = Math.max(zoomLevel - 0.1, 0.5); 
+            applyZoom(); 
+        };
+        
+        window.resetZoom = function() { 
+            zoomLevel = 1; 
+            applyZoom(); 
+        };
+        
+        function applyZoom() {
+            const content = document.getElementById('rootTables');
+            
+            if (content) {
+                content.style.transform = `scale(${zoomLevel})`;
+                content.style.transformOrigin = 'top left';
+                content.style.width = `${100 / zoomLevel}%`;
+                content.style.height = `${100 / zoomLevel}%`;
+                document.getElementById('zoomLevel').textContent = Math.round(zoomLevel * 100) + '%';
+            }
+        }
+
+        // ======================================================================
         // ========================== TOGGLE MENU ===============================
         // ======================================================================
         window.toggleLeftMenu = function() {
             document.getElementById('toggleMenuPanel').classList.toggle('show');
+        };
+
+        // ======================================================================
+        // ========================== SAVE OPTIONS ==============================
+        // ======================================================================
+        window.showSaveOptions = function() {
+            if (!member1 || !member2) {
+                alert('Please select both members first');
+                return;
+            }
+            document.getElementById('saveOptionsModal').style.display = 'block';
+            document.getElementById('saveModalOverlay').style.display = 'block';
+            document.getElementById('toggleMenuPanel').classList.remove('show');
+        };
+
+        window.closeSaveModal = function() {
+            document.getElementById('saveOptionsModal').style.display = 'none';
+            document.getElementById('saveModalOverlay').style.display = 'none';
+        };
+
+        window.processSave = function() {
+            const selected = document.querySelector('input[name="saveFormat"]:checked');
+            if (!selected) {
+                alert('Please select a format');
+                return;
+            }
+            
+            closeSaveModal();
+            
+            switch(selected.value) {
+                case 'pdf-high':
+                    exportPDF('high');
+                    break;
+                case 'pdf-low':
+                    exportPDF('low');
+                    break;
+                case 'jpeg':
+                    exportAsJPEG();
+                    break;
+            }
         };
 
         // ======================================================================
@@ -782,6 +993,12 @@
             if (!e.target.closest('.toggle-menu-panel') && !e.target.closest('.left-toggle-btn')) {
                 document.getElementById('toggleMenuPanel')?.classList.remove('show');
             }
+            
+            // Close save modal when clicking outside
+            if (!e.target.closest('.save-options-modal') && !e.target.closest('[onclick="showSaveOptions()"]')) {
+                document.getElementById('saveOptionsModal').style.display = 'none';
+                document.getElementById('saveModalOverlay').style.display = 'none';
+            }
         });
 
         // ======================================================================
@@ -877,6 +1094,9 @@
             `;
             
             document.getElementById('rootTables').innerHTML = html;
+            
+            // Reset zoom when new content is rendered
+            resetZoom();
         }
 
         // ======================================================================
@@ -884,9 +1104,8 @@
         // ======================================================================
         window.selectMember = function(name) {
             // This function is called when clicking on a table row
-            // You can implement navigation to individual view if needed
             console.log('Selected member:', name);
-            // Future enhancement: navigate to individual tree view
+            // Future enhancement: navigate to individual view
         };
 
         // ======================================================================
@@ -903,15 +1122,18 @@
         };
 
         // ======================================================================
-        // ========================== FIXED PDF EXPORT ==========================
+        // ========================== UPDATED PDF EXPORT ========================
         // ======================================================================
-        window.exportPDF = async function() {
+        async function exportPDF(quality = 'high') {
             if (!member1 || !member2) {
                 alert('Please select both members first');
                 return;
             }
             
-            // Capture the ENTIRE scrollable content area, not just rootTables
+            const scale = quality === 'high' ? 2.0 : 1.0;
+            const jpegQuality = quality === 'high' ? 0.95 : 0.6;
+            const qualityText = quality === 'high' ? 'High Resolution' : 'Low Resolution';
+            
             const content = document.querySelector('.scrollable-content');
             if (!content) return alert('No content to export');
             
@@ -924,7 +1146,7 @@
                 content.style.overflow = 'visible';
                 content.style.height = 'auto';
                 
-                // Create header exactly like File 2
+                // Create header
                 const header = document.createElement('div');
                 header.style.marginBottom = '30px';
                 header.style.textAlign = 'center';
@@ -933,10 +1155,9 @@
                     <h2 style="color: #5a0000; font-size: 24px; font-family: 'Playfair Display', serif; margin: 0;">${displayName(member1.name)} & ${displayName(member2.name)}</h2>
                 `;
                 
-                // Insert header at the beginning of scrollable-content
                 content.insertBefore(header, content.firstChild);
                 
-                // Create footer exactly like File 2
+                // Create footer
                 const footer = document.createElement('div');
                 footer.style.marginTop = '30px';
                 footer.style.padding = '15px 20px';
@@ -950,22 +1171,10 @@
                 const timeStr = formatCurrentTime();
                 const excelSavedTime = fileInfo ? fileInfo.saved_time : '07/03/2026, 10:51:21 pm';
 
-                // LINE 1: Developer with pipe separator
-                const line1 = document.createElement('div');
-                line1.style.padding = '2px 0';
-                line1.style.fontWeight = 'bold';
-                line1.style.color = '#0f172a';
-                line1.textContent = `Developer : Imran Haider S/o Syed Risalat Hussain Rizvi | 0332-787-6010`;
-
-                // LINE 2: Dates with pipe separator
-                const line2 = document.createElement('div');
-                line2.style.padding = '2px 0';
-                line2.style.fontWeight = 'bold';
-                line2.style.color = '#5a0000';
-                line2.textContent = `Last Data Updated : ${excelSavedTime} | PDF Printed : ${timeStr}`;
-
-                footer.appendChild(line1);
-                footer.appendChild(line2);
+                footer.innerHTML = `
+                    <div style="padding:2px 0; font-weight:bold; color:#0f172a;">Developer : Imran Haider S/o Syed Risalat Hussain Rizvi | 0332-787-6010</div>
+                    <div style="padding:2px 0; font-weight:bold; color:#5a0000;">Last Data Updated : ${excelSavedTime} | PDF Generated : ${timeStr}</div>
+                `;
                 content.appendChild(footer);
                 
                 // Loading message
@@ -980,21 +1189,18 @@
                 loadingMsg.style.borderRadius = '8px';
                 loadingMsg.style.zIndex = '9999';
                 loadingMsg.style.boxShadow = '0 4px 20px rgba(0,0,0,0.3)';
-                loadingMsg.textContent = '📄 Preparing PDF... please wait';
+                loadingMsg.textContent = `📄 Creating ${qualityText} PDF...`;
                 document.body.appendChild(loadingMsg);
                 
-                // Allow time for styles to apply
                 await new Promise(resolve => setTimeout(resolve, 500));
                 
-                // Capture with proper scale and settings (same as File 2)
+                // Capture with selected scale
                 const canvas = await html2canvas(content, {
-                    scale: 2,
+                    scale: scale,
                     backgroundColor: '#ffffff',
                     logging: false,
                     allowTaint: true,
-                    useCORS: true,
-                    windowWidth: content.scrollWidth,
-                    windowHeight: content.scrollHeight
+                    useCORS: true
                 });
                 
                 // Remove temporary elements
@@ -1007,38 +1213,132 @@
                 
                 document.body.removeChild(loadingMsg);
                 
-                // Create PDF with proper dimensions (same as File 2)
-                const imgData = canvas.toDataURL('image/png');
+                // Create PDF with JPEG compression
+                const imgData = canvas.toDataURL('image/jpeg', jpegQuality);
                 const { jsPDF } = window.jspdf;
                 
-                // Calculate dimensions (same formula as File 2)
                 const w = canvas.width / 2 * 0.264583;
                 const h = canvas.height / 2 * 0.264583;
                 
-                // Create PDF with dynamic sizing (same as File 2)
                 const pdf = new jsPDF({
                     orientation: w > h ? 'l' : 'p',
                     unit: 'mm',
                     format: [w + 40, h + 40]
                 });
                 
-                // Add image with proper positioning (same as File 2)
-                pdf.addImage(imgData, 'PNG', 20, 20, w, h);
+                pdf.addImage(imgData, 'JPEG', 20, 20, w, h, undefined, 'FAST');
                 
-                // Save with meaningful filename
                 const safeName1 = displayName(member1.name).replace(/[^a-z0-9]/gi, '_').toLowerCase();
                 const safeName2 = displayName(member2.name).replace(/[^a-z0-9]/gi, '_').toLowerCase();
-                pdf.save(`root_${safeName1}_${safeName2}_${new Date().getTime()}.pdf`);
+                pdf.save(`root_${safeName1}_${safeName2}_${quality}_${Date.now()}.pdf`);
+                
+                // Show file size
+                const base64Length = imgData.length - 'data:image/jpeg;base64,'.length;
+                const fileSizeKB = Math.ceil((base64Length * 0.75) / 1024);
+                alert(`✅ ${qualityText} PDF saved!\nFile size: ~${fileSizeKB} KB`);
                 
             } catch (err) {
                 console.error('PDF Error:', err);
                 alert('❌ PDF generation failed: ' + err.message);
                 
-                // Restore styles even on error
                 if (content) {
                     content.style.overflow = originalOverflow;
                     content.style.height = originalHeight;
                 }
+            }
+        }
+
+        // ======================================================================
+        // ========================== JPEG EXPORT ===============================
+        // ======================================================================
+        window.exportAsJPEG = async function() {
+            if (!member1 || !member2) {
+                alert('Please select both members first');
+                return;
+            }
+            
+            const content = document.querySelector('.scrollable-content');
+            if (!content) return alert('No content to export');
+            
+            try {
+                const originalOverflow = content.style.overflow;
+                const originalHeight = content.style.height;
+                
+                content.style.overflow = 'visible';
+                content.style.height = 'auto';
+                
+                const header = document.createElement('div');
+                header.style.marginBottom = '30px';
+                header.style.textAlign = 'center';
+                header.innerHTML = `
+                    <h1 style="color: #d4af37; font-size: 36px; font-family: 'Playfair Display', serif; margin: 0 0 10px 0;">Rizvi Family - Root Analysis</h1>
+                    <h2 style="color: #5a0000; font-size: 24px; font-family: 'Playfair Display', serif; margin: 0;">${displayName(member1.name)} & ${displayName(member2.name)}</h2>
+                `;
+                content.insertBefore(header, content.firstChild);
+
+                const footer = document.createElement('div');
+                footer.style.marginTop = '30px';
+                footer.style.padding = '15px 20px';
+                footer.style.background = '#fcf9f4';
+                footer.style.width = '100%';
+                footer.style.boxSizing = 'border-box';
+                footer.style.fontFamily = "'Inter', sans-serif";
+                footer.style.fontSize = '12px';
+                footer.style.textAlign = 'center';
+
+                const timeStr = formatCurrentTime();
+                const excelSavedTime = fileInfo ? fileInfo.saved_time : '07/03/2026, 10:51:21 pm';
+                
+                footer.innerHTML = `
+                    <div style="padding:2px 0; font-weight:bold; color:#0f172a;">Developer : Imran Haider S/o Syed Risalat Hussain Rizvi | 0332-787-6010</div>
+                    <div style="padding:2px 0; font-weight:bold; color:#5a0000;">Last Data Updated : ${excelSavedTime} | JPEG Generated : ${timeStr}</div>
+                `;
+                content.appendChild(footer);
+                
+                const loadingMsg = document.createElement('div');
+                loadingMsg.style.position = 'fixed';
+                loadingMsg.style.top = '50%';
+                loadingMsg.style.left = '50%';
+                loadingMsg.style.transform = 'translate(-50%, -50%)';
+                loadingMsg.style.background = '#5a0000';
+                loadingMsg.style.color = 'white';
+                loadingMsg.style.padding = '20px 40px';
+                loadingMsg.style.borderRadius = '8px';
+                loadingMsg.style.zIndex = '9999';
+                loadingMsg.style.boxShadow = '0 4px 20px rgba(0,0,0,0.3)';
+                loadingMsg.textContent = '📸 Creating JPEG...';
+                document.body.appendChild(loadingMsg);
+                
+                await new Promise(resolve => setTimeout(resolve, 500));
+
+                const canvas = await html2canvas(content, { 
+                    scale: 1.2,
+                    backgroundColor: '#ffffff', 
+                    logging: false
+                });
+                
+                content.removeChild(header);
+                content.removeChild(footer);
+                content.style.overflow = originalOverflow;
+                content.style.height = originalHeight;
+                document.body.removeChild(loadingMsg);
+
+                const imgData = canvas.toDataURL('image/jpeg', 0.85);
+                
+                const link = document.createElement('a');
+                const safeName1 = displayName(member1.name).replace(/[^a-z0-9]/gi, '_').toLowerCase();
+                const safeName2 = displayName(member2.name).replace(/[^a-z0-9]/gi, '_').toLowerCase();
+                link.download = `root_${safeName1}_${safeName2}_${Date.now()}.jpg`;
+                link.href = imgData;
+                link.click();
+                
+                const base64Length = imgData.length - 'data:image/jpeg;base64,'.length;
+                const fileSizeKB = Math.ceil((base64Length * 0.75) / 1024);
+                setTimeout(() => alert(`✅ JPEG saved!\nFile size: ~${fileSizeKB} KB`), 100);
+                
+            } catch (err) {
+                console.error('Export Error:', err);
+                alert('❌ Failed: ' + err.message);
             }
         };
 
@@ -1060,6 +1360,15 @@
         } else {
             fileInfo = FILE_INFO || { saved_time: "No timestamp" };
         }
+
+        // Setup search input listeners
+        document.getElementById('search1')?.addEventListener('keyup', function(e) {
+            window.searchMember(this.value, 1);
+        });
+
+        document.getElementById('search2')?.addEventListener('keyup', function(e) {
+            window.searchMember(this.value, 2);
+        });
 
         // ======================================================================
         // ========================== INITIALIZATION ============================
