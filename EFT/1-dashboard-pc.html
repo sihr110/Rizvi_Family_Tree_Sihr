@@ -187,19 +187,26 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            background: #991b1b;
+            background: #5a0000;
             color: white;
             padding: 12px 24px;
             border-radius: 8px;
             cursor: pointer;
-            border: 2px solid #991b1b;
+            border: 2px solid var(--gold);
             min-width: 240px;
             justify-content: center;
             font-size: 15px;
+            transition: all 0.2s;
         }
 
         .exit-btn-container:hover {
-            background: #b91c1c;
+            background: #7a1f1f;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(90, 0, 0, 0.3);
+        }
+        
+        .exit-btn-container:active {
+            transform: translateY(0);
         }
 
         .app-footer {
@@ -343,15 +350,22 @@ let db = [];
 let currentView = 'dashboard'; // 'dashboard' or 'admin'
 let isAdminAuthenticated = false; // Track if admin is already logged in
 
+// UPDATED logout function - now redirects to main index.html
 function logout() {
-    // Clear all data when going back to password screen
-    localStorage.removeItem('familyDB');
-    localStorage.removeItem('fileInfo');
-    localStorage.removeItem('tableViewMember');
-    localStorage.removeItem('tableViewFilters');
-    db = [];
-    isAdminAuthenticated = false;
-    window.location.href = 'index.html';
+    // Ask for confirmation before exiting
+    if (confirm('Are you sure you want to exit and return to the login page?')) {
+        // Clear all data when going back to password screen
+        localStorage.removeItem('familyDB');
+        localStorage.removeItem('fileInfo');
+        localStorage.removeItem('tableViewMember');
+        localStorage.removeItem('tableViewFilters');
+        db = [];
+        isAdminAuthenticated = false;
+        
+        // Redirect to main index.html in the root folder (one level up)
+        console.log('Redirecting to main login page...');
+        window.location.href = '../index.html';
+    }
 }
 
 function hardReset() {
@@ -534,8 +548,8 @@ function renderDashboardView() {
             <div class="bottom-row">
                 <div class="exit-btn-container" onclick="logout()">
                     <span class="exit-btn-icon">🚪</span>
-                    <span class="exit-btn-text">Exit</span>
-                    <span class="exit-btn-subtext">- (Back to login)</span>
+                    <span class="exit-btn-text">Exit to Login</span>
+                    <span class="exit-btn-subtext">- (Back to main page)</span>
                 </div>
                 
                 <div class="exit-btn-container" onclick="hardReset()" style="background: #4169E1;">
@@ -590,6 +604,11 @@ function renderAdminView() {
                 <div class="exit-btn-container" onclick="goToDashboard()" style="background: var(--dark-blue); min-width: 200px; white-space: nowrap;">
                     <span class="exit-btn-icon">⬅️</span>
                     <span class="exit-btn-text">Back - (to Dashboard)</span>
+                </div>
+                
+                <div class="exit-btn-container" onclick="logout()" style="background: #5a0000; min-width: 200px; white-space: nowrap;">
+                    <span class="exit-btn-icon">🚪</span>
+                    <span class="exit-btn-text">Exit to Login</span>
                 </div>
             </div>
         </div>
@@ -680,5 +699,3 @@ checkHash();
 
 </body>
 </html>
-
-
