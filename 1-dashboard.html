@@ -1,18 +1,18 @@
 <!-- ======================================== -->
-<!-- FILE NAME: 1-dashboard.html           -->
-<!-- UPDATED: 0.5 zoom for all devices       -->
+<!-- FILE NAME: 1-dashboard.html              -->
+<!-- COMBINED PC & MOBILE VERSION             -->
+<!-- PC: zoom:1, Mobile: zoom:0.5 via ?device -->
 <!-- ======================================== -->
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=0.5, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Rizvi Family · Dashboard</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <!-- Include 10-family-data.js for auto-loading -->
     <script src="10-family-data.js"></script>
     
     <style>
@@ -47,8 +47,6 @@
             border: 2px solid var(--gold);
             overflow: hidden;
             box-shadow: 0 0 50px rgba(212, 175, 55, 0.2);
-            /* Fixed 0.5 zoom for all devices */
-            zoom: 0.5;
         }
 
         .app-header {
@@ -229,7 +227,7 @@
 
         .admin-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 25px;
             margin-bottom: 30px;
         }
@@ -291,15 +289,8 @@
             color: var(--dark-blue);
         }
 
-        /* Mobile specific adjustments */
+        /* Mobile specific adjustments when zoom is applied */
         @media (max-width: 768px) {
-            .app-container {
-                zoom: 0.5;
-                border-radius: 10px;
-                margin: 0;
-                height: 100vh;
-            }
-            
             .app-header {
                 padding: 8px 12px;
             }
@@ -317,29 +308,6 @@
             .status-badge {
                 padding: 6px 10px;
                 font-size: 11px;
-            }
-            
-            .dashboard-card {
-                min-height: 130px;
-                padding: 15px 8px;
-            }
-            
-            .card-icon {
-                font-size: 32px;
-            }
-            
-            .card-title {
-                font-size: 14px;
-            }
-            
-            .card-desc {
-                font-size: 11px;
-            }
-            
-            .exit-btn-container {
-                padding: 8px 12px;
-                min-width: 160px;
-                font-size: 12px;
             }
         }
         
@@ -390,12 +358,29 @@
     </div>
 
 <script>
+// ===== DEVICE DETECTION =====
+(function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const device = urlParams.get('device') || 'pc'; // Default to PC
+    
+    // Apply zoom based on device
+    const appContainer = document.querySelector('.app-container');
+    if (appContainer) {
+        if (device === 'mobile') {
+            appContainer.style.zoom = '0.5';
+        } else {
+            appContainer.style.zoom = '1';
+        }
+    }
+    
+    // Store device for navigation
+    localStorage.setItem('device', device);
+})();
 
 // Check URL parameters on page load
 function checkURLParams() {
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.has('view') && urlParams.get('view') === 'admin') {
-        // Automatically prompt for admin password
         setTimeout(() => {
             const pwd = prompt('Enter Admin Password:');
             if (pwd === '6010') {
@@ -408,16 +393,15 @@ function checkURLParams() {
             } else {
                 renderDashboardView();
             }
-        }, 100); // Small delay to ensure page is loaded
+        }, 100);
     }
 }
 
 let db = [];
-let currentView = 'dashboard'; // 'dashboard' or 'admin'
-let isAdminAuthenticated = false; // Track if admin is already logged in
+let currentView = 'dashboard';
+let isAdminAuthenticated = false;
 
 function logout() {
-    // Clear all data when going back to password screen
     localStorage.removeItem('familyDB');
     localStorage.removeItem('fileInfo');
     localStorage.removeItem('tableViewMember');
@@ -431,32 +415,25 @@ function hardReset() {
     const confirmation = confirm("🚨 WARNING: This will permanently delete ALL family data from this browser. Are you sure?");
     
     if (confirmation) {
-        // Clear all localStorage items
         localStorage.removeItem('familyDB');
         localStorage.removeItem('fileInfo');
         localStorage.removeItem('tableViewMember');
         localStorage.removeItem('tableViewFilters');
         
-        // Reset the database variable
         db = [];
         isAdminAuthenticated = false;
         
-        // Update header status
         updateHeaderStatus();
         
-        // Update the UI based on current view
         if (currentView === 'admin') {
             renderAdminView();
         }
         
         alert("✅ All data has been cleared from browser storage.");
-        
-        // Try to auto-load again
         autoLoadFromJS();
     }
 }
 
-// Admin login with password
 function goToAdminWithPassword() {
     const pwd = prompt('Enter Admin Password:');
     if (pwd === '6010') {
@@ -468,12 +445,10 @@ function goToAdminWithPassword() {
     }
 }
 
-// No password required for data load (protected by admin gateway)
 function loadData() {
     document.getElementById('fileInput').click();
 }
 
-// UPDATED: File input handler to include all fields (mother, spouse, maritalStatus, alive)
 document.getElementById('fileInput').onchange = function(e) {
     const file = e.target.files[0];
     if (!file) return;
@@ -485,19 +460,17 @@ document.getElementById('fileInput').onchange = function(e) {
             const wb = XLSX.read(data, { type: 'array' });
             const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
             
-            // UPDATED: Map all fields including mother, spouse, maritalStatus, alive
             db = rows.map(r => ({
                 name: String(r.Name || r.name || '').trim(),
                 father: String(r.Father || r.father || '').trim(),
-                mother: String(r.Mother || r.mother || '').trim(),           // ADDED
-                spouse: String(r.Spouse || r.spouse || '').trim(),           // ADDED
+                mother: String(r.Mother || r.mother || '').trim(),
+                spouse: String(r.Spouse || r.spouse || '').trim(),
                 gen: String(r.Gen || r.gen || '').trim(),
                 gender: String(r.Gender || r.gender || 'Male').trim().toUpperCase(),
-                maritalStatus: String(r.MaritalStatus || r.maritalStatus || r.Maritalstatus || r.maritalstatus || '').trim(), // ADDED
-                alive: String(r.Alive || r.alive || '').trim()               // ADDED
+                maritalStatus: String(r.MaritalStatus || r.maritalStatus || r.Maritalstatus || r.maritalstatus || '').trim(),
+                alive: String(r.Alive || r.alive || '').trim()
             })).filter(p => p.name);
 
-            // ADDED: Extract timestamp from J1/J2 if present
             try {
                 const firstSheet = wb.Sheets[wb.SheetNames[0]];
                 const j1Cell = firstSheet['J1'];
@@ -514,22 +487,16 @@ document.getElementById('fileInput').onchange = function(e) {
                 };
                 
                 localStorage.setItem('fileInfo', JSON.stringify(fileInfo));
-                console.log('✅ Timestamp extracted from Excel:', fileInfo.saved_time);
             } catch (tsErr) {
                 console.warn('Could not extract timestamp:', tsErr);
             }
 
-            // Save to localStorage for other pages
             localStorage.setItem('familyDB', JSON.stringify(db));
-            
             updateHeaderStatus();
             
             if (currentView === 'admin') {
                 renderAdminView();
             }
-            
-            // Optional success message
-            console.log(`✅ Successfully loaded ${db.length} members from Excel file with all fields.`);
             
         } catch (err) {
             alert('❌ Error: ' + err.message);
@@ -544,7 +511,6 @@ function updateHeaderStatus() {
 }
 
 function goToIndividual() {
-    // Check if data exists in memory OR in localStorage
     if (db.length === 0) {
         const saved = localStorage.getItem('familyDB');
         if (saved) {
@@ -555,14 +521,11 @@ function goToIndividual() {
         }
     }
     
-    // Detect if on mobile for navigation (keeping zoom consistent)
-    const isMobile = window.innerWidth <= 768;
-    // We're keeping the same file for both, so no parameter needed
-    window.location.href = '2-individual-tree.html';
+    const device = localStorage.getItem('device') || 'pc';
+    window.location.href = `2-individual-tree.html?device=${device}`;
 }
 
 function goToRoot() {
-    // Check if data exists in memory OR in localStorage
     if (db.length === 0) {
         const saved = localStorage.getItem('familyDB');
         if (saved) {
@@ -572,7 +535,9 @@ function goToRoot() {
             return;
         }
     }
-    window.location.href = '4-root-tree-pc.html';
+    
+    const device = localStorage.getItem('device') || 'pc';
+    window.location.href = `4-root-tree.html?device=${device}`;
 }
 
 function goToDashboard() {
@@ -638,7 +603,7 @@ function renderAdminView() {
         <div class="admin-container">
             <div class="admin-title">⚙️ Admin Use Only</div>
             
-            <div class="admin-grid" style="grid-template-columns: repeat(3, 1fr);">
+            <div class="admin-grid">
                 <div class="admin-card-large" onclick="loadData()">
                     <div class="admin-card-icon">📂</div>
                     <div class="admin-card-title">Load Data</div>
@@ -648,14 +613,14 @@ function renderAdminView() {
                     </div>
                 </div>
                 
-                <div class="admin-card-large" onclick="window.location.href='11- add-data.html'">
+                <div class="admin-card-large" onclick="window.location.href='11-add-data.html'">
                     <div class="admin-card-icon">✏️</div>
                     <div class="admin-card-title">Add / Edit Member</div>
                     <div class="admin-card-desc">Add new members or edit existing records</div>
-                    <div class="data-status" style="margin-top: 15px;">→ Open 11- add-data.html</div>
+                    <div class="data-status" style="margin-top: 15px;">→ Open Editor</div>
                 </div>
 
-                <div class="admin-card-large" onclick="window.location.href='12- excel-to-js-converter.html'">
+                <div class="admin-card-large" onclick="window.location.href='12-excel-to-js-converter.html'">
                     <div class="admin-card-icon">🔄</div>
                     <div class="admin-card-title">Data Converter</div>
                     <div class="admin-card-desc">Excel to JS / JSON converter</div>
@@ -673,24 +638,18 @@ function renderAdminView() {
     `;
 }
 
-// Auto-load from 10-family-data.js
 function autoLoadFromJS() {
-    // Check if FAMILY_DATA is available (from 10-family-data.js)
     if (typeof FAMILY_DATA !== 'undefined' && FAMILY_DATA.length > 0) {
         try {
-            // Save the family members data (already includes all fields)
             db = FAMILY_DATA;
             localStorage.setItem('familyDB', JSON.stringify(db));
             
-            // Save the file info (timestamp) to localStorage
             if (typeof FILE_INFO !== 'undefined') {
                 localStorage.setItem('fileInfo', JSON.stringify(FILE_INFO));
-                console.log('✅ Timestamp saved:', FILE_INFO.saved_time);
-                console.log('✅ Total members:', FILE_INFO.total_members);
             }
             
             updateHeaderStatus();
-            console.log(`✅ Auto-loaded ${db.length} members with all fields`);
+            console.log(`✅ Auto-loaded ${db.length} members`);
             
         } catch (err) {
             console.error('Error:', err);
@@ -698,15 +657,12 @@ function autoLoadFromJS() {
     }
 }
 
-// Initialize on page load
 function initializeData() {
-    // First check if we have data in localStorage (from previous session)
     const saved = localStorage.getItem('familyDB');
     if (saved) {
         db = JSON.parse(saved);
         updateHeaderStatus();
         
-        // Also load fileInfo if available
         const savedInfo = localStorage.getItem('fileInfo');
         if (savedInfo) {
             console.log('📅 Cached timestamp:', JSON.parse(savedInfo).saved_time);
@@ -714,27 +670,21 @@ function initializeData() {
         return;
     }
 
-    // If no cached data, auto-load from 10-family-data.js
     autoLoadFromJS();
 }
 
-// Check for hash on page load (FOR BACK TO ADMIN BUTTON)
 function checkHash() {
     const urlParams = new URLSearchParams(window.location.search);
     const isPreAuth = urlParams.get('auth') === 'true';
 
     if (window.location.hash === '#admin') {
         setTimeout(() => {
-            // If we have the auth flag OR are already authenticated in this session
             if (isPreAuth || isAdminAuthenticated) {
                 currentView = 'admin';
                 isAdminAuthenticated = true;
                 renderAdminView();
-                
-                // Clean the URL so the 'auth' flag doesn't stay there forever
                 window.history.replaceState({}, document.title, "1-dashboard.html#admin");
             } else {
-                // Otherwise, ask for the password as usual
                 const pwd = prompt('Enter Admin Password:');
                 if (pwd === '6010') {
                     currentView = 'admin';
@@ -748,21 +698,10 @@ function checkHash() {
     }
 }
 
-// Set initial zoom
-document.addEventListener('DOMContentLoaded', function() {
-    // Ensure zoom is applied
-    const appContainer = document.querySelector('.app-container');
-    if (appContainer) {
-        appContainer.style.zoom = '0.5';
-    }
-});
-
-// Initialize everything
 initializeData();
 renderDashboardView();
 checkURLParams();
 checkHash();
-
 </script>
 
 </body>
