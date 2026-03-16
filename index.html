@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Rizvi Family · Login</title>
+    <title>Rizvi Family Tree · Login</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
     
@@ -375,17 +375,15 @@
             
             if (enteredPwd === CONFIG.password) {
                 console.log('Password correct, redirecting...');
-                // Clear any existing data on fresh login
-                localStorage.removeItem('familyDB');
                 
                 // Navigate based on language and device
                 let dashboard;
                 if (language === 'english') {
-                    // English language dashboards
-                    dashboard = deviceType === 'pc' ? '1-dashboard-pc.html' : '6-dashboard-mobile.html';
+                    // English language - redirect to EFT folder
+                    dashboard = deviceType === 'pc' ? 'EFT/1-dashboard-pc.html' : 'EFT/6-dashboard-mobile.html';
                 } else {
-                    // Urdu language dashboards
-                    dashboard = deviceType === 'pc' ? '21-dashboard-pc.html' : '21-dashboard-mobile.html';
+                    // Urdu language - redirect to UFT folder
+                    dashboard = deviceType === 'pc' ? 'UFT/21-dashboard-pc.html' : 'UFT/21-dashboard-mobile.html';
                 }
                 
                 console.log('Redirecting to:', dashboard);
