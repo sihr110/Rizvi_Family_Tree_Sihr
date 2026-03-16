@@ -1,20 +1,18 @@
 <!-- ======================================== -->
 <!-- FILE NAME: 1-dashboard.html           -->
-<!--                                          -->
+<!-- UPDATED: 0.5 zoom for all devices       -->
 <!-- ======================================== -->
-
-
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Rizvi Family · Dashboard (Desktop)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=0.5, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Rizvi Family · Dashboard</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <!-- Include 10-family-data.js for auto-loading on PC -->
+    <!-- Include 10-family-data.js for auto-loading -->
     <script src="10-family-data.js"></script>
     
     <style>
@@ -49,6 +47,8 @@
             border: 2px solid var(--gold);
             overflow: hidden;
             box-shadow: 0 0 50px rgba(212, 175, 55, 0.2);
+            /* Fixed 0.5 zoom for all devices */
+            zoom: 0.5;
         }
 
         .app-header {
@@ -290,6 +290,80 @@
             background: var(--gold);
             color: var(--dark-blue);
         }
+
+        /* Mobile specific adjustments */
+        @media (max-width: 768px) {
+            .app-container {
+                zoom: 0.5;
+                border-radius: 10px;
+                margin: 0;
+                height: 100vh;
+            }
+            
+            .app-header {
+                padding: 8px 12px;
+            }
+            
+            .header-title {
+                font-size: 16px;
+            }
+            
+            .header-icon {
+                width: 28px;
+                height: 28px;
+                font-size: 14px;
+            }
+            
+            .status-badge {
+                padding: 6px 10px;
+                font-size: 11px;
+            }
+            
+            .dashboard-card {
+                min-height: 130px;
+                padding: 15px 8px;
+            }
+            
+            .card-icon {
+                font-size: 32px;
+            }
+            
+            .card-title {
+                font-size: 14px;
+            }
+            
+            .card-desc {
+                font-size: 11px;
+            }
+            
+            .exit-btn-container {
+                padding: 8px 12px;
+                min-width: 160px;
+                font-size: 12px;
+            }
+        }
+        
+        /* Small phones */
+        @media (max-width: 480px) {
+            .top-row {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .bottom-row {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .exit-btn-container {
+                min-width: auto;
+                width: 100%;
+            }
+            
+            .admin-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
@@ -297,7 +371,7 @@
         <div class="app-header" id="appHeader">
             <div class="header-title">
                 <span class="header-icon">🌿</span>
-                <span id="headerTitle">Rizvi Family Dashboard (PC)</span>
+                <span id="headerTitle">Rizvi Family Dashboard</span>
             </div>
             <div class="header-actions" id="headerActions">
                 <span class="status-badge" id="headerStatus">📊 Total member records: 0</span>
@@ -314,7 +388,6 @@
             Developer: Imran Haider S/o Syed Risalat Hussain Rizvi | 0332-787-6010
         </div>
     </div>
-
 
 <script>
 
@@ -481,6 +554,10 @@ function goToIndividual() {
             return;
         }
     }
+    
+    // Detect if on mobile for navigation (keeping zoom consistent)
+    const isMobile = window.innerWidth <= 768;
+    // We're keeping the same file for both, so no parameter needed
     window.location.href = '2-individual-tree.html';
 }
 
@@ -504,7 +581,7 @@ function goToDashboard() {
 }
 
 function renderDashboardView() {
-    document.getElementById('headerTitle').innerText = 'Rizvi Family Dashboard (PC)';
+    document.getElementById('headerTitle').innerText = 'Rizvi Family Dashboard';
     document.getElementById('headerActions').innerHTML = `
         <span class="status-badge" id="headerStatus">📊 Total member records: ${db.length || (localStorage.getItem('familyDB') ? JSON.parse(localStorage.getItem('familyDB')).length : 0)}</span>
     `;
@@ -596,7 +673,7 @@ function renderAdminView() {
     `;
 }
 
-// Auto-load from 10-family-data.js on PC
+// Auto-load from 10-family-data.js
 function autoLoadFromJS() {
     // Check if FAMILY_DATA is available (from 10-family-data.js)
     if (typeof FAMILY_DATA !== 'undefined' && FAMILY_DATA.length > 0) {
@@ -670,6 +747,16 @@ function checkHash() {
         }, 100);
     }
 }
+
+// Set initial zoom
+document.addEventListener('DOMContentLoaded', function() {
+    // Ensure zoom is applied
+    const appContainer = document.querySelector('.app-container');
+    if (appContainer) {
+        appContainer.style.zoom = '0.5';
+    }
+});
+
 // Initialize everything
 initializeData();
 renderDashboardView();
@@ -680,5 +767,3 @@ checkHash();
 
 </body>
 </html>
-
-
