@@ -3,8 +3,6 @@
 <!--                                          -->
 <!-- ======================================== -->
 
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -236,7 +234,7 @@
 
         .admin-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 25px;
             margin-bottom: 30px;
         }
@@ -277,6 +275,12 @@
         .admin-card-desc {
             color: #666;
             font-size: 14px;
+        }
+
+        .data-status {
+            margin-top: 15px;
+            color: #2e7d32;
+            font-size: 13px;
         }
 
         .home-link {
@@ -322,7 +326,6 @@
         </div>
     </div>
 
-
 <script>
 
 // Check URL parameters on page load
@@ -342,19 +345,17 @@ function checkURLParams() {
             } else {
                 renderDashboardView();
             }
-        }, 100); // Small delay to ensure page is loaded
+        }, 100);
     }
 }
 
 let db = [];
-let currentView = 'dashboard'; // 'dashboard' or 'admin'
-let isAdminAuthenticated = false; // Track if admin is already logged in
+let currentView = 'dashboard';
+let isAdminAuthenticated = false;
 
-// UPDATED logout function - now redirects to main index.html
+// UPDATED logout function - redirects to main index.html
 function logout() {
-    // Ask for confirmation before exiting
     if (confirm('Are you sure you want to exit and return to the login page?')) {
-        // Clear all data when going back to password screen
         localStorage.removeItem('familyDB');
         localStorage.removeItem('fileInfo');
         localStorage.removeItem('tableViewMember');
@@ -362,7 +363,6 @@ function logout() {
         db = [];
         isAdminAuthenticated = false;
         
-        // Redirect to main index.html in the root folder (one level up)
         console.log('Redirecting to main login page...');
         window.location.href = '../index.html';
     }
@@ -372,32 +372,28 @@ function hardReset() {
     const confirmation = confirm("🚨 WARNING: This will permanently delete ALL family data from this browser. Are you sure?");
     
     if (confirmation) {
-        // Clear all localStorage items
         localStorage.removeItem('familyDB');
         localStorage.removeItem('fileInfo');
         localStorage.removeItem('tableViewMember');
         localStorage.removeItem('tableViewFilters');
         
-        // Reset the database variable
         db = [];
         isAdminAuthenticated = false;
         
-        // Update header status
         updateHeaderStatus();
         
-        // Update the UI based on current view
         if (currentView === 'admin') {
             renderAdminView();
+        } else {
+            renderDashboardView();
         }
         
         alert("✅ All data has been cleared from browser storage.");
         
-        // Try to auto-load again
         autoLoadFromJS();
     }
 }
 
-// Admin login with password
 function goToAdminWithPassword() {
     const pwd = prompt('Enter Admin Password:');
     if (pwd === '6010') {
@@ -409,12 +405,10 @@ function goToAdminWithPassword() {
     }
 }
 
-// No password required for data load (protected by admin gateway)
 function loadData() {
     document.getElementById('fileInput').click();
 }
 
-// UPDATED: File input handler to include all fields (mother, spouse, maritalStatus, alive)
 document.getElementById('fileInput').onchange = function(e) {
     const file = e.target.files[0];
     if (!file) return;
@@ -426,19 +420,17 @@ document.getElementById('fileInput').onchange = function(e) {
             const wb = XLSX.read(data, { type: 'array' });
             const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
             
-            // UPDATED: Map all fields including mother, spouse, maritalStatus, alive
             db = rows.map(r => ({
                 name: String(r.Name || r.name || '').trim(),
                 father: String(r.Father || r.father || '').trim(),
-                mother: String(r.Mother || r.mother || '').trim(),           // ADDED
-                spouse: String(r.Spouse || r.spouse || '').trim(),           // ADDED
+                mother: String(r.Mother || r.mother || '').trim(),
+                spouse: String(r.Spouse || r.spouse || '').trim(),
                 gen: String(r.Gen || r.gen || '').trim(),
                 gender: String(r.Gender || r.gender || 'Male').trim().toUpperCase(),
-                maritalStatus: String(r.MaritalStatus || r.maritalStatus || r.Maritalstatus || r.maritalstatus || '').trim(), // ADDED
-                alive: String(r.Alive || r.alive || '').trim()               // ADDED
+                maritalStatus: String(r.MaritalStatus || r.maritalStatus || r.Maritalstatus || r.maritalstatus || '').trim(),
+                alive: String(r.Alive || r.alive || '').trim()
             })).filter(p => p.name);
 
-            // ADDED: Extract timestamp from J1/J2 if present
             try {
                 const firstSheet = wb.Sheets[wb.SheetNames[0]];
                 const j1Cell = firstSheet['J1'];
@@ -460,17 +452,17 @@ document.getElementById('fileInput').onchange = function(e) {
                 console.warn('Could not extract timestamp:', tsErr);
             }
 
-            // Save to localStorage for other pages
             localStorage.setItem('familyDB', JSON.stringify(db));
             
             updateHeaderStatus();
             
             if (currentView === 'admin') {
                 renderAdminView();
+            } else {
+                renderDashboardView();
             }
             
-            // Optional success message
-            console.log(`✅ Successfully loaded ${db.length} members from Excel file with all fields.`);
+            console.log(`✅ Successfully loaded ${db.length} members from Excel file.`);
             
         } catch (err) {
             alert('❌ Error: ' + err.message);
@@ -485,7 +477,6 @@ function updateHeaderStatus() {
 }
 
 function goToIndividual() {
-    // Check if data exists in memory OR in localStorage
     if (db.length === 0) {
         const saved = localStorage.getItem('familyDB');
         if (saved) {
@@ -499,7 +490,6 @@ function goToIndividual() {
 }
 
 function goToRoot() {
-    // Check if data exists in memory OR in localStorage
     if (db.length === 0) {
         const saved = localStorage.getItem('familyDB');
         if (saved) {
@@ -575,35 +565,35 @@ function renderAdminView() {
         <div class="admin-container">
             <div class="admin-title">⚙️ Admin Use Only</div>
             
-            <div class="admin-grid" style="grid-template-columns: repeat(3, 1fr);">
+            <div class="admin-grid">
                 <div class="admin-card-large" onclick="loadData()">
                     <div class="admin-card-icon">📂</div>
                     <div class="admin-card-title">Load Data</div>
                     <div class="admin-card-desc">Upload Excel file to database</div>
-                    <div class="data-status" style="margin-top: 15px; color: #2e7d32;">
+                    <div class="data-status" style="color: #2e7d32;">
                         ${dbCount > 0 ? `✅ ${dbCount} members loaded` : '⏳ No data loaded'}
                     </div>
                 </div>
                 
-                <div class="admin-card-large" onclick="window.location.href='11- add-data.html'">
+                <div class="admin-card-large" onclick="window.location.href='11-add-data.html'">
                     <div class="admin-card-icon">✏️</div>
                     <div class="admin-card-title">Add / Edit Member</div>
                     <div class="admin-card-desc">Add new members or edit existing records</div>
-                    <div class="data-status" style="margin-top: 15px;">→ Open 11- add-data.html</div>
+                    <div class="data-status">→ Open Editor</div>
                 </div>
 
-                <div class="admin-card-large" onclick="window.location.href='12- excel-to-js-converter.html'">
+                <div class="admin-card-large" onclick="window.location.href='12-excel-to-js-converter.html'">
                     <div class="admin-card-icon">🔄</div>
                     <div class="admin-card-title">Data Converter</div>
                     <div class="admin-card-desc">Excel to JS / JSON converter</div>
-                    <div class="data-status" style="margin-top: 15px;">→ Open Converter</div>
+                    <div class="data-status">→ Open Converter</div>
                 </div>
             </div>
             
             <div style="display: flex; gap: 25px; justify-content: center; margin-top: 30px;">
                 <div class="exit-btn-container" onclick="goToDashboard()" style="background: var(--dark-blue); min-width: 200px; white-space: nowrap;">
                     <span class="exit-btn-icon">⬅️</span>
-                    <span class="exit-btn-text">Back - (to Dashboard)</span>
+                    <span class="exit-btn-text">Back to Dashboard</span>
                 </div>
                 
                 <div class="exit-btn-container" onclick="logout()" style="background: #5a0000; min-width: 200px; white-space: nowrap;">
@@ -615,16 +605,12 @@ function renderAdminView() {
     `;
 }
 
-// Auto-load from 13-family-data.js on PC
 function autoLoadFromJS() {
-    // Check if FAMILY_DATA is available (from 13-family-data.js)
     if (typeof FAMILY_DATA !== 'undefined' && FAMILY_DATA.length > 0) {
         try {
-            // Save the family members data (already includes all fields)
             db = FAMILY_DATA;
             localStorage.setItem('familyDB', JSON.stringify(db));
             
-            // Save the file info (timestamp) to localStorage
             if (typeof FILE_INFO !== 'undefined') {
                 localStorage.setItem('fileInfo', JSON.stringify(FILE_INFO));
                 console.log('✅ Timestamp saved:', FILE_INFO.saved_time);
@@ -632,7 +618,7 @@ function autoLoadFromJS() {
             }
             
             updateHeaderStatus();
-            console.log(`✅ Auto-loaded ${db.length} members with all fields`);
+            console.log(`✅ Auto-loaded ${db.length} members`);
             
         } catch (err) {
             console.error('Error:', err);
@@ -640,43 +626,38 @@ function autoLoadFromJS() {
     }
 }
 
-// Initialize on page load
 function initializeData() {
-    // First check if we have data in localStorage (from previous session)
     const saved = localStorage.getItem('familyDB');
     if (saved) {
-        db = JSON.parse(saved);
-        updateHeaderStatus();
-        
-        // Also load fileInfo if available
-        const savedInfo = localStorage.getItem('fileInfo');
-        if (savedInfo) {
-            console.log('📅 Cached timestamp:', JSON.parse(savedInfo).saved_time);
+        try {
+            db = JSON.parse(saved);
+            updateHeaderStatus();
+            
+            const savedInfo = localStorage.getItem('fileInfo');
+            if (savedInfo) {
+                console.log('📅 Cached timestamp:', JSON.parse(savedInfo).saved_time);
+            }
+            return;
+        } catch (e) {
+            console.error('Error parsing saved data:', e);
         }
-        return;
     }
 
-    // If no cached data, auto-load from 13-family-data.js
     autoLoadFromJS();
 }
 
-// Check for hash on page load (FOR BACK TO ADMIN BUTTON)
 function checkHash() {
     const urlParams = new URLSearchParams(window.location.search);
     const isPreAuth = urlParams.get('auth') === 'true';
 
     if (window.location.hash === '#admin') {
         setTimeout(() => {
-            // If we have the auth flag OR are already authenticated in this session
             if (isPreAuth || isAdminAuthenticated) {
                 currentView = 'admin';
                 isAdminAuthenticated = true;
                 renderAdminView();
-                
-                // Clean the URL so the 'auth' flag doesn't stay there forever
                 window.history.replaceState({}, document.title, "1-dashboard-pc.html#admin");
             } else {
-                // Otherwise, ask for the password as usual
                 const pwd = prompt('Enter Admin Password:');
                 if (pwd === '6010') {
                     currentView = 'admin';
@@ -689,6 +670,7 @@ function checkHash() {
         }, 100);
     }
 }
+
 // Initialize everything
 initializeData();
 renderDashboardView();
