@@ -16,7 +16,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700;900&family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <!-- Include 33-family-data-urdu.js for auto-loading on PC (Urdu Version) -->
-    <script src="33-family-data-urdu.js"></script>
+    <script src="20-family-data.js"></script>
     
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -611,12 +611,12 @@ function renderAdminView() {
     `;
 }
 
-// Auto-load from 33-family-data-urdu.js on PC
+// Auto-load from 20-family-data.js on PC
 function autoLoadFromJS() {
     console.log('Checking for Urdu data...');
     console.log('FAMILY_DATA_URDU exists?', typeof FAMILY_DATA_URDU !== 'undefined');
     
-    // Check if FAMILY_DATA_URDU is available (from 33-family-data-urdu.js)
+    // Check if FAMILY_DATA_URDU is available (from 20-family-data.js)
     if (typeof FAMILY_DATA_URDU !== 'undefined' && FAMILY_DATA_URDU.length > 0) {
         try {
             // Save the family members data (already includes all fields)
@@ -671,8 +671,8 @@ function initializeData() {
         }
     }
 
-    // If no cached data, auto-load from 33-family-data-urdu.js
-    console.log('No cached data, auto-loading from 33-family-data-urdu.js...');
+    // If no cached data, auto-load from 20-family-data.js
+    console.log('No cached data, auto-loading from 11-family-data.js...');
     autoLoadFromJS();
 }
 
