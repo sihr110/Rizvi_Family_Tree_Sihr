@@ -51,39 +51,39 @@
             font-style: italic;
         }
 
-        .device-selector {
-            margin: 20px 0;
+        .language-selector {
+            margin: 20px 0 25px 0;
             display: flex;
-            gap: 10px;
+            gap: 12px;
             justify-content: center;
         }
 
-        .device-btn {
-            padding: 12px 10px;
+        .lang-btn {
+            padding: 14px 10px;
             border: 2px solid var(--gold);
             background: white;
             cursor: pointer;
             border-radius: 8px;
             font-weight: 600;
-            font-size: 15px;
+            font-size: 16px;
             transition: all 0.2s;
             flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
-            min-height: 50px;
+            gap: 8px;
+            min-height: 52px;
             -webkit-appearance: none;
             appearance: none;
         }
 
-        .device-btn.active {
+        .lang-btn.active {
             background: var(--gold);
             color: var(--dark-blue);
             border-color: var(--dark-blue);
         }
 
-        .device-btn:active {
+        .lang-btn:active {
             transform: scale(0.98);
             background: #faebcd;
         }
@@ -204,6 +204,14 @@
             margin-bottom: 10px;
             color: var(--gold);
         }
+
+        .section-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #666;
+            margin-bottom: 8px;
+        }
     </style>
 </head>
 <body>
@@ -212,12 +220,13 @@
         <h1>Rizvi Family Tree</h1>
         <div class="subtitle">Honoring our past, preserving our future</div>
         
-        <div class="device-selector">
-            <button class="device-btn" id="pcBtn">
-                <span>💻</span> Desktop
+        <div class="section-label">SELECT LANGUAGE</div>
+        <div class="language-selector">
+            <button class="lang-btn" id="englishBtn">
+                <span>🇬🇧</span> English
             </button>
-            <button class="device-btn active" id="mobileBtn">
-                <span>📱</span> Mobile
+            <button class="lang-btn active" id="urduBtn">
+                <span>🇵🇰</span> Urdu
             </button>
         </div>
         
@@ -243,40 +252,40 @@
     </div>
 
     <script>
+        // Simple configuration
         const CONFIG = { password: 'sihr110' };
-        let deviceType = 'mobile'; // Default to mobile
+        let language = 'urdu'; // Default to Urdu (active by default)
 
-        // Wait for DOM to be fully loaded
+        // DOM ready
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('Page loaded, setting up event listeners...');
+            console.log('Page loaded, setting up...');
             
-            // Get elements
-            const pcBtn = document.getElementById('pcBtn');
-            const mobileBtn = document.getElementById('mobileBtn');
+            // Elements
+            const englishBtn = document.getElementById('englishBtn');
+            const urduBtn = document.getElementById('urduBtn');
             const toggleBtn = document.getElementById('toggleBtn');
             const unlockBtn = document.getElementById('unlockBtn');
             const passwordField = document.getElementById('passwordField');
             const errorMsg = document.getElementById('passwordError');
 
-            // Device selection - PC
-            if (pcBtn) {
-                pcBtn.addEventListener('click', function(e) {
+            // --- Language toggle (only visual, actual redirect uses chosen language) ---
+            if (englishBtn) {
+                englishBtn.addEventListener('click', function(e) {
                     e.preventDefault();
-                    console.log('PC button clicked');
-                    deviceType = 'pc';
-                    pcBtn.classList.add('active');
-                    mobileBtn.classList.remove('active');
+                    console.log('English selected');
+                    language = 'english';
+                    englishBtn.classList.add('active');
+                    urduBtn.classList.remove('active');
                 });
             }
 
-            // Device selection - Mobile
-            if (mobileBtn) {
-                mobileBtn.addEventListener('click', function(e) {
+            if (urduBtn) {
+                urduBtn.addEventListener('click', function(e) {
                     e.preventDefault();
-                    console.log('Mobile button clicked');
-                    deviceType = 'mobile';
-                    mobileBtn.classList.add('active');
-                    pcBtn.classList.remove('active');
+                    console.log('Urdu selected');
+                    language = 'urdu';
+                    urduBtn.classList.add('active');
+                    englishBtn.classList.remove('active');
                 });
             }
 
@@ -284,18 +293,16 @@
             if (toggleBtn) {
                 toggleBtn.addEventListener('click', function(e) {
                     e.preventDefault();
-                    console.log('Toggle button clicked');
                     const type = passwordField.type === 'password' ? 'text' : 'password';
                     passwordField.type = type;
                     toggleBtn.textContent = type === 'password' ? 'Show' : 'Hide';
                 });
             }
 
-            // Unlock button
+            // Unlock button click
             if (unlockBtn) {
                 unlockBtn.addEventListener('click', function(e) {
                     e.preventDefault();
-                    console.log('Unlock button clicked');
                     checkPassword();
                 });
             }
@@ -305,44 +312,43 @@
                 passwordField.addEventListener('keypress', function(e) {
                     if (e.key === 'Enter') {
                         e.preventDefault();
-                        console.log('Enter key pressed');
                         checkPassword();
                     }
                 });
-
-                // Clear error when typing
                 passwordField.addEventListener('input', function() {
                     errorMsg.style.display = 'none';
                 });
             }
 
-            // Focus on password field
+            // Initial focus
             passwordField.focus();
         });
 
+        // Password check and redirect
         function checkPassword() {
             const passwordField = document.getElementById('passwordField');
             const errorMsg = document.getElementById('passwordError');
             const enteredPwd = passwordField.value;
             
-            console.log('Checking password...');
+            console.log('Checking password. Current language:', language);
             
             if (enteredPwd === CONFIG.password) {
-                console.log('Password correct, redirecting to', deviceType);
-                // Clear any existing data on fresh login
+                console.log('✅ Access granted');
+                // Clear any leftover data (optional)
                 localStorage.removeItem('familyDB');
                 
-                // Navigate to appropriate dashboard
-             const dashboard = deviceType === 'pc' ? '1-dashboard-pc.html' : '6-dashboard-mobile.html';
+                // Redirect based ONLY on language (device option removed)
+                let dashboard = (language === 'english') ? '1-dashboard.html' : '21-dashboard.html';
+                
+                console.log('Redirecting to:', dashboard);
                 window.location.href = dashboard;
             } else {
-                console.log('Password incorrect');
-                // Show error message
+                console.log('❌ Incorrect password');
                 errorMsg.style.display = 'block';
                 passwordField.value = '';
                 passwordField.focus();
                 
-                // Hide error after 3 seconds
+                // Auto-hide error after 3 seconds
                 setTimeout(() => {
                     errorMsg.style.display = 'none';
                 }, 3000);
