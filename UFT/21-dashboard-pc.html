@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- FILE NAME: 21-dashboard.html           -->
+<!-- FILE NAME: 21-dashboard-pc.html           -->
 <!-- Urdu Version - Rizvi Family Dashboard     -->
 <!-- ======================================== -->
 
@@ -514,7 +514,7 @@ function goToIndividual() {
             return;
         }
     }
-    window.location.href = '22-individual-tree.html';
+    window.location.href = '22-individual-tree-pc.html';
 }
 
 function goToRoot() {
@@ -528,7 +528,7 @@ function goToRoot() {
             return;
         }
     }
-    window.location.href = '24-root-tree.html';
+    window.location.href = '24-root-tree-pc.html';
 }
 
 function goToDashboard() {
@@ -720,7 +720,7 @@ function checkHash() {
                 renderAdminView();
                 
                 // Clean the URL so the 'auth' flag doesn't stay there forever
-                window.history.replaceState({}, document.title, "21-dashboard.html#admin");
+                window.history.replaceState({}, document.title, "21-dashboard-pc.html#admin");
             } else {
                 // Otherwise, ask for the password as usual
                 const pwd = prompt('ایڈمن پاس ورڈ درج کریں:');
