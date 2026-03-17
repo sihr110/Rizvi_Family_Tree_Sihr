@@ -1,7 +1,4 @@
-// Family Tree Data - Generated on 15/03/2026, 11:53:41 am
-// Total Members: 375
-// Excel Last Saved: 14/03/2026, 1:31:16 pm
-
+// English Family Data - Generated 17/03/2026, 12:08:04 pm
 const FAMILY_DATA = [
   {
     "name": "Hazrat Abdul Mutalib",
@@ -1224,7 +1221,7 @@ const FAMILY_DATA = [
     "alive": "No"
   },
   {
-    "name": "Syed Huzabbar Ali",
+    "name": "Syed Hizbar Ali",
     "father": "Syed Madad Ali",
     "mother": "",
     "spouse": "---",
@@ -1255,7 +1252,7 @@ const FAMILY_DATA = [
   },
   {
     "name": "Syed Mansab Ali",
-    "father": "Syed Huzabbar Ali",
+    "father": "Syed Hizbar Ali",
     "mother": "",
     "spouse": "---",
     "gen": "G-036-S1",
@@ -1531,7 +1528,7 @@ const FAMILY_DATA = [
     "gen": "G-039-S1",
     "gender": "MALE",
     "maritalStatus": "Married",
-    "alive": "Yes"
+    "alive": "No"
   },
   {
     "name": "Syed Shamshad Hussain",
@@ -1541,7 +1538,7 @@ const FAMILY_DATA = [
     "gen": "G-039-S2",
     "gender": "MALE",
     "maritalStatus": "Married",
-    "alive": "Yes"
+    "alive": "No"
   },
   {
     "name": "Syed Tafazul Hussain",
@@ -1551,7 +1548,7 @@ const FAMILY_DATA = [
     "gen": "G-039-S3",
     "gender": "MALE",
     "maritalStatus": "Married",
-    "alive": "Yes"
+    "alive": "No"
   },
   {
     "name": "Syed Shahid Hussain",
@@ -1561,7 +1558,7 @@ const FAMILY_DATA = [
     "gen": "G-039-S4",
     "gender": "MALE",
     "maritalStatus": "Married",
-    "alive": "Yes"
+    "alive": "No"
   },
   {
     "name": "Syed Zahid Hussain",
@@ -1571,7 +1568,7 @@ const FAMILY_DATA = [
     "gen": "G-039-S5",
     "gender": "MALE",
     "maritalStatus": "Married",
-    "alive": "Yes"
+    "alive": "No"
   },
   {
     "name": "Syeda Nafees Fatima",
@@ -1854,7 +1851,7 @@ const FAMILY_DATA = [
     "alive": "No"
   },
   {
-    "name": "Syed Saeed Abbas",
+    "name": "Syed Saeed Abbas (Bachan)",
     "father": "Syed Mohammad Taqi",
     "mother": "",
     "spouse": "---",
@@ -2365,7 +2362,7 @@ const FAMILY_DATA = [
   },
   {
     "name": "Syed Jaweed Abbas",
-    "father": "Syed Saeed Abbas",
+    "father": "Syed Saeed Abbas (Bachan)",
     "mother": "",
     "spouse": "",
     "gen": "G-041-S1",
@@ -2411,7 +2408,7 @@ const FAMILY_DATA = [
     "gen": "G-041-D1",
     "gender": "FEMALE",
     "maritalStatus": "Married",
-    "alive": "Yes"
+    "alive": "No"
   },
   {
     "name": "Syeda Shaheen",
@@ -3070,7 +3067,7 @@ const FAMILY_DATA = [
     "spouse": "---",
     "gen": "G-042-D1",
     "gender": "FEMALE",
-    "maritalStatus": "Unmarried",
+    "maritalStatus": "Married",
     "alive": "Yes"
   },
   {
@@ -3755,15 +3752,6 @@ const FAMILY_DATA = [
   }
 ];
 
-const FILE_INFO = {
-  "saved_time_header": "Date & time file saved",
-  "saved_time": "14/03/2026, 1:31:16 pm",
-  "exported_time": "15/03/2026, 11:53:41 am",
-  "total_members": 375,
-  "source_file": "Data.xlsx"
-};
+const FILE_INFO = { saved_time: "17/03/2026, 12:08:04 pm", total_members: 375 };
 
-// Export for use in HTML
-if (typeof module !== "undefined" && module.exports) {
-    module.exports = { FAMILY_DATA, FILE_INFO };
-}
+if (typeof module !== 'undefined') module.exports = { FAMILY_DATA, FILE_INFO };
