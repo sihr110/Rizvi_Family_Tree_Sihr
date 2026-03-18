@@ -134,7 +134,7 @@
             background: #f0f0f0;
         }
 
-        .unlock-btn {
+        .unlock-btn, .dashboard-btn {
             background: var(--maroon);
             color: white;
             border: none;
@@ -155,7 +155,7 @@
             min-height: 55px;
         }
 
-        .unlock-btn:active {
+        .unlock-btn:active, .dashboard-btn:active {
             background: #7a1f1f;
             transform: scale(0.98);
         }
@@ -212,44 +212,72 @@
             color: #666;
             margin-bottom: 5px;
         }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .welcome-message {
+            color: var(--dark-blue);
+            font-size: 16px;
+            margin: 15px 0;
+            padding: 10px;
+            background: #f9f3e0;
+            border-radius: 8px;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
-    <div class="password-container">
+    <div class="password-container" id="loginContainer">
         <div class="family-seal">🌿</div>
         <h1>Rizvi Family Tree</h1>
         <div class="subtitle">Honoring our past, preserving our future</div>
         
-        <div class="section-label">SELECT LANGUAGE</div>
-        <div class="language-selector">
-            <button class="lang-btn" id="englishBtn">
-                <span>🇬🇧</span> English
+        <!-- Language Selection + Password Section (Initially Visible) -->
+        <div id="loginSection">
+            <div class="section-label">SELECT LANGUAGE</div>
+            <div class="language-selector">
+                <button class="lang-btn active" id="englishBtn">
+                    <span>🇬🇧</span> English
+                </button>
+                <button class="lang-btn" id="urduBtn">
+                    <span>🇵🇰</span> Urdu
+                </button>
+            </div>
+
+            <div class="password-wrapper">
+                <input type="password" id="passwordField" placeholder="Enter Secure Password" autofocus>
+                <span class="toggle-btn" id="toggleBtn">Show</span>
+            </div>
+
+            <button class="unlock-btn" id="unlockBtn">
+                <span>🔓</span> Unlock
             </button>
-            <button class="lang-btn active" id="urduBtn">
-                <span>🇵🇰</span> Urdu
-            </button>
+            <div id="passwordError" class="error-msg">
+                ❌ Access Denied. Please verify the password.
+            </div>
         </div>
 
-        <div class="section-label">CHOOSE DEVICE</div>
-        <div class="device-selector">
-            <button class="device-btn" id="pcBtn">
-                <span>💻</span> Desktop
-            </button>
-            <button class="device-btn active" id="mobileBtn">
-                <span>📱</span> Mobile
-            </button>
-        </div>
-        
-        <div class="password-wrapper">
-            <input type="password" id="passwordField" placeholder="Enter Secure Password" autofocus>
-            <span class="toggle-btn" id="toggleBtn">Show</span>
-        </div>
+        <!-- Device Selection Section (Initially Hidden) -->
+        <div id="deviceSection" class="hidden">
+            <div class="welcome-message">
+                ✓ Password Verified
+            </div>
+            
+            <div class="section-label">CHOOSE DEVICE</div>
+            <div class="device-selector">
+                <button class="device-btn active" id="pcBtn">
+                    <span>💻</span> Desktop
+                </button>
+                <button class="device-btn" id="mobileBtn">
+                    <span>📱</span> Mobile
+                </button>
+            </div>
 
-        <button class="unlock-btn" id="unlockBtn">
-            <span>🔓</span> Unlock Dashboard
-        </button>
-        <div id="passwordError" class="error-msg">
-            ❌ Access Denied. Please verify the password.
+            <button class="dashboard-btn" id="enterDashboardBtn">
+                <span>🚪</span> Enter Dashboard
+            </button>
         </div>
 
         <div class="footer-note">
@@ -263,20 +291,23 @@
 
     <script>
         const CONFIG = { password: 'sihr110' };
-        let deviceType = 'mobile'; // Default to mobile
-        let language = 'urdu'; // Default to Urdu
+        let deviceType = 'pc'; // Default to Desktop
+        let language = 'english'; // Default to English
 
         // Wait for DOM to be fully loaded
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Page loaded, setting up event listeners...');
             
             // Get elements
+            const loginSection = document.getElementById('loginSection');
+            const deviceSection = document.getElementById('deviceSection');
             const englishBtn = document.getElementById('englishBtn');
             const urduBtn = document.getElementById('urduBtn');
             const pcBtn = document.getElementById('pcBtn');
             const mobileBtn = document.getElementById('mobileBtn');
             const toggleBtn = document.getElementById('toggleBtn');
             const unlockBtn = document.getElementById('unlockBtn');
+            const enterDashboardBtn = document.getElementById('enterDashboardBtn');
             const passwordField = document.getElementById('passwordField');
             const errorMsg = document.getElementById('passwordError');
 
@@ -335,7 +366,7 @@
                 });
             }
 
-            // Unlock button
+            // Unlock button - First step
             if (unlockBtn) {
                 unlockBtn.addEventListener('click', function(e) {
                     e.preventDefault();
@@ -360,6 +391,15 @@
                 });
             }
 
+            // Enter Dashboard button - Second step
+            if (enterDashboardBtn) {
+                enterDashboardBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('Enter Dashboard button clicked');
+                    navigateToDashboard();
+                });
+            }
+
             // Focus on password field
             passwordField.focus();
         });
@@ -367,27 +407,23 @@
         function checkPassword() {
             const passwordField = document.getElementById('passwordField');
             const errorMsg = document.getElementById('passwordError');
+            const loginSection = document.getElementById('loginSection');
+            const deviceSection = document.getElementById('deviceSection');
             const enteredPwd = passwordField.value;
             
             console.log('Checking password...');
             console.log('Language selected:', language);
-            console.log('Device selected:', deviceType);
             
             if (enteredPwd === CONFIG.password) {
-                console.log('Password correct, redirecting...');
+                console.log('Password correct, showing device selection');
                 
-                // Navigate based on language and device
-                let dashboard;
-                if (language === 'english') {
-                    // English language - redirect to EFT folder
-                    dashboard = deviceType === 'pc' ? 'EFT/1-dashboard-pc.html' : 'EFT/6-dashboard-mobile.html';
-                } else {
-                    // Urdu language - redirect to UFT folder
-                    dashboard = deviceType === 'pc' ? 'UFT/21-dashboard-pc.html' : 'UFT/21-dashboard-mobile.html';
-                }
+                // Hide login section, show device selection section
+                loginSection.classList.add('hidden');
+                deviceSection.classList.remove('hidden');
                 
-                console.log('Redirecting to:', dashboard);
-                window.location.href = dashboard;
+                // Clear password field
+                passwordField.value = '';
+                
             } else {
                 console.log('Password incorrect');
                 // Show error message
@@ -400,6 +436,25 @@
                     errorMsg.style.display = 'none';
                 }, 3000);
             }
+        }
+
+        function navigateToDashboard() {
+            console.log('Navigating to dashboard...');
+            console.log('Language selected:', language);
+            console.log('Device selected:', deviceType);
+            
+            // Navigate based on language and device
+            let dashboard;
+            if (language === 'english') {
+                // English language - redirect to EFT folder
+                dashboard = deviceType === 'pc' ? 'EFT/1-dashboard-pc.html' : 'EFT/6-dashboard-mobile.html';
+            } else {
+                // Urdu language - redirect to UFT folder
+                dashboard = deviceType === 'pc' ? 'UFT/21-dashboard-pc.html' : 'UFT/21-dashboard-pc.html';
+            }
+            
+            console.log('Redirecting to:', dashboard);
+            window.location.href = dashboard;
         }
     </script>
 </body>
