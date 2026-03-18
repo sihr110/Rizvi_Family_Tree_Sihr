@@ -1,33 +1,29 @@
-<!-- ===================================== -->
-<!-- FILE NAME: 3-individual-table-pc.html -->
-<!-- LAST UPDATED: 15/03/2026              -->
-<!-- Table view for Rizvi Family -->
-<!-- ===================================== -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rizvi family · table view</title>
+    <title>Rizvi family · table view (no vital)</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     
+    <!-- external data file (contains FAMILY_DATA and FILE_INFO) -->
+    <script src="13-family-data.js"></script>
+    
     <style>
+        /* Gentle pulsing/blinking effect with gold and light green - Header Toggle */
+        .left-toggle-btn {
+            animation: gentle-blink 1.5s infinite;
+        }
 
-/* Gentle pulsing/blinking effect with gold and light green - Header Toggle */
-.left-toggle-btn {
-    animation: gentle-blink 1.5s infinite;
-}
-
-@keyframes gentle-blink {
-    0% { opacity: 1; background: var(--gold); }
-    50% { opacity: 0.7; background: #90EE90; transform: scale(1.1); }
-    100% { opacity: 1; background: var(--gold); }
-}
+        @keyframes gentle-blink {
+            0% { opacity: 1; background: var(--gold); }
+            50% { opacity: 0.7; background: #90EE90; transform: scale(1.1); }
+            100% { opacity: 1; background: var(--gold); }
+        }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -351,7 +347,6 @@
             position: relative;
         }
 
-        /* Scrollbar styling */
         .table-container::-webkit-scrollbar {
             width: 12px;
             height: 12px;
@@ -497,7 +492,7 @@
             background: var(--light-gold);
         }
 
-        /* Table Styles */
+        /* Table Styles — VITAL STATUS COLUMN REMOVED */
         .family-table {
             width: 100%;
             border-collapse: collapse;
@@ -542,18 +537,6 @@
         .family-table tbody tr.selected-row {
             background: var(--selected-row-bg) !important;
             border-left: 4px solid var(--green);
-        }
-
-        .vital-status {
-            font-weight: 600;
-        }
-
-        .vital-status.yes {
-            color: var(--green);
-        }
-
-        .vital-status.no {
-            color: var(--maroon);
         }
 
         .app-footer {
@@ -628,7 +611,7 @@
             <div class="left-toggle-btn" onclick="toggleLeftMenu()">☰</div>
             <div class="header-title">
                 <span class="header-icon">🌿</span>
-                <span>Rizvi family · table view</span>
+                <span>Rizvi family · table view (no vital)</span>
             </div>
             <div class="header-actions">
                 <div class="header-btn tree-view" onclick="switchToTreeView()">🌳 Tree View</div>
@@ -706,6 +689,7 @@
     <div class="modal-overlay" id="saveModalOverlay" onclick="closeSaveModal()"></div>
 
     <script>
+        // global variables (data loaded from external 13-family-data.js)
         let db = [];
         let fileInfo = null;
         let currentIndividual = null;
@@ -723,7 +707,18 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            loadData();
+            // load from globals set by 13-family-data.js
+            if (typeof FAMILY_DATA !== 'undefined') {
+                db = FAMILY_DATA;
+            } else {
+                console.warn('FAMILY_DATA not found, using empty array');
+                db = [];
+            }
+            if (typeof FILE_INFO !== 'undefined') {
+                fileInfo = FILE_INFO;
+            } else {
+                fileInfo = { saved_time: "19/03/2026, 2:02:45 am" };
+            }
             
             const urlParams = new URLSearchParams(window.location.search);
             const memberName = urlParams.get('member');
@@ -731,19 +726,11 @@
                 setTimeout(() => {
                     const member = db.find(m => m.name === decodeURIComponent(memberName));
                     if (member) selectMember(member);
-                }, 500);
+                }, 200);
             } else {
                 resetIndividual();
             }
         });
-
-        function loadData() {
-            const saved = localStorage.getItem('familyDB');
-            if (saved) db = JSON.parse(saved);
-            
-            const savedInfo = localStorage.getItem('fileInfo');
-            if (savedInfo) fileInfo = JSON.parse(savedInfo);
-        }
 
         function formatCurrentTime() {
             const d = new Date();
@@ -805,7 +792,7 @@
             results.forEach(member => {
                 const div = document.createElement('div');
                 div.className = 'result-item';
-                div.innerHTML = `<div><span class="main-name">${displayName(member.name)}</span> <span class="gen">${member.gen}</span>
+                div.innerHTML = `<div><span class="main-name">${displayName(member.name)}</span> <span class="gen">${member.gen || ''}</span>
                     <div class="father-name">${member.gender?.startsWith('F') ? 'D/o' : 'S/o'} ${displayName(member.father) || '—'}</div></div>`;
                 div.onclick = () => { selectMember(member); dropdown.style.display = 'none'; this.value = displayName(member.name); };
                 dropdown.appendChild(div);
@@ -848,8 +835,8 @@
             return arr;
         }
 
+        // render member card without VITAL column
         function renderMemberInfoCard(member) {
-            const statusIcon = (member.alive || '').toLowerCase() === 'yes' ? '🌹' : '🥀';
             const mother = getMother(member);
             
             return `
@@ -857,7 +844,6 @@
                     <thead>
                         <tr>
                             <th>NAME</th>
-                            <th>VITAL STATUS</th>
                             <th>GEN</th>
                             <th>FATHER</th>
                             <th>MOTHER</th>
@@ -867,7 +853,6 @@
                     <tbody>
                         <tr class="selected-row">
                             <td><strong>${displayName(member.name)}</strong></td>
-                            <td class="vital-status ${(member.alive || '').toLowerCase() === 'yes' ? 'yes' : 'no'}">${statusIcon} ${(member.alive || '').toLowerCase() === 'yes' ? 'Yes' : 'No'}</td>
                             <td>${member.gen || '—'}</td>
                             <td>${displayName(member.father) || '—'}</td>
                             <td>${mother}</td>
@@ -878,24 +863,23 @@
             `;
         }
 
+        // render table for list of members (no vital column)
         function renderTableForMembers(members, title, includeSelected = false) {
             if (!members || members.length === 0) return '';
             
             let html = `<table class="family-table">`;
             html += `<thead><tr>
-                <th>NAME</th><th>VITAL STATUS</th><th>GEN</th><th>FATHER</th><th>MOTHER</th><th>SPOUSE</th>
+                <th>NAME</th><th>GEN</th><th>FATHER</th><th>MOTHER</th><th>SPOUSE</th>
             </tr></thead><tbody>`;
             
             members.forEach(m => {
                 if (includeSelected && currentIndividual?.name === m.name) return;
                 
-                const statusIcon = (m.alive || '').toLowerCase() === 'yes' ? '🌹' : '🥀';
                 const mother = getMother(m);
                 const isSelected = currentIndividual?.name === m.name ? 'selected-row' : '';
                 
                 html += `<tr class="${isSelected}" onclick="selectMember(db.find(x => x.name === '${m.name.replace(/'/g, "\\'")}'))">`;
                 html += `<td><strong>${displayName(m.name)}</strong></td>`;
-                html += `<td class="vital-status ${(m.alive || '').toLowerCase() === 'yes' ? 'yes' : 'no'}">${statusIcon} ${(m.alive || '').toLowerCase() === 'yes' ? 'Yes' : 'No'}</td>`;
                 html += `<td>${m.gen || '—'}</td>`;
                 html += `<td>${displayName(m.father) || '—'}</td>`;
                 html += `<td>${mother}</td>`;
@@ -963,7 +947,7 @@
             document.getElementById('tableRoot').innerHTML = html;
         }
 
-        // Updated zoom functions with proper scrolling
+        // Zoom functions
         function zoomIn() { 
             zoomLevel = Math.min(zoomLevel + 0.1, 2); 
             applyZoom(); 
@@ -984,14 +968,9 @@
             const content = document.getElementById('tableRoot');
             
             if (container && content) {
-                // Apply scale transform
                 content.style.transform = `scale(${zoomLevel})`;
-                
-                // Set width/height to maintain scrollable area
                 content.style.width = `${100 / zoomLevel}%`;
                 content.style.height = `${100 / zoomLevel}%`;
-                
-                // Update zoom level display
                 document.getElementById('zoomLevel').textContent = Math.round(zoomLevel * 100) + '%';
             }
         }
@@ -1034,7 +1013,7 @@
             }
         };
 
-        // Updated PDF function with quality parameter
+        // PDF export (adapted, works without vital column)
         async function exportTablePDF(quality = 'high') {
             if (!currentIndividual) { alert('Please select a member first'); return; }
             
@@ -1065,7 +1044,7 @@
                 footer.style.textAlign = 'center';
 
                 const timeStr = formatCurrentTime();
-                const excelSavedTime = fileInfo ? fileInfo.saved_time : '06/03/2026, 3:57:46 pm';
+                const excelSavedTime = fileInfo ? fileInfo.saved_time : '19/03/2026, 2:02:45 am';
 
                 footer.innerHTML = `
                     <div style="padding:2px 0; font-weight:bold; color:#0f172a;">Developer : Imran Haider S/o Syed Risalat Hussain Rizvi | 0332-787-6010</div>
@@ -1115,7 +1094,6 @@
                 const safeName = currentIndividual.name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
                 pdf.save(`family_table_${safeName}_${quality}_${Date.now()}.pdf`);
                 
-                // Show file size
                 const base64Length = imgData.length - 'data:image/jpeg;base64,'.length;
                 const fileSizeKB = Math.ceil((base64Length * 0.75) / 1024);
                 alert(`✅ ${qualityText} PDF saved!\nFile size: ~${fileSizeKB} KB`);
@@ -1126,7 +1104,7 @@
             }
         }
 
-        // JPEG function
+        // JPEG export (adapted)
         window.exportAsJPEG = async function() {
             if (!currentIndividual) return;
             
@@ -1152,7 +1130,7 @@
                 footer.style.textAlign = 'center';
 
                 const timeStr = formatCurrentTime();
-                const excelSavedTime = fileInfo ? fileInfo.saved_time : '06/03/2026, 3:57:46 pm';
+                const excelSavedTime = fileInfo ? fileInfo.saved_time : '19/03/2026, 2:02:45 am';
                 
                 footer.innerHTML = `
                     <div style="padding:2px 0; font-weight:bold; color:#0f172a;">Developer : Imran Haider S/o Syed Risalat Hussain Rizvi | 0332-787-6010</div>
@@ -1235,7 +1213,7 @@
             }
         });
 
-        // Make functions globally available
+        // Expose functions globally
         window.zoomIn = zoomIn; 
         window.zoomOut = zoomOut; 
         window.resetZoom = resetZoom;

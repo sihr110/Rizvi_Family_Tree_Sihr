@@ -1,8 +1,3 @@
-<!-- ======================================== -->
-<!-- FILE NAME: 7-individual-tree-mobile.html -->
-<!-- ONLY DIFF: zoom: 0.5 for mobile          -->
-<!-- ======================================== -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -616,7 +611,6 @@ body {
 }
 </style>
 
-
 </head>
 <body>
     <!-- NO ZOOM CONTROLS - mobile uses pinch-to-zoom -->
@@ -715,7 +709,7 @@ body {
         let childrenCollapsed = true;
         let ancestorsCollapsed = true;
 
-        // ADDED: displayName function to hide numeric prefixes
+        // displayName function to hide numeric prefixes
         function displayName(str) {
             return str ? str.replace(/\s*-\s*\d+$/, '').trim() : '';
         }
@@ -846,28 +840,33 @@ body {
             return arr;
         }
 
+        // MODIFIED: renderBox now omits 'Status' line entirely AND removes any rose/flower icons
         function renderBox(person, label, isSiblingOrChild = false) {
             const isFemale = person.gender?.startsWith('F');
             const isSelected = currentIndividual?.name === person.name;
             const mother = person.mother || '—';
             const hasKids = db.some(c => c.father === person.name);
-            const statusIcon = (person.alive || '').toLowerCase() === 'yes' ? '🌹' : '🥀';
-            const fatherStatus = (person.father) ? (db.find(f => f.name === person.father)?.alive || '').toLowerCase() === 'yes' ? '🌹' : '🥀' : '';
+            // Removed statusIcon and fatherStatus entirely (no roses)
 
             let html = `<div class="box ${isFemale ? 'female-box' : ''} ${isSelected ? 'selected' : ''}" data-name="${person.name}" onclick="handleBoxClick(this)">`;
             html += `<div class="box-header"><span>${label}</span><span>${person.gen || '—'}</span></div>`;
             html += `<div class="box-body">`;
             
-            html += `<div class="box-row"><span class="box-label">Name :</span><span class="box-value"><span class="member-name">${displayName(person.name)}</span> ${statusIcon}</span></div>`;
+            // Name line - NO icon after name
+            html += `<div class="box-row"><span class="box-label">Name :</span><span class="box-value"><span class="member-name">${displayName(person.name)}</span></span></div>`;
             
+            // For siblings/children: show spouse and mother. For main/ancestors: show father, mother, spouse.
             if (isSiblingOrChild) {
                 html += `<div class="box-row"><span class="box-label">Spouse :</span><span class="box-value">${person.spouse || '—'}</span></div>`;
-                html += `<div class="box-row"><span class="box-label">Status :</span><span class="box-value">${person.maritalStatus || '—'}</span></div>`;
+                // Mother line
+                html += `<div class="box-row"><span class="box-label">Mother :</span><span class="box-value">${mother}</span></div>`;
+                // NO status line
             } else {
-                html += `<div class="box-row"><span class="box-label">Father :</span><span class="box-value">${displayName(person.father) || '—'} ${fatherStatus}</span></div>`;
+                // Main person/ancestors: show father, mother, spouse (NO status, NO roses)
+                html += `<div class="box-row"><span class="box-label">Father :</span><span class="box-value">${displayName(person.father) || '—'}</span></div>`;
                 html += `<div class="box-row"><span class="box-label">Mother :</span><span class="box-value">${mother}</span></div>`;
                 html += `<div class="box-row"><span class="box-label">Spouse :</span><span class="box-value">${person.spouse || '—'}</span></div>`;
-                html += `<div class="box-row"><span class="box-label">Status :</span><span class="box-value">${person.maritalStatus || '—'}</span></div>`;
+                // No status line
             }
             
             if (hasKids) html += `<div class="child-icon">👪</div>`;

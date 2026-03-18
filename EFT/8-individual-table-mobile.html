@@ -2,6 +2,7 @@
 <!-- FILE NAME: 8-individual-table-mobile.html -->
 <!-- LAST UPDATED: 15/03/2026              -->
 <!-- Table view for Rizvi Family - Mobile version -->
+<!-- VITAL STATUS COLUMN REMOVED -->
 <!-- ===================================== -->
 
 <!DOCTYPE html>
@@ -399,7 +400,7 @@
             background: var(--light-gold);
         }
 
-        /* Table Styles */
+        /* Table Styles - VITAL STATUS COLUMN REMOVED */
         .family-table {
             width: 100%;
             border-collapse: collapse;
@@ -444,18 +445,6 @@
         .family-table tbody tr.selected-row {
             background: var(--selected-row-bg) !important;
             border-left: 4px solid var(--green);
-        }
-
-        .vital-status {
-            font-weight: 600;
-        }
-
-        .vital-status.yes {
-            color: var(--green);
-        }
-
-        .vital-status.no {
-            color: var(--maroon);
         }
 
         .app-footer {
@@ -779,8 +768,8 @@
             return arr;
         }
 
+        // UPDATED: Removed VITAL STATUS from member info card
         function renderMemberInfoCard(member) {
-            const statusIcon = (member.alive || '').toLowerCase() === 'yes' ? '🌹' : '🥀';
             const mother = getMother(member);
             
             return `
@@ -788,7 +777,6 @@
                     <thead>
                         <tr>
                             <th>NAME</th>
-                            <th>VITAL STATUS</th>
                             <th>GEN</th>
                             <th>FATHER</th>
                             <th>MOTHER</th>
@@ -798,7 +786,6 @@
                     <tbody>
                         <tr class="selected-row">
                             <td><strong>${displayName(member.name)}</strong></td>
-                            <td class="vital-status ${(member.alive || '').toLowerCase() === 'yes' ? 'yes' : 'no'}">${statusIcon} ${(member.alive || '').toLowerCase() === 'yes' ? 'Yes' : 'No'}</td>
                             <td>${member.gen || '—'}</td>
                             <td>${displayName(member.father) || '—'}</td>
                             <td>${mother}</td>
@@ -809,24 +796,23 @@
             `;
         }
 
+        // UPDATED: Removed VITAL STATUS from table render function
         function renderTableForMembers(members, title, includeSelected = false) {
             if (!members || members.length === 0) return '';
             
             let html = `<table class="family-table">`;
             html += `<thead><tr>
-                <th>NAME</th><th>VITAL STATUS</th><th>GEN</th><th>FATHER</th><th>MOTHER</th><th>SPOUSE</th>
+                <th>NAME</th><th>GEN</th><th>FATHER</th><th>MOTHER</th><th>SPOUSE</th>
             </tr></thead><tbody>`;
             
             members.forEach(m => {
                 if (includeSelected && currentIndividual?.name === m.name) return;
                 
-                const statusIcon = (m.alive || '').toLowerCase() === 'yes' ? '🌹' : '🥀';
                 const mother = getMother(m);
                 const isSelected = currentIndividual?.name === m.name ? 'selected-row' : '';
                 
                 html += `<tr class="${isSelected}" onclick="selectMember(db.find(x => x.name === '${m.name.replace(/'/g, "\\'")}'))">`;
                 html += `<td><strong>${displayName(m.name)}</strong></td>`;
-                html += `<td class="vital-status ${(m.alive || '').toLowerCase() === 'yes' ? 'yes' : 'no'}">${statusIcon} ${(m.alive || '').toLowerCase() === 'yes' ? 'Yes' : 'No'}</td>`;
                 html += `<td>${m.gen || '—'}</td>`;
                 html += `<td>${displayName(m.father) || '—'}</td>`;
                 html += `<td>${mother}</td>`;

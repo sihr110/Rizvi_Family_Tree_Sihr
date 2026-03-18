@@ -1,16 +1,9 @@
-
-
-<!-- ===================================== -->
-<!-- FILE NAME: 2-individual-tree-pc.html -->
-<!-- LAST UPDATED: 15/03/2026              -->
-<!-- ===================================== -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rizvi family · structured tree</title>
+    <title>Rizvi family · structured tree (no roses)</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -18,18 +11,17 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     
     <style>
-  
-/* Gentle pulsing/blinking effect with gold and light green - Header Toggle */
-.left-toggle-btn {
-    animation: gentle-blink 1.5s infinite;
-}
+        /* Gentle pulsing/blinking effect with gold and light green - Header Toggle */
+        .left-toggle-btn {
+            animation: gentle-blink 1.5s infinite;
+        }
 
-@keyframes gentle-blink {
-    0% { opacity: 1; background: var(--gold); }
-    50% { opacity: 0.7; background: #90EE90; transform: scale(1.1); }
-    100% { opacity: 1; background: var(--gold); }
-}
-     
+        @keyframes gentle-blink {
+            0% { opacity: 1; background: var(--gold); }
+            50% { opacity: 0.7; background: #90EE90; transform: scale(1.1); }
+            100% { opacity: 1; background: var(--gold); }
+        }
+         
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         :root {
@@ -651,7 +643,6 @@
             display: none;
         }
     </style>
-
 </head>
 <body>
     <!-- ZOOM CONTROLS - outside white container, in black area -->
@@ -887,31 +878,31 @@
             return arr;
         }
 
+        // ===== UPDATED renderBox function - NO ROSE ICONS (alive field removed) =====
         function renderBox(person, label, isSiblingOrChild = false) {
             const isFemale = person.gender?.startsWith('F');
             const isSelected = currentIndividual?.name === person.name;
             const mother = person.mother || '—';
             const hasKids = db.some(c => c.father === person.name);
-            const statusIcon = (person.alive || '').toLowerCase() === 'yes' ? '🌹' : '🥀';
-            const fatherStatus = (person.father) ? (db.find(f => f.name === person.father)?.alive || '').toLowerCase() === 'yes' ? '🌹' : '🥀' : '';
+            // No statusIcon because alive field is deleted
 
             let html = `<div class="box ${isFemale ? 'female-box' : ''} ${isSelected ? 'selected' : ''}" data-name="${person.name}" onclick="handleBoxClick(this)">`;
             html += `<div class="box-header"><span>${label}</span><span>${person.gen || '—'}</span></div>`;
             html += `<div class="box-body">`;
             
-            // Name with rose icon
-            html += `<div class="box-row"><span class="box-label">Name :</span><span class="box-value"><span class="member-name">${displayName(person.name)}</span> ${statusIcon}</span></div>`;
+            // Name without any icon
+            html += `<div class="box-row"><span class="box-label">Name :</span><span class="box-value"><span class="member-name">${displayName(person.name)}</span></span></div>`;
             
             if (isSiblingOrChild) {
-                // SIBLING OR CHILD BOX - only show Spouse and Status
-                html += `<div class="box-row"><span class="box-label">Spouse :</span><span class="box-value">${person.spouse || '—'}</span></div>`;
-                html += `<div class="box-row"><span class="box-label">Status :</span><span class="box-value">${person.maritalStatus || '—'}</span></div>`;
-            } else {
-                // SELECTED, FATHER, ANCESTOR BOXES - show all fields
-                html += `<div class="box-row"><span class="box-label">Father :</span><span class="box-value">${displayName(person.father) || '—'} ${fatherStatus}</span></div>`;
+                // SIBLING OR CHILD BOX - show Father, Mother, and Spouse (no status)
+                html += `<div class="box-row"><span class="box-label">Father :</span><span class="box-value">${displayName(person.father) || '—'}</span></div>`;
                 html += `<div class="box-row"><span class="box-label">Mother :</span><span class="box-value">${mother}</span></div>`;
                 html += `<div class="box-row"><span class="box-label">Spouse :</span><span class="box-value">${person.spouse || '—'}</span></div>`;
-                html += `<div class="box-row"><span class="box-label">Status :</span><span class="box-value">${person.maritalStatus || '—'}</span></div>`;
+            } else {
+                // SELECTED, FATHER, ANCESTOR BOXES - show all fields without status
+                html += `<div class="box-row"><span class="box-label">Father :</span><span class="box-value">${displayName(person.father) || '—'}</span></div>`;
+                html += `<div class="box-row"><span class="box-label">Mother :</span><span class="box-value">${mother}</span></div>`;
+                html += `<div class="box-row"><span class="box-label">Spouse :</span><span class="box-value">${person.spouse || '—'}</span></div>`;
             }
             
             // Child icon if person has children
