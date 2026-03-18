@@ -1,0 +1,1497 @@
+<!-- ===================================== -->
+<!-- FILE NAME: 22-individual-tree-pc.html -->
+<!-- CREATED: 19/03/2026                    -->
+<!-- ===================================== -->
+
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+<meta name="google" content="notranslate">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رضوی خاندان · شجرہ نسب</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <style>
+
+/* Gentle pulsing/blinking effect with gold and light green - Header Toggle */
+.left-toggle-btn {
+    animation: gentle-blink 1.5s infinite;
+}
+
+@keyframes gentle-blink {
+    0% { opacity: 1; background: var(--gold); }
+    50% { opacity: 0.7; background: #90EE90; transform: scale(1.1); }
+    100% { opacity: 1; background: var(--gold); }
+}
+
+* { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+}
+
+:root {
+    --maroon: #5a0000;
+    --dark-blue: #0f172a;
+    --gold: #d4af37;
+    --light-gold: #f1d279;
+    --green: #2e7d32;
+    --dark-green: #1b5e20;
+    --light-pink: #ffe4e9;
+    --bronze: #bc8c4f;
+}
+
+body {
+    font-family: 'Noto Nastaliq Urdu', 'Inter', sans-serif;
+    background: #1a1a1a;
+    height: 100vh;
+    overflow: hidden;
+    margin: 0;
+    padding: 10px;
+    position: relative;
+    direction: rtl;
+}
+
+/* ZOOM CONTROLS - outside white container */
+.zoom-controls {
+    position: absolute;
+    top: 30px;
+    left: 0px;
+    right: auto;
+    background: white;
+    border: 2px solid var(--gold);
+    border-radius: 8px;
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    z-index: 2000;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.zoom-btn {
+    width: 40px;
+    height: 40px;
+    border: 2px solid var(--gold);
+    background: white;
+    color: var(--dark-blue);
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Inter', sans-serif;
+}
+
+.zoom-btn:hover {
+    background: var(--gold);
+    color: white;
+}
+
+.zoom-level {
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 5px;
+    font-family: 'Inter', sans-serif;
+}
+
+.app-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    background: white;
+    height: calc(100vh - 20px);
+    display: flex;
+    flex-direction: column;
+    border-radius: 20px;
+    border: 2px solid var(--gold);
+    overflow: hidden;
+    box-shadow: 0 0 50px rgba(212, 175, 55, 0.2);
+}
+
+.app-header {
+    background: linear-gradient(135deg, var(--dark-blue) 0%, #1e3d3d 100%);
+    color: var(--gold);
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 3px solid var(--gold);
+    position: relative;
+}
+
+.header-title {
+    font-family: 'Noto Nastaliq Urdu', 'Inter', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+}
+
+.header-icon {
+    background: var(--gold);
+    color: var(--dark-blue);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Inter', sans-serif;
+}
+
+.header-actions {
+    display: flex;
+    gap: 10px;
+    margin-right: auto;
+    margin-left: 0;
+}
+
+.header-btn {
+    padding: 8px 16px;
+    background: transparent;
+    border: 2px solid var(--gold);
+    color: var(--gold);
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+    font-family: 'Noto Nastaliq Urdu', 'Inter', sans-serif;
+}
+
+.header-btn:hover {
+    background: var(--gold);
+    color: var(--dark-blue);
+}
+
+.header-btn.dashboard {
+    background: var(--green);
+    border-color: transparent;
+    color: white;
+}
+
+.left-toggle-btn {
+    background: var(--gold);
+    color: var(--dark-blue);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    cursor: pointer;
+    border: 2px solid white;
+    z-index: 2000;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    transition: all 0.3s;
+    font-family: 'Inter', sans-serif;
+}
+
+.left-toggle-btn:hover {
+    background: var(--light-gold);
+    transform: scale(1.1);
+}
+
+.toggle-menu-panel {
+    position: absolute;
+    right: 10px;
+    left: auto;
+    top: 60px;
+    background: white;
+    border: 3px solid var(--gold);
+    border-radius: 12px;
+    padding: 15px;
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 1999;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    min-width: 220px;
+}
+
+.toggle-menu-panel.show {
+    display: flex;
+}
+
+.toggle-menu-item {
+    padding: 12px 18px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    border: 2px solid var(--gold);
+    background: white;
+    color: var(--dark-blue);
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.2s;
+    font-family: 'Noto Nastaliq Urdu', 'Inter', sans-serif;
+}
+
+.toggle-menu-item:hover {
+    background: #faebcd;
+    transform: translateX(-5px);
+}
+
+.toggle-menu-item.active {
+    background: #d4edda !important;
+    border-color: var(--dark-green) !important;
+    color: var(--dark-blue);
+}
+
+.main-content {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+    background: #fffcf8;
+}
+
+.center-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+}
+
+.search-section {
+    padding: 15px;
+    background: #fffcf8;
+    border-bottom: 2px solid var(--gold);
+}
+
+.search-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.search-label {
+    font-weight: 700;
+    color: var(--maroon);
+    font-size: 13px;
+    white-space: nowrap;
+    font-family: 'Noto Nastaliq Urdu', 'Inter', sans-serif;
+}
+
+.search-wrapper {
+    position: relative;
+    flex: 1;
+}
+
+.search-input {
+    width: 100%;
+    padding: 10px 15px;
+    border: 2px solid #cbd5e1;
+    border-radius: 4px;
+    font-size: 14px;
+    outline: none;
+    font-family: 'Noto Nastaliq Urdu', 'Inter', sans-serif;
+    text-align: right;
+}
+
+.search-input:focus {
+    border-color: var(--gold);
+}
+
+.search-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 2px solid var(--gold);
+    border-radius: 0 0 4px 4px;
+    max-height: 300px;
+    overflow-y: auto;
+    display: none;
+    z-index: 1000;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.result-item {
+    padding: 12px 15px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+    transition: background 0.2s;
+    text-align: right;
+}
+
+.result-item:hover {
+    background: #faebcd;
+}
+
+.result-item .main-name {
+    font-weight: 700;
+    color: var(--dark-blue);
+    font-size: 14px;
+    font-family: 'Noto Nastaliq Urdu', 'Inter', sans-serif;
+}
+
+.result-item .gen {
+    color: var(--maroon);
+    font-size: 12px;
+    margin-right: 8px;
+    font-family: 'Inter', sans-serif;
+}
+
+.result-item .father-name {
+    font-size: 11px;
+    color: #666;
+    margin-top: 2px;
+    font-family: 'Noto Nastaliq Urdu', 'Inter', sans-serif;
+}
+
+.tree-container {
+    flex: 1;
+    overflow: auto !important;
+    padding: 20px;
+    position: relative;
+}
+
+/* Scrollbar styling */
+.tree-container::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+.tree-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 6px;
+}
+
+.tree-container::-webkit-scrollbar-thumb {
+    background: var(--gold);
+    border-radius: 6px;
+}
+
+.tree-container::-webkit-scrollbar-thumb:hover {
+    background: var(--dark-blue);
+}
+
+.tree-root-layout {
+    transform-origin: top right;
+    transition: transform 0.1s;
+    min-width: 100%;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.welcome-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    min-height: 500px;
+}
+
+.welcome-box {
+    text-align: center;
+    max-width: 500px;
+    padding: 40px;
+    background: white;
+    border: 3px solid var(--gold);
+    border-radius: 20px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+}
+
+.welcome-icon {
+    font-size: 72px;
+    margin-bottom: 20px;
+    color: var(--gold);
+    font-family: 'Inter', sans-serif;
+}
+
+.welcome-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--dark-blue);
+    margin-bottom: 15px;
+    font-family: 'Noto Nastaliq Urdu', 'Inter', sans-serif;
+}
+
+.welcome-text {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 25px;
+    line-height: 1.6;
+    font-family: 'Noto Nastaliq Urdu', 'Inter', sans-serif;
+}
+
+.box {
+    border: 2px solid var(--gold);
+    border-radius: 12px;
+    background: white;
+    width: 280px;
+    text-align: right;
+    cursor: pointer;
+    position: relative;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    transition: all 0.2s;
+    font-size: 12px;
+}
+
+.box:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+}
+
+@keyframes gentleBeat {
+    0% { border-color: #2e7d32; background: #e8f5e9; transform: scale(1.02); box-shadow: 0 0 15px rgba(46,125,50,0.3); }
+    35% { border-color: #4caf50; background: #c8e6c9; transform: scale(1.04); box-shadow: 0 0 25px rgba(76,175,80,0.5); }
+    70% { border-color: #2e7d32; background: #e8f5e9; transform: scale(1.02); box-shadow: 0 0 15px rgba(46,125,50,0.3); }
+    100% { border-color: #2e7d32; background: #e8f5e9; transform: scale(1.02); box-shadow: 0 0 15px rgba(46,125,50,0.3); }
+}
+
+.box.selected {
+    animation: gentleBeat 2.2s infinite;
+    border-width: 4px;
+    z-index: 10;
+}
+
+.box.female-box {
+    background-color: var(--light-pink);
+    border-color: #fb7185;
+}
+
+.box-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background: #f8fafc;
+    border-bottom: 1px solid #ddd;
+    border-radius: 10px 10px 0 0;
+    font-weight: 800;
+    font-family: 'Noto Nastaliq Urdu', 'Inter', sans-serif;
+}
+
+.box-body {
+    padding: 12px;
+    position: relative;
+    min-height: 120px;
+}
+
+.box-row {
+    display: flex;
+    margin-bottom: 5px;
+    line-height: 1.5;
+    font-family: 'Noto Nastaliq Urdu', 'Inter', sans-serif;
+}
+
+.box-label {
+    font-weight: 700;
+    color: var(--dark-blue);
+    min-width: 60px;
+    font-family: 'Noto Nastaliq Urdu', 'Inter', sans-serif;
+}
+
+.box-value {
+    color: #333;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-wrap: wrap;
+    font-family: 'Noto Nastaliq Urdu', 'Inter', sans-serif;
+}
+
+.member-name {
+    font-family: 'Noto Nastaliq Urdu', 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.child-icon {
+    position: absolute;
+    bottom: 8px;
+    left: 12px;
+    right: auto;
+    font-size: 18px;
+    line-height: 1;
+    color: #555;
+    font-family: 'Inter', sans-serif;
+}
+
+.v-line {
+    width: 3px;
+    height: 25px;
+    background: var(--gold);
+    margin: 10px auto;
+}
+
+.section-heading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--maroon);
+    margin: 20px 0 15px 0;
+    padding-bottom: 10px;
+    border-bottom: 3px solid var(--gold);
+    font-family: 'Noto Nastaliq Urdu', 'Inter', sans-serif;
+    cursor: pointer;
+    position: relative;
+}
+
+.section-heading span:first-child {
+    text-align: center;
+    letter-spacing: 0.5px;
+}
+
+.toggle-icon {
+    font-size: 22px;
+    font-weight: bold;
+    background: var(--gold);
+    color: var(--dark-blue);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    margin-left: 0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: all 0.2s;
+    flex-shrink: 0;
+    font-family: 'Inter', sans-serif;
+}
+
+.toggle-icon:hover {
+    transform: scale(1.1);
+    background: var(--light-gold);
+}
+
+/* ===== BOX ALIGNMENT - WITH 10px GAP ALL AROUND ===== */
+.children-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    margin: 0 auto 10px auto;
+}
+
+.children-row.four-in-row {
+    display: grid;
+    grid-template-columns: repeat(4, auto);
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.children-row.one-box,
+.children-row.two-boxes,
+.children-row.three-boxes {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.children-row.remaining-center {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.family-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 25px;
+}
+
+.app-footer {
+    background: var(--dark-blue);
+    color: var(--gold);
+    text-align: center;
+    padding: 8px;
+    font-size: 11px;
+    border-top: 2px solid var(--gold);
+    font-family: 'Noto Nastaliq Urdu', 'Inter', sans-serif;
+}
+
+.context-menu {
+    position: fixed;
+    background: white;
+    border: 2px solid var(--gold);
+    border-radius: 8px;
+    padding: 5px;
+    z-index: 3000;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    min-width: 150px;
+}
+
+.context-menu-item {
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 13px;
+    font-family: 'Noto Nastaliq Urdu', 'Inter', sans-serif;
+}
+
+.context-menu-item:hover {
+    background: #faebcd;
+}
+
+/* Save Options Modal */
+.save-options-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border: 3px solid var(--gold);
+    border-radius: 12px;
+    padding: 25px;
+    z-index: 4000;
+    min-width: 350px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+.save-options-modal h3 {
+    color: var(--maroon);
+    margin-bottom: 20px;
+    text-align: center;
+    font-family: 'Noto Nastaliq Urdu', 'Inter', sans-serif;
+}
+
+.save-options-modal label {
+    display: block;
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Noto Nastaliq Urdu', 'Inter', sans-serif;
+}
+
+.save-options-modal input[type="radio"] {
+    margin-left: 10px;
+}
+
+.save-options-modal button {
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Noto Nastaliq Urdu', 'Inter', sans-serif;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 3999;
+    display: none;
+}
+
+/* Urdu text styling */
+.urdu-text {
+    font-family: 'Noto Nastaliq Urdu', 'Inter', sans-serif;
+    line-height: 1.8;
+}
+
+.footer-urdu {
+    font-family: 'Noto Nastaliq Urdu', 'Inter', sans-serif;
+    font-size: 12px;
+}
+
+/* English text styling (for numbers, icons, etc) */
+.english-text {
+    font-family: 'Inter', sans-serif;
+}
+
+    </style>
+
+</head>
+<body>
+    <!-- ZOOM CONTROLS - outside white container, in black area -->
+    <div class="zoom-controls">
+        <div class="zoom-btn" onclick="zoomIn()">+</div>
+        <div class="zoom-level" id="zoomLevel">100%</div>
+        <div class="zoom-btn" onclick="zoomOut()">-</div>
+        <div class="zoom-btn" onclick="resetZoom()">↺</div>
+    </div>
+
+    <div class="app-container">
+        <div class="app-header">
+            <div class="left-toggle-btn" onclick="toggleLeftMenu()">☰</div>
+            <div class="header-title">
+                <span class="header-icon">🌿</span>
+                <span>رضوی خاندان · شجرہ نسب</span>
+            </div>
+            <div class="header-actions">
+                <div class="header-btn" onclick="showTableView()">📊 جدول</div>
+                <div class="header-btn dashboard" onclick="showDashboard()">🏠 مرکزی صفحہ</div>
+            </div>
+        </div>
+
+        <div class="toggle-menu-panel" id="toggleMenuPanel">
+            <div class="toggle-menu-item active" id="toggleSiblings" onclick="handleToggleMenuClick('siblings')">👥 بہن بھائی</div>
+            <div class="toggle-menu-item active" id="toggleDescendants" onclick="handleToggleMenuClick('descendants')">👶 اولاد</div>
+            <div class="toggle-menu-item active" id="toggleAncestors" onclick="handleToggleMenuClick('ancestors')">🌳 آباؤ اجداد</div>
+            <div style="border-top:1px solid var(--gold); margin:5px 0;"></div>
+            <div class="toggle-menu-item" onclick="resetIndividual()">🔄 دوبارہ ترتیب</div>
+            <div class="toggle-menu-item" onclick="showSaveOptions()">💾 محفوظ کریں</div>
+        </div>
+
+        <div class="main-content">
+            <div class="center-content">
+                <div class="search-section">
+                    <div class="search-row">
+                        <span class="search-label">نام تلاش کریں</span>
+                        <div class="search-wrapper">
+                            <input type="text" id="searchInput" class="search-input" placeholder="نام درج کریں..." autocomplete="off">
+                            <div id="searchDropdown" class="search-dropdown"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tree-container" id="treeContainer">
+                    <div class="tree-root-layout" id="treeRoot"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="app-footer" id="appFooter" style="font-family:'Noto Nastaliq Urdu',sans-serif;">
+            ڈویلپر: عمران حیدر ابن سید رسالت حسین رضوی | 6010-787-0332
+        </div>
+    </div>
+
+    <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" style="display:none;">
+
+    <!-- Save Options Modal -->
+    <div class="save-options-modal" id="saveOptionsModal" style="display:none;">
+        <h3 style="color:var(--maroon); margin-bottom:20px; text-align:center;">💾 شجرہ محفوظ کریں</h3>
+        
+        <div style="margin-bottom:20px;">
+            <div style="font-weight:600; margin-bottom:10px; color:var(--dark-blue);">فارمیٹ منتخب کریں:</div>
+            
+            <label style="display:block; margin-bottom:15px; padding:10px; border:2px solid #e0e0e0; border-radius:8px; cursor:pointer;">
+                <input type="radio" name="saveFormat" value="pdf-high" checked style="margin-left:10px;"> 
+                <span style="font-weight:600;">📑 PDF - ہائی ریزولوشن</span>
+                <span style="display:block; font-size:12px; color:#666; margin-right:25px;">پرنٹ کے لیے بہترین (3-8 MB)</span>
+            </label>
+            
+            <label style="display:block; margin-bottom:15px; padding:10px; border:2px solid #e0e0e0; border-radius:8px; cursor:pointer;">
+                <input type="radio" name="saveFormat" value="pdf-low" style="margin-left:10px;"> 
+                <span style="font-weight:600;">📑 PDF - لو ریزولوشن</span>
+                <span style="display:block; font-size:12px; color:#666; margin-right:25px;">شیئرنگ کے لیے بہترین (0.5-2 MB)</span>
+            </label>
+            
+            <label style="display:block; margin-bottom:15px; padding:10px; border:2px solid #e0e0e0; border-radius:8px; cursor:pointer;">
+                <input type="radio" name="saveFormat" value="jpeg" style="margin-left:10px;"> 
+                <span style="font-weight:600;">📸 JPEG تصویر</span>
+                <span style="display:block; font-size:12px; color:#666; margin-right:25px;">یونیورسل فارمیٹ (200-500 KB)</span>
+            </label>
+        </div>
+        
+        <div style="display:flex; gap:10px; justify-content:center;">
+            <button onclick="processSave()" style="flex:2; padding:12px; background:var(--green); color:white; border:none; border-radius:6px; font-weight:600; cursor:pointer;">محفوظ کریں</button>
+            <button onclick="closeSaveModal()" style="flex:1; padding:12px; background:#f0f0f0; border:1px solid #ccc; border-radius:6px; cursor:pointer;">منسوخ</button>
+        </div>
+    </div>
+
+    <!-- Overlay -->
+    <div class="modal-overlay" id="saveModalOverlay" onclick="closeSaveModal()"></div>
+
+    <script>
+        let db = [];
+        let fileInfo = null;
+        let currentIndividual = null;
+        let showSiblings = true;
+        let showDescendants = true;
+        let showAncestors = true;
+        let zoomLevel = 1;
+        let siblingsCollapsed = false;  // Show siblings by default
+        let childrenCollapsed = false;   // Show children by default
+        let ancestorsCollapsed = false;  // Show ancestors by default
+
+        // Load data from 33-family-data-urdu.js
+        function loadData() {
+            const script = document.createElement('script');
+            script.src = '33-family-data-urdu.js';
+            script.onload = function() {
+                if (typeof FAMILY_DATA_URDU !== 'undefined') {
+                    db = FAMILY_DATA_URDU;
+                    fileInfo = FILE_INFO || null;
+                    
+                    // Check URL parameter
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const memberName = urlParams.get('member');
+                    if (memberName) {
+                        setTimeout(() => {
+                            const member = db.find(m => m.name === decodeURIComponent(memberName));
+                            if (member) selectMember(member);
+                        }, 500);
+                    } else {
+                        resetIndividual();
+                    }
+                } else {
+                    document.getElementById('treeRoot').innerHTML = `
+                        <div class="welcome-container">
+                            <div class="welcome-box">
+                                <div class="welcome-icon">⚠️</div>
+                                <div class="welcome-title">ڈیٹا لوڈ نہیں ہوا</div>
+                                
+<div class="welcome-text">براہ کرم یقینی بنائیں کہ فائل 33-family-data-urdu.js موجود ہے۔</div>
+                            </div>
+                        </div>
+                    `;
+                }
+            };
+            script.onerror = function() {
+                document.getElementById('treeRoot').innerHTML = `
+                    <div class="welcome-container">
+                        <div class="welcome-box">
+                            <div class="welcome-icon">⚠️</div>
+                            <div class="welcome-title">فائل نہیں ملی</div>
+                            <div class="welcome-text">33-family-data-urdu.js نہیں مل سکی۔</div>
+                        </div>
+                    </div>
+                `;
+            };
+            document.head.appendChild(script);
+        }
+
+        function displayName(str) {
+            return str ? str : '';
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+        });
+
+        function formatCurrentTime() {
+            const d = new Date();
+            const day = d.getDate();
+            const month = d.getMonth() + 1;
+            const year = d.getFullYear();
+            const hours = d.getHours();
+            const minutes = String(d.getMinutes()).padStart(2, '0');
+            const ampm = hours >= 12 ? 'شام' : 'صبح';
+            const displayHours = hours % 12 || 12;
+            return `${day}/${month}/${year} - ${displayHours}:${minutes} ${ampm}`;
+        }
+
+        window.toggleLeftMenu = () => document.getElementById('toggleMenuPanel').classList.toggle('show');
+
+        window.handleToggleMenuClick = function(filter) {
+            if (!currentIndividual) return;
+            if (filter === 'siblings') {
+                showSiblings = !showSiblings;
+                document.getElementById('toggleSiblings').classList.toggle('active', showSiblings);
+            } else if (filter === 'descendants') {
+                showDescendants = !showDescendants;
+                document.getElementById('toggleDescendants').classList.toggle('active', showDescendants);
+            } else if (filter === 'ancestors') {
+                showAncestors = !showAncestors;
+                document.getElementById('toggleAncestors').classList.toggle('active', showAncestors);
+            }
+            renderTree();
+            document.getElementById('toggleMenuPanel').classList.remove('show');
+        };
+
+        function resetIndividual() {
+            document.getElementById('searchInput').value = '';
+            currentIndividual = null;
+            const url = new URL(window.location);
+            url.searchParams.delete('member');
+            window.history.pushState({}, '', url);
+            document.getElementById('treeRoot').innerHTML = `
+                <div class="welcome-container">
+                    <div class="welcome-box">
+                        <div class="welcome-icon">🌿</div>
+                        <div class="welcome-title">رضوی خاندان کا شجرہ نسب</div>
+                        <div class="welcome-text">
+                            براہ کرم اوپر دیے گئے سرچ باکس میں کسی فرد کا نام تلاش کریں<br>
+                            تاکہ ان کے خاندانی روابط دیکھ سکیں۔
+                        </div>
+                    </div>
+                </div>
+            `;
+            closeAllMenus();
+        }
+
+        document.getElementById('searchInput')?.addEventListener('keyup', function(e) {
+            const query = this.value;
+            const dropdown = document.getElementById('searchDropdown');
+            if (query.length < 2) { dropdown.style.display = 'none'; return; }
+            const results = db.filter(m => m.name.includes(query)).slice(0, 8);
+            dropdown.innerHTML = '';
+            results.forEach(member => {
+                const div = document.createElement('div');
+                div.className = 'result-item';
+                div.innerHTML = `<div><span class="main-name">${member.name}</span> <span class="gen">${member.gen || ''}</span>
+                    <div class="father-name">والد: ${member.father || '—'}</div></div>`;
+                div.onclick = () => { 
+                    selectMember(member); 
+                    dropdown.style.display = 'none'; 
+                    this.value = member.name;
+                };
+                dropdown.appendChild(div);
+            });
+            dropdown.style.display = 'block';
+        });
+
+        function selectMember(member) {
+            currentIndividual = member;
+            document.getElementById('searchInput').value = member.name;
+            const url = new URL(window.location);
+            url.searchParams.set('member', encodeURIComponent(member.name));
+            window.history.pushState({}, '', url);
+            renderTree();
+        }
+
+        window.toggleSection = function(section) {
+            if (section === 'siblings') siblingsCollapsed = !siblingsCollapsed;
+            else if (section === 'children') childrenCollapsed = !childrenCollapsed;
+            else if (section === 'ancestors') ancestorsCollapsed = !ancestorsCollapsed;
+            renderTree();
+        };
+
+        function findParent(p) {
+            if (!p || !p.father || p.father === '—' || p.father === '---') return null;
+            return db.find(x => x.name === p.father) || null;
+        }
+
+        function getAncestors(p) {
+            let arr = [], cur = p;
+            while (cur?.father && cur.father !== '—' && cur.father !== '---') {
+                const father = db.find(x => x.name === cur.father);
+                if (!father) break;
+                arr.push(father);
+                cur = father;
+            }
+            return arr;
+        }
+
+        // Updated renderBox - Mother and spouse in all boxes, no father in sibling/child boxes, no rose/alive
+        function renderBox(person, label, isSiblingOrChild = false) {
+            const isFemale = person.gender === 'Female' || person.gender === 'خاتون';
+            const isSelected = currentIndividual?.name === person.name;
+            const mother = person.mother || '—';
+            const spouse = person.spouse || '—';
+            const hasKids = db.some(c => c.father === person.name);
+            
+            let html = `<div class="box ${isFemale ? 'female-box' : ''} ${isSelected ? 'selected' : ''}" data-name="${person.name}" onclick="handleBoxClick(this)">`;
+            html += `<div class="box-header"><span>${label}</span><span>${person.gen || '—'}</span></div>`;
+            html += `<div class="box-body">`;
+            
+            // Name only - no rose/alive status
+            html += `<div class="box-row"><span class="box-label">نام :</span><span class="box-value"><span class="member-name">${person.name}</span></span></div>`;
+            
+            if (isSiblingOrChild) {
+                // SIBLING OR CHILD BOX - Mother and spouse only (no father)
+                html += `<div class="box-row"><span class="box-label" style="font-size:9px !important;">والدہ :</span><span class="box-value">${mother}</span></div>`;
+                html += `<div class="box-row"><span class="box-label" style="font-size:9px !important;">شریک حیات :</span><span class="box-value">${spouse}</span></div>`;
+            } else {
+                // SELECTED, FATHER, ANCESTOR BOXES - Father, mother, spouse all shown
+                html += `<div class="box-row"><span class="box-label">والد :</span><span class="box-value">${person.father || '—'}</span></div>`;
+                html += `<div class="box-row"><span class="box-label">والدہ :</span><span class="box-value">${mother}</span></div>`;
+                html += `<div class="box-row"><span class="box-label" style="font-size:9px !important;">شریک حیات :</span><span class="box-value">${spouse}</span></div>`;
+            }
+            
+            if (hasKids) html += `<div class="child-icon">👪</div>`;
+            
+            html += `</div></div>`;
+            return html;
+        }
+
+        function renderGenderGroup(genderMembers, type) {
+            const count = genderMembers.length;
+            const getLabel = (m) => type === 'sibling' ? (m.gender === 'Female' || m.gender === 'خاتون' ? 'بہن' : 'بھائی') : (m.gender === 'Female' || m.gender === 'خاتون' ? 'بیٹی' : 'بیٹا');
+            
+            if (count === 1) {
+                return `<div class="children-row one-box">${genderMembers.map(m => renderBox(m, getLabel(m), true)).join('')}</div>`;
+            }
+            else if (count === 2) {
+                return `<div class="children-row two-boxes">${genderMembers.map(m => renderBox(m, getLabel(m), true)).join('')}</div>`;
+            }
+            else if (count === 3) {
+                return `<div class="children-row three-boxes">${genderMembers.map(m => renderBox(m, getLabel(m), true)).join('')}</div>`;
+            }
+            else if (count === 4) {
+                return `<div class="children-row four-in-row">${genderMembers.map(m => renderBox(m, getLabel(m), true)).join('')}</div>`;
+            }
+            else {
+                const firstFour = genderMembers.slice(0, 4);
+                const remaining = genderMembers.slice(4);
+                const remainingCount = remaining.length;
+                
+                let remainingClass = 'remaining-center';
+                if (remainingCount === 1) remainingClass = 'one-box';
+                else if (remainingCount === 2) remainingClass = 'two-boxes';
+                else if (remainingCount === 3) remainingClass = 'three-boxes';
+                
+                return `
+                    <div class="children-row four-in-row">
+                        ${firstFour.map(m => renderBox(m, getLabel(m), true)).join('')}
+                    </div>
+                    <div class="children-row ${remainingClass}">
+                        ${remaining.map(m => renderBox(m, getLabel(m), true)).join('')}
+                    </div>
+                `;
+            }
+        }
+
+        function renderMembersWithLayout(members, type) {
+            if (members.length === 0) return '';
+            
+            // If more than 5 members, split by gender
+            if (members.length > 5) {
+                const males = members.filter(m => m.gender === 'Male' || m.gender === 'مرد');
+                const females = members.filter(m => m.gender === 'Female' || m.gender === 'خاتون');
+                
+                let html = '';
+                
+                if (males.length > 0) {
+                    html += renderGenderGroup(males, type);
+                }
+                
+                if (females.length > 0) {
+                    html += renderGenderGroup(females, type);
+                }
+                
+                return html;
+            }
+            
+            const count = members.length;
+            const getLabel = (m) => type === 'sibling' ? (m.gender === 'Female' || m.gender === 'خاتون' ? 'بہن' : 'بھائی') : (m.gender === 'Female' || m.gender === 'خاتون' ? 'بیٹی' : 'بیٹا');
+            
+            if (count === 1) {
+                return `<div class="children-row one-box">${members.map(m => renderBox(m, getLabel(m), true)).join('')}</div>`;
+            }
+            else if (count === 2) {
+                return `<div class="children-row two-boxes">${members.map(m => renderBox(m, getLabel(m), true)).join('')}</div>`;
+            }
+            else if (count === 3) {
+                return `<div class="children-row three-boxes">${members.map(m => renderBox(m, getLabel(m), true)).join('')}</div>`;
+            }
+            else if (count === 4) {
+                return `<div class="children-row four-in-row">${members.map(m => renderBox(m, getLabel(m), true)).join('')}</div>`;
+            }
+            else {
+                const firstFour = members.slice(0, 4);
+                const remaining = members.slice(4);
+                const remainingCount = remaining.length;
+                
+                let remainingClass = 'remaining-center';
+                if (remainingCount === 1) remainingClass = 'one-box';
+                else if (remainingCount === 2) remainingClass = 'two-boxes';
+                else if (remainingCount === 3) remainingClass = 'three-boxes';
+                
+                return `
+                    <div class="children-row four-in-row">
+                        ${firstFour.map(m => renderBox(m, getLabel(m), true)).join('')}
+                    </div>
+                    <div class="children-row ${remainingClass}">
+                        ${remaining.map(m => renderBox(m, getLabel(m), true)).join('')}
+                    </div>
+                `;
+            }
+        }
+
+        function renderTree() {
+            if (!currentIndividual) return;
+            let html = '<div>';
+
+            // Show Ancestors
+            if (showAncestors) {
+                const ancestors = getAncestors(currentIndividual);
+                if (ancestors.length) {
+                    html += `<div class="section-heading" onclick="toggleSection('ancestors')">`;
+                    html += `<span>🌳 آباؤ اجداد (${ancestors.length})</span>`;
+                    html += `<span class="toggle-icon">${ancestorsCollapsed ? '+' : '-'}</span>`;
+                    html += `</div>`;
+                    if (!ancestorsCollapsed) {
+                        html += '<div class="family-group">';
+                        [...ancestors].reverse().forEach((a, idx) => {
+                            html += renderBox(a, idx === 0 ? 'قدیم ترین' : 'آبا', false);
+                            if (idx < ancestors.length-1) html += '<div class="v-line"></div>';
+                        });
+                        html += '<div class="v-line"></div></div>';
+                    }
+                }
+            }
+
+            // Show Current Individual and Father
+            const father = findParent(currentIndividual);
+            if (father) {
+                html += '<div class="family-group">';
+                html += renderBox(father, 'والد', false);
+                html += '<div class="v-line"></div>';
+                html += renderBox(currentIndividual, 'فرد', false);
+                html += '</div>';
+            } else {
+                html += '<div class="family-group">' + renderBox(currentIndividual, 'فرد', false) + '</div>';
+            }
+
+            // Show Siblings
+            if (showSiblings) {
+                const siblings = db.filter(s => s.father === currentIndividual.father && s.name !== currentIndividual.name);
+                if (siblings.length > 0) {
+                    html += `<div class="section-heading" onclick="toggleSection('siblings')">`;
+                    html += `<span>👥 بہن بھائی (${siblings.length})</span>`;
+                    html += `<span class="toggle-icon">${siblingsCollapsed ? '+' : '-'}</span>`;
+                    html += `</div>`;
+                    if (!siblingsCollapsed) {
+                        html += renderMembersWithLayout(siblings, 'sibling');
+                    }
+                }
+            }
+
+            // Show Children
+            if (showDescendants) {
+                const children = db.filter(c => c.father === currentIndividual.name);
+                if (children.length) {
+                    html += `<div class="section-heading" onclick="toggleSection('children')">`;
+                    html += `<span>👶 اولاد (${children.length})</span>`;
+                    html += `<span class="toggle-icon">${childrenCollapsed ? '+' : '-'}</span>`;
+                    html += `</div>`;
+                    if (!childrenCollapsed) {
+                        html += renderMembersWithLayout(children, 'child');
+                    }
+                }
+            }
+
+            html += '</div>';
+            document.getElementById('treeRoot').innerHTML = html;
+        }
+
+        window.handleBoxClick = function(el) {
+            const name = el.dataset.name;
+            const member = db.find(m => m.name === name);
+            if (member) selectMember(member);
+        };
+
+        // Updated zoom functions with proper scrolling
+        function zoomIn() { 
+            zoomLevel = Math.min(zoomLevel + 0.1, 2); 
+            applyZoom(); 
+        }
+
+        function zoomOut() { 
+            zoomLevel = Math.max(zoomLevel - 0.1, 0.5); 
+            applyZoom(); 
+        }
+
+        function resetZoom() { 
+            zoomLevel = 1; 
+            applyZoom(); 
+        }
+
+        function applyZoom() {
+            const container = document.querySelector('.tree-container');
+            const content = document.getElementById('treeRoot');
+            
+            if (container && content) {
+                // Apply scale transform
+                content.style.transform = `scale(${zoomLevel})`;
+                
+                // Set width/height to maintain scrollable area
+                content.style.width = `${100 / zoomLevel}%`;
+                content.style.height = `${100 / zoomLevel}%`;
+                
+                // Update zoom level display
+                document.getElementById('zoomLevel').textContent = Math.round(zoomLevel * 100) + '%';
+            }
+        }
+
+        // Save Options Functions
+        window.showSaveOptions = function() {
+            if (!currentIndividual) {
+                alert('براہ کرم پہلے کسی فرد کو منتخب کریں');
+                return;
+            }
+            document.getElementById('saveOptionsModal').style.display = 'block';
+            document.getElementById('saveModalOverlay').style.display = 'block';
+            document.getElementById('toggleMenuPanel').classList.remove('show');
+        };
+
+        window.closeSaveModal = function() {
+            document.getElementById('saveOptionsModal').style.display = 'none';
+            document.getElementById('saveModalOverlay').style.display = 'none';
+        };
+
+        window.processSave = function() {
+            const selected = document.querySelector('input[name="saveFormat"]:checked');
+            if (!selected) {
+                alert('براہ کرم فارمیٹ منتخب کریں');
+                return;
+            }
+            
+            closeSaveModal();
+            
+            switch(selected.value) {
+                case 'pdf-high':
+                    exportIndividualPDF('high');
+                    break;
+                case 'pdf-low':
+                    exportIndividualPDF('low');
+                    break;
+                case 'jpeg':
+                    exportAsJPEG();
+                    break;
+            }
+        };
+
+        // Updated PDF function with quality parameter
+        async function exportIndividualPDF(quality = 'high') {
+            const member = currentIndividual;
+            if (!member) return;
+            
+            const scale = quality === 'high' ? 2.0 : 1.0;
+            const jpegQuality = quality === 'high' ? 0.95 : 0.6;
+            const qualityText = quality === 'high' ? 'ہائی ریزولوشن' : 'لو ریزولوشن';
+            
+            const treeElement = document.querySelector('.tree-root-layout');
+            if (!treeElement) return alert('کوئی مواد نہیں');
+            
+            try {
+                // Add header
+                const header = document.createElement('div');
+                header.style.marginBottom = '30px'; 
+                header.style.textAlign = 'center';
+                header.innerHTML = `<h1 style="color: #d4af37; font-size: 36px; font-family: 'Playfair Display', serif; margin:0;">رضوی خاندان کا شجرہ نسب</h1>
+                    <h2 style="color:#5a0000; font-size:24px; font-family:'Playfair Display', serif; margin:10px 0 0 0;">${member.name}</h2>`;
+                treeElement.insertBefore(header, treeElement.firstChild);
+
+                // Add footer
+                const footer = document.createElement('div');
+                footer.style.marginTop = '30px';
+                footer.style.padding = '15px 20px';
+                footer.style.background = '#fcf9f4';
+                footer.style.width = '100%';
+                footer.style.boxSizing = 'border-box';
+                footer.style.fontFamily = "'Noto Nastaliq Urdu', sans-serif";
+                footer.style.fontSize = '12px';
+                footer.style.textAlign = 'center';
+
+                const timeStr = formatCurrentTime();
+                const excelSavedTime = fileInfo ? fileInfo.saved_time : '15/03/2026, 5:04:36 pm';
+
+                footer.innerHTML = `
+                    <div style="padding:2px 0; font-weight:bold; color:#0f172a;">ڈویلپر: عمران حیدر ابن سید رسالت حسین رضوی | 6010-787-0332</div>
+                    <div style="padding:2px 0; font-weight:bold; color:#5a0000;">آخری ترمیم: ${excelSavedTime} | PDF جنریٹ: ${timeStr}</div>
+                `;
+                treeElement.appendChild(footer);
+                
+                // Show loading
+                const loadingMsg = document.createElement('div');
+                loadingMsg.style.position = 'fixed';
+                loadingMsg.style.top = '50%'; 
+                loadingMsg.style.left = '50%'; 
+                loadingMsg.style.transform = 'translate(-50%, -50%)';
+                loadingMsg.style.background = '#5a0000'; 
+                loadingMsg.style.color = 'white'; 
+                loadingMsg.style.padding = '20px 40px'; 
+                loadingMsg.style.borderRadius = '8px'; 
+                loadingMsg.style.zIndex = '9999'; 
+                loadingMsg.style.boxShadow = '0 4px 20px rgba(0,0,0,0.3)';
+                loadingMsg.textContent = `📄 PDF بنا رہے ہیں... (${qualityText})`;
+                document.body.appendChild(loadingMsg);
+                
+                await new Promise(resolve => setTimeout(resolve, 500));
+
+                // Capture with selected scale
+                const canvas = await html2canvas(treeElement, { 
+                    scale: scale,
+                    backgroundColor: '#ffffff', 
+                    logging: false
+                });
+                
+                // Remove header and footer
+                treeElement.removeChild(header);
+                treeElement.removeChild(footer);
+                document.body.removeChild(loadingMsg);
+
+                // Create PDF
+                const imgData = canvas.toDataURL('image/jpeg', jpegQuality);
+                const { jsPDF } = window.jspdf;
+                const w = canvas.width / 2 * 0.264583;
+                const h = canvas.height / 2 * 0.264583;
+                
+                const pdf = new jsPDF({ 
+                    orientation: w > h ? 'l' : 'p', 
+                    unit: 'mm', 
+                    format: [w + 40, h + 40] 
+                });
+                
+                pdf.addImage(imgData, 'JPEG', 20, 20, w, h, undefined, 'FAST');
+                const safeName = member.name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+                pdf.save(`shajra_${safeName}_${quality}_${Date.now()}.pdf`);
+                
+                // Show file size
+                const base64Length = imgData.length - 'data:image/jpeg;base64,'.length;
+                const fileSizeKB = Math.ceil((base64Length * 0.75) / 1024);
+                alert(`✅ PDF محفوظ ہو گئی!\nفائل سائز: ~${fileSizeKB} KB`);
+                
+            } catch (err) {
+                console.error('PDF Error:', err);
+                alert('❌ PDF نہیں بن سکی: ' + err.message);
+            }
+        }
+
+        // JPEG export function
+        window.exportAsJPEG = async function() {
+            const member = currentIndividual;
+            if (!member) return;
+            
+            const treeElement = document.querySelector('.tree-root-layout');
+            if (!treeElement) return alert('کوئی مواد نہیں');
+            
+            try {
+                // Add header
+                const header = document.createElement('div');
+                header.style.marginBottom = '30px'; 
+                header.style.textAlign = 'center';
+                header.innerHTML = `<h1 style="color: #d4af37; font-size: 36px; font-family: 'Playfair Display', serif; margin:0;">رضوی خاندان کا شجرہ نسب</h1>
+                    <h2 style="color:#5a0000; font-size:24px; font-family:'Playfair Display', serif; margin:10px 0 0 0;">${member.name}</h2>`;
+                treeElement.insertBefore(header, treeElement.firstChild);
+
+                // Add footer
+                const footer = document.createElement('div');
+                footer.style.marginTop = '30px';
+                footer.style.padding = '15px 20px';
+                footer.style.background = '#fcf9f4';
+                footer.style.width = '100%';
+                footer.style.boxSizing = 'border-box';
+                footer.style.fontFamily = "'Noto Nastaliq Urdu', sans-serif";
+                footer.style.fontSize = '12px';
+                footer.style.textAlign = 'center';
+
+                const timeStr = formatCurrentTime();
+                const excelSavedTime = fileInfo ? fileInfo.saved_time : '15/03/2026, 5:04:36 pm';
+                
+                footer.innerHTML = `
+                    <div style="padding:2px 0; font-weight:bold; color:#0f172a;">ڈویلپر: عمران حیدر ابن سید رسالت حسین رضوی | 6010-787-0332</div>
+                    <div style="padding:2px 0; font-weight:bold; color:#5a0000;">آخری ترمیم: ${excelSavedTime} | JPEG جنریٹ: ${timeStr}</div>
+                `;
+                treeElement.appendChild(footer);
+                
+                // Show loading
+                const loadingMsg = document.createElement('div');
+                loadingMsg.style.position = 'fixed';
+                loadingMsg.style.top = '50%'; 
+                loadingMsg.style.left = '50%'; 
+                loadingMsg.style.transform = 'translate(-50%, -50%)';
+                loadingMsg.style.background = '#5a0000'; 
+                loadingMsg.style.color = 'white'; 
+                loadingMsg.style.padding = '20px 40px'; 
+                loadingMsg.style.borderRadius = '8px'; 
+                loadingMsg.style.zIndex = '9999'; 
+                loadingMsg.style.boxShadow = '0 4px 20px rgba(0,0,0,0.3)';
+                loadingMsg.textContent = '📸 JPEG بنا رہے ہیں...';
+                document.body.appendChild(loadingMsg);
+                
+                await new Promise(resolve => setTimeout(resolve, 500));
+
+                // Capture with good balance
+                const canvas = await html2canvas(treeElement, { 
+                    scale: 1.2,
+                    backgroundColor: '#ffffff', 
+                    logging: false
+                });
+                
+                // Remove header and footer
+                treeElement.removeChild(header);
+                treeElement.removeChild(footer);
+                document.body.removeChild(loadingMsg);
+
+                // Export as JPEG
+                const imgData = canvas.toDataURL('image/jpeg', 0.85);
+                
+                // Download
+                const link = document.createElement('a');
+                const safeName = member.name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+                link.download = `shajra_${safeName}_${Date.now()}.jpg`;
+                link.href = imgData;
+                link.click();
+                
+                // Show file size
+                const base64Length = imgData.length - 'data:image/jpeg;base64,'.length;
+                const fileSizeKB = Math.ceil((base64Length * 0.75) / 1024);
+                setTimeout(() => alert(`✅ JPEG محفوظ ہو گئی!\nفائل سائز: ~${fileSizeKB} KB`), 100);
+                
+            } catch (err) {
+                console.error('Export Error:', err);
+                alert('❌ JPEG نہیں بن سکی: ' + err.message);
+            }
+        };
+
+        function closeAllMenus() {
+            document.getElementById('searchDropdown').style.display = 'none';
+            document.querySelectorAll('.context-menu').forEach(m => m.remove());
+            document.getElementById('toggleMenuPanel')?.classList.remove('show');
+            document.getElementById('saveOptionsModal').style.display = 'none';
+            document.getElementById('saveModalOverlay').style.display = 'none';
+        }
+        
+        function showDashboard() { 
+            window.location.href = '21-dashboard-pc.html'; 
+        }
+        
+        window.showTableView = function() {
+            if (currentIndividual) {
+                window.location.href = '23-individual-table-pc.html?member=' + encodeURIComponent(currentIndividual.name);
+            } else {
+                window.location.href = '23-individual-table-pc.html';
+            }
+        };
+        
+        // Global click listener to close dropdowns and menus
+        document.addEventListener('click', function(e) {
+            // Close search dropdown when clicking outside
+            if (!e.target.closest('.search-wrapper')) document.getElementById('searchDropdown').style.display = 'none';
+            
+            // Close toggle menu when clicking outside
+            if (!e.target.closest('.toggle-menu-panel') && !e.target.closest('.left-toggle-btn')) 
+                document.getElementById('toggleMenuPanel')?.classList.remove('show');
+            
+            // Close save modal when clicking outside
+            if (!e.target.closest('.save-options-modal') && !e.target.closest('[onclick="showSaveOptions()"]')) {
+                document.getElementById('saveOptionsModal').style.display = 'none';
+                document.getElementById('saveModalOverlay').style.display = 'none';
+            }
+        });
+
+        // Make functions globally available
+        window.zoomIn = zoomIn; 
+        window.zoomOut = zoomOut; 
+        window.resetZoom = resetZoom;
+        window.showDashboard = showDashboard; 
+        window.resetIndividual = resetIndividual;
+    </script>
+</body>
+</html>
