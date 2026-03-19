@@ -1,5 +1,5 @@
 // Urdu Family Data
-// Saved: 18/03/2026, 9:04:20 pm
+// Saved: 19/03/2026, 3:20:56 pm
 const FAMILY_DATA_URDU = [
   {
     "name": "حضرت عبدالمطلب",
@@ -2352,7 +2352,7 @@ const FAMILY_DATA_URDU = [
   {
     "name": "سید محمد عمران رضوی",
     "father": "سید محمد اظہر",
-    "mother": "سیدہ عصمت زھرا",
+    "mother": "سیدہ عصمت زھرا رضوی",
     "spouse": "---",
     "gen": "G-041-S1",
     "gender": "Male"
@@ -2360,7 +2360,7 @@ const FAMILY_DATA_URDU = [
   {
     "name": "سید محمد کامران رضوی",
     "father": "سید محمد اظہر",
-    "mother": "سیدہ عصمت زھرا",
+    "mother": "سیدہ عصمت زھرا رضوی",
     "spouse": "---",
     "gen": "G-041-S2",
     "gender": "Male"
@@ -2368,7 +2368,7 @@ const FAMILY_DATA_URDU = [
   {
     "name": "سید  محمد عدنان حیدر",
     "father": "سید محمد اظہر",
-    "mother": "سیدہ عصمت زھرا",
+    "mother": "سیدہ عصمت زھرا رضوی",
     "spouse": "---",
     "gen": "G-041-S3",
     "gender": "Male"
@@ -2376,7 +2376,7 @@ const FAMILY_DATA_URDU = [
   {
     "name": "سیدہ اعزاز عالیہ",
     "father": "سید محمد اظہر",
-    "mother": "سیدہ عصمت زھرا",
+    "mother": "سیدہ عصمت زھرا رضوی",
     "spouse": "---",
     "gen": "G-041-D1",
     "gender": "Female"
@@ -2384,7 +2384,7 @@ const FAMILY_DATA_URDU = [
   {
     "name": "سیدہ ارم رضوی",
     "father": "سید محمد اظہر",
-    "mother": "سیدہ عصمت زھرا",
+    "mother": "سیدہ عصمت زھرا رضوی",
     "spouse": "سید شبہ کاظمی",
     "gen": "G-041-D2",
     "gender": "Female"
@@ -2392,7 +2392,7 @@ const FAMILY_DATA_URDU = [
   {
     "name": "سیدہ حنا رضوی",
     "father": "سید محمد اظہر",
-    "mother": "سیدہ عصمت زھرا",
+    "mother": "سیدہ عصمت زھرا رضوی",
     "spouse": "سید وصی حسین نقوی",
     "gen": "G-041-D3",
     "gender": "Female"
@@ -2999,4 +2999,4 @@ const FAMILY_DATA_URDU = [
   }
 ];
 
-const FILE_INFO = { saved_time: "18/03/2026, 9:04:20 pm", total_members: 375 };
+const FILE_INFO = { saved_time: "19/03/2026, 3:20:56 pm", total_members: 375 };
