@@ -160,6 +160,32 @@
             transform: scale(0.98);
         }
 
+        .back-btn {
+            background: transparent;
+            color: var(--dark-blue);
+            border: 2px solid var(--gold);
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            transition: all 0.2s;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            -webkit-appearance: none;
+            appearance: none;
+            min-height: 50px;
+        }
+
+        .back-btn:active {
+            background: #f5f5f5;
+            transform: scale(0.98);
+        }
+
         .error-msg {
             color: var(--maroon);
             margin-top: 15px;
@@ -226,6 +252,12 @@
             border-radius: 8px;
             font-weight: 600;
         }
+
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
     </style>
 </head>
 <body>
@@ -275,9 +307,14 @@
                 </button>
             </div>
 
-            <button class="dashboard-btn" id="enterDashboardBtn">
-                <span>🚪</span> Enter Dashboard
-            </button>
+            <div class="button-group">
+                <button class="dashboard-btn" id="enterDashboardBtn">
+                    <span>🚪</span> Enter Dashboard
+                </button>
+                <button class="back-btn" id="backToLoginBtn">
+                    <span>↩️</span> Back to Login
+                </button>
+            </div>
         </div>
 
         <div class="footer-note">
@@ -308,6 +345,7 @@
             const toggleBtn = document.getElementById('toggleBtn');
             const unlockBtn = document.getElementById('unlockBtn');
             const enterDashboardBtn = document.getElementById('enterDashboardBtn');
+            const backToLoginBtn = document.getElementById('backToLoginBtn');
             const passwordField = document.getElementById('passwordField');
             const errorMsg = document.getElementById('passwordError');
 
@@ -372,6 +410,30 @@
                     e.preventDefault();
                     console.log('Unlock button clicked');
                     checkPassword();
+                });
+            }
+
+            // Back to Login button
+            if (backToLoginBtn) {
+                backToLoginBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('Back to Login button clicked');
+                    
+                    // Hide device section, show login section
+                    deviceSection.classList.add('hidden');
+                    loginSection.classList.remove('hidden');
+                    
+                    // Clear password field and focus
+                    passwordField.value = '';
+                    passwordField.focus();
+                    
+                    // Hide any error messages
+                    errorMsg.style.display = 'none';
+                    
+                    // Reset to default selections (optional)
+                    language = 'english';
+                    englishBtn.classList.add('active');
+                    urduBtn.classList.remove('active');
                 });
             }
 
