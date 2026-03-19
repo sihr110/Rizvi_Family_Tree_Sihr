@@ -1,0 +1,488 @@
+<!-- ======================================== -->
+<!-- FILE NAME: 21-dashboard-mobile.html       -->
+<!-- Urdu Version - Rizvi Family Dashboard     -->
+<!-- Mobile Only - Simplified Version          -->
+<!-- ======================================== -->
+
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+<head>
+    <meta name="google" content="notranslate">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>خاندان رضوی · موبائل ڈیش بورڈ</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700;900&family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="33-family-data-urdu.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        :root {
+            --maroon: #5a0000;
+            --dark-blue: #0f172a;
+            --gold: #d4af37;
+            --bronze: #bc8c4f;
+            --light-bg: #fffcf8;
+        }
+
+        body {
+            font-family: 'Noto Nastaliq Urdu', 'Inter', sans-serif;
+            background: #1a1a1a;
+            min-height: 100vh;
+            margin: 0;
+            padding: 8px;
+        }
+
+        .app-container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            min-height: calc(100vh - 16px);
+            display: flex;
+            flex-direction: column;
+            border-radius: 24px;
+            border: 2px solid var(--gold);
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.15);
+        }
+
+        .app-header {
+            background: linear-gradient(135deg, var(--dark-blue) 0%, #1e3d3d 100%);
+            color: var(--gold);
+            padding: 12px 15px;
+            border-bottom: 3px solid var(--gold);
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'Playfair Display', 'Noto Nastaliq Urdu', serif;
+            font-size: 16px;
+            font-weight: 900;
+            white-space: nowrap;
+        }
+
+        .header-icon {
+            background: var(--gold);
+            color: var(--dark-blue);
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .status-badge {
+            background: var(--gold);
+            color: var(--dark-blue);
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+            font-family: 'Noto Nastaliq Urdu', 'Inter', sans-serif;
+        }
+
+        .main-content {
+            flex: 1;
+            background: var(--light-bg);
+            padding: 25px 15px;
+        }
+
+        .dashboard-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .dashboard-card {
+            background: white;
+            border: 2px solid var(--gold);
+            border-radius: 20px;
+            padding: 30px 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .dashboard-card:active {
+            transform: scale(0.98);
+            border-color: var(--bronze);
+            background: #fafafa;
+        }
+
+        .card-icon {
+            font-size: 56px;
+            margin-bottom: 15px;
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--dark-blue);
+            margin-bottom: 8px;
+            font-family: 'Noto Nastaliq Urdu', 'Inter', sans-serif;
+        }
+
+        .card-desc {
+            color: #666;
+            font-size: 14px;
+            font-family: 'Noto Nastaliq Urdu', 'Inter', sans-serif;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 18px;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            border: 2px solid var(--gold);
+            transition: all 0.2s;
+            font-family: 'Noto Nastaliq Urdu', 'Inter', sans-serif;
+        }
+
+        .action-btn.exit {
+            background: var(--maroon);
+            color: white;
+        }
+
+        .action-btn.reset {
+            background: #4169E1;
+            color: white;
+        }
+
+        .action-btn:active {
+            transform: scale(0.98);
+            opacity: 0.9;
+        }
+
+        .app-footer {
+            background: var(--dark-blue);
+            color: var(--gold);
+            text-align: center;
+            padding: 12px 10px;
+            font-size: 11px;
+            border-top: 2px solid var(--gold);
+            line-height: 1.6;
+            font-family: 'Noto Nastaliq Urdu', 'Inter', sans-serif;
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+            display: none;
+        }
+
+        .loading-content {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            border: 3px solid var(--gold);
+            text-align: center;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--gold);
+            border-top-color: var(--dark-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Simplified Header - One Row -->
+        <div class="app-header">
+            <div class="header-content">
+                <div class="header-title">
+                    <span class="header-icon">🌿</span>
+                    <span>رضوی خاندان</span>
+                </div>
+                <div class="status-badge" id="headerStatus">📊 0 اراکین</div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content" id="mainContent">
+            <!-- Dynamic content will be inserted here -->
+        </div>
+
+        <!-- Footer -->
+        <div class="app-footer">
+            ڈویلپر: عمران حیدر ولد سید رسالت حسین رضوی<br>
+            0332-787-6010
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <div id="loadingMessage">لوڈ ہو رہا ہے...</div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== GLOBAL VARIABLES ====================
+        let db = [];
+        let fileInfo = null;
+
+        // ==================== INITIALIZATION ====================
+        function initializeData() {
+            // First check if we have data in localStorage
+            const saved = localStorage.getItem('familyDB');
+            if (saved) {
+                try {
+                    db = JSON.parse(saved);
+                    updateHeaderStatus();
+                    
+                    const savedInfo = localStorage.getItem('fileInfo');
+                    if (savedInfo) {
+                        fileInfo = JSON.parse(savedInfo);
+                    }
+                    renderDashboard();
+                    return;
+                } catch (e) {
+                    console.error('Error parsing saved data:', e);
+                }
+            }
+
+            // If no cached data, auto-load from 33-family-data-urdu.js
+            autoLoadFromJS();
+        }
+
+        function autoLoadFromJS() {
+            if (typeof FAMILY_DATA_URDU !== 'undefined' && FAMILY_DATA_URDU.length > 0) {
+                try {
+                    db = FAMILY_DATA_URDU;
+                    localStorage.setItem('familyDB', JSON.stringify(db));
+                    
+                    if (typeof FILE_INFO !== 'undefined') {
+                        fileInfo = FILE_INFO;
+                        localStorage.setItem('fileInfo', JSON.stringify(FILE_INFO));
+                        console.log('✅ ٹائم سٹیمپ محفوظ:', FILE_INFO.saved_time);
+                    }
+                    
+                    updateHeaderStatus();
+                    renderDashboard();
+                    showToast('✅ ڈیٹا خودکار لوڈ ہو گیا');
+                } catch (err) {
+                    console.error('Error:', err);
+                    showToast('❌ ڈیٹا لوڈ کرنے میں خرابی');
+                }
+            } else {
+                console.warn('⚠️ FAMILY_DATA_URDU not found or empty');
+                renderDashboard();
+            }
+        }
+
+        function updateHeaderStatus() {
+            const count = db.length || 0;
+            document.getElementById('headerStatus').innerHTML = `📊 ${count} اراکین`;
+        }
+
+        // ==================== RENDER DASHBOARD ====================
+        function renderDashboard() {
+            const mainContent = document.getElementById('mainContent');
+            
+            mainContent.innerHTML = `
+                <div class="dashboard-grid">
+                    <!-- Individual Search Card -->
+                    <div class="dashboard-card" onclick="goToIndividual()">
+                        <div class="card-icon">👤</div>
+                        <div class="card-title">انفرادی تلاش</div>
+                        <div class="card-desc">کسی ایک فرد کی معلومات دیکھیں</div>
+                    </div>
+                    
+                    <!-- Root Relative Card -->
+                    <div class="dashboard-card" onclick="goToRoot()">
+                        <div class="card-icon">👥</div>
+                        <div class="card-title">جڑ رشتہ دار</div>
+                        <div class="card-desc">دو افراد کے درمیان تعلق معلوم کریں</div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="action-buttons">
+                        <div class="action-btn exit" onclick="logout()">
+                            <span>🚪</span>
+                            <span>لاگ آؤٹ</span>
+                        </div>
+                        
+                        <div class="action-btn reset" onclick="hardReset()">
+                            <span>⚠️</span>
+                            <span>مکمل ری سیٹ</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ==================== NAVIGATION ====================
+        function goToIndividual() {
+            if (db.length === 0) {
+                const saved = localStorage.getItem('familyDB');
+                if (saved) {
+                    db = JSON.parse(saved);
+                } else {
+                    showToast('❌ براہ کرم پہلے ڈیٹا لوڈ کریں');
+                    return;
+                }
+            }
+            window.location.href = '22-individual-tree-pc.html';
+        }
+
+        function goToRoot() {
+            if (db.length === 0) {
+                const saved = localStorage.getItem('familyDB');
+                if (saved) {
+                    db = JSON.parse(saved);
+                } else {
+                    showToast('❌ براہ کرم پہلے ڈیٹا لوڈ کریں');
+                    return;
+                }
+            }
+            window.location.href = '24-root-tree-pc.html';
+        }
+
+        // ==================== UTILITY FUNCTIONS ====================
+        function showLoading(message = 'لوڈ ہو رہا ہے...') {
+            document.getElementById('loadingMessage').textContent = message;
+            document.getElementById('loadingOverlay').style.display = 'flex';
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').style.display = 'none';
+        }
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                left: 20px;
+                right: 20px;
+                background: var(--dark-blue);
+                color: var(--gold);
+                padding: 15px;
+                border-radius: 12px;
+                text-align: center;
+                border: 2px solid var(--gold);
+                z-index: 5000;
+                font-family: 'Noto Nastaliq Urdu', sans-serif;
+                animation: slideUp 0.3s ease;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            `;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'slideDown 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 2000);
+        }
+
+        function logout() {
+            if (confirm('کیا آپ باہر جانا چاہتے ہیں؟')) {
+                // Clear data when going back to password screen
+                localStorage.removeItem('familyDB');
+                localStorage.removeItem('fileInfo');
+                db = [];
+                window.location.href = '../index.html';
+            }
+        }
+
+        function hardReset() {
+            if (confirm('🚨 انتباہ: تمام ڈیٹا مستقل طور پر حذف ہو جائے گا۔ کیا آپ کو یقین ہے؟')) {
+                // Clear all localStorage items
+                localStorage.removeItem('familyDB');
+                localStorage.removeItem('fileInfo');
+                localStorage.removeItem('tableViewMember');
+                localStorage.removeItem('tableViewFilters');
+                
+                // Reset database
+                db = [];
+                
+                // Update header
+                updateHeaderStatus();
+                
+                // Re-render dashboard
+                renderDashboard();
+                
+                showToast('✅ تمام ڈیٹا صاف کر دیا گیا');
+                
+                // Try to auto-load again
+                autoLoadFromJS();
+            }
+        }
+
+        // ==================== ANIMATION STYLES ====================
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideUp {
+                from { transform: translateY(100%); opacity: 0; }
+                to { transform: translateY(0); opacity: 1; }
+            }
+            @keyframes slideDown {
+                from { transform: translateY(0); opacity: 1; }
+                to { transform: translateY(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // ==================== INITIALIZE ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeData();
+        });
+
+        // Make functions globally available
+        window.goToIndividual = goToIndividual;
+        window.goToRoot = goToRoot;
+        window.logout = logout;
+        window.hardReset = hardReset;
+    </script>
+</body>
+</html>
